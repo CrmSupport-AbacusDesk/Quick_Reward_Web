@@ -1,0 +1,202 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Purchase Request</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh();">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="purchase_data.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+        (click)="active_tab = 'Pending';getList()"><i class="material-icons">pending_actions</i>Pending
+        ({{tabCount.Pending ? tabCount.Pending : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+        (click)="active_tab = 'Approved'; getList()"><i class="material-icons">swap_horiz</i>Approved
+        ({{tabCount.Approved ? tabCount.Approved : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+        (click)="active_tab = 'Reject';getList()"><i class="material-icons">cancel</i>Reject
+        ({{tabCount.Reject ? tabCount.Reject : '0'}})</button>
+      </div>
+    </div>
+  </div>
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table class="sno-border">
+            <tr>
+              <th class="w50">S.No.</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">PO ID</th>
+              <th class="w100">Type</th>
+              <th class="w180">Name</th>
+              <th class="w120">Invoice Date</th>
+              <th class="w120">Invoice Number</th>
+              <th class="w80  text-right">Total Item</th>
+              <th class="w80  text-right">Total SQFT</th>
+              <th class="w80  text-right">Claim Points</th>
+              <th class="w90  text-right" *ngIf="active_tab == 'Approved'">Approved Points</th>
+              <th class="w100  text-center" *ngIf="active_tab == 'Pending' && logined_user_data.edit_purchase == '1'">Action</th>
+            </table>
+          </div>
+          <div class="table-head border-top">
+            <table class="sno-border">
+              <tr>
+                <th class="w50">&nbsp;</th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input select-input">
+                      <input matInput placeholder="Search..." (keyup.enter)="getList()" name="id"
+                      #id="ngModel" [(ngModel)]="filter.id">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input select-input">
+                      <input matInput placeholder="Search..." (keyup.enter)="getList()" name="sub_type"
+                      #sub_type="ngModel" [(ngModel)]="filter.sub_type">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w180">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input select-input">
+                      <input matInput placeholder="Search..." (keyup.enter)="getList()" name="created_by_name"
+                      #created_by_name="ngModel" [(ngModel)]="filter.created_by_name">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w120">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="picker1" placeholder="Date" name="invoice_date"
+                      #invoice_date="ngModel" [(ngModel)]="filter.invoice_date" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                      <mat-datepicker #picker1></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w120">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input select-input">
+                      <input matInput placeholder="Search..." (keyup.enter)="getList()" name="invoice_number"
+                      #invoice_number="ngModel" [(ngModel)]="filter.invoice_number">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w80  text-right">&nbsp;</th>
+                <th class="w80  text-right">&nbsp;</th>
+                <th class="w80  text-right">&nbsp;</th>
+                <th class="w90  text-right"  *ngIf="active_tab == 'Approved'">&nbsp;</th>
+                <th class="w100  text-center" *ngIf="active_tab == 'Pending' && logined_user_data.edit_purchase == '1'">&nbsp;</th>
+              </table>
+            </div>
+          </div>
+          
+          <div class="table-container" *ngIf="purchase_data.length > 0">
+            <div class="table-content">
+              <table class="sno-border">
+                <ng-container *ngIf="!skLoading">
+                  <tr *ngFor="let row of purchase_data; let i = index" [ngClass]="{'Current': service.currentUserID == row.id}">
+                    <td class="w50">{{i + 1 + sr_no}}</td>
+                    <td class="w100">{{row.date_created | date : 'd MMM y'}}</td>
+                    <td class="w100">
+                      <button class="link-btn" (click)="service.setData(filter); service.setTabData(active_tab)" routerLink="purchasedetail/{{row.encrypt_id}}">
+                        {{row.id ? ('PO-' +row.id) : '---'}}
+                      </button>
+                    </td>
+                    <td class="w100">{{row.sub_type}}</td>
+                    <td class="w180">
+                      <button class="link-btn" (click)="service.setData(filter); service.setTabData(active_tab)" routerLink="purchasedetail/{{row.encrypt_id}}">
+                        {{row.created_by_name ? (row.created_by_name | titlecase) : '---'}}
+                      </button>
+                    </td>
+                    <td class="w120">{{row.invoice_date | date : 'd MMM y'}}</td>
+                    <td class="w120">{{row.invoice_number ? row.invoice_number : '---'}}</td>
+                    <td class="w80  text-right">{{row.total_item ? row.total_item: '0'}}</td>
+                    <td class="w80  text-right">{{row.total_sqft ? row.total_sqft: '0'}}</td>
+                    <td class="w80  text-right">{{row.total_point_value ? row.total_point_value: '0'}}</td>
+                    <td class="w90  text-right"  *ngIf="active_tab == 'Approved'">{{row.approved_point ? row.approved_point: '0'}}</td>
+                    <td class="w100  text-center" *ngIf="active_tab == 'Pending' && logined_user_data.edit_purchase == '1'">
+                      <button class="link-btn" (click)="openDialog(row)">
+                        Change Status
+                      </button>
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-container *ngFor="let row of [].constructor(10)">
+                  <tr class="sk-loading" *ngIf="skLoading">
+                    <td class="w30"><div>&nbsp;</div></td>
+                    <td class="w100"><div>&nbsp;</div></td>
+                    <td class="w100"><div>&nbsp;</div></td>
+                    <td class="w100"><div>&nbsp;</div></td>
+                    <td class="w180"><div>&nbsp;</div></td>
+                    <td class="w120"><div>&nbsp;</div></td>
+                    <td class="w120"><div>&nbsp;</div></td>
+                    <td class="w80  text-right"><div>&nbsp;</div></td>
+                    <td class="w80  text-right"><div>&nbsp;</div></td>
+                    <td class="w80  text-right"><div>&nbsp;</div></td>
+                    <td class="w90  text-right"  *ngIf="active_tab == 'Approved'"><div>&nbsp;</div></td>
+                    <td class="w100  text-center" *ngIf="active_tab == 'Pending' && logined_user_data.edit_purchase == '1'"><div>&nbsp;</div></td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="purchase_data.length == 0 && datanotfound == true">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+
+
+      <div class="fab-btns">
+      <button class="pulse excel" mat-fab color="primary"
+        [matMenuTriggerFor]="menu" *ngIf="logined_user_data.add_purchase=='1'">
+        <i class="material-icons">apps</i>
+        Action
+      </button>
+    </div>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngIf="logined_user_data.import_purchase=='1' && purchase_data.length > 0" (click)="progressService.setCancelReq(false); downloadInChunks();" >
+        <mat-icon>download</mat-icon>
+        <span>Download in excel</span>
+      </button>
+     
+      
+      <button mat-menu-item routerLink="purchase-add" *ngIf="logined_user_data.add_purchase=='1'" routerLinkActive="router-link-active">
+        <mat-icon>add</mat-icon>
+        <span>Add New</span>
+      </button>
+      
+    </mat-menu>
+    </div>

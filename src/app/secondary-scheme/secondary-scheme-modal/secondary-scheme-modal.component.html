@@ -1,0 +1,80 @@
+<div class="edit-modal">
+  <p class="heading">Result Detail</p>
+  <div mat-dialog-content>
+    <div class="cs-form">
+      <div class="grid-box">
+        <div class="block-feilds" *ngIf="scheme_for != 'Sales user'">
+          <span>Company Name</span>
+          <p>{{company_name}}</p>
+        </div>
+        <div class="block-feilds">
+          <span>Name</span>
+          <p>{{contact_person}}</p>
+        </div>
+
+        <div class="block-feilds">
+          <span>Mobile No.</span>
+          <p>{{mobile_no}}</p>
+        </div>
+      </div>
+
+
+      <div class="cs-table left-right-10">
+        <div class="sticky-head">
+          <div class="table-head boder-bottom">
+            <table>
+              <tr>
+                <th class="w60 text-center">Sr.No</th>
+                <th>{{scheme_type == 'Collection' ? 'Transaction Date':'Bill Date Created'}}</th>
+                <th class="w200 text-center">{{scheme_type == 'Collection' ? 'Transaction ID':'Bill No.'}}</th>
+                <th class="w100 text-center">{{scheme_type == 'Collection' ? 'Transaction Amount':(invoiceDetails.criteria_type == 'Value' ? 'Approved Amount' : 'Quantity')}}</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!skLoading">
+                <tr *ngFor="let row of (scheme_type == 'Collection' ? invoiceDetails.total_collection : invoiceDetails.total_sale); let i = index;">
+                  <td class="w60 text-center">{{i+1}}</td>
+                  <td>{{scheme_type == 'Collection' ? (row.transaction_date | date: 'dd MMM yyyy') : (row.bill_date | date: 'dd MMM yyyy')}} </td>
+                  <td class="w200 text-center" *ngIf="scheme_type != 'Collection'"><a class="link-btn" (click)="toInvoice(row.bill_id)" mat-button>{{row.bill_no}}</a></td>
+                  <td class="w200 text-center" *ngIf="scheme_type == 'Collection'">{{row.transaction_id }}</td>
+                  <td class="w100 text-center">{{scheme_type == 'Collection' ? '₹ '+ row.transaction_amount :(row.approved_amount ? '₹ '+ row.approved_amount : row.product_qty)}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="skLoading">
+                <tr class="sk-loading" *ngFor="let row of [].constructor(8); let i = index;">
+                  <td class="w60">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td>
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w200 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <ng-container *ngIf="(scheme_type == 'Collection' ? invoiceDetails.total_collection : invoiceDetails.total_sale).length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+
+
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>

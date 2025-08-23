@@ -1,0 +1,322 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Secondary Order Details :- {{secondaryOrderDetail.company_name ? (secondaryOrderDetail.company_name | titlecase) : ''}}</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <div class="group-btn">
+        <!-- <button mat-button class="ouline-btns pdf" (click)="exportPdf()"><img src="assets/img/icons/pdf.png"> Export PDF</button> -->
+        <!-- <button mat-button class="ouline-btns whatsapp"><img src="assets/img/icons/whatsapp.png"> Send Whatsapp</button> -->
+        <!-- <button mat-button class="ouline-btns email"><img src="assets/img/icons/email.png"> Send Mail</button> -->
+        <!-- && (secondaryOrderDetail.order_status=='Pending' || secondaryOrderDetail.order_status=='Reject') -->
+        <ng-container *ngIf="login_data.edit_order=='1' || login_data.edit_secondary_orders=='1' ||  login_data.user_type=='DMS'">
+          <button mat-button class="ouline-btns status"
+          *ngIf="secondaryOrderDetail.order_status =='Pending' && ((login_data.access_level == '1') || (login_data.access_level != '1' ) || ( login_data.user_type=='DMS')) "
+          (click)="openDialog()"><img src="assets/img/icons/update.png"> Change Status</button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m8 l8">
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Dealer Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Company Name</span>
+                <p>{{secondaryOrderDetail.company_name ? (secondaryOrderDetail.company_name | titlecase) : '---'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Contact Person</span>
+                <p>{{secondaryOrderDetail.name ? (secondaryOrderDetail.name | titlecase) : '---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Contact Details</span>
+                <p>{{secondaryOrderDetail.mobile}}</p>
+              </div>
+            </div>
+            
+            <div class="grid-box single mt16 mb16">
+              <div class="block-feilds">
+                <span>Address</span>
+                <p>
+                  {{ secondaryOrderDetail.address ? secondaryOrderDetail.address + ' ,' : '' }}
+                  {{ secondaryOrderDetail.city ? secondaryOrderDetail.city + ' ,' : '' }}
+                  {{ secondaryOrderDetail.district ? (secondaryOrderDetail.district | titlecase) + ' ,' : '' }}
+                  {{ secondaryOrderDetail.state ? (secondaryOrderDetail.state | titlecase) : '' }}
+                  {{ secondaryOrderDetail.pincode ? secondaryOrderDetail.pincode : '' }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-head mt15">
+            <h2>Primary Customer Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Company Name</span>
+                <p>{{distributorInfo.company_name ? (distributorInfo.company_name | titlecase) : '---'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Account Code</span>
+                <p>{{distributorInfo.dr_code ? distributorInfo.dr_code: '---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Contact Person</span>
+                <p>{{distributorInfo.name ? (distributorInfo.name | titlecase) : ''}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Contact Details</span>
+                <p>{{distributorInfo.mobile}}</p>
+              </div>
+            </div>
+            
+            <div class="grid-box single mt16 mb16">
+              <div class="block-feilds">
+                <span>Address</span>
+                <p>
+                  {{ distributorInfo.address ? distributorInfo.address + ' ,' : '' }}
+                  {{ distributorInfo.city ? distributorInfo.city + ' ,' : '' }}
+                  {{ distributorInfo.district ? (distributorInfo.district | titlecase) + ' ,' : '' }}
+                  {{ distributorInfo.state ? (distributorInfo.state | titlecase) : '' }}
+                  {{ distributorInfo.pincode ? distributorInfo.pincode : '' }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-head mt15">
+            <h2>Order Details</h2>
+            <!-- <div class="left-auto">
+              <a class="sm-mat-icon-button" mat-icon-button  matTooltip="Edit Detail" (click)="editDetails()">
+                <i class="material-icons">edit</i>
+              </a>
+            </div> -->
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date</span>
+                <p>{{secondaryOrderDetail.date_created | date : 'd MMM yyyy , h:mm a'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Created By</span>
+                <p>{{secondaryOrderDetail.created_by_name ? (secondaryOrderDetail.created_by_name | titlecase): ''}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Order Id</span>
+                <p>{{secondaryOrderDetail.order_no}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Total Items</span>
+                <p>{{secondaryOrderDetail.order_item}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Item QTY.</span>
+                <p>{{secondaryOrderDetail.qty}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="login_data?.organisation_data?.order_place==0">
+                <span>Order Amount</span>
+                <p>&#x20B9; {{secondaryOrderDetail.net_price}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Order Type</span>
+                <p>{{secondaryOrderDetail.order_type}}</p>
+              </div>
+              <div class="block-feilds {{secondaryOrderDetail.order_status}}">
+                <span>Status</span>
+                <p>{{secondaryOrderDetail.order_status}}</p>
+              </div>
+              <div class="block-feilds {{secondaryOrderDetail.order_status!='Pending'}}">
+                <span>Status Changed By</span>
+                <p>{{secondaryOrderDetail.action_by_name}}</p>
+              </div>
+            </div>
+            <div class="grid-box single mt16">
+              <div class="block-feilds" *ngIf="secondaryOrderDetail.order_create_remark">
+                <span>Remark</span>
+                <p>{{secondaryOrderDetail.order_create_remark}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="secondaryOrderDetail.reason_reject">
+                <span>Reason Reject</span>
+                <p>{{secondaryOrderDetail.reason_reject}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <ng-container *ngIf="secondaryOrderDetail?.document && secondaryOrderDetail?.document.length>0">
+          <p class="imageheader">Uploaded Images</p>
+          <div class="card-body" style="overflow: auto;">
+              <div class="grid-box">
+                  <div class="block-feilds">
+                      <div class="doc-img">
+                          <div *ngFor="let row of secondaryOrderDetail.document">
+                              <img src="{{img_url+row.image}}" (click)="goToImage(img_url+row.image)"
+                                  style="cursor: zoom-in;">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+      </ng-container>
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m4 l4">
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Logs</h2>
+          </div>
+          <div class="card-body">
+            <div class="logs-box" style="max-height: 390px;">
+              <ng-container *ngFor="let row of order_logs">
+                <div class="logshead">{{row.created_by_name}} : - {{row.date_created | date: 'd-MMM-yyyy, h:mm a'}}</div>
+                <div class="logscontent">
+                  <span>Remark : -</span> <span>{{row.remark}}</span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+              <div class="sk-box">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="tools-container no-sticky">
+        <div class="mat-tabbar">
+          <button mat-button [ngClass]="{'active' :orderType== 'order'}" (click)="orderType= 'order'"><i
+            class="material-icons">pending_actions</i>Item Details</button>
+          </div>
+        </div>
+        <div class="cs-table horizontal-scroll" *ngIf="orderType== 'order'">
+          <div class="sticky-head" style="top: -10px;">
+            <div class="table-head">
+              <table>
+                <tr>
+                  <th class="w50">S.no.</th>
+                  <th >Item Details</th>
+                    <ng-container *ngIf="this.logined_user_data?.org_id=='17'">
+                        <th class="w100 text-center">Remark</th>
+                    </ng-container>
+                  <th class="w80 text-right" *ngIf="login_data?.organisation_data?.order_place==0">Price</th>
+                  <th class="w80 text-right">QTY.</th>
+                  <th class="w100 text-right" *ngIf="login_data?.organisation_data?.order_place==0">Total Price</th>
+                  <th class="w120 text-right" *ngIf="login_data?.organisation_data?.order_place==0">Discount Amount</th>
+                  <th class="w100  text-right" *ngIf="login_data?.organisation_data?.order_place==0">Sub Total</th>
+                  <th class="w120  text-right" *ngIf="login_data?.organisation_data?.order_place==0">GST Amount</th>
+                  <th class="w100 text-right" *ngIf="login_data?.organisation_data?.order_place==0">Net Amount</th>
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+          
+          <div class="table-container">
+            <div class="table-content">
+              <table>
+                <tr *ngFor="let row of item_details; let i =index">
+                  <td class="w50">{{i+1}}</td>
+                  <td >{{row.segment_name ? (row.segment_name | titlecase) : ''}} {{row.product_name ? (row.product_name | titlecase) : ''}} {{row.product_code ? ( '('+row.product_code+')') : '---'}}</td>
+                    <ng-container *ngIf="this.logined_user_data?.org_id=='17'">
+                        <td class="w100 text-center">{{row.description}}</td>
+                    </ng-container>
+                  <td class="w80 text-right" *ngIf="login_data?.organisation_data?.order_place==0">&#x20B9;  {{row.price | number:'1.2-2' }}</td>
+                  <td class="w80 text-right">{{row.qty}}</td>
+                  <td class="w100 text-right" *ngIf="login_data?.organisation_data?.order_place==0">&#x20B9; {{row.total_price | number:'1.2-2' }} </td>
+                  <td class="w120 text-right" *ngIf="login_data?.organisation_data?.order_place==0"> {{row.discount_amount | number:'1.2-2'}} {{row.discount_percent > 0 ? ( '(' + row.discount_percent + '%)') : ''}}</td>
+                  <td class="w100  text-right" *ngIf="login_data?.organisation_data?.order_place==0">&#x20B9; {{row.amount | number:'1.2-2'}}</td>
+                  <td class="w120  text-right" *ngIf="login_data?.organisation_data?.order_place==0">&#x20B9; {{row.gst_amount | number:'1.2-2'}} {{row.gst_percent > 0 ? ( '(' + row.gst_percent + '%)') : ''}}</td>
+                  <td class="w100 text-right" *ngIf="login_data?.organisation_data?.order_place==0"><strong>&#x20B9; {{row.net_price | number:'1.2-2'}}</strong></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <div class="row">
+        <div class="col s4 offset-s8">
+          <div class="invoice-table">
+            <table>
+              <tr>
+                <td>Total Item</td>
+                <td class="text-center w10">:</td>
+                <td class="text-right w120">{{(secondaryOrderDetail.order_item) }}</td>
+              </tr>
+              <tr>
+                <td>Total Item Quantity</td>
+                <td class="text-center">:</td>
+                <td class="text-right ">{{(secondaryOrderDetail.qty) }}</td>
+              </tr>
+              <tr *ngIf="login_data?.organisation_data?.order_place==0">
+                <td>Amount</td>
+                <td class="text-center">:</td>
+                <td class="text-right ">&#8377; {{(secondaryOrderDetail.total_price) | number:'1.1-2'}}</td>
+              </tr>
+              
+              <tr *ngIf="login_data?.organisation_data?.order_place==0">
+                <td>Discount Amount</td>
+                <td class="text-center">:</td>
+                <td class="text-right ">&#8377; {{secondaryOrderDetail.discount_amount | number:'1.1-2'}}</td>
+              </tr>
+              
+              <tr *ngIf="login_data?.organisation_data?.order_place==0">
+                <td>Sub-Total</td>
+                <td class="text-center">:</td>
+                <td class="text-right ">&#8377; {{secondaryOrderDetail.amount | number:'1.1-2'}}</td>
+              </tr>
+              <tr *ngIf="login_data?.organisation_data?.order_place==0">
+                <td>GST Amount</td>
+                <td class="text-center">:</td>
+                <td class="text-right ">&#8377; {{secondaryOrderDetail.gst_amount | number:'1.1-2'}}</td>
+              </tr>
+              <tr *ngIf="login_data?.organisation_data?.order_place==0">
+                <td> Net Amount</td>
+                <td class="text-center">:</td>
+                <td class="text-right ">&#8377; {{(secondaryOrderDetail.net_price) | number:'1.1-2'}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

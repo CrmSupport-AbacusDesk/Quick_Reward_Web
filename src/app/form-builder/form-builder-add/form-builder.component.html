@@ -1,0 +1,295 @@
+<div class="main-container">
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add New</h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)="f.valid && submit()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Create Form</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Organization Name</mat-label>
+                    <mat-select name="org_id" #org_id="ngModel" [(ngModel)]="data.org_id">
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getOrg($event.target.value)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let list of org;let index=index"
+                        value="{{list.id}}">{{list.company_name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="org_id.touched || f.submitted">
+                    <p *ngIf="org_id.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Module</mat-label>
+                    <mat-select name="module_name" #module_name="ngModel" [(ngModel)]="data.module_name" required>
+                      <mat-option value="Enquiry">Enquiry</mat-option>
+                      <mat-option value="Infleuncer Network">Infleuncer Network</mat-option>
+                      <mat-option value="Customer Network">Customer Network</mat-option>
+                      <mat-option value="Product">Product</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="module_name.touched || f.submitted">
+                    <p *ngIf="module_name.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Field For</mat-label>
+                    <mat-select name="field_for" #field_for="ngModel" [(ngModel)]="data.field_for" required>
+                      <mat-option value="App">App</mat-option>
+                      <mat-option value="Web">Web</mat-option>
+                      <mat-option value="All">Both</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="field_for.touched || f.submitted">
+                    <p *ngIf="field_for.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Table Name</mat-label>
+                    <input matInput placeholder="Type Here ..." name="table_name" [(ngModel)]="data.table_name"
+                      pattern="^[^\s]+$" #table_name="ngModel" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="table_name.touched || f.submitted">
+                    <p *ngIf="table_name.errors?.required">This field is required</p>
+                    <p *ngIf="table_name?.errors?.pattern && table_name?.touched">Spaces are not allowed.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Field Type</mat-label>
+                    <mat-select name="field_type" #field_type="ngModel" [(ngModel)]="data.field_type" required>
+                      <mat-option value="Input">Input</mat-option>
+                      <mat-option value="Dropdown">Dropdown</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="field_type.touched || f.submitted">
+                    <p *ngIf="field_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Field Value</mat-label>
+                    <input matInput placeholder="Type Here ..." name="field_label" [(ngModel)]="data.field_label"
+                      pattern="^[^\s]+$" #field_label="ngModel" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="field_label.touched || f.submitted">
+                    <p *ngIf="field_label.errors?.required">This field is required</p>
+                    <p *ngIf="field_label?.errors?.pattern && field_label?.touched">Spaces are not allowed.</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Placeholder</mat-label>
+                    <input matInput placeholder="Type Here ..." name="field_placeholder"
+                      [(ngModel)]="data.field_placeholder" #field_placeholder="ngModel" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="field_placeholder.touched || f.submitted">
+                    <p *ngIf="field_placeholder.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3" *ngIf="data.field_type == 'Input'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Field Text Type</mat-label>
+                    <mat-select name="field_text_type" #field_text_type="ngModel" [(ngModel)]="data.field_text_type"
+                      required>
+                      <mat-option value="text">text</mat-option>
+                      <mat-option value="number">number</mat-option>
+                      <mat-option value="tel">tel</mat-option>
+                      <mat-option value="email">email</mat-option>
+                      <mat-option value="file">file</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="field_text_type.touched || f.submitted">
+                    <p *ngIf="field_text_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3" *ngIf="data.field_type == 'Dropdown'">
+                  <div class="df">
+                    <div>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Dropdown Option</mat-label>
+                        <input matInput placeholder="Type Here ..." name="dropdown_option"
+                          [(ngModel)]="data.dropdown_option" pattern="^[^\s].*" #dropdown_option="ngModel">
+                      </mat-form-field>
+                      <div class="alert alert-danger"
+                        *ngIf="dropdown_option?.errors?.pattern && dropdown_option?.touched">
+                        <p>Spaces are not allowed.</p>
+                      </div>
+                    </div>
+
+                    <button type="button" (click)="addtolist()" class="add-item ml15" mat-raised-button
+                      [disabled]="!data.dropdown_option || (dropdown_option?.errors?.pattern && dropdown_option?.touched)">
+                      <i class="material-icons">add</i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Mandatory Field</mat-label>
+                    <mat-select name="is_mandate" #is_mandate="ngModel" [(ngModel)]="data.is_mandate" required>
+                      <mat-option value="1">Yes</mat-option>
+                      <mat-option value="0">No</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="is_mandate.touched || f.submitted">
+                    <p *ngIf="is_mandate.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+
+                <ng-container
+                  *ngIf="data.field_type == 'Input' && (data.field_text_type == 'text'  || data.field_text_type == 'number')">
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Min Length</mat-label>
+                      <input matInput placeholder="Type Here ..." name="field_min_length"
+                        [(ngModel)]="data.field_min_length" #field_min_length="ngModel">
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="field_min_length.touched || f.submitted">
+                      <p *ngIf="field_min_length.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Max Length</mat-label>
+                      <input matInput placeholder="Type Here ..." name="field_max_length"
+                        [(ngModel)]="data.field_max_length" #field_max_length="ngModel">
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="field_max_length.touched || f.submitted">
+                      <p *ngIf="field_max_length.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Pattern</mat-label>
+                      <input matInput placeholder="Type Here ..." name="pattern_validation"
+                        [(ngModel)]="data.pattern_validation" #pattern_validation="ngModel">
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="pattern_validation.touched || f.submitted">
+                      <p *ngIf="pattern_validation.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                </ng-container>
+
+              </div>
+
+
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Dependent Field </mat-label>
+                    <mat-select name="dependent_flag" #dependent_flag="ngModel" [(ngModel)]="data.dependent_flag"
+                      required>
+                      <mat-option value="0">No</mat-option>
+                      <mat-option value="1">Depend On Other</mat-option>
+                      <mat-option value="2">Depend On Self</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="dependent_flag.touched || f.submitted">
+                    <p *ngIf="dependent_flag.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <ng-container *ngIf="data.dependent_flag == '1' ||data.dependent_flag == '2'">
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Dependent Field Name</mat-label>
+                      <input matInput placeholder="Type Here ..." name="dependent_field_name"
+                        [(ngModel)]="data.dependent_field_name" pattern="^[^\s]+$" #dependent_field_name="ngModel"
+                        required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="dependent_field_name.touched || f.submitted">
+                      <p *ngIf="dependent_field_name.errors?.required">This field is required</p>
+                      <p *ngIf="dependent_field_name?.errors?.pattern && dependent_field_name?.touched">Spaces are not
+                        allowed.</p>
+                    </div>
+                  </div>
+
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Dependent Field Value</mat-label>
+                      <input matInput placeholder="Type Here ..." name="dependent_field_value"
+                        [(ngModel)]="data.dependent_field_value" #dependent_field_value="ngModel" required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="dependent_field_value.touched || f.submitted">
+                      <p *ngIf="dependent_field_value.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+
+              <div class="row" *ngIf="listarray.length > 0 && data.field_type == 'Dropdown'">
+                <div class="col s6">
+                  <div class="cs-table  left-right-10">
+                    <div class="table-head border-top">
+                      <table>
+                        <tr>
+                          <th class="w30 text-center"></th>
+                          <th>Dropdown Option</th>
+                          <th class="w60">Action</th>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="table-container">
+                      <div class="table-content">
+                        <table>
+                          <tr *ngFor="let row of listarray; let i=index;">
+                            <td class="w30 text-center">{{i+1}}</td>
+                            <td>{{row}}</td>
+                            <td class="w60">
+                              <a mat-button class="delete-mat"><i class="material-icons red-clr"
+                                  (click)="delete(i)">delete_sweep</i></a>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+              [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

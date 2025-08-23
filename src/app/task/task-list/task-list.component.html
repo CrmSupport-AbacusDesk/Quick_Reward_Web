@@ -1,0 +1,243 @@
+<div class="main-container {{padding0}}">
+
+  <div class="tools-container">
+    <h2>Task</h2>
+
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <div class="pagination" *ngIf="taskList_data.length > 0">
+
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mat-tabbar" *ngIf="userId != '1' && userData.data.user_type != 'ORG'">
+        <button mat-button [ngClass]="active_tab == 'my_task' ? 'active' : ''"
+          (click)="active_tab = 'my_task'; getTaskList()"><i class="material-icons">pending_actions</i>My Task</button>
+        <button mat-button [ngClass]="active_tab == 'assign_task' ? 'active' : ''"
+          (click)="active_tab = 'assign_task'; getTaskList()"><i class="material-icons">check_circle</i>Assign
+          Task</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container pb100">
+    <div class="tools-container no-sticky">
+      <div class="mat-tabbar">
+        <!-- <button mat-button [ngClass]="sub_active_tab == 'promise_pending' ? 'active' : ''" (click)="sub_active_tab = 'promise_pending';getTaskList('promise_pending')"><i class="material-icons">pending_actions</i>Promise Pending ({{tabCount.promise_pending}})</button> -->
+        <button mat-button [ngClass]="sub_active_tab == 'promise_done' ? 'active' : ''"
+          (click)="sub_active_tab = 'promise_done'; getTaskList('promise_done')"><i
+            class="material-icons">assignment_turned_in</i>Pending ({{tabCount.promise_done}})</button>
+        <button mat-button [ngClass]="sub_active_tab == 'close' ? 'active' : ''"
+          (click)="sub_active_tab = 'close'; getTaskList('close')"><i class="material-icons">check_circle</i>Close
+          ({{tabCount.close}})</button>
+      </div>
+    </div>
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No.</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">Created By</th>
+              <th>Description</th>
+              <th class="w180">Assign To</th>
+              <th class="w120">User Type</th>
+              <th class="w120" *ngIf="sub_active_tab == 'promise_done'">Promise Date</th>
+              <ng-container *ngIf="sub_active_tab == 'close'">
+                <th>Closing Remark</th>
+                <th class="w120">Closing Date</th>
+              </ng-container>
+              <th class="w100 text-center"
+                *ngIf="active_tab == 'assign_task' &&  (sub_active_tab == 'promise_pending' || sub_active_tab == 'promise_done')">
+                Action</th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="" name="date_created"
+                      [(ngModel)]="filter.date_created" (dateChange)="getTaskList(sub_active_tab)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">&nbsp;</th>
+              <th>&nbsp;</th>
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="assign_to_name"
+                      (keyup.enter)="getTaskList(sub_active_tab)" #assign_to_name="ngModel"
+                      [(ngModel)]="filter.assign_to_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="assign_to_type" #assign_to_type="ngModel" [(ngModel)]="filter.assign_to_type"
+                      (selectionChange)="getTaskList(sub_active_tab)">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="Sales User">Sales User</mat-option>
+                      <mat-option value="System User">System User</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120" *ngIf="sub_active_tab == 'promise_done'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="promise_date" placeholder="" name="promise_date"
+                      [(ngModel)]="filter.promise_date" (dateChange)="getTaskList(sub_active_tab)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="promise_date"></mat-datepicker-toggle>
+                    <mat-datepicker #promise_date disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <ng-container *ngIf="sub_active_tab == 'close'">
+                <th>&nbsp;</th>
+                <th class="w120">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="close_date" placeholder="" name="close_date"
+                        [(ngModel)]="filter.close_date" (dateChange)="getTaskList(sub_active_tab)" disabled>
+                      <mat-datepicker-toggle matSuffix [for]="close_date"></mat-datepicker-toggle>
+                      <mat-datepicker #close_date disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+              </ng-container>
+              <th class="w100"
+                *ngIf="active_tab == 'assign_task' &&  (sub_active_tab == 'promise_pending' || sub_active_tab == 'promise_done')">
+                &nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of taskList_data; let i = index;"
+                [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{row.date_created | date:'d MMM y'}}</td>
+                <td class="w100">{{row.created_by_name ? row.created_by_name : '----'}}</td>
+                <td>
+                  <a class="link-btn" routerLink="task-detail/{{(row.encrypt_id)}}">
+                    {{row.escalation_description | titlecase}}
+                  </a>
+                </td>
+                <td class="w180">{{row.assign_to_name | titlecase}}</td>
+                <td class="w120">{{row.assign_to_type | titlecase}}</td>
+                <td class="w120" *ngIf="sub_active_tab == 'promise_done'">{{row.promise_date | date:'d MMM y'}}</td>
+                <ng-container *ngIf="sub_active_tab == 'close'">
+                  <td>{{row.close_remark}}</td>
+                  <td class="w120">{{row.close_date | date:'d MMM y'}}</td>
+                </ng-container>
+                <td class="w100"
+                  *ngIf="active_tab == 'assign_task' &&  (sub_active_tab == 'promise_pending' || sub_active_tab == 'promise_done')">
+                  <ng-container *ngIf="sub_active_tab == 'promise_pending'">
+                    <a class="link-btn" (click)="openDialog(row.id, 'date');service.setData(filter)">Update Date</a>
+                  </ng-container>
+                  <ng-container *ngIf="active_tab == 'assign_task' && sub_active_tab == 'close'">
+                    <a class="link-btn" (click)="openDialog(row.id, 'close_task');service.setData(filter)">Close
+                      Remark</a>
+                  </ng-container>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120" *ngIf="sub_active_tab == 'promise_done'">
+                  <div>&nbsp;</div>
+                </td>
+                <ng-container *ngIf="sub_active_tab == 'close'">
+                  <td>
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w120">
+                    <div>&nbsp;</div>
+                  </td>
+                </ng-container>
+                <td class="w100"
+                  *ngIf="active_tab == 'assign_task' &&  (sub_active_tab == 'promise_pending' || sub_active_tab == 'promise_done')">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+
+
+      </div>
+    </div>
+
+    <ng-container *ngIf="taskList_data.length == 0 && noResult">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+
+
+
+  <div class="fab-btns" *ngIf="hide !=  true">
+
+    <!-- <button  mat-fab class="excel pulse" *ngIf="taskList_data.length > 0 && assign_login_data2.export_task=='1'" (click)="exportAsXLSX();" >
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+     -->
+
+    <button mat-fab class="pulse" color="primary" *ngIf="assign_login_data2.add_task=='1'" routerLink="task-add">
+      <i class="material-icons">add</i>
+      Add New
+    </button>
+
+  </div>
+
+</div>

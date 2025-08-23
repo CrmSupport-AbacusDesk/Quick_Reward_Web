@@ -1,0 +1,160 @@
+<div  class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" (click)="back();">
+        <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Generate QR Codes Admin</h2>
+</div>
+<div class="container container-scroll pt10 pl10 pr10 pb50">
+<ng-container>
+  <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+    <div class="row">
+                    
+      <div class="col s12">
+          <div class="card pb0">
+              <div class="card-head">
+                  <h2>Basic Information</h2>
+              </div>
+              <div class="card-body cs-form">
+                  <div class="row">
+                      
+                    <div class="col s12 m3 l3">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Organisation</mat-label>
+                            <mat-select name="org_id" [(ngModel)]="data.org_id" #org_id="ngModel" [ngClass]="{'has-error' : org_id.invalid }" (ngModelChange)="getProduct('');FindQrgenration(data.org_id)" required>
+                                <mat-option>
+                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (ngModelChange)="getOrganisation($event.target.value)"></ngx-mat-select-search>
+                                </mat-option>
+                                <mat-option *ngFor="let row of GetAllOrganisation" value="{{row.id}}">{{row.company_name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="org_id.touched || f.submitted">
+                            <p *ngIf="org_id.errors?.required">This field is required</p>
+                        </div>
+                    </div>
+                      <div class="col s12 m3 l3" >
+                          <mat-form-field appearance="outline">
+                              <mat-label>Paper Size</mat-label>
+                              <mat-select name="template_id" [(ngModel)]="data.template_id" #template_id="ngModel"  (selectionChange)="findId(data.template_id)" required>
+                                  <mat-option value="" disabled>Select</mat-option>
+                                  <ng-container *ngFor="let row of paperSize">
+                                      <mat-option value="{{row.id}}">{{row.size}}</mat-option>
+                                  </ng-container>
+                              </mat-select>
+                              
+                          </mat-form-field>
+                          <div class="alert alert-danger" *ngIf="template_id.touched || f.submitted">
+                              <p *ngIf="template_id.errors?.required">This field is required</p>
+                          </div>
+                      </div>
+                      
+                      
+                      <div class="col s12 m3 l3">
+                          <mat-form-field appearance="outline">
+                              <mat-label>Coupon Type</mat-label>
+                              <mat-select name="coupon_type" [(ngModel)]="data.coupon_type" #coupon_type="ngModel" [ngClass]="{'has-error' : coupon_type.invalid }" required>
+                                  <mat-option value="" disabled>Select</mat-option>
+                                  <mat-option value="Master Box" >Box</mat-option>
+                                  <mat-option value="Item Box" >Product</mat-option>
+                              </mat-select>
+                          </mat-form-field>
+                          <div class="alert alert-danger" *ngIf="coupon_type.touched || f.submitted">
+                              <p *ngIf="coupon_type.errors?.required">This field is required</p>
+                          </div>
+                      </div>
+                      
+                      <div class="col s12 m3 l3">
+                          <mat-form-field  appearance="outline">
+                              <mat-label>Product</mat-label>
+                              <mat-select  name="product_code" [(ngModel)]="data.product_code" #product_code="ngModel" required (ngModelChange)="findProductId(data.product_code)" >
+                                  <mat-option >
+                                      <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getProduct($event.target.value)"></ngx-mat-select-search>
+                                  </mat-option>
+                                  <mat-option *ngFor="let row of product_data" value="{{row.product_code}}">{{row.product_name}} -{{row.product_code}} - {{ row.point_category_name ? ' Point Cat. - ' + row.point_category_name : 'Point Cat. - NO' }}                                                    <ng-container *ngIf="data.coupon_type == 'Master Box'">{{row.small_packing_size > 0 ? '(' + row.small_packing_size + ')' : ''}}</ng-container> </mat-option>
+                              </mat-select>
+                          </mat-form-field>
+                          <div class="alert alert-danger" *ngIf="product_code.touched || f.submitted">
+                              <p *ngIf="product_code.errors?.required">This field is required</p>
+                          </div>
+                      </div>
+                      
+                      
+
+                      </div>
+                      <div class="row">
+                        <div class="col s12 m3 l3" *ngIf="qr_genration==1">
+                            <mat-form-field  appearance="outline">
+                                <mat-label>Point Categories</mat-label>
+                                <mat-select  name="Categories" [(ngModel)]="data.point_category_id" #point_category_id="ngModel" required (ngModelChange)="findCategoryName(data.point_category_id)" >
+                                    <mat-option >
+                                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="pointCategory_data($event.target.value)"></ngx-mat-select-search>
+                                    </mat-option>
+                                    <mat-option *ngFor="let row of pointCategories_data" value="{{row.id}}"
+                                    (click)="data.point_category_name=row.point_category_name">{{row.point_category_name ?
+                                        (row.point_category_name | titlecase) : '---'}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div class="alert alert-danger" *ngIf="point_category_id.touched || f.submitted">
+                                    <p *ngIf="point_category_id.errors?.required">This field is required</p>
+                                </div>
+                            </div>
+                        <div class="col s12 m3 l3">
+                            <mat-form-field  appearance="outline">
+                                <mat-label>Batch No.</mat-label>
+                                <input matInput placeholder="Type Here ..."  name="batch_no" #batch_no="ngModel"
+                                [(ngModel)]="data.batch_no">
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="col s12 m3 l3">
+                            <mat-form-field  appearance="outline">
+                                <mat-label>Total Number Of QR Code</mat-label>
+                                <input matInput placeholder="Type Here ..."  name="total_coupon" #total_coupon="ngModel"
+                                [(ngModel)]="data.total_coupon" onkeypress="return event.charCode>=48 && event.charCode<=57"  required>
+                            </mat-form-field>
+                            <div class="alert alert-danger" *ngIf="total_coupon.touched || f.submitted">
+                                <p *ngIf="total_coupon.errors?.required">This field is required</p>
+                            </div>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                          <div class="col s12 m3 l3">
+                              <mat-form-field  appearance="outline">
+                                  <mat-label>Remark</mat-label>
+                                  <input matInput placeholder="Type Here ..."  name="coupon_remark" #coupon_remark="ngModel"
+                                  [(ngModel)]="data.coupon_remark">
+                              </mat-form-field>
+                          </div>
+                          
+                          <div class="col s12 m6 l6">
+                              <img src="{{uploadurl + 'template_img/' + data.temp_image}}" *ngIf="data.temp_image">
+                          </div>
+                      </div>
+                      
+                      
+                      
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <div class="row">
+          <div class="col s12">
+              <div class="text-right">
+                  <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+                      {{savingFlag == true ? 'Please Wait' : 'Generate'}}
+                  </button>
+              </div>
+          </div>
+      </div>
+  </form>
+</ng-container>
+
+
+
+
+
+</div>
+
+</div>

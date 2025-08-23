@@ -1,0 +1,350 @@
+<div class="main-container">
+  <app-loader *ngIf="excelLoader"></app-loader>
+  <div class="tools-container">
+    <h2>Installation List</h2>
+
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </a>
+
+      <div class="pagination" *ngIf="installationList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{ pagenumber }}</span>
+          of
+          <span>{{ total_page }}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mat-tabbar">
+      <ng-container>
+        <button mat-button [ngClass]="active_tab == 'All' ? 'active' : ''"
+          (click)="active_tab = 'All'; getinspectionList('')">
+          <i class="material-icons">all_inbox</i>All({{ tab_count.all_count ? tab_count.all_count:'0' }})
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending'; getinspectionList('')">
+          <i class="material-icons">pending_actions</i>Pending({{
+          tab_count.pending_count
+          }})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Assigned' ? 'active' : ''"
+          (click)="active_tab = 'Assigned'; getinspectionList('')">
+          <i class="material-icons">pending_actions</i>Assigned({{
+          tab_count.assigned_count
+          }})
+        </button>
+      </ng-container>
+      <button mat-button [ngClass]="active_tab == 'Done' ? 'active' : ''"
+        (click)="active_tab = 'Done'; getinspectionList('')">
+        <i class="material-icons">thumb_up_alt</i>Done({{
+        tab_count.done_count
+        }})
+      </button>
+      <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+        (click)="active_tab = 'Reject'; getinspectionList('')">
+        <i class="material-icons">thumb_down_alt</i>Reject({{
+        tab_count.reject_count
+        }})
+      </button>
+    </div>
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w150">Date Created</th>
+              <th class="w150">Created By</th>
+              <th class="w100">Installation No.</th>
+              <th class="w150">Customer Name</th>
+              <th class="w120">Customer Mobile No.</th>
+              <th class="w180">Address</th>
+              <th class="w180" *ngIf=" active_tab !='Pending'">Technician Details</th>
+              <th class="w50">Total Item</th>
+              <th class="w100" *ngIf="active_tab == 'All'">Status</th>
+
+              <th class="w70 text-center">TAT</th>
+              <th class="w180">Last Remark</th>
+              <th class="w180" *ngIf="active_tab == 'Reject' || active_tab == 'All'">Reject Reason</th>
+              <th class="w140" *ngIf="active_tab != 'Pending'">Status Update Date</th>
+              <th class="w120" *ngIf="active_tab != 'Pending'">Status Update By</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w60"></th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter_data.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="created_name"
+                      (keyup.enter)="getinspectionList('')" #created_name="ngModel"
+                      [(ngModel)]="filter_data.created_name"
+                      onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode === 32" />
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="complain_no"
+                      (keyup.enter)="getinspectionList('')" #complain_no="ngModel"
+                      [(ngModel)]="filter_data.complain_no" />
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="customer_name"
+                      (keyup.enter)="getinspectionList('')" #customer_name="ngModel"
+                      onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode === 32"
+                      [(ngModel)]="filter_data.customer_name" />
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="customer_mobile"
+                      (keyup.enter)="getinspectionList('')" #customer_mobile="ngModel"
+                      [(ngModel)]="filter_data.customer_mobile"
+                      onkeypress="return event.charCode>=48 && event.charCode<=57" minlength="10" maxlength="10" />
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="address"
+                      (keyup.enter)="getinspectionList('')" #address="ngModel" [(ngModel)]="filter_data.address" />
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w180" *ngIf=" active_tab !='Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="carpenter_detail"
+                      (keyup.enter)="getinspectionList('')" #carpenter_detail="ngModel"
+                      [(ngModel)]="filter_data.carpenter_detail">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w50">
+                <div class="th-search-acmt">
+                  <!-- <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="carpenter_detail"
+                      #carpenter_detail="ngModel" [(ngModel)]="filter_data.carpenter_detail">
+                  </mat-form-field> -->
+                </div>
+              </th>
+              <th class="w100" *ngIf="active_tab == 'All'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="complaint_status" #complaint_status="ngModel"
+                      [(ngModel)]="filter_data.complaint_status" (selectionChange)="getinspectionList('')">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="Pending">Pending</mat-option>
+                      <mat-option value="Done">Done </mat-option>
+                      <mat-option value="Reject">Reject </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+
+              </th>
+
+              <th class="w70 text-center"></th>
+              <th class="w180"></th>
+              <th class="w180" *ngIf="active_tab == 'Reject'|| active_tab == 'All'"></th>
+              <th class="w140" *ngIf="active_tab != 'Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker2" placeholder="Date" name="status_updated_date"
+                      #status_updated_date="ngModel" [(ngModel)]="filter_data.status_updated_date"
+                      (ngModelChange)="date_format2()" [max]="today_date" readonly />
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120" *ngIf="active_tab != 'Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="status_updated_by_name"
+                      (keyup.enter)="getinspectionList('')" #status_updated_by_name="ngModel"
+                      [(ngModel)]="filter_data.status_updated_by_name"
+                      onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode === 32" />
+                  </mat-form-field>
+                </div>
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of installationList; let i = index"
+                [ngClass]="{ Current: service.currentUserID == row.id }">
+                <td class="w60">{{ i + 1 + sr_no }}</td>
+                <td class="w150">
+                  {{
+                  row.date_created
+                  ? (row.date_created | date : "dd MMM yyy ,h:mm a")
+                  : "--"
+                  }}
+                </td>
+                <td class="w150">
+                  {{ row.created_name ? (row.created_name | titlecase) : "--" }}
+                </td>
+                <td class="w100">
+                  <a class="link-btn" mat-button (click)="service.setData(filter_data)"
+                    routerLink="installation-detail/{{ row.id }}" routerLinkActive="active">{{ row.complain_no }}</a>
+                </td>
+                <td class="w150">{{ row.customer_name | titlecase }}</td>
+                <td class="w120">{{ row.customer_mobile }}</td>
+                <td class="w180">{{row.address?(row.address|titlecase):'--'}}</td>
+                <!-- <td class="180">{{row.address?(row.address|titlecase):'--'}}</td> -->
+                <td class="w180" *ngIf=" active_tab !='Pending'">{{row.carpenter_name ? (row.carpenter_name| titlecase)
+                  : '--'}}-{{row.carpenter_mobile
+                  ?
+                  row.carpenter_mobile : '--'}}</td>
+                <td class="w50 text-center"><a class="link-btn flat"
+                    (click)="attendancDetail(row)">{{row.total_items}}</a></td>
+                <td class="w100" *ngIf="active_tab == 'All'">
+                  <strong class="yellow-clr" *ngIf="row.complaint_status=='Pending'">{{row.complaint_status|
+                    titlecase}}</strong>
+                  <strong class="green-clr" *ngIf="row.complaint_status=='Done'">{{row.complaint_status|
+                    titlecase}}</strong>
+                  <strong class="red-clr" *ngIf="row.complaint_status=='Reject'">{{row.complaint_status|
+                    titlecase}}</strong>
+                </td>
+
+
+                <td class="w70 text-center">{{row.pending_at}}</td>
+                <td class="w180">{{row.remark?(row.remark| titlecase):'--'}}</td>
+                <td class="w180" *ngIf="active_tab == 'Reject' || active_tab == 'All'">
+                  {{row.status_reason?(row.status_reason| titlecase):'--'}}
+                </td>
+                <td class="w140" *ngIf="active_tab != 'Pending'">
+                  {{
+                  row.status_updated_date != "0000-00-00 00:00:00"
+                  ? (row.status_updated_date | date : "dd MMM yyy ,h:mm a")
+                  : "--"
+                  }}
+                </td>
+                <td class="w120" *ngIf="active_tab != 'Pending'">
+                  {{row.status_updated_by_name?(row.status_updated_by_name|titlecase):'--'}}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180" *ngIf=" active_tab !='Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100" *ngIf="active_tab == 'All'">
+                  <div>&nbsp;</div>
+                </td>
+
+                <td class="w70">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180" *ngIf="active_tab == 'Reject'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w140" *ngIf=" active_tab !='Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120" *ngIf=" active_tab !='Pending'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="datanotfound == true && installationList.length == 0">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div></div>
+
+  <div class="fab-btns">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{ pulse: fabBtnValue == 'add' }"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+  </div>
+  <mat-menu #menu="matMenu">
+    <!-- <button mat-menu-item (click)="downloadExcel()" *ngIf="installationList.length > 0">
+      <mat-icon>download</mat-icon>
+      <span>Download excel</span>
+    </button> -->
+    <button mat-menu-item (click)="lastBtnValue('add')" routerLink="add-installation/installation"
+      routerLinkActive="router-link-active">
+      <mat-icon>add</mat-icon>
+      <span>Add New</span>
+    </button>
+  </mat-menu>
+</div>

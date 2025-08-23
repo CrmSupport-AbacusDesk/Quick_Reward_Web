@@ -1,0 +1,243 @@
+<div class="main-container">
+	<!-- <app-loader *ngIf="loader==1"></app-loader> -->
+	<div class="tools-container">
+		<h2>Allowances</h2>
+		<div class="left-auto df ac flex-gap-10">
+			<button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+				<i class="material-icons">refresh</i>
+			</button>
+			<div class="pagination">
+				<div class="pagination-content">
+					Pages
+					<span>{{pagenumber}}</span>
+					of
+					<span>{{total_page}}</span>
+				</div>
+				<div class="page-nav">
+
+					<button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+						<i class="material-icons">navigate_before</i>
+					</button>
+					<button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+						[disabled]="pagenumber == total_page ">
+						<i class="material-icons">navigate_next</i>
+					</button>
+				</div>
+			</div>
+			<!-- <div class="group-btn" *ngIf="this.logined_user_data2.edit_allowance_master=='1'">
+				<button mat-button class="ouline-btns excel" style="color:#11bd11" (click)="openDialog()">
+					<mat-icon>currency_rupee</mat-icon>
+					Fixed Allowance Amount
+				</button>
+			</div> -->
+		</div>
+
+	</div>
+
+	<div class="container table-container">
+		<div class="padding10">
+			<div class="scroll-tables">
+				<table>
+					<tr>
+						<td class="w500">
+							<table>
+								<tr>
+									<th class="w50">S.no</th>
+									<th class="w150">User Name</th>
+									<th>Designation</th>
+								</tr>
+								<tr>
+									<th class="w50">&nbsp;</th>
+									<th>
+										<div class="th-search-acmt">
+											<mat-form-field class="example-full-width cs-input select-input">
+												<input matInput placeholder="Search..." type="text" name="name"
+													[(ngModel)]="designation.name" (keyup.enter)="get_allowance()">
+											</mat-form-field>
+										</div>
+									</th>
+									<th>
+										<div class="th-search-acmt">
+											<mat-form-field class="example-full-width cs-input select-input">
+												<input matInput placeholder="Search..." type="text"
+													name="designation_name" [(ngModel)]="designation.designation_name"
+													(keyup.enter)="get_allowance()">
+											</mat-form-field>
+										</div>
+									</th>
+								</tr>
+
+								<tr *ngFor="let row of allowanceData;let i=index">
+									<td class="w50">{{sr_no+i+1}}</td>
+									<td matTooltip="{{row.name}}" matTooltipPosition="above">
+										<p class="one-line">{{row.name ? (row.name | titlecase) : '---'}}
+										</p>
+									</td>
+									<td matTooltip="{{row.designation_name}}" matTooltipPosition="above">
+										<p class="one-line">{{row.designation_name ? (row.designation_name | titlecase)
+											:'---'}}</p>
+									</td>
+								</tr>
+							</table>
+						</td>
+
+						<td style="overflow-x: auto;overflow-y: hidden;">
+							<table>
+								<tr>
+									<!-- <th class="w600 text-center" colspan="8">Local Conveyance</th> -->
+									<th class="w60 text-center">Flight</th>
+									<th class="w60 text-center">Train</th>
+									<th class="w60 text-center">Bus</th>
+									<th class="w60 text-center">Auto</th>
+									<th class="w60 text-center">Taxi</th>
+									<th class="w60 text-center">Metro</th>
+									<th class="w60 text-center">Public </th>
+									<th class="w80 text-center">Hotel</th>
+									<th class="w80 text-center">Food</th>
+									<th class="w80 text-center">Toll Tax</th>
+									<th class="w80 text-center">Other</th>
+									<th class="w200 text-center" colspan="2">Self Conveyance</th>
+								</tr>
+								<tr>
+									<th class="text-center lh26">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">&nbsp;</th>
+									<th class="text-center">Car Per KM</th>
+									<th class="text-center">Bike Per KM</th>
+								</tr>
+								<tr *ngFor="let data of allowanceData;let i = index">
+									<td class="text-center">
+										<div class="action-button">
+											<mat-checkbox id="flight{{i}}" name="flight{{i}}" [(ngModel)]="data.flight"
+												[checked]="data.flight == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+									<td class="text-center">
+										<div class="action-button">
+
+											<mat-checkbox id="train{{i}}" name="train{{i}}" [(ngModel)]="data.train"
+												[checked]="data.train == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+
+
+									<td class="text-center">
+										<div class="action-button">
+											<mat-checkbox id="bus{{i}}" name="bus{{i}}" [(ngModel)]="data.bus"
+												[checked]="data.bus == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+
+									<td class="text-center">
+										<div class="action-button">
+											<mat-checkbox name="auto{{i}}" [(ngModel)]="data.auto"
+												[checked]="data.auto == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+
+									<td class="text-center">
+										<div class="action-button">
+											<mat-checkbox id="taxi{{i}}" name="taxi{{i}}" [(ngModel)]="data.taxi"
+												[checked]="data.taxi == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+									<td class="text-center">
+										<div class="action-button">
+											<mat-checkbox id="metro{{i}}" name="metro{{i}}" [(ngModel)]="data.metro"
+												[checked]="data.metro == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+
+									<td class="text-center">
+										<div class="fix-input">
+											<input type="text" name="public_transport_limit{{i}}"
+												[(ngModel)]="data.public_transport_limit"
+												value="{{data.public_transport_limit}}">
+										</div>
+									</td>
+
+									<td class="text-center">
+										<div class="fix-input">
+											<!-- <mat-checkbox id="hotel{{i}}" name="hotel{{i}}"
+												[(ngModel)]="data.hotel"
+												[checked]="data.hotel == '1' ? true : ''">&nbsp;</mat-checkbox> -->
+
+											<input type="text" name="hotel{{i}}" [(ngModel)]="data.hotel"
+												value="{{data.hotel}}">
+										</div>
+									</td>
+
+									<td class="text-center">
+										<div class="fix-input">
+											<input type="text" name="food{{i}}" [(ngModel)]="data.food"
+												value="{{data.food}}">
+											<!-- <mat-checkbox id="food{{i}}" name="food{{i}}"
+												[(ngModel)]="data.food"
+												[checked]="data.food == '1' ? true : ''">&nbsp;</mat-checkbox> -->
+										</div>
+									</td>
+
+									<td class="text-center">
+										<div class="action-button">
+											<mat-checkbox id="tolltax{{i}}" name="tolltax{{i}}"
+												[(ngModel)]="data.tolltax"
+												[checked]="data.tolltax == '1' ? true : ''">&nbsp;</mat-checkbox>
+										</div>
+									</td>
+									<td class="text-center">
+										<div class="fix-input">
+											<input type="text" name="other{{i}}" [(ngModel)]="data.other"
+												value="{{data.other}}">
+											<!-- <mat-checkbox id="other{{i}}" name="other{{i}}"
+												[(ngModel)]="data.other"
+												[checked]="data.other == '1' ? true : ''">&nbsp;</mat-checkbox> -->
+										</div>
+									</td>
+
+
+
+									<td class="text-center">
+										<div class="fix-input">
+											<input type="text" name="car{{i}}" [(ngModel)]="data.car"
+												value="{{data.car}}">
+										</div>
+									</td>
+									<td class="text-center">
+										<div class="fix-input">
+											<input type="text" name="bike{{i}}" [(ngModel)]="data.bike"
+												value="{{data.bike}}">
+										</div>
+									</td>
+
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="fab-btns">
+		<button mat-fab color="accent" (click)="updateAllowance()" class="pulse"
+			[ngClass]="{'loading': skLoading == true}" [disabled]="skLoading"
+			*ngIf="allowanceData.length > 0 && logined_user_data2.edit_allowance_master=='1'">
+			<i class="material-icons">update</i>
+			Update
+		</button>
+		<button class="pulse excel" mat-fab color="primary" (click)="getAlllowanceExcel()"
+			*ngIf="allowanceData.length > 0 && logined_user_data2.export_allowance_master=='1'">
+			<mat-icon>download</mat-icon>
+			Download in excel
+		</button>
+	</div>
+</div>

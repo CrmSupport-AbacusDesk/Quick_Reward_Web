@@ -1,0 +1,45 @@
+.arrow{
+    font-size: 14px !important;
+    color: var(--link-color);
+}
+
+h2{
+    small{
+        font-size: 12px;
+        font-weight: bold;
+    }
+}
+
+@keyframes progressAnimationStrike {
+    from { width: 0 }
+    to   { width: 100% }
+}
+
+.progressBar {
+    border-radius:30px;
+    height:20px;
+    overflow:hidden;
+    border:1px solid #e3e3e3;
+    .level{
+        width:30%;
+        height:100%;
+        font-weight: bold;
+        padding-left: 10px;
+    }
+    .green_progress_bar{
+        transition: 0.4s linear;  
+        transition-property: width, background-color;  
+        background-color: #FCBC51; 
+        width: 100%; 
+        background-image: linear-gradient(
+        45deg, rgb(252,163,17) 25%, 
+        transparent 25%, transparent 50%, 
+        rgb(252,163,17) 50%, rgb(252,163,17) 75%,
+        transparent 75%, transparent); 
+        animation: progressAnimationStrike 3s;
+        
+    }
+    .yellow{
+        background: #FF9F00;
+    }
+}

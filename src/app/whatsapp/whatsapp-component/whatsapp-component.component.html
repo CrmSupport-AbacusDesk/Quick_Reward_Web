@@ -1,0 +1,385 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Whatsapp Integration</h2>
+    <div class="bal-column-container">
+      <div class="bal-column">
+        <i class="material-icons primary">currency_rupee</i>
+        <p>Total SMS</p>
+        <span>₹ {{bal.total_credit ? bal.total_credit : '0'}}</span>
+      </div>
+      <div class="bal-column">
+        <i class="material-icons danger">redeem</i>
+        <p>Used SMS</p>
+        <span>₹ {{bal.total_debit ? bal.total_debit : '0'}}</span>
+      </div>
+      <div class="bal-column">
+        <i class="material-icons success">account_balance_wallet</i>
+        <p>Current Balance</p>
+        <span>₹ {{bal.total_balance ? bal.total_balance : '0'}}</span>
+      </div>
+    </div>
+  </div>
+
+<ng-container *ngIf="logined_user_data.organisation_data.whatsapp_enable == '1'">
+  <div class="tools-container">
+    <div class="mat-tabbar">
+
+      <button mat-button [ngClass]="active_tab == 'Configuration' ? 'active' : ''"
+      (click)="active_tab = 'Configuration'; getConfigurationList(active_tab);">
+      <i class="material-icons">account_balance_wallet</i>Configuration
+    </button>
+
+    
+      <button mat-button [ngClass]="active_tab == 'Ledger' ? 'active' : ''"
+        (click)="active_tab = 'Ledger'; getLedgerList(active_tab);">
+        <i class="material-icons">receipt_long</i>Ledger
+      </button>
+ 
+      <button mat-button [ngClass]="active_tab == 'Transaction History' ? 'active' : ''"
+        (click)="active_tab = 'Transaction History'; getTransctionList(active_tab);">
+        <i class="material-icons">swap_horiz</i>Transaction History
+      </button>
+    </div>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="(ledgerList.length > 0 && active_tab == 'Ledger') || (templateList.length > 0 && active_tab == 'Configuration') || (transctionList.length > 0 && active_tab == 'Transaction History')">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="container pb100 no-tab" *ngIf="active_tab == 'Ledger'">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w90">Date</th>
+              <th class="w130">Transaction Type</th>
+              <th class="w100 text-right">Debit</th>
+              <th class="w100 text-right">Credit</th>
+              <th class="w100 text-right">Balance</th>
+              <th>Transaction Description</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" (ngModelChange)="date_format()" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w130">&nbsp;</th>
+              <th class="w100 text-right">&nbsp;</th>
+              <th class="w100 text-right">&nbsp;</th>
+              <th class="w100 text-right">&nbsp;</th>
+              <th>&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="ledgerList.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of ledgerList; let i = index;">
+                <td class="w60">{{i+1+sr_no}}</td>
+                <td class="w90">{{row.date_created | date : 'd MMM y'}}</td>
+                <td class="w130">{{row.transaction_type ? row.transaction_type : '0'}}
+                </td>
+                <td class="w100 text-right">₹ {{row.debit ? row.debit : '0'}}</td>
+                <td class="w100 text-right">₹{{row.credit ? row.credit : '0'}}</td>
+                <td class="w100 text-right">₹ {{row.balance ? row.balance : '0'}}</td>
+                <td>{{row.transaction_remark ? row.transaction_remark : '---'}}
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w90">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w130">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td>&nbsp;</td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+
+        <div *ngIf="ledgerList.length == 0">
+          <app-not-result-found></app-not-result-found>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="container pb100 no-tab" *ngIf="active_tab =='Configuration'">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w100">Event</th>
+              <th class="w100">Module Name</th>
+              <th class="w100">Template Id</th>
+              <th>Template Message</th>
+              <th class="w50 text-right">Action</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100 text-right">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="event"
+                      (keyup.enter)="getConfigurationList('')" #event="ngModel" [(ngModel)]="filter.event">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-right">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="module_name"
+                      (keyup.enter)="getConfigurationList('')" #module_name="ngModel"
+                      [(ngModel)]="filter.module_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-right">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="template_id"
+                      (keyup.enter)="getConfigurationList('')" #template_id="ngModel"
+                      [(ngModel)]="filter.template_id">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th>&nbsp;</th>
+              <!-- <th class="w50">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="status" [(ngModel)]="filter.status" (selectionChange)="getConfigurationList('')">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="active">Active</mat-option>
+                      <mat-option value="deactive">Deactive </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th> -->
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="templateList.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of templateList; let i = index;">
+                <td class="w60">{{i+1+sr_no}}</td>
+                <td class="w100 text-right">{{row.event ? row.event : '0'}}</td>
+                <td class="w100 text-right">{{row.module_name ? row.module_name : '0'}}</td>
+                <td class="w100 text-right">{{row.template_id ? row.template_id : '0'}}</td>
+                <td>{{row.template_message ? row.template_message : '---'}}</td>
+                <td class="w50 text-center" *ngIf="active_tab =='Configuration'">
+                  <div class="action-button">
+                    <mat-slide-toggle 
+                    color="accent" 
+                    [name]="'status'+i" 
+                    [checked]="row.status == '1'"
+                    (change)="updateStatus(i, row.template_id, $event.checked)">
+                  </mat-slide-toggle>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td>&nbsp;</td>
+                
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+
+        <div *ngIf="templateList.length == 0">
+          <app-not-result-found></app-not-result-found>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="container pb100 no-tab" *ngIf="active_tab == 'Transaction History'">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w90">Date</th>
+              <th class="w120">Customer Name</th>
+              <th class="w100">Status</th>
+              <th>Message</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" (ngModelChange)="date_format()" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120 text-right">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="project_name"
+                      (keyup.enter)="getConfigurationList('')" #project_name="ngModel" [(ngModel)]="filter.project_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-right">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="processed"
+                      (keyup.enter)="getConfigurationList('')" #processed="ngModel" [(ngModel)]="filter.processed">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th>&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="transctionList.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of transctionList; let i = index;">
+                <td class="w60">{{i+1+sr_no}}</td>
+                <td class="w90">{{row.date_created | date : 'd MMM y'}}</td>
+                <td class="w120">{{row.project_name ? row.project_name : 'N/A'}}</td>
+                <td class="w100">
+                  <strong class="yellow-clr"
+                    *ngIf="row.processed==0">InProcess</strong>
+                  <strong class="green-clr"
+                    *ngIf="row.processed==1">Send</strong>
+                  <strong class="red-clr"
+                    *ngIf="row.processed==2">Rejected</strong>
+                </td>
+                <td>{{row.template ? row.template : '---'}}</td>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w90">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td>&nbsp;</td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+
+        <div *ngIf="transctionList.length == 0">
+          <app-not-result-found></app-not-result-found>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</ng-container>
+
+<ng-container *ngIf="logined_user_data.organisation_data.whatsapp_enable == '0'">
+  <div class="container pb100 no-tab">
+
+    <p class="no-content-text">Whatsapp not activated yet</p>
+  </div>
+</ng-container>
+</div>

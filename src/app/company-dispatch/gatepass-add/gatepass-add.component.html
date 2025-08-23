@@ -1,0 +1,447 @@
+<div class="edit-modal" *ngIf="modalData.model_type == 'add' || modalData.model_type == 'update'">
+  <div mat-dialog-content>
+    <p class="heading"> {{data.id ? 'Update' : 'Generate'}} Gate Pass</p>
+    <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      <div class="cs-form">
+        <div class="row">
+
+          <div class="col s12 m3 l3">
+            <mat-form-field appearance="outline">
+              <mat-label>Invoice No.</mat-label>
+              <input matInput placeholder="Type Here ..." name="invoice_number" #invoice_number="ngModel"
+                [(ngModel)]="data.invoice_number" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="delivery_boy_name.touched || f.submitted">
+              <p *ngIf="delivery_boy_name.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12 m3 l3">
+            <mat-form-field appearance="outline">
+              <mat-label>E-Way Bill no.</mat-label>
+              <input matInput placeholder="Type Here ..." name="ev_bill_no" #ev_bill_no="ngModel"
+                [(ngModel)]="data.ev_bill_no" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="delivery_boy_name.touched || f.submitted">
+              <p *ngIf="delivery_boy_name.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12 m3 l3">
+            <mat-form-field appearance="outline">
+              <mat-label>Driver Name</mat-label>
+              <input matInput placeholder="Type Here ..." name="delivery_boy_name" #delivery_boy_name="ngModel"
+                [readonly]="modalData.model_type == 'update'" [(ngModel)]="data.delivery_boy_name" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="delivery_boy_name.touched || f.submitted">
+              <p *ngIf="delivery_boy_name.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 m3 l3">
+            <mat-form-field appearance="outline">
+              <mat-label>Driver Mobile</mat-label>
+              <input matInput placeholder="Type Here ..." name="mobile_number" #mobile_number="ngModel"
+                [(ngModel)]="data.mobile_number" minlength="10" maxlength="10" min="0"
+                onkeypress="return event.charCode>=48 && event.charCode<=57"
+                [readonly]="modalData.model_type == 'update'" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="mobile_number.touched || f.submitted">
+              <p *ngIf="mobile_number.errors?.required">This field is required</p>
+              <p *ngIf="mobile_number.errors?.maxlength || mobile_number.errors?.minlength">Mobile No should be of 10
+                digits..</p>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="row">
+          <div class="col s12 m3 l3">
+            <mat-form-field appearance="outline">
+              <mat-label>Vehicle No</mat-label>
+              <input matInput placeholder="Type Here ..." name="vehicle_number" #vehicle_number="ngModel"
+                [(ngModel)]="data.vehicle_number" [readonly]="modalData.model_type == 'update'" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="vehicle_number.touched || f.submitted">
+              <p *ngIf="vehicle_number.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12 m3 l3">
+            <mat-form-field appearance="outline">
+              <mat-label>Transportation Mode</mat-label>
+              <input matInput placeholder="Type Here ..." name="transportation_mode" #transportation_mode="ngModel"
+                [(ngModel)]="data.transportation_mode" [readonly]="modalData.model_type == 'update'" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="transportation_mode.touched || f.submitted">
+              <p *ngIf="transportation_mode.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 m3 l3" *ngIf="modalData.model_type == 'update'">
+            <mat-form-field appearance="outline">
+              <mat-label>Bilty No</mat-label>
+              <input matInput placeholder="Type Here ..." name="reference_no" #reference_no="ngModel"
+                [(ngModel)]="data.reference_no">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="cs-table left-right-10" *ngIf="gatePassAssign.length > 0">
+          <div class="sticky-head">
+            <div class="table-head border-top">
+              <table>
+                <tr>
+                  <th class="w60  text-center">Sr. No</th>
+                  <th class="w100">Date Created</th>
+                  <th>Company Name</th>
+                  <!-- <th class="w120">Dispatch Type</th> -->
+                  <th class="w120">Order Number</th>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-content">
+              <table>
+                <tr *ngFor="let row of gatePassAssign; let i=index;">
+                  <td class="w60 text-center">{{i+1}}</td>
+                  <td class="w100">{{row.date_created | date:'dd MMM yyyy'}}</td>
+                  <td>{{row.customer_name ? row.customer_name : row.company_name}}</td>
+                  <!-- <td class="w120">{{row.bill_dispatch_type}}</td> -->
+                  <td class="w120">{{row.order_no}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div mat-dialog-actions>
+        <div class="text-right wp100">
+          <button type="text" class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+          <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+            [disabled]="savingFlag == true">
+            {{savingFlag == true ? 'Saving' : data.id ? 'Update': 'Save'}}
+          </button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+
+
+
+<div class="edit-modal" *ngIf="modalData.model_type == 'detail' ">
+  <div mat-dialog-content>
+    <p class="heading">Gate Pass Detail</p>
+    <div class="cs-form">
+      <div class="card flat" *ngIf="!skLoading">
+        <div class="card-body">
+          <div class="grid-box">
+            <div class="block-feilds">
+              <span>Date Created</span>
+              <p>{{gatePassDetail.date_created | date}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Invoice No.</span>
+              <p>{{gatePassDetail.invoice_number}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>E-Way Bill no.</span>
+              <p>{{gatePassDetail.ev_bill_no}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Gatepass Number</span>
+              <p>{{gatePassDetail.gate_pass_no}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Driver Name</span>
+              <p>{{gatePassDetail.delivery_boy_name}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Driver Mobile</span>
+              <p>{{gatePassDetail.mobile_number}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Vehicle Number</span>
+              <p>{{gatePassDetail.vehicle_number}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Transportation Mode</span>
+              <p>{{gatePassDetail.transportation_mode}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Bilty Number</span>
+              <p>{{gatePassDetail.reference_number ? gatePassDetail.reference_number :'---'}}</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- Skeleton start -->
+      <div class="card flat" *ngIf="skLoading">
+        <div class="sk-head">
+          <h2>&nbsp;</h2>
+        </div>
+        <div class="card-body">
+          <div class="grid-box">
+            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+              &nbsp;
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Skeleton end -->
+      <div class="cs-table left-right-10" *ngIf="!skLoading">
+        <div class="sticky-head">
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w60  text-center">Sr. No</th>
+                <th class="w100">Date Created</th>
+                <th>Company Name</th>
+                <!-- <th class="w120">Dispatch Type</th> -->
+                <th class="w120">Order Number</th>
+                <th class="w120 text-center">Total Quantity</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <tr *ngFor="let row of gatePassDetail.invoice; let i=index;">
+                <td class="w60 text-center">{{i+1}}</td>
+                <td class="w100">{{row.date_created | date:'dd MMM yyyy'}}</td>
+                <td>{{row.customer_name}}</td>
+                <!-- <td class="w120">{{row.bill_dispatch_type}}</td> -->
+                <td class="w120">{{row.order_no}}</td>
+                <td class="w120 text-center">{{row.total_order_qty}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="print_card" hidden>
+    <h2 style="font-size: 20px;  text-align: center; margin: 16px 0px;">{{company_name}}</h2>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+      <strong style="font-size: 13px;">Invoice No.</strong> : {{gatePassDetail.invoice_number}}
+    </p>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+      <strong style="font-size: 13px;">Generate Date</strong> : {{gatePassDetail.date_created | date}}
+    </p>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+      <strong style="font-size: 13px;">Gatepass Number</strong> : {{gatePassDetail.gate_pass_no}}
+    </p>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+      <strong style="font-size: 13px;">Delivery Person</strong> : {{gatePassDetail.delivery_boy_name}}
+    </p>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+      <strong style="font-size: 13px;">Mobile No.</strong> : {{gatePassDetail.mobile_number}}
+    </p>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;">
+      <strong style="font-size: 13px;">Vehicle Number</strong> : {{gatePassDetail.vehicle_number}}
+    </p>
+    <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">
+        Transportation Mode</strong> : {{gatePassDetail.transportation_mode}}
+    </p>
+
+    <table style=" width: 100%; table-layout: fixed; border-collapse: collapse;">
+      <tr>
+        <td style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000; width: 120px;">
+          Date Created</td>
+        <td style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000;">Company Name
+        </td>
+        <td style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000; width: 120px;">
+          Order Number</td>
+        <td
+          style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000; width: 120px; text-align:center">
+          Total Quantity</td>
+      </tr>
+      <tr *ngFor="let row of gatePassDetail.invoice;">
+        <td style="font-size: 13px; padding: 10px 16px;">{{row.date_created | date:'d MMM y'}}</td>
+        <td style="font-size: 13px; padding: 10px 16px;">{{row.customer_name ? (row.customer_name | titlecase) : ''}}
+        </td>
+        <td style="font-size: 13px; padding: 10px 16px;">{{row.order_no}}</td>
+        <td style="font-size: 13px; padding: 10px 16px; text-align:center">{{row.total_order_qty}}</td>
+      </tr>
+    </table>
+  </div>
+
+
+  <div mat-dialog-actions>
+    <div class="text-right wp100">
+      <button type="text" class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" (click)="printData();">Print Now</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="edit-modal" *ngIf="modalData.model_type == 'sales_return' ">
+  <div mat-dialog-content>
+    <p class="heading mb0">Sales Return Items</p>
+    <div class="cs-form">
+      <div class="cs-table left-right-10">
+        <div class="sticky-head">
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w60  text-center">Sr. No</th>
+                <ng-container *ngIf="modalData.status != 'scan' ">
+                  <th class="w200">Company Name</th>
+                </ng-container>
+                <ng-container *ngIf="modalData.status == 'scan' ">
+                  <th class="w140">Coupon Code</th>
+                  <th class="w140">Coupon Type</th>
+                </ng-container>
+
+                <th>Product Detail</th>
+                <ng-container *ngIf="modalData.status != 'scan' ">
+                  <th class="w80 text-center">QTY</th>
+                </ng-container>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!skLoading">
+                <tr *ngFor="let row of itemData; let i=index;">
+                  <td class="w60 text-center">{{i+1}}</td>
+                  <ng-container *ngIf="modalData.status != 'scan' ">
+                    <td class="w200">{{row.dr_detail}}</td>
+                  </ng-container>
+                  <ng-container *ngIf="modalData.status == 'scan' ">
+                    <td class="w140">{{row.coupon_code}}</td>
+                    <td class="w140">{{row.coupon_type}}</td>
+                  </ng-container>
+                  <td>{{row.product_detail}}</td>
+                  <ng-container *ngIf="modalData.status != 'scan' ">
+                    <td class="w80 text-center">{{row.product_qty}}</td>
+                  </ng-container>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="skLoading">
+                <tr class="sk-loading" *ngFor="let row of [].constructor(5)">
+                  <td class="w60">
+                    <div>&nbsp;</div>
+                  </td>
+                  <ng-container *ngIf="modalData.status == 'scan' ">
+                    <td class="w140">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w140">
+                      <div>&nbsp;</div>
+                    </td>
+                  </ng-container>
+                  <td>
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div mat-dialog-actions>
+    <div class="text-right wp100">
+      <button type="text" class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="edit-modal" *ngIf="modalData.model_type == 'manual_entry' ">
+  <div mat-dialog-content>
+    <p class="heading mb0">Manual Packing</p>
+    <div class="cs-form">
+      <div class="cs-table left-right-10" *ngIf="noScanItem.length > 0">
+        <div class=" border-top">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w50 text-center">Sr.No</th>
+                <th class="w120">Master Box Serial No.</th>
+                <th>Item Detail</th>
+                <th class="w100 text-right">QTY.</th>
+                <th class="w140 text-right">Dispatched QTY.</th>
+                <th class="w140 text-right">Remaining QTY.</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container pb0">
+          <div class="table-content none-shadow">
+            <table>
+              <ng-container *ngFor="let row of noScanItem;let i=index;">
+                <tr>
+                  <td class="w50 text-center">{{i+1}}</td>
+                  <td class="w120">{{modalData.master_coupon_code}}</td>
+                  <td>{{row.item_name}} ({{row.item_code}})</td>
+                  <td class="w100 text-right">{{row.sale_qty}}</td>
+                  <td class="w140 text-right">{{row.order_remaining}}</td>
+                  <td class="w140 text-right">
+                    <div class="th-search-acmt"
+                      [ngClass]="{'error-block' :row.order_remaining == 0 ?  row.sale_dispatch_qty > row.sale_qty : row.sale_dispatch_qty >  (row.order_remaining > 0 && row.sale_qty - row.order_remaining)}">
+                      <mat-form-field>
+                        <input type="text" class="text-right" matInput
+                          onkeypress="return event.charCode>=48 && event.charCode<=57" placeholder="Dispatch QTY."
+                          [name]="'sale_dispatch_qty'+i" #sale_dispatch_qty="ngModel"
+                          [(ngModel)]="row.sale_dispatch_qty"
+                          (ngModelChange)="checkValidation(row.sale_qty, row.order_remaining, row.sale_dispatch_qty,  i+1)">
+                      </mat-form-field>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <ng-container *ngIf="noScanItem.length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+
+
+
+
+  <div mat-dialog-actions>
+    <div class="text-right wp100">
+      <button type="text" class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" (click)="updateDispatch()"
+        [disabled]="savingFlag == true" *ngIf="noScanItem.length > 0">
+        {{savingFlag == true ? 'Saving' : data.id ? 'Update': 'Save'}}
+      </button>
+    </div>
+  </div>
+</div>

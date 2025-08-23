@@ -1,0 +1,500 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>{{(pageType == 'quotation' || pageType == 'order') ? ( (pageType | titlecase) + ' Detail') : 'Primary Order Details'}}
+            <ng-container *ngIf="pageType != 'quotation' && pageType != 'order'">:-{{order_detail.company_name ?
+                (order_detail.company_name | titlecase) : '---'}}</ng-container>
+            </h2>
+            <div class="left-auto left-auto df ac flex-gap-10">
+                <div class="group-btn">
+                    <button mat-button class="ouline-btns pdf" (click)="exportPdf()"><img src="assets/img/icons/pdf.png">
+                        Export PDF</button>
+                        <!-- <button mat-button class="ouline-btns whatsapp"><img src="assets/img/icons/whatsapp.png"> Send Whatsapp</button>
+                        <button mat-button class="ouline-btns email"><img src="assets/img/icons/email.png"> Send Mail</button> -->
+                        <!-- || order_detail.order_status =='Reject' -->
+                        <button mat-button class="ouline-btns status" *ngIf="(order_detail.order_status =='Pending'|| order_detail.order_status =='Approved' || order_detail.order_status =='Partially Dispatched' || (login_data.organisation_data.dispatch == '1') || order_detail.order_status =='partialDispatched' || order_detail.order_status =='Hold' || order_detail.order_status =='dispatchPlanning' ) && (login_data.edit_primary_order=='1')" (click)="openDialog()"><img src="assets/img/icons/update.png">
+                            {{order_detail.order_status == 'Approved' || order_detail.order_status == 'partialDispatched' ? 'Dispatch Status' : order_detail.order_status == 'dispatchPlanning' ? 'Dispatch Planning' : 'Change Status'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container  container-scroll pt10 pl10 pr10 pb50">
+                <div class="row">
+                    <div class="col s12 m8 l8">
+                        <div class="card" *ngIf="!skLoading">
+                            <div class="card-head">
+                                <h2>
+                                    {{(pageType == 'quotation' || pageType == 'order') ? ('Site/Project Detail') : 'Customer Details'}}
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <ng-container *ngIf="pageType != 'order' && pageType != 'quotation'">
+                                    
+                                    <div class="grid-box">
+                                        <div class="block-feilds">
+                                            <span>Company Name</span>
+                                            <p>{{order_detail.company_name ? (order_detail.company_name | titlecase) : '---'}}
+                                            </p>
+                                        </div>
+                                        <div class="block-feilds">
+                                            <span>Account Code</span>
+                                            <p>{{order_detail.dr_code ? order_detail.dr_code : '---'}}</p>
+                                        </div>
+                                        <div class="block-feilds">
+                                            <span>Contact Person</span>
+                                            <p>{{order_detail.name ? (order_detail.name | titlecase) : '---'}}</p>
+                                        </div>
+                                        <div class="block-feilds">
+                                            <span>Contact Details</span>
+                                            <p>{{order_detail.mobile}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid-box single mt16 mb16">
+                                        <div class="block-feilds">
+                                            <span>Address</span>
+                                            <p>
+                                                {{ order_detail.address ? (order_detail.address + ', ') : '' }} 
+                                                {{ order_detail.city ? (order_detail.city + ', ') : '' }} 
+                                                {{ order_detail.district ? ((order_detail.district | titlecase) + ', ') : '' }} 
+                                                {{ order_detail.state ? ((order_detail.state | titlecase) + ', ') : '' }} 
+                                                {{ order_detail.pincode }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="grid-box" *ngIf="login_data.organisation_data.dms== '1'">
+                                        <div class="block-feilds">
+                                            <span>Credit Limit</span>
+                                            <p>&#x20B9; {{order_detail.credit_limit ? order_detail.credit_limit : 0}}</p>
+                                        </div>
+                                        <div class="block-feilds">
+                                            <span>Credit Day's</span>
+                                            <p>{{order_detail.credit_period}}</p>
+                                        </div>
+                                        <ng-container *ngIf="order_detail.order_status  == 'Pending'">
+                                            <div class="block-feilds approved">
+                                                <span>Outstanding</span>
+                                                <p>&#x20B9; {{order_detail.Outstanding_balance}}</p>
+                                            </div>
+                                            <div class="block-feilds reject">
+                                                <span>Overdue</span>
+                                                <p>&#x20B9; {{order_detail.overdue}}</p>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="pageType == 'order' || pageType == 'quotation'">
+                                    <div class="grid-box">
+                                        <div class="block-feilds">
+                                            <span>Site Detail</span>
+                                            <p>{{order_detail.ownerName ? (order_detail.ownerName | titlecase) : '---'}}
+                                                {{order_detail.ownerMobile ? order_detail.ownerMobile : '---'}}</p>
+                                            </div>
+                                            <div class="block-feilds">
+                                                <span>Channel Distributor Detail</span>
+                                                <p>{{order_detail.distributor_name ? (order_detail.distributor_name | titlecase) :
+                                                    '---'}} {{order_detail.distributor_mobile ? order_detail.distributor_mobile :
+                                                        '---'}}</p>
+                                                    </div>
+                                                    <div class="block-feilds">
+                                                        <span>Sub Dealer Detail</span>
+                                                        <p>{{order_detail.dealer_name ? (order_detail.dealer_name | titlecase) : '---'}}
+                                                            {{order_detail.dealer_mobile ? order_detail.dealer_mobile : '---'}}</p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                            <div class="card-head mt15">
+                                                <h2>
+                                                    {{pageType == 'quotation' ? 'Quotation Detail' : 'Order Details'}}
+                                                </h2>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="grid-box">
+                                                    <div class="block-feilds">
+                                                        <span>Date</span>
+                                                        <p>{{order_detail.date_created | date: 'dd MMM yyyy , h:mm a'}}</p>
+                                                    </div>
+                                                    
+                                                    <div class="block-feilds">
+                                                        <span>Created By</span>
+                                                        <p>{{order_detail.created_by_name ? (order_detail.created_by_name | titlecase) : ''}}
+                                                            {{order_detail.created_by_type ? (order_detail.created_by_type.replaceAll('_', ' '))
+                                                            : ''}}</p>
+                                                        </div>
+                                                        <div class="block-feilds">
+                                                            <span>{{pageType == 'quotation' ? 'Quotation' : 'Order'}} Id</span>
+                                                            <p>{{order_detail.order_no}}</p>
+                                                        </div>
+                                                        <div class="block-feilds">
+                                                            <span>Total Items</span>
+                                                            <p>{{order_detail.order_item}}</p>
+                                                        </div>
+                                                        
+                                                        <div class="block-feilds">
+                                                            <span>Item QTY.</span>
+                                                            <p>{{order_detail.total_order_qty}}</p>
+                                                        </div>
+                                                        
+                                                        <div class="block-feilds" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">
+                                                            <span>{{pageType == 'quotation' ? 'Quotation' : 'Order'}} Amount</span>
+                                                            <p>&#x20B9; {{order_detail.order_grand_total}}</p>
+                                                        </div>
+                                                        <div class="block-feilds" *ngIf="pageType != 'quotation'">
+                                                            <span>{{pageType == 'quotation' ? 'Quotation' : 'Order'}} Type</span>
+                                                            <p>{{order_detail.order_type}}</p>
+                                                        </div>
+                                                        
+                                                        <ng-container *ngIf="pageType == 'order' || pageType == 'quotation'">
+                                                            
+                                                            <div class="block-feilds">
+                                                                <span>Billing Address</span>
+                                                                <p>{{order_detail.billing_address ? order_detail.billing_address : '---'}}</p>
+                                                            </div>
+                                                            
+                                                            <div class="block-feilds">
+                                                                <span>Shipping Address</span>
+                                                                <p>{{order_detail.shipping_address ? order_detail.shipping_address : '---'}}</p>
+                                                            </div>
+                                                        </ng-container>
+                                                        
+                                                        <div class="block-feilds {{order_detail.order_status}}">
+                                                            <span>{{pageType == 'quotation' ? 'Quotation' : 'Order'}} Status</span>
+                                                            <p>{{(order_detail.order_status == 'partialDispatched' && order_detail.partial_dispatch
+                                                                ==
+                                                                0) ? 'Partial Planned' : (order_detail.order_status == 'partialDispatched' &&
+                                                                order_detail.partial_dispatch == 1) ? 'Partial Dispatched' :
+                                                                order_detail.order_status
+                                                                == 'completeDispatched' ? 'Complete Planned': order_detail.order_status ==
+                                                                'dispatchPlanning' ? 'Dispatch Planning' : order_detail.order_status}}</p>
+                                                            </div>
+
+                                                            <div class="block-feilds" *ngIf="pageType == 'order' && order_detail.quotation_id">
+                                                                <span>Order ID</span>
+                                                                <a class="link-btn "  (click)="moveQuotationDetail('quotation',order_detail.quotation_id)">
+                                                                    <p>{{order_detail.quotation_id ? 'QUOT-' + order_detail.quotation_id : '---'}}</p>
+                                                                </a>
+                                                            </div>
+                                                            
+                                                            
+                                                            <div class="block-feilds" *ngIf="order_detail.senior_reason">
+                                                                <span>Reason</span>
+                                                                <p>{{order_detail.senior_reason ? order_detail.senior_reason :'---'}}</p>
+                                                            </div>
+
+                                                            <div class="block-feilds" *ngIf="order_detail.transport_name">
+                                                                <span>Transport</span>
+                                                                <p>{{order_detail.transport_name ? order_detail.transport_name : '---'}}</p>
+                                                            </div>
+                                                            
+                                                            <div class="block-feilds" *ngIf="order_detail.organisation_name">
+                                                                <span>Organisation Name</span>
+                                                                <p>{{order_detail.organisation_name}}</p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="grid-box single mt16">
+                                                            <div class="block-feilds">
+                                                                <span>Remark</span>
+                                                                <p>{{order_detail.order_create_remark ? order_detail.order_create_remark : '---'}}</p>
+                                                            </div>
+                                                            <div class="block-feilds" *ngIf="order_detail.reason_reject">
+                                                                <span>Reason Reject</span>
+                                                                <p>{{order_detail.reason_reject ? order_detail.reason_reject : '---'}}</p>
+                                                            </div>
+
+                                                            <div class="block-feilds" *ngIf="order_detail.status_remark">
+                                                                <span>Status Change Remark</span>
+                                                                <p>{{order_detail.status_remark ? order_detail.status_remark : '---'}}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                <div class="card" *ngIf="skLoading">
+                                                    <div class="sk-head">
+                                                        <h2>&nbsp;</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="grid-box">
+                                                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                                                &nbsp;
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                            <div class="col s12 m4 l4" *ngIf="pageType != 'quotation'">
+                                                <div class="card" *ngIf="!skLoading">
+                                                    <div class="card-head">
+                                                        <h2>Logs</h2>
+                                                        
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="logs-box" style="max-height: 390px;">
+                                                            <ng-container *ngFor="let row of order_logs">
+                                                                <div class="logshead">{{row.created_by_name}} : - {{row.date_created | date : 'dd MMMyyyy, h:mm a'}}</div>
+                                                                <div class="logscontent">
+                                                                    <span>Remark : -</span> {{row.remark}}
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                <div class="card" *ngIf="skLoading">
+                                                    <div class="sk-head">
+                                                        <h2>&nbsp;</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="grid-box single mt10" *ngFor="let row of order_logs">
+                                                            <div class="sk-box">
+                                                                &nbsp;
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        <ng-container *ngIf="order_detail?.document && order_detail?.document.length>0">
+                                            <p class="imageheader">Uploaded Images</p>
+                                            <div class="card-body" style="overflow: auto;">
+                                                <div class="grid-box">
+                                                    <div class="block-feilds">
+                                                        <div class="doc-img">
+                                                            <div *ngFor="let row of order_detail.document">
+                                                                <img src="{{img_url+row.image}}" (click)="goToImage(img_url+row.image)"
+                                                                    style="cursor: zoom-in;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+            
+            
+                                        </ng-container>
+                                        <div class="row" *ngIf="!skLoading">
+                                            <div class="tools-container no-sticky">
+                                                <div class="mat-tabbar">
+                                                    <button mat-button [ngClass]="{'active' :orderType== 'order'}" (click)="orderType= 'order'"><i
+                                                        class="material-icons">pending_actions</i>Item Details</button>
+                                                        <button mat-button [ngClass]="{'active' :orderType== 'billing'}" (click)="orderType = 'billing'"
+                                                        *ngIf="login_data.organisation_data.dms== '1'">
+                                                        <i class="material-icons">receipt</i>Billing Detail
+                                                    </button>
+                                                </div>
+                                                
+                                                <div class="left-auto"
+                                                *ngIf="orderType == 'order' && order_detail.order_status== 'Pending' && login_data.edit_primary_order=='1'">
+                                                <button matTooltip="Update Item" (click)="addItem()" mat-raised-button color="primary"><i
+                                                    class="material-icons">update</i> Update Item</button>
+                                                </div>
+                                            </div>
+                                            <ng-container *ngIf="orderType== 'order'">
+                                                <div class="cs-table horizontal-scroll">
+                                                    <div class="sticky-head" style="top: -10px;">
+                                                        <div class="table-head">
+                                                            <table>
+                                                                <tr>
+                                                                    <th class="w40">S.no.</th>
+                                                                    <th>Item Details</th>
+                                                                    <th class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">Price</th>
+                                                                    <th class="w80 text-center" *ngIf="pageType =='quotation'">Sale QTY.</th>
+                                                                    <th class="w80 text-center" *ngIf="pageType =='quotation'">Dispatch QTY.</th>
+                                                                    <ng-container *ngIf="this.logined_user_data?.org_id=='17'">
+                                                                        <th class="w80 text-center">Battery</th>
+                                                                        <th class="w80 text-center">Charger</th>
+                                                                        <th class="w80 text-center">Remark</th>
+                                                                        <!-- <th class="w80 text-center">Controller</th> -->
+                                                                    </ng-container>
+                                                                    <th class="w80 text-center">{{pageType =='quotation' ? 'Remaining' : ''}} QTY.</th>
+                                                                    <th class="w100 text-center" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">Packing Size</th>
+                                                                    <th class="w100 text-center" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">Master Packing Size</th>
+                                                                    <th class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">Total Price</th>
+                                                                    <th class="w120 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">Discount Amount</th>
+                                                                    
+                                                                    <th class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">Sub Total</th>
+                                                                    <th class="w120 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">GST Amount</th>
+                                                                    <th class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">Net Amount</th>
+                                                                    <!-- <th class="w40 text-right" *ngIf="order_detail.order_status  == 'Pending' && login_data.delete_order=='1'">Action</th> -->
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="table-container">
+                                                        <div class="table-content">
+                                                            <table>
+                                                                <ng-container *ngFor="let row of order_item; let i =index">
+                                                                    <tr
+                                                                    [ngClass]="{'dispatched': row.sale_dispatch_qty == row.qty && order_detail.order_status == 'partialDispatched'}">
+                                                                    <td class="w40">{{i+1}}</td>
+                                                                    <td>{{row.segment_name | titlecase}} - {{row.product_name ?
+                                                                        (row.product_name | titlecase) : '---'}} {{row.product_code ? (
+                                                                            '('+row.product_code+')') : '---'}}
+                                                                        </td>
+                                                                        <td class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">&#x20B9; {{row.price | number:'1.2-2' }}</td>
+                                                                       <td class="w80 text-center" *ngIf="pageType =='quotation'" >{{row.sale_qty ? row.sale_qty : '---'}}</td>
+                                                                       <td class="w80 text-center" *ngIf="pageType =='quotation'" >{{row.sale_dispatch_qty ? row.sale_dispatch_qty : '---'}}</td>
+                                                                       <ng-container *ngIf="this.logined_user_data?.org_id=='17'">
+                                                                        <td class="w80 text-center">{{row.battery ? row.battery : '---'}}</td>
+                                                                       <td class="w80 text-center">{{row.charger ? row.charger : '---'}}</td>
+                                                                       <td class="w80 text-center">{{row.description ? row.description : '---'}}</td>
+                                                                       <!-- <td class="w80 text-center">{{row.controller ? row.controller : '---'}}</td> -->
+                                                                       </ng-container>
+                                                                        <td class="w80  text-center">
+                                                                            <ng-container *ngIf="order_detail.order_status  != 'Pending'">
+                                                                                {{row.qty}} {{row.feature_name ? ( '('+row.feature_name+')') : ''}}
+                                                                            </ng-container>
+                                                                            <ng-container *ngIf="order_detail.order_status  == 'Pending'">
+                                                                                <ng-container *ngIf="editqty == true">
+                                                                                    <div class="th-search-acmt mr30">
+                                                                                        <mat-form-field>
+                                                                                            <input type="text" matInput class="text-right"
+                                                                                            onkeypress="return event.charCode>=48 && event.charCode<=57"
+                                                                                            placeholder="Enter Qty" name="qty{{i}}" #qty="ngModel"
+                                                                                            [(ngModel)]="row.qty">
+                                                                                        </mat-form-field>
+                                                                                    </div>
+                                                                                    <div class="action-button text-right"
+                                                                                    *ngIf=" (login_data.edit_primary_order=='1' )">
+                                                                                    <a mat-icon-button matTooltip="Save"
+                                                                                    (click)="Update_qty(row.id, row.qty)">
+                                                                                    <i class="material-icons edit">save</i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </ng-container>
+                                                                        
+                                                                        <ng-container *ngIf="editqty == false">
+                                                                            {{row.qty}}
+                                                                        </ng-container>
+                                                                    </ng-container>
+                                                                </td>
+                                                                <td class="w100 text-center" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">{{row.small_packing_size ? row.small_packing_size : '---'}}</td>
+                                                                <td class="w100 text-center" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">{{row.master_packing_size ? row.master_packing_size : '---'}}</td>
+                                                                <td class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">&#x20B9; {{row.total_price | number:'1.2-2' }} </td>
+                                                                <td class="w120 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0"> &#x20B9; {{row.discount_amount | number:'1.2-2'}} ({{row.discount_percent + '%'}})</td>
+                                                                <td class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">&#x20B9; {{row.amount | number:'1.2-2'}}</td>
+                                                                <td class="w120 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0">&#x20B9; {{row.gst_amount | number:'1.2-2'}} ({{row.gst_percent}}%)</td>
+                                                                <td class="w80 text-right" *ngIf="this.logined_user_data?.organisation_data?.order_place==0"><strong>&#x20B9; {{row.net_price | number:'1.2-2'}}</strong></td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col s5 offset-s7">
+                                                <div class="invoice-table">
+                                                    <table>
+                                                        <tr>
+                                                            <td>Total Item</td>
+                                                            <th class="text-right">{{order_detail?.order_item}}</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Total Item Qty.</td>
+                                                            <th class="text-right">{{order_detail.total_order_qty||'N/A'}}</th>
+                                                        </tr>
+                                                        <tr *ngIf="this.logined_user_data?.organisation_data?.order_place==0">
+                                                            <td>Total Order Price</td>
+                                                            <th class="text-right">₹ {{order_detail.total_order_amount | number:'1.2-2'}}</th>
+                                                        </tr>
+                                                        <tr *ngIf="this.logined_user_data?.organisation_data?.order_place==0">
+                                                            <td>Total Discount Amount</td>
+                                                            <th class="text-right">₹ {{order_detail.order_discount | number:'1.2-2'}}</th>
+                                                        </tr>
+                                                        <tr *ngIf="this.logined_user_data?.organisation_data?.order_place==0">
+                                                            <td>Sub Total</td>
+                                                            <th class="text-right">₹ {{order_detail.order_total | number:'1.2-2'}}</th>
+                                                        </tr>
+                                                        <tr *ngIf="this.logined_user_data?.organisation_data?.order_place==0">
+                                                            <td>Total GST Amount</td>
+                                                            <th class="text-right">₹ {{order_detail.order_gst | number:'1.2-2'}}</th>
+                                                        </tr>
+                                                        <tr *ngIf="this.logined_user_data?.organisation_data?.order_place==0">
+                                                            <td>Grand Total</td>
+                                                            <th class="text-right">₹ {{order_detail.order_grand_total | number:'1.2-2'}}</th>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </ng-container>
+                                    <div class="cs-table" *ngIf="orderType== 'billing'">
+                                        <div class="sticky-head" style="top: -10px;">
+                                            <div class="table-head">
+                                                <table>
+                                                    <tr>
+                                                        <th class="w30">S.no.</th>
+                                                        <th class="w150">Invoice Date</th>
+                                                        <th class="w150">Invoice Number</th>
+                                                        <th class="w80 text-center">Total Item</th>
+                                                        <th class="w80 text-center">Total QTY.</th>
+                                                        <th class="w100 text-right">Invoice Amount</th>
+                                                        <th class="w100 text-right">Payment</th>
+                                                        <th class="w100 text-right">Balance Amount</th>
+                                                        
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        <div class="table-container">
+                                            <div class="table-content">
+                                                <table>
+                                                    <tr *ngFor="let row of invoice_bill_item; let i =index">
+                                                        <td class="w30">{{i+1}}</td>
+                                                        <td class="w150">{{row.billing_date | date:'dd MMM yyyy'}}</td>
+                                                        <td class="w150"><a class="link-btn" [routerLink]="['billing-details/', row.id]"
+                                                            [queryParams]="row.id">{{row.bill_number}}</a></td>
+                                                            <td class="w80 text-center">{{row.total_billing_item}}</td>
+                                                            <td class="w80 text-center">{{row.total_billing_item_qty}}</td>
+                                                            <td class="w100 text-right"><strong>&#x20B9; {{row.net_amount}}</strong></td>
+                                                            <td class="w100 text-right"><strong>&#x20B9; {{row.billing_receive_amount}}</strong>
+                                                            </td>
+                                                            <td class="w100 text-right"><strong>&#x20B9; {{row.pending_balance}}</strong></td>
+                                                        </tr>
+                                                        
+                                                        <ng-container *ngIf="loader">
+                                                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                                                <td class="w30">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                                <td class="w150">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                                <td class="w150">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                                <td class="w80">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                                <td class="w80">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                                <td class="w100">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                                <td class="w100">
+                                                                    <div>&nbsp;</div>
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>

@@ -1,0 +1,204 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back();">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Reprint Coupon</h2>
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+
+
+
+    <div id="print_card" style="width: 50%;margin-left: 250px;" hidden>
+      <div id='qr_code_container'>
+
+
+<ng-container *ngIf="getData.template_id != 1 ">
+
+    <!-- ***** CASE 1 BOX WITH ITEM START***** -->
+        <ng-container *ngIf="box1 == 1">
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;"
+            *ngFor="let row of qrCode; let i = index;">
+            <div class="qr_img"
+              style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;">
+              <ngx-qrcode [elementType]="elementType" value="{{row.coupon_code}}" cssClass="aclass qr_img_card"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span class='fix-text'>Box {{i+1}}</span>
+              <span class='fix-code' style="text-align: left; margin-left: 5px;">{{row.coupon_code}}</span>
+
+            </div>
+
+            <ng-container *ngFor="let subRow of row.itembox">
+              <div class="qr_img"
+                style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;">
+                <ngx-qrcode [elementType]="elementType" value="{{subRow.coupon_code}}" cssClass="aclass qr_img_card"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+                <span class='fix-code'>{{subRow.coupon_code}}</span>
+                <span class='fix-text-code'>{{getData.product_code}}</span>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+        <!-- ***** CASE 1 BOX WITH ITEM END***** -->
+        <!-- ***** CASE 2 ONLY BOX START ***** -->
+        <ng-container *ngIf="box2 == 2">
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img"
+              style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;"
+              *ngFor="let row of qrCode; let i = index;">
+              <ngx-qrcode [elementType]="elementType" value="{{row.coupon_code}}" cssClass="aclass qr_img_card"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span class='fix-text'>BOX {{i+1}}</span>
+              <span class='fix-code' style="text-align: center; margin-left: -5px;">{{row.coupon_code}}</span>
+              <span class='fix-text-right' style="text-align:left"> {{getData.product_code}}</span>
+            </div>
+          </div>
+        </ng-container>
+        <!-- ***** CASE 2 ONLY BOX END ***** -->
+
+
+        <!-- ***** CASE 3 ONLY ITEM START***** -->
+        <ng-container *ngIf="box3 == 3">
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img"
+              style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;"
+              *ngFor="let row of qrCode">
+              <ngx-qrcode [elementType]="elementType" value="{{row.coupon_code}}" cssClass="aclass qr_img_card"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span class='fix-code' style="text-align: center; margin-left: -3px;">{{row.coupon_code}}</span>
+              <span class='fix-text-code'>{{getData.product_code}}</span>
+            </div>
+          </div>
+        </ng-container>
+        <!-- ***** CASE 3 ONLY ITEM END***** -->
+
+</ng-container>
+
+      
+<!-- 25*25 mm sticker natraj bath  sticker  layout 1 -->
+    <ng-container *ngIf="getData.template_id == 1">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 94.488188976px; height: 94.488188976px; margin: 3px 0px 0px; position: relative;"
+              *ngFor="let row of qrCode">
+              <div class="qr_rep">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" 
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <p class='qr_content' style="text-align: center; text-transform: uppercase;font-size: 7px;line-height: 8px;font-weight: bold;margin-top: -3px;">{{ row.coupon_code }}</p>
+              <p class='qr_content' style="text-align: center; text-transform: uppercase;font-size: 7px;line-height: 8px;font-weight: bold;margin-top: -3px;">{{ getData.product_code}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 25*25 mm sticker -->
+
+
+    <!-- 50*50 mm (Jolly  sathi) sticker -->
+    <!-- <ng-container *ngIf="getData.template_id == 47">
+
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 188.97637795px; position: relative;  display: grid;grid-template-columns: 1fr 1fr; column-gap: 10px;">
+            <div style="width: 377.95275591Z; height: 188.97637795px; justify-content: center; align-items: center;"
+              *ngFor="let row of qrCode">
+               <div class="qr_rep1">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" 
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <p class='qr_content' style="text-align: center; text-transform: uppercase;font-size: 15px;line-height: 8px;font-weight: bold;margin-top: -4px;">{{ row.coupon_code }}</p>
+              <p class='qr_content' style="text-align: center; text-transform: uppercase;font-size: 15px;line-height: 8px;font-weight: bold;margin-top: -4px;">{{ getData.product_code}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container> -->
+    <!-- 50*50 mm (Jolly  sathi) sticker -->
+
+
+
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+    <div class="row ">
+      <div class="col s12">
+        <div class="card pb0">
+          <div class="card-body cs-form">
+            <div class="row">
+              <div class="col s12 m6 l6">
+                <mat-form-field appearance="outline">
+                  <mat-label>Coupon Number</mat-label>
+                  <input matInput placeholder="Type Here ..." name="coupon_number" #coupon_number="ngModel"
+                    [(ngModel)]="couponNumber.coupon_number" minlength="12" maxlength="16" min="0" #focusInput
+                    (ngModelChange)="checkCoupon(couponNumber.coupon_number)">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb100">
+      <div class="col s12 m12 l12 grid-five-box">
+        <div class="qr-card" *ngFor="let row of qrCode; let i = index;">
+            <div  class="qr-box">
+              <div class="cs-barcode" *ngIf="getData.coupon_type == 'Master Box' ">
+                <ngx-qrcode 
+                [elementType]="elementType" 
+                value="{{row.coupon_code}}"
+                cssClass="aclass"
+                errorCorrectionLevel="L">
+              </ngx-qrcode>
+              <span class="fix">Box {{i+1}}</span>
+              <span class="qr-code-number">{{row.coupon_code}}</span>
+            </div>
+            
+            <div class="cs-barcode" *ngIf="getData.coupon_type == 'Item Box' ">
+              <ngx-qrcode 
+              [elementType]="elementType" 
+              value="{{row.coupon_code}}"
+              cssClass="aclass"
+              errorCorrectionLevel="L">
+            </ngx-qrcode>
+            <span class="qr-code-number">{{row.coupon_code}}</span>
+          </div>
+          
+        </div>
+        <div class="qr-box" *ngFor="let subRow of row.itembox">
+          <div class="cs-barcode">
+            <ngx-qrcode 
+            [elementType]="elementType" 
+            value="{{subRow.coupon_code}}"
+            cssClass="aclass"
+            errorCorrectionLevel="L">
+          </ngx-qrcode>
+          <span class="qr-code-number">{{subRow.coupon_code}}</span> 
+        </div>
+    </div>
+  </div>
+</div>
+    </div>
+
+
+    <div class="fab-btns" *ngIf="qrCode.length > 0">
+      <div class="fab-btns">
+        <button class="pulse excel" mat-fab color="primary" (click)="printData();">
+          <i class="material-icons">print</i>
+          Print Coupon
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,265 @@
+<div class="main-container">
+  <app-loader *ngIf="excelLoader"></app-loader>
+  <div class="tools-container">
+    <h2>Spare Part List</h2>
+
+
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </a>
+
+      <div class="pagination" *ngIf="spareList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No</th>
+              <th class="w150">Date Created</th>
+              <th class="w150">Part Name</th>
+              <th class="w100">Part No.</th>
+              <th class="w100 text-center">Min Stock Alert</th>
+              <th class="w50 text-center">Stock Qty</th>
+              <th class="w80 text-center">Assign Qty</th>
+              <th class="w100 text-right">MRP</th>
+              <th class="w300 text-center">Stock</th>
+              <th class="w100 text-center">Image</th>
+              <th class="w100 text-center">Action</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w50"></th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter_data.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="part_name"
+                      (keyup.enter)="getSpareList('')" #part_name="ngModel" [(ngModel)]="filter_data.part_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="part_no" (keyup.enter)="getSpareList('')"
+                      #part_no="ngModel" [(ngModel)]="filter_data.part_no">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-center"></th>
+              <th class="w50 text-center"></th>
+              <th class="w80 text-center"></th>
+              <th class="w100 text-right"></th>
+              <th class="w300 text-center"></th>
+              <th class="w100 text-center"></th>
+              <th class="w100 text-center"></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of spareList; let i = index "
+                [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w50">{{i + 1 + sr_no}}</td>
+                <td class="w150">{{row.date_created ? (row.date_created | date : 'dd MMM yyy ,h:mm a') : '--'}}</td>
+                <td class="w150">{{row.part_name? (row.part_name | titlecase):'--'}}</td>
+                <td class="w100">{{row.part_no? (row.part_no | titlecase):'--'}}</td>
+                <td class="w100 text-center"
+                  [ngClass]="{'light-green': row.current_stock >= row.min_stock , 'red-bgclr': row.current_stock < row.min_stock}">
+                  {{row.min_stock}}</td>
+                <td class="w50 text-center">{{row.current_stock? row.current_stock:'0'}}</td>
+                <td class="w80 text-center">
+                  <button mat-raised-button style="border-radius: 25px;" (click)="assignZero(row.assign_stock)"
+                    [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="row.assign_stock=='0'">
+                    <span>{{row.assign_stock?row.assign_stock:0}}</span>
+                    <mat-icon>chevron_right</mat-icon>
+                  </button>
+                  <button mat-raised-button style="border-radius: 25px;"
+                    (click)="spareQty(row.part_name,row.part_no,row.assign_part,'Assign Stock')"
+                    [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="row.assign_stock!='0'">
+                    <span>{{row.assign_stock?row.assign_stock:0}}</span>
+                    <mat-icon>chevron_right</mat-icon>
+                  </button>
+                </td>
+                <td class="w100 text-right">Rs.{{row.mrp? row.mrp:'--'}}</td>
+                <td class="w300 text-center">
+                  <div class="flex-button">
+                    <button mat-raised-button style="border-radius: 25px;"
+                      (click)="spareQty(row.part_name,row.part_no,row.incoming_data,'Incoming')"
+                      [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="row.incoming_data.length">
+                      <mat-icon>arrow_circle_down</mat-icon>
+                      <span>Incoming</span>
+                    </button>
+                    <button mat-raised-button style="border-radius: 25px;" (click)="returnQty(row.incoming_data)"
+                      [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="!row.incoming_data.length">
+                      <mat-icon>arrow_circle_down</mat-icon>
+                      <span>Incoming</span>
+                    </button>
+                    <button mat-raised-button style="border-radius: 25px;"
+                      (click)="spareQty(row.part_name,row.part_no,row.assign_part,'Outgoing')"
+                      [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="row.assign_stock!='0'">
+                      <mat-icon>arrow_circle_up</mat-icon>
+                      <span>Outgoing</span>
+                    </button>
+                    <button mat-raised-button style="border-radius: 25px;" (click)="outgoingStock(row.assign_stock)"
+                      [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="row.assign_stock=='0'">
+                      <mat-icon>arrow_circle_up</mat-icon>
+                      <span>Outgoing</span>
+                    </button>
+                    <button mat-raised-button style="border-radius: 25px;"
+                      (click)="spareQty(row.part_name,row.part_no,row.return_data,'Return')"
+                      [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="row.return_data.length">
+                      <mat-icon>assignment_returned</mat-icon>
+                      <span>Return</span>
+                    </button>
+                    <button mat-raised-button style="border-radius: 25px;" (click)="return(row.return_data)"
+                      [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="!row.return_data.length">
+                      <mat-icon>assignment_returned</mat-icon>
+                      <span>Return</span>
+                    </button>
+                  </div>
+                </td>
+                <td class="w100 text-center">
+                  <div *ngIf="row.image.length">
+                    <img [src]="url+row.image" (click)="imageModel(url+row.image)"
+                      style="cursor: zoom-in; width: 50px;">
+                  </div>
+                </td>
+                <td class="w100 text-center">
+                  <div class="action-button">
+                    <button mat-icon-button matTooltip="View" (click)="addSpareDialog('edit',row,row.id)">
+                      <i class="material-icons edit">edit</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Delete" (click)="delete(row.id)">
+                      <i class="material-icons red-clr">delete</i>
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w50 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w300 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="datanotfound==true && spareList.length == 0;">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+
+  <div class="fab-btns">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+  </div>
+  <mat-menu #menu="matMenu">
+    <!-- <button mat-menu-item (click)="downloadExcel();" *ngIf="spareList.length > 0">
+      <mat-icon>download</mat-icon>
+      <span>Download Excel</span>
+    </button> -->
+    <button mat-menu-item (click)="spareQty('','','','Return Stock')" routerLink="add-customer"
+      routerLinkActive="router-link-active">
+      <mat-icon>assignment_returned</mat-icon>
+      <span>Return Stock</span>
+    </button>
+    <button mat-menu-item (click)="spareQty('','','','Manage Stock')" routerLink="add-customer"
+      routerLinkActive="router-link-active">
+      <mat-icon>inventory</mat-icon>
+      <span>Manage Stock</span>
+    </button>
+    <button mat-menu-item (click)="spareQty('','','','assign_stock')" routerLink="add-customer"
+      routerLinkActive="router-link-active">
+      <mat-icon>assignment</mat-icon>
+      <span>Assign Stock</span>
+    </button>
+    <button mat-menu-item (click)="addSpareDialog('add','','')" routerLinkActive="router-link-active">
+      <mat-icon>add</mat-icon>
+      <span>Add Spare Part</span>
+    </button>
+    <button mat-menu-item (click)="upload_excel('addSpare');">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload New Data</span>
+    </button>
+  </mat-menu>
+</div>

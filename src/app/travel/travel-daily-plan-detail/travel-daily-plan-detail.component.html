@@ -1,0 +1,190 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Party Wise Journey Plan Detail</h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+
+      <div class="col s12 m12 l12">
+
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Basic Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Plan ID</span>
+                <p>#{{travel_detail.id}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Territory Code</span>
+                <p>{{travel_detail.beat_code ? travel_detail.beat_code : '---'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Area Name</span>
+                <p>{{travel_detail.area_name ? travel_detail.area_name : '---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Employee Code</span>
+                <p>{{travel_detail.employee_id}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Employee Name</span>
+                <p>{{travel_detail.name ? (travel_detail.name | titlecase) : '---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Reporting Manager</span>
+                <p>{{travel_detail.r_name ? (travel_detail.r_name | titlecase) : '---'}}</p>
+              </div>
+
+              <div class="block-feilds flex-heading {{travel_detail.status}}">
+                <div>
+                  <span>Status</span>
+                  <p>{{travel_detail.status ? travel_detail.status : '---'}} </p>
+                </div>
+                <div class="left-auto" *ngIf="travel_detail.status != 'Approved' && assign_login_data2.edit_event_plan == '1'">
+                  <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                  (click)="changeStatusDialog(travel_detail.id,'traveldailywise')">
+                  <i class="material-icons">edit</i>
+                </a>
+              </div>
+              </div>
+
+              <div class="block-feilds">
+                <span>Status Updated By</span>
+                <p>{{travel_detail.status_updated_by_name ? travel_detail.status_updated_by_name : '---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Status Updated On</span>
+                <p>{{travel_detail.updated_date!='0000-00-00'? (travel_detail.updated_date | date:'d MMM y'):'--'}}</p>
+              </div>
+
+              <div class="block-feilds" *ngIf="travel_detail.status_remark">
+                <span>Remark</span>
+                <p>{{travel_detail.status_remark && travel_detail.status_remark != '' && travel_detail.status_remark !=
+                  null?travel_detail.status_remark:'--'}}</p>
+              </div>
+
+              <div class="block-feilds" *ngIf="travel_detail.reason">
+                <span>Reason of Reject</span>
+                <p>{{travel_detail.reason}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-container>
+          <div class="card pt0 mt10">
+            <div class="card-body pt0">
+              <div class="grid-box eight highlight-grid">
+                <div class="block-feilds">
+                  <span>Date Created</span>
+                  <p>{{travel_detail.date_created!='0000-00-00 00:00:00'? (travel_detail.date_created | date:'d MMM y,
+                    hh:mm a'):'--'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Created By</span>
+                  <p>{{travel_detail.created_by_name ? (travel_detail.created_by_name | titlecase) : '---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Visit Date</span>
+                  <p>{{travel_detail.date_from!='0000-00-00'? (travel_detail.date_from | date:'d MMM y'):'--'}}</p>
+
+                </div>
+
+                <div class="block-feilds">
+                  <span>Visit Plan</span>
+                  <p>{{travel_detail.visit_plan_count ? travel_detail.visit_plan_count : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Visit Actual</span>
+                  <p>{{travel_detail.visit_actual_count ? travel_detail.visit_actual_count : '---'}}</p>
+
+                </div>
+                <div class="block-feilds">
+                  <span>Plan Follow</span>
+                  <p>{{travel_detail.visit_plan_follow ? (travel_detail.visit_plan_follow + '%') : '---'}}</p>
+
+                </div>
+                <div class="block-feilds">
+                  <span>Plan Deviation</span>
+                  <p>{{travel_detail.visit_plan_deviation ? (travel_detail.visit_plan_deviation + '%') : '---'}}</p>
+
+                </div>
+
+
+
+              </div>
+            </div>
+            <div class="cs-table left-right-10">
+              <div class=" border-top">
+                <div class="table-head">
+                  <table>
+                    <tr>
+                      <th class="w50  text-center">Sr.No</th>
+                      <th class="w150">Customer Type</th>
+                      <th>Company Name</th>
+                      <th class="w100 text-center">Check-in</th>
+                      <th class="w100 text-center">Check-out</th>
+                      <th class="w100 text-center">Time-spend</th>
+                      <th>Remark</th>
+                      <th class="w100">Status</th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="table-container pb0">
+                <div class="table-content none-shadow">
+                  <table>
+                    <tr *ngFor="let row of travel_detail.visit_plan_data; let i = index;">
+                      <td class="w50  text-center">{{i+1}}</td>
+                      <td class="w150">{{row.dr_type_name ? row.dr_type_name:'---'}}</td>
+                      <td>{{row.company_name ? row.company_name : '---'}}</td>
+                      <td class="w100 text-center">{{row.checkin_start != '0000-00-00 00:00:00' ? (row.checkin_start |
+                        date:'hh:mm a'): '--'}}</td>
+                      <td class="w100 text-center">{{row.checkin_end != '0000-00-00 00:00:00' ? (row.checkin_end |
+                        date:'hh:mm a'): '--'}}</td>
+                      <td class="w100 text-center">{{row.spent_time ? row.spent_time: '--'}}</td>
+                      <td>{{row.remark ? row.remark: '--'}}</td>
+                      <td class="w100"
+                        [ngClass]="{'light-green': row.checkin_id > 0, 'yellow-bgclr': row.checkin_id == 0}">
+                        {{row.checkin_id > 0 ? 'Complete': 'Pending'}}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

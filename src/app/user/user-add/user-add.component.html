@@ -1,0 +1,1041 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Add New User</h2>
+    </div>
+
+    <div class="container pt10 pl10 pr10 pb50">
+        <form name="detail" #f="ngForm" validate (ngSubmit)=" f.valid && submitDetail()">
+            <div class="row">
+                <div class="col s12">
+                    <div class="card pb0">
+                        <div class="card-head">
+                            <h2>User Type</h2>
+                        </div>
+                        <div class="card-body cs-form">
+                            <div class="row">
+                                <div class="col s12 m6 l6">
+                                    <mat-radio-group class="example-section" id="user_type" name="user_type"
+                                        [(ngModel)]="data.user_type">
+                                        <ng-container *ngIf="logined_user_data.id != '1'">
+                                            <mat-radio-button class="wp30" color="primary"
+                                                (change)="get_sales_user_type('', $event)" value="Sales User"
+                                                *ngIf="logined_user_data.organisation_data.sfa == '1'">
+                                                Sales User
+                                            </mat-radio-button>
+                                            <mat-radio-button class="wp30" color="primary"
+                                                (change)="get_sales_user_type('', $event);" value="System User"
+                                                *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.loyalty == '1' || logined_user_data.organisation_data.dispatch == '1')">
+                                                System User
+                                            </mat-radio-button>
+                                        </ng-container>
+                                        <!-- <ng-container *ngIf="logined_user_data.id == '1'">
+                                            <mat-radio-button class="wp30" color="primary"
+                                                (change)="get_sales_user_type('', $event);" value="ORG">
+                                                Organization
+                                            </mat-radio-button>
+                                        </ng-container> -->
+                                    </mat-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-head mt16">
+                            <h2>Basic Information</h2>
+                        </div>
+                        <div class="card-body cs-form">
+                            <!-- <div class="row mb16" *ngIf="logined_user_data.id == '1'">
+                                <div class="col s12 m1 l1">
+                                    <mat-checkbox [(ngModel)]="data.sfa" name="sfa">SFA</mat-checkbox>
+                                </div>
+                                <div class="col s12 m1 l1">
+                                    <mat-checkbox [(ngModel)]="data.dms" (change)="getPaperSize($event)"
+                                        name="dms">DMS</mat-checkbox>
+                                </div>
+                                <div class="col s12 m1 l1">
+                                    <mat-checkbox [(ngModel)]="data.loyalty" (change)="getPaperSize($event)"
+                                        name="loyalty">Loyalty</mat-checkbox>
+                                </div>
+                            </div> -->
+                            <div class="row">
+                                <div class="col s12 m3 l3">
+                                    <div class="wp100">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Select Designation</mat-label>
+                                            <mat-select name="user_role" placeholder="Role" [(ngModel)]="data.user_role"
+                                                #user_role="ngModel" (selectionChange)="checkIndex(data.user_role)"
+                                                required>
+                                                <mat-option value="" disabled>Select Role</mat-option>
+                                                <mat-option *ngFor="let row of sales_type"
+                                                    value="{{row.id}}">{{row.role_name}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+
+                                        <div class="alert alert-danger" *ngIf="user_role.touched || f.submitted">
+                                            <p *ngIf="user_role.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Name</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="name" #name="ngModel"
+                                            minlength="3" (keypress)="isValidName($event)" [(ngModel)]="data.name"
+                                            required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="name.touched || f.submitted">
+                                        <p *ngIf="name.errors?.required">This field is required</p>
+                                        <p *ngIf="!name.errors?.required && data.name.length<3">Invalid name</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline" [ngClass]="{'has-error' : exist == true } ">
+                                        <mat-label>Mobile No</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="mobileno" #mobileno="ngModel"
+                                            [(ngModel)]="data.mobileno" minlength="10" maxlength="10" min="0"
+                                            (keypress)="MobileNumber($event)" pattern="^[6-9][0-9]{0,9}$"
+                                            (input)="check_number()" [ngClass]="{'has-error' : mobileno.invalid } "
+                                            required>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="mobileno.touched || f.submitted">
+                                        <p *ngIf="mobileno.errors?.required">This field is required</p>
+                                        <p *ngIf="mobileno.errors?.pattern">Invalid Mobile Number</p>
+                                        <p
+                                            *ngIf="!mobileno.errors?.pattern  && (mobileno.errors?.maxlength || mobileno.errors?.minlength)">
+                                            Mobile No should be of 10 digits..
+                                        </p>
+                                    </div>
+
+                                    <div class="alert alert-danger" *ngIf="exist">
+                                        Mobile no. already Exists.
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Email ID</mat-label>
+                                        <input matInput placeholder="Type Here ..." type="email" name="email"
+                                            #email="ngModel" [(ngModel)]="data.email"
+                                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="email.touched || f.submitted">
+                                        <p *ngIf="email.errors?.pattern">This is not a valid Email ID !</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Employee Code</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="employee_id"
+                                            #employee_id="ngModel" [(ngModel)]="data.employee_id" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="employee_id.touched || f.submitted">
+                                        <p *ngIf="employee_id.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Enquiry</mat-label>
+                                        <mat-select name="enquiry_enable" #enquiry_enable="ngModel"
+                                            [(ngModel)]="data.enquiry_enable_type" multiple required>
+                                            <mat-option value="SFA">SFA</mat-option>
+                                            <mat-option value="DMS">DMS</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="enquiry_enable.touched || f.submitted">
+                                        <p *ngIf="enquiry_enable.errors?.required">This field is required</p>
+                                    </div>
+                                </div> -->
+
+                                <!-- <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Order</mat-label>
+                                        <mat-select name="order" #order="ngModel" [(ngModel)]="data.order_type"
+                                            required>
+                                            <mat-option value="0">Price Wise</mat-option>
+                                            <mat-option value="1">Quantity Wise</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="order.touched || f.submitted">
+                                        <p *ngIf="order.errors?.required">This field is required</p>
+                                    </div>
+                                </div> -->
+
+                                <!-- <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Order Item With Image</mat-label>
+                                        <mat-select name="item_image" #item_image="ngModel"
+                                            [(ngModel)]="data.item_image" required>
+                                            <mat-option value="1">Yes</mat-option>
+                                            <mat-option value="0">No</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="item_image.touched || f.submitted">
+                                        <p *ngIf="item_image.errors?.required">This field is required</p>
+                                    </div>
+                                </div> -->
+
+
+
+
+
+                                <ng-container *ngIf="logined_user_data.id != '1'">
+                                    <div class="col s12 m3 l3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Date of Birth</mat-label>
+                                            <input name="D.O.B" matInput [matDatepicker]="pickers_birth" placeholder=""
+                                                [max]="maxDate" #date_of_birth="ngModel" readonly
+                                                [(ngModel)]="data.date_of_birth">
+                                            <mat-datepicker-toggle matSuffix
+                                                [for]="pickers_birth"></mat-datepicker-toggle>
+                                            <mat-datepicker #pickers_birth></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col s12 m3 l3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Date of Wedding Anniversary</mat-label>
+                                            <input name="D.O.W.A" matInput [matDatepicker]="pickers_wedding"
+                                                placeholder="" [max]="maxDate" #date_of_wedding="ngModel" readonly
+                                                [(ngModel)]="data.date_of_wedding">
+                                            <mat-datepicker-toggle matSuffix
+                                                [for]="pickers_wedding"></mat-datepicker-toggle>
+                                            <mat-datepicker #pickers_wedding></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col s12 m3 l3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Date of Joining</mat-label>
+                                            <input name="D.O.J" matInput [matDatepicker]="pickers" placeholder=""
+                                                [max]="maxDate" #date_of_joining="ngModel" readonly
+                                                [(ngModel)]="data.date_of_joining">
+                                            <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                                            <mat-datepicker #pickers></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+
+
+                                </ng-container>
+                            </div>
+
+                            <!-- <div class="row" *ngIf="logined_user_data.id == '1'">
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Net Price</mat-label>
+                                        <mat-select name="net_price" #net_price="ngModel" [(ngModel)]="data.net_price"
+                                            required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="net_price.touched || f.submitted">
+                                        <p *ngIf="net_price.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Primary Discount Editable</mat-label>
+                                        <mat-select name="primary_dist_edit" #primary_dist_edit="ngModel"
+                                            [(ngModel)]="data.primary_dist_edit" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="primary_dist_edit.touched || f.submitted">
+                                        <p *ngIf="primary_dist_edit.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Additional Discount</mat-label>
+                                        <mat-select name="additional_discount" #additional_discount="ngModel"
+                                            [(ngModel)]="data.additional_discount" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="additional_discount.touched || f.submitted">
+                                        <p *ngIf="additional_discount.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="data.dms == true || data.sfa == true">
+                                    <div class="col s12 m3 l3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Party Deactivation Type </mat-label>
+                                            <mat-select name="party_deactive" #party_deactive="ngModel"
+                                                [(ngModel)]="data.party_deactive" required>
+                                                <mat-option value="0">Order Based</mat-option>
+                                                <mat-option value="1">Scanning Based</mat-option>
+                                                <mat-option value="2">Default Active</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="party_deactive.touched || f.submitted">
+                                            <p *ngIf="party_deactive.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Party Inactive Month</mat-label>
+                                        <mat-select name="party_inactive_month" #party_inactive_month="ngModel"
+                                            [(ngModel)]="data.party_inactive_month" required>
+                                            <mat-option value="1">1</mat-option>
+                                            <mat-option value="2">2</mat-option>
+                                            <mat-option value="3">3</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="party_inactive_month.touched || f.submitted">
+                                        <p *ngIf="party_inactive_month.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+                            </div> -->
+
+                            <!-- <div class="row"
+                                *ngIf="(logined_user_data.id == '1' && data.loyalty) || (logined_user_data.id == '1' && data.loyalty) || (logined_user_data.id == '1' && data.loyalty) || logined_user_data.id == '1' && data.sfa || logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.sfa || data.dms)">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Party Reset Device</mat-label>
+                                        <mat-select name="party_reset_device" #party_reset_device="ngModel"
+                                            [(ngModel)]="data.party_reset_device" required>
+                                            <mat-option value="1">No</mat-option>
+                                            <mat-option value="0">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="party_reset_device.touched || f.submitted">
+                                        <p *ngIf="party_reset_device.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1' && data.loyalty">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Influencer Reset Device</mat-label>
+                                        <mat-select name="influencer_reset_device" #influencer_reset_device="ngModel"
+                                            [(ngModel)]="data.influencer_reset_device" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="influencer_reset_device.touched || f.submitted">
+                                        <p *ngIf="influencer_reset_device.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1' && data.sfa">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Expense Claim</mat-label>
+                                        <mat-select name="exp_type" #exp_type="ngModel" [(ngModel)]="data.exp_type"
+                                            required>
+                                            <mat-option value="0">Manual Km</mat-option>
+                                            <mat-option value="1">Google Km</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="exp_type.touched || f.submitted">
+                                        <p *ngIf="exp_type.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1' && data.loyalty">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Scanning Subtype</mat-label>
+                                        <mat-select name="scanning_sub_type_wise" #scanning_sub_type_wise="ngModel"
+                                            [(ngModel)]="data.scanning_sub_type_wise" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="scanning_sub_type_wise.touched || f.submitted">
+                                        <p *ngIf="scanning_sub_type_wise.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1' && data.loyalty">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Influencer registration Auto Approval</mat-label>
+                                        <mat-select name="influencer_registration_auto_approval"
+                                            #influencer_registration_auto_approval="ngModel"
+                                            [(ngModel)]="data.influencer_registration_auto_approval" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="influencer_registration_auto_approval.touched || f.submitted">
+                                        <p *ngIf="influencer_registration_auto_approval.errors?.required">This field is
+                                            required</p>
+                                    </div>
+                                </div>
+                                <div class="row"
+                                    *ngIf="logined_user_data.id == '1' && data.loyalty && data.user_type=='ORG'">
+                                    <div class="col s12 m3 l3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Select Basis Of Working State</mat-label>
+                                            <mat-select name="state_wise_listing" [(ngModel)]="data.state_wise_listing"
+                                                #state_wise_listing="ngModel" required>
+                                                <mat-option value="Yes">Yes</mat-option>
+                                                <mat-option value="No">No</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger"
+                                            *ngIf="state_wise_listing.touched || f.submitted">
+                                            <p *ngIf="state_wise_listing.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div> -->
+                            <!-- <div class="row"
+                                *ngIf="(logined_user_data.id == '1') && (logined_user_data.id == '1' && data.loyalty && data.influencer_registration_auto_approval == '0') || (logined_user_data.id == '1' && data.loyalty && data.influencer_approval == '1' && data.influencer_registration_auto_approval == '0') || (logined_user_data.id == '1' && data.loyalty) || logined_user_data.id == '1'">
+
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1' && data.loyalty">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Upload Redeem Request</mat-label>
+                                        <mat-select name="upload_redeem_req" #upload_redeem_req="ngModel"
+                                            [(ngModel)]="data.upload_redeem_req" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="upload_redeem_req.touched || f.submitted">
+                                        <p *ngIf="upload_redeem_req.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && data.loyalty && data.influencer_registration_auto_approval == '0'">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Influencer Approval Type</mat-label>
+                                        <mat-select name="influencer_approval" #influencer_approval="ngModel"
+                                            [(ngModel)]="data.influencer_approval" required>
+                                            <mat-option value="0">Standard</mat-option>
+                                            <mat-option value="1">Multiple</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="influencer_approval.touched || f.submitted">
+                                        <p *ngIf="influencer_approval.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && data.loyalty && data.influencer_approval == '1' && data.influencer_registration_auto_approval == '0'">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Influencer Approval Level</mat-label>
+                                        <mat-select name="influencer_approval_level"
+                                            #influencer_approval_level="ngModel" multiple
+                                            [(ngModel)]="data.influencer_approval_level">
+                                            <mat-option value="Level1">Level1</mat-option>
+                                            <mat-option value="Level2">Level2</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="influencer_approval_level.touched || f.submitted">
+                                        <p *ngIf="influencer_approval_level.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1' && data.loyalty">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Scanning Geo Location</mat-label>
+                                        <mat-select name="scanning_geo_loaction" #scanning_geo_loaction="ngModel"
+                                            [(ngModel)]="data.scanning_geo_loaction" required>
+                                            <mat-option value="0">No</mat-option>
+                                            <mat-option value="1">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="scanning_geo_loaction.touched || f.submitted">
+                                        <p *ngIf="scanning_geo_loaction.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="logined_user_data.id == '1'">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Address Auto Fetch</mat-label>
+                                        <mat-select name="address_autofetch" #address_autofetch="ngModel"
+                                            [(ngModel)]="data.address_autofetch" required>
+                                            <mat-option value="1">No</mat-option>
+                                            <mat-option value="0">Yes</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="address_autofetch.touched || f.submitted">
+                                        <p *ngIf="address_autofetch.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data.id == '1' && (data.loyalty || (data.dms && data.secondary_network_loyalty == 'Scanning Based'))">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Influencer Redeemption Preference</mat-label>
+                                        <mat-select name="redeemption_prefrence" #redeemption_prefrence="ngModel"
+                                            [(ngModel)]="data.redeemption_prefrence" required>
+                                            <mat-option value="Bank">Bank</mat-option>
+                                            <mat-option value="UPI">UPI</mat-option>
+                                            <mat-option value="Both">Both</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+<div class="alert alert-danger"
+                                        *ngIf="redeemption_prefrence.touched || f.submitted">
+                                        <p *ngIf="redeemption_prefrence.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                            </div> -->
+
+                            <div class="row" >
+                                <!-- *ngIf="logined_user_data.id != '1'" -->
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Weekly Off</mat-label>
+                                        <mat-select name="weekly_off" #weekly_off="ngModel"
+                                            [(ngModel)]="data.weekly_off">
+                                            <mat-option disabled="">Select Week</mat-option>
+                                            <mat-option value="Sunday">Sunday</mat-option>
+                                            <mat-option value="Monday">Monday</mat-option>
+                                            <mat-option value="Tuesday">Tuesday</mat-option>
+                                            <mat-option value="Wednesday">Wednesday</mat-option>
+                                            <mat-option value="Thursday">Thursday</mat-option>
+                                            <mat-option value="Friday">Friday</mat-option>
+                                            <mat-option value="Saturday">Saturday</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="approvalLevel.length > 0">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Influencer Approval</mat-label>
+                                        <mat-select name="influencer_approval_level"
+                                            #influencer_approval_level="ngModel"
+                                            [(ngModel)]="data.influencer_approval_level" required>
+                                            <ng-container *ngFor="let row of approvalLevel">
+                                                <mat-option [value]="row.level">{{row.level_name}}</mat-option>
+                                            </ng-container>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="influencer_approval_level.touched || f.submitted">
+                                        <p *ngIf="influencer_approval_level.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="data.user_type == 'Sales User'">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Reporting Manager</mat-label>
+                                        <mat-select name="assign_user" #assign_user="ngModel"
+                                            [(ngModel)]="data.assign_user">
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                    placeholderLabel="Search.."
+                                                    (keyup)="getReportManager($event.target.value)"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option *ngFor="let list of report_manager;let index=index"
+                                                value="{{list.id}}">{{list.name}} - {{list.role_name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="data.user_type != 'Sales User' && logined_user_data.organisation_data.sfa == '1'">
+                                   
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Assign Users</mat-label>
+                                        <mat-select name="assign_system_user" #assign_system_user="ngModel" multiple
+                                            [(ngModel)]="data.assign_system_user" required>
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                    placeholderLabel="Search.."
+                                                    (keyup)="getReportManager($event.target.value)"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option *ngFor="let list of report_manager;let index=index"
+                                                value="{{list.id}}"> {{list.name}} - {{list.role_name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="assign_system_user.touched || f.submitted">
+                                        <p *ngIf="assign_system_user.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3"  *ngIf="data.user_type == 'System User' && logined_user_data.organisation_data.loyalty == '1'">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Select Working State</mat-label>
+                                        <mat-select name="working_state" [(ngModel)]="data.working_state"
+                                            #working_state="ngModel"
+                                            (selectionChange)="data.working_state ? getDistrict(2,'') : ''" multiple
+                                            >
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                    placeholderLabel="Search.."
+                                                    (keyup)="getWorkingStateList($event.target.value)"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option *ngFor="let row of states"
+                                                value="{{row.state_name}}">{{row.state_name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="working_state.touched || f.submitted">
+                                        <p *ngIf="working_state.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="col s12 m6 l6">
+                                    <div class="row">
+                                        <div class="col s12 m6 l6">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>Select State</mat-label>
+                                                <mat-select name="state" [(ngModel)]="data.state" #state="ngModel"
+                                                    (selectionChange)="getDistrict(1,'')">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                            placeholderLabel="Search.."
+                                                            (keyup)="getStateList($event.target.value)"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let row of statesList"
+                                                        value="{{row.state_name}}">{{row.state_name}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+                                                <p *ngIf="state.errors?.required">This field is required</p>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col s12 m6 l6">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>Select District</mat-label>
+                                                <mat-select name="district" [(ngModel)]="data.district"
+                                                    #district="ngModel">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                            placeholderLabel="Search.."
+                                                            (keyup)="getDistrict(1,$event.target.value)"></ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let row of district_list"
+                                                        value="{{row.district_name}}">{{row.district_name}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="district.touched || f.submitted">
+                                                <p *ngIf="district.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col s12 m6 l6">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>City</mat-label>
+                                                <input matInput placeholder="Type here..." name="city" #city="ngModel"
+                                                    [(ngModel)]="data.city">
+                                            </mat-form-field>
+                                        </div>
+
+                                        <div class="col s12 m6 l6">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>Pincode</mat-label>
+                                                <input matInput name="pincode" placeholder="Type Here ..."
+                                                    #pincode="ngModel" maxlength="6" [(ngModel)]="data.pincode">
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="pincode.touched || f.submitted">
+                                                <p *ngIf="pincode.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col s12 m6 l6">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Address</mat-label>
+                                        <textarea matInput placeholder="Type Here ..." name="address" #address="ngModel"
+                                            [(ngModel)]="data.address" class="h80"></textarea>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="address.touched || f.submitted">
+                                        <p *ngIf="address.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row" *ngIf="data.user_type == 'Sales User'">
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Select Working State</mat-label>
+                                        <mat-select name="working_state" [(ngModel)]="data.working_state"
+                                            #working_state="ngModel"
+                                            (selectionChange)="data.working_state ? getDistrict(2,'') : ''" multiple
+                                            required>
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                    placeholderLabel="Search.."
+                                                    (keyup)="getWorkingStateList($event.target.value)"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option *ngFor="let row of states"
+                                                value="{{row.state_name}}">{{row.state_name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="working_state.touched || f.submitted">
+                                        <p *ngIf="working_state.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Select District</mat-label>
+                                        <mat-select name="working_district" [(ngModel)]="data.working_district"
+                                            #working_district="ngModel" multiple required>
+                                            <mat-option disabled="">Select Working District</mat-option>
+                                            <div class="pl16 mt5 rm-mb">
+                                                <mat-checkbox [(ngModel)]="data.allWorkingDistrict"
+                                                    (change)="selectAllOption('district')" name="allsaleexecutive"
+                                                    value="true">Select All</mat-checkbox>
+                                            </div>
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                    placeholderLabel="Search.."
+                                                    (keyup)="getDistrict(2,$event.target.value)"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option *ngFor="let row of working_district_list"
+                                                value="{{row.district_name}}">{{row.district_name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+
+                                    <!-- <mat-form-field appearance="outline">
+                                        <mat-label>Working District</mat-label>
+                                        <mat-select name="working_district" #working_district="ngModel" [(ngModel)]="data.working_district" multiple required>
+                                            <mat-option disabled="">Select Working District</mat-option>
+                                            <div class="pl16">
+                                                <mat-checkbox [(ngModel)]="data.allWorkingDistrict" (change)="selectAllOption('district')" name="allsaleexecutive" value="true">Select All</mat-checkbox>
+                                            </div>
+                                            <mat-option *ngFor="let row of working_district_list" value="{{row.district_name}}"> {{row.district_name}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field> -->
+                                    <div class="alert alert-danger" *ngIf="working_district.touched || f.submitted">
+                                        <p *ngIf="working_district.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="row" *ngIf="logined_user_data.id == '1'">
+                <div class="col s12">
+                    <div class="card pb0">
+                        <div class="card-head mt16">
+                            <h2>Other Information</h2>
+                        </div>
+                        <div class="card-body cs-form">
+                            <div class="row">
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Logo</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="logo" #logo="ngModel"
+                                            minlength="3" [(ngModel)]="data.logo" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="logo.touched || f.submitted">
+                                        <p *ngIf="logo.errors?.required">This field is required</p>
+                                        <p *ngIf="!logo.errors?.required && data.logo.length<3">Invalid</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>App Id</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="app_id" #app_id="ngModel"
+                                            [(ngModel)]="data.app_id" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="app_id.touched || f.submitted">
+                                        <p *ngIf="app_id.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>One Signal Id</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="app_onesignal_id"
+                                            #app_onesignal_id="ngModel" [(ngModel)]="data.app_onesignal_id" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="app_onesignal_id.touched || f.submitted">
+                                        <p *ngIf="app_onesignal_id.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>One Signal Key</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="app_onesignal_key"
+                                            #app_onesignal_key="ngModel" [(ngModel)]="data.app_onesignal_key" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="app_onesignal_key.touched || f.submitted">
+                                        <p *ngIf="app_onesignal_key.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col s12 m3 l3 mt14">
+                                    <mat-checkbox [(ngModel)]="data.whatsapp_enable" name="whatsapp_enable">Whatsapp
+                                        Enabled?</mat-checkbox>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col s12 m3 l3" *ngIf="data.sfa">
+                                    <div class="card">
+                                        <div class="card-head">
+                                            <h2 class="font13 mb5">Select SFA Home Page</h2>
+                                        </div>
+
+                                        <mat-radio-group class="example-section dflex1 flex-gap-10" id="home_page_sfa"
+                                            name="home_page_sfa" [(ngModel)]="data.home_page_sfa">
+                                            <div *ngFor="let row of sfaHomeList">
+                                                <mat-radio-button class="wp25 mb4" color="primary"
+                                                    value="{{row?.page_name}}">
+                                                    {{row?.page_name}}
+                                                </mat-radio-button>
+                                            </div>
+                                        </mat-radio-group>
+                                    </div>
+
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="data.dms">
+                                    <div class="card">
+                                        <div class="card-head">
+                                            <h2 class="font13 mb5">Select DMS Home Page</h2>
+                                        </div>
+                                        <mat-radio-group class="example-section dflex1 flex-gap-10" id="home_page_dms"
+                                            name="home_page_dms" [(ngModel)]="data.home_page_dms">
+                                            <div *ngFor="let row of dmsHomeList">
+                                                <mat-radio-button class="wp25 mb4" color="primary"
+                                                    value="{{row?.page_name}}">
+                                                    {{row?.page_name}}
+                                                </mat-radio-button>
+                                            </div>
+                                        </mat-radio-group>
+
+                                        <div class="row">
+                                            <div class="col s12 m12 l12">
+                                                <mat-form-field appearance="outline">
+                                                    <mat-label>Secondary Network Loyalty</mat-label>
+                                                    <mat-select name="secondary_network_loyalty"
+                                                        #secondary_network_loyalty="ngModel"
+                                                        [(ngModel)]="data.secondary_network_loyalty" required>
+                                                        <mat-option value="Scanning Based">Scanning Based</mat-option>
+                                                        <mat-option value="Secondary Billing Based">Secondary Billing
+                                                            Based</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <div class="alert alert-danger"
+                                                    *ngIf="secondary_network_loyalty.touched || f.submitted">
+                                                    <p *ngIf="secondary_network_loyalty.errors?.required">This field is
+                                                        required</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col s12 m12 l12">
+                                                <mat-form-field appearance="outline">
+                                                    <mat-label>Secondary Self Registration</mat-label>
+                                                    <mat-select name="secondary_registration"
+                                                        #secondary_registration="ngModel"
+                                                        [(ngModel)]="data.secondary_registration" required>
+                                                        <mat-option disabled="">Select Secondary
+                                                            Registration</mat-option>
+                                                        <mat-option value="Yes">Yes</mat-option>
+                                                        <mat-option value="No">No</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+
+                                                <div class="alert alert-danger"
+                                                    *ngIf="secondary_registration.touched || f.submitted">
+                                                    <p *ngIf="secondary_registration.errors?.required">This field is
+                                                        required</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="data.loyalty && data.user_type == 'ORG'">
+                                    <div class="card">
+                                        <div class="card-head">
+                                            <h2 class="font13 mb5">Select Loyalty Home Page</h2>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col s12">
+                                                <mat-radio-group class="example-section dflex1 flex-gap-10"
+                                                    id="home_page_loyalty" name="home_page_loyalty"
+                                                    [(ngModel)]="data.home_page_loyalty">
+                                                    <div *ngFor="let row of loyaltyHomeList">
+                                                        <mat-radio-button class="wp25 mb4" color="primary"
+                                                            value="{{row?.page_name}}">
+                                                            {{row?.page_name}}
+                                                        </mat-radio-button>
+                                                    </div>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+
+                                       
+
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="(data.dms == true && data.secondary_network_loyalty == 'Scanning Based') || (data.loyalty == true && data.user_type == 'ORG')">
+                                    <div class="row"
+                                        *ngIf="logined_user_data.id == '1' && (data.loyalty || (data.dms == true && data.secondary_network_loyalty == 'Scanning Based'))">
+                                        <div class="col s12">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>Coupon Generation</mat-label>
+                                                <mat-select name="qr_genration" #qr_genration="ngModel"
+                                                    [(ngModel)]="data.qr_genration" required>
+                                                    <mat-option value="QR Wise">QR Wise</mat-option>
+                                                    <mat-option value="Item Wise">Item Wise</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="qr_genration.touched || f.submitted">
+                                                <p *ngIf="qr_genration.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row"
+                                        *ngIf="logined_user_data.id == '1' && (data.loyalty || (data.dms == true && data.secondary_network_loyalty == 'Scanning Based'))">
+                                        <div class="col s12">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>QR Printing</mat-label>
+                                                <mat-select name="qr_printing" #qr_printing="ngModel"
+                                                    [(ngModel)]="data.qr_printing" required>
+                                                    <mat-option value="0">Basiq360 Printing</mat-option>
+                                                    <mat-option value="1">Third Party Printing</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="qr_printing.touched || f.submitted">
+                                                <p *ngIf="qr_printing.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row"
+                                        *ngIf="(logined_user_data.id == '1' && (data.loyalty || (data.dms == true && data.secondary_network_loyalty == 'Scanning Based')) && data.qr_printing == '0')">
+                                        <div class="col s12">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>QR Paper Size</mat-label>
+                                                <mat-select name="assign_template" #assign_template="ngModel"
+                                                    [(ngModel)]="data.assign_template" multiple required>
+                                                    <mat-option disabled="">Select Paper Size</mat-option>
+                                                    <mat-option *ngFor="let row of paperSize"
+                                                        value="{{row.id}}">{{row.size}} <strong>{{row.id ? ('(Template
+                                                            ID - '+row.id+')') : ''}}</strong></mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+
+                                            <div class="alert alert-danger"
+                                                *ngIf="assign_template.touched || f.submitted">
+                                                <p *ngIf="assign_template.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row"
+                                        *ngIf="logined_user_data.id == '1' && (data.loyalty || (data.dms == true && data.secondary_network_loyalty == 'Scanning Based'))">
+                                        <div class="col s12">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>Redeem Request Accept</mat-label>
+                                                <mat-select name="redeem_request_accept"
+                                                    #redeem_request_accept="ngModel"
+                                                    [(ngModel)]="data.redeem_request_accept" required>
+                                                    <mat-option value="0">Single</mat-option>
+                                                    <mat-option value="1">Multiple</mat-option>
+</mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger"
+                                                *ngIf="redeem_request_accept.touched || f.submitted">
+                                                <p *ngIf="redeem_request_accept.errors?.required">This field is required
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row"
+                                        *ngIf="logined_user_data.id == '1' && (data.loyalty || (data.dms == true && data.secondary_network_loyalty == 'Scanning Based'))">
+                                        <div class="col s12">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>Coupon Length</mat-label>
+                                                <mat-select name="coupon_length" #coupon_length="ngModel"
+                                                    [(ngModel)]="data.coupon_length" required>
+                                                    <mat-option value="12">12</mat-option>
+                                                    <mat-option value="16">16</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger"
+                                                *ngIf="coupon_length.touched || f.submitted">
+                                                <p *ngIf="coupon_length.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col s12">
+                    <div class="text-right">
+                        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent"
+                            type="submit" [disabled]="savingFlag == true || exist">
+                            {{savingFlag == true ? 'Saving' : 'Save'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+ </div>
+</div>

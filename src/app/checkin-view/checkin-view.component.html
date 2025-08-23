@@ -1,0 +1,327 @@
+<div mat-dialog-title>Checkin Details
+  <a mat-icon-button class="fix-btn" (click)="close()">
+    <i class="material-icons edit">clear</i>
+  </a>
+</div>
+<div mat-dialog-content>
+  <div class="dialog-content">
+    <div class="row" *ngIf="skLoading">
+      <div class="col s12">
+        <div class="card">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="!skLoading">
+      <div class="col s12 m18 l8">
+        <div class="card">
+          <div class="card-head">
+            <h2>Basic Detais</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date</span>
+                <p>{{attedence_data.attend_date | date : 'd MMM y'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Employee Name</span>
+                <p>{{user_details.name | titlecase}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Employee Code</span>
+                <p>{{user_details.employee_id}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Reporting Manager</span>
+                <p>{{user_details.reporting_manager_name | titlecase}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Primary Sales Count</span>
+                <p>{{attedence_data.today_primary_sales_count}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Secondary Sales Count</span>
+                <p>{{attedence_data.today_secondary_sales_count}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Google KM</span>
+                <p>{{attedence_data.km_per_day}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Start Meter Reading</span>
+                <p>{{attedence_data.start_meter_reading ? attedence_data.start_meter_reading : '0'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Stop Meter Reading</span>
+                <p>{{attedence_data.stop_meter_reading ? attedence_data.stop_meter_reading : '0'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Actual KM</span>
+                <p *ngIf="attedence_data.start_meter_reading > 0 && attedence_data.stop_meter_reading > 0">{{attedence_data.stop_meter_reading - attedence_data.start_meter_reading}}</p>
+                <p *ngIf="attedence_data.start_meter_reading == 0 || attedence_data.stop_meter_reading == 0">0</p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="col s12 m18 l8 ">
+          <div class="card mt10">
+            <div class="card-head">
+              <h2>Add Remarks</h2>
+            </div>
+            <div class="card-body">
+              <!-- <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Date</span>
+                  <p>{{attedence_data.attend_date | date : 'd MMM y'}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Employee Name</span>
+                  <p>{{user_details.name | titlecase}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Employee Code</span>
+                  <p>{{user_details.employee_id}}</p>
+                </div>
+                
+                
+                
+  
+                
+              </div> -->
+              
+              <form #f="ngForm">
+                <div mat-dialog-content>
+             
+                  <div class="cs-form">
+                <div class="row">
+                  <div class="col s12 m5 l5">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Type</mat-label>
+                        <mat-select name="checkin_remark_type" #checkin_remark_type="ngModel"
+                            [(ngModel)]="Checkindata.checkin_remark_type" >
+                            <mat-option value="Punchin">Punchin</mat-option>
+                            <mat-option value="Punchout">Punchout</mat-option>
+                            <mat-option value="Check-in">Check-in</mat-option>
+                            <mat-option value="Check-out">Check-out</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- <div class="alert alert-danger" *ngIf="checkin_remark_type.touched || f.submitted">
+                        <p *ngIf="checkin_remark_type.errors?.required">This field is required</p>
+                    </div> -->
+                </div>
+                <div class="col s12 m5 l5">
+                  <mat-form-field class="cs-input" appearance="outline">
+                    <mat-label>Add Remark</mat-label>
+                    <input matInput placeholder="Type here ..." name="remark" #remark="ngModel" [(ngModel)]="Checkindata.remark" [ngClass]="{'has-error' : remark.invalid }" />
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="remark.touched || f.submitted">
+                    <p *ngIf="remark.errors?.required">This field is required</p>
+                </div> -->
+                </div>
+                <div class="col s12 m2 l2 mt11">
+                  <button type="button" (click)="addtolist($event)" [disabled]="!Checkindata.checkin_remark_type||!Checkindata.remark" class="mr10" mat-stroked-button color="warn">Add to List</button>
+                </div>
+                </div>
+                  
+                    
+                   
+                    <ng-container *ngIf="Remarkarray?.length>0">
+                      <table class="mt10">
+                          <thead>
+                              <tr>
+                                <th class="w60">S.No</th>
+                            <th class="w100">Type</th>
+                            <th>Remark</th>
+                            <th class="w60">Delete</th>
+                               
+                              </tr>
+                          </thead>
+                          <tbody>
+                              
+                              <tr *ngFor="let item of Remarkarray;let i = index;">
+                                <td  class="w60">{{i+1}}</td>
+                                <td class="w100">{{item.checkin_remark_type}}</td>
+                                <td>{{item.remark}}</td>
+                                <td class="w60">
+                                    <div class="tag-info">
+                                        <button style="border: none;" type="button"><i class="material-icons red-clr"
+                                                (click)="DeleteItem(i,$event)">delete_sweep</i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                          </tbody>
+                      </table>
+                  </ng-container>
+                  
+            
+                 
+                </div>
+                <div mat-dialog-actions>
+                  <div class="text-right wp100">
+                    <!-- <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button> -->
+                    <button mat-raised-button color="accent" type="button" (click)="Submit()"  [ngClass]="{'loading': savingFlag == true}" [disabled]="savingFlag == true">
+                      {{savingFlag == true ? 'Saving' : 'Save'}}
+                    </button>
+                  </div>
+                </div>
+                <ng-container *ngIf="RemarkData?.length>0">
+                  <div class="card-head">
+                    <h2>Remarks Detail</h2>
+                  </div>
+                  <table class="mt10">
+                      <thead>
+                          <tr>
+                            <th class="w60">S.No</th>
+                            <th class="w100">Type</th>
+                            <th>Remark</th>
+                         
+                          </tr>
+                      </thead>
+                      <tbody>
+                         
+                          <tr *ngFor="let item of RemarkData;let i = index;">
+                            <td  class="w60">{{i+1}}</td>
+                            <td class="w100">{{item.checkin_remark_type}}</td>
+                            <td>{{item.remark}}</td>
+                         
+                        </tr>
+                      </tbody>
+                  </table>
+              </ng-container>
+                </div>
+              </form>
+
+            </div>
+          </div>
+         
+        </div>
+        <!-- <div class="direction-map">
+          
+          <agm-map [latitude]="attedence_data.start_lat" [longitude]="attedence_data.start_lng">
+            <agm-direction [origin]="origin" [destination]="destination">
+            </agm-direction>
+            <ng-container *ngFor="let mark of check_in_data">
+              <agm-marker [latitude]="mark.start_lat" [longitude]="mark.start_lng"></agm-marker>
+              
+            </ng-container>
+            
+          </agm-map>
+        </div> -->
+      </div>
+      
+      
+      
+      <div class="col s12 m4 l4">
+        <div class="travel">
+          <ul>
+            <li>
+              <span class="vistit-count">
+                <i class="material-icons">location_on</i>
+              </span>
+              <p>
+                <strong>Day Start </strong>
+                <ng-container *ngIf="attedence_data.start_time == '0000-00-00 00:00:00'">---</ng-container>
+                <ng-container *ngIf="attedence_data.start_time != '0000-00-00 00:00:00'">{{attedence_data.start_time |
+                  date:'h:mm a'}} <br><br><strong>GPS Address :</strong> {{attedence_data.start_address}}</ng-container>
+                </p>
+              </li>
+              
+              <li *ngFor="let row of check_in_data; let i = index">
+                <span class="vistit-count">{{i+1}}</span>
+                <span class="km">{{row.km}} KM</span>
+                <div class="counter">
+                  <div>
+                    
+                    <h2 class="link-clr pointer" (click)="goToPage(row.dr_id, row.dr_type)" >{{row.display_name}} {{row.dr_type_name ? ('(' +row.dr_type_name + ')') : ''}} </h2>
+                    
+                    <div class="visit-time">
+                      <div class="visit-hours">
+                        <span class="green-clr">Check-in</span>
+                        <p *ngIf="row.visit_start != '0000-00-00 00:00:00' ">{{row.visit_start | date:'h:mm a'}}</p>
+                        <p *ngIf="row.visit_start == '0000-00-00 00:00:00' ">---</p>
+                      </div>
+                      <div class="visit-hours">
+                        <span class="red-clr">Check-out</span>
+                        <p *ngIf="row.visit_end != '0000-00-00 00:00:00' ">{{row.visit_end | date:'h:mm a'}}</p>
+                        <p *ngIf="row.visit_end == '0000-00-00 00:00:00' ">---</p>
+                      </div>
+                      <div class="visit-hours">
+                        <span>Total time spend</span>
+                        <p>{{row.TOTAL_TIME_TAKE}}</p>
+                      </div>
+                    </div>
+                    <ng-container *ngIf="row.network_data && row.network_data.dr_type != 'other'">
+                      <p *ngIf="row.network_data.dr_type"><strong>Customer Type :</strong> {{row.network_data.dr_type}} {{row.network_data.network}}</p>
+                      <p *ngIf="row.network_data.state"><strong>State :</strong> {{row.network_data.state ? row.network_data.state : '---'}}</p>
+                      <p *ngIf="row.network_data.district"><strong>District :</strong> {{row.network_data.district ? row.network_data.district : '---'}}</p>
+                      <p *ngIf="row.network_data.city"><strong>City :</strong> {{row.network_data.city ? row.network_data.city :'---'}}</p>
+                      <p *ngIf="row.start_address"><strong>Start GPS Address :</strong> {{row.start_address}}</p>
+                      <p *ngIf="row.address"><strong>End GPS Address :</strong> {{row.address}}</p>
+                      <p *ngIf="row.visit_type"><strong>Visit Type :</strong> {{row.visit_type ? row.visit_type : ''}}</p>
+                      <p *ngIf="row.description"><strong>Check-in Remark :</strong> {{row.description}}</p>
+                    </ng-container>
+                  </div>
+                  <div class="type-visit">
+                    <div class="types" [ngClass]="{'active': row.order_flag > 0}">
+                      <span>&nbsp;</span>
+                      Order
+                    </div>
+                    <div class="types" [ngClass]="{'active': row.followup_flag > 0}">
+                      <span>&nbsp;</span>
+                      Followup
+                    </div>
+                    <div class="types" [ngClass]="{'active': row.document_flag > 0}">
+                      <span>&nbsp;</span>
+                      <a style="cursor: pointer;text-decoration: underline;" *ngIf="row.document_flag > 0"
+                        (click)="opendoc(row.Doc)">
+                        Photo upload
+                      </a>
+                      <a *ngIf="row.document_flag <1">
+                        Photo upload
+                      </a>
+                      
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <span class="vistit-count">
+                  <i class="material-icons">location_on</i>
+                </span>
+                <span class="km" style="top:-11px; left:-63px;">{{attedence_data.distance_from_last_checkin ? attedence_data.distance_from_last_checkin : '0'}}
+                  KM</span>
+                  
+                  <p *ngIf="attedence_data.stop_address && attedence_data.stop_time != '0000-00-00 00:00:00' "><strong>Day
+                    Stop </strong>
+                    <ng-container *ngIf="attedence_data.stop_time == '0000-00-00 00:00:00'">---</ng-container>
+                    <ng-container *ngIf="attedence_data.stop_time != '0000-00-00 00:00:00'">{{attedence_data.stop_time |
+                      date:'h:mm a'}} <br><br><strong>GPS Address :</strong> {{attedence_data.stop_address}}</ng-container>
+                    </p>
+                  </li>
+                </ul>
+              </div>
+              
+            </div>
+   
+          </div>
+        </div>
+      </div>

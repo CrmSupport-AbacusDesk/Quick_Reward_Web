@@ -1,0 +1,824 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>{{reportType.reportType ? (reportType.reportType.replaceAll('-', ' ')) : ''}}</h2>
+
+    <div class="left-auto">
+      <a class="sm-mat-icon-button" mat-icon-button matTooltip="Header Settings"
+        (click)="settingModal(reportType.reportType)">
+        <i class="material-icons">settings</i>
+      </a>
+    </div>
+  </div>
+
+
+
+  <div class="container container-scroll pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12">
+        <div class="card pb0">
+          <div class="card-body cs-form">
+            <div class="row">
+              <div class="col s12 m3 l3">
+                <div class="selct-all text-left" *ngIf="states.length > 0">
+                  <mat-checkbox [(ngModel)]="data.checkUser" name="checkUser" color="primary"
+                    (click)="allSelect('state'); userList('')">Select All State</mat-checkbox>
+                </div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>State</mat-label>
+                  <mat-select name="state" #state="ngModel" [(ngModel)]="data.state" multiple
+                    (selectionChange)="userList('')">
+                    <mat-option>
+                      <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                        (keyup)="getAllList($event.target.value,'','', '')"></ngx-mat-select-search>
+                    </mat-option>
+
+
+
+                    <mat-option *ngFor="let row of states" value="{{row.state_name}}">
+                      {{row.state_name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col s12 m3 l3">
+                <div class="selct-all text-left" *ngIf="reportingOne.length > 0">
+                  <mat-checkbox [(ngModel)]="data.rm1" name="rm1" color="primary"
+                    (click)="allSelect('rm1'); userList('')">Select All Reporting Manager</mat-checkbox>
+                </div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Reporting Manager 1</mat-label>
+                  <mat-select name="rsm1" #rsm1="ngModel" [(ngModel)]="data.rsm1" multiple
+                    (selectionChange)="userList('')">
+                    <mat-option>
+                      <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                        (keyup)="getAllList('',$event.target.value,'', '')"></ngx-mat-select-search>
+                    </mat-option>
+
+                    <mat-option *ngFor="let list of reportingOne; let index=index" value="{{list.id}}">
+                      {{list.name? (list.name | titlecase) : '---'}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+
+              <div class="col s12 m3 l3">
+                <div class="selct-all text-left" *ngIf="user.length > 0">
+                  <mat-checkbox [(ngModel)]="data.employee" name="employee" color="primary"
+                    (click)="allSelect('employee'); userList('')">Select All Employee</mat-checkbox>
+                </div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Employee *</mat-label>
+                  <mat-select name="assigned_sales_user_name" [(ngModel)]="data.assigned_sales_user_name"
+                    #assigned_sales_user_name="ngModel" multiple>
+                    <mat-option>
+                      <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                        (keyup)="userList($event.target.value)"></ngx-mat-select-search>
+                    </mat-option>
+
+
+                    <mat-option *ngFor="let list of user;let index=index" value="{{list.id}}">
+                      {{list.name? (list.name | titlecase) : '---'}} {{list.employee_id ? ('- ' + list.employee_id):
+                      ''}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col s12 m3 l3"
+                [ngClass]="{'mt24': states.length > 0 || reportingOne.length > 0 || user.length > 0}">
+                <mat-form-field appearance="outline">
+                  <mat-label>Date From *</mat-label>
+                  <input name="date_from" matInput [matDatepicker]="pickers1" #date_from="ngModel" readonly
+                    [(ngModel)]="data.date_from" [max]="today">
+                  <mat-datepicker-toggle matSuffix [for]="pickers1"></mat-datepicker-toggle>
+                  <mat-datepicker #pickers1></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12 m3 l3">
+                <mat-form-field appearance="outline">
+                  <mat-label>Date To *</mat-label>
+                  <input name="date_to" matInput [matDatepicker]="pickers" #date_to="ngModel" readonly
+                    [(ngModel)]="data.date_to" [min]="data.date_from" [max]="today">
+                  <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                  <mat-datepicker #pickers></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <div class="col s12 m3 l3">
+
+                <div class="mt5">
+                  <!-- <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+                    [disabled]="!data.date_from && !data.date_to && !data.assigned_sales_user_name || savingFlag == true "
+                    (click)="getReport()">
+                    {{savingFlag == true ? 'Please Wait' : reportType.reportType == 'Expense-Report' ? 'Download Excel'
+                    : 'Search'}}
+                  </button> -->
+
+
+                  <ng-container
+                    *ngIf="!data.date_from || !data.date_to || !data.assigned_sales_user_name || !data.state || !data.rsm1 || !data.rsm2 || !data.hod_user">
+                    <a class="ml10" mat-raised-button color="warn" (click)="clearFilter()">
+                      Clear
+                    </a>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width: 100%; height: 100px; background: red;">
+      <button (click)="startPlayback()">Start Playback</button>
+      <button (click)="pausePlayback()">Pause Playback</button>
+      <button (click)="rewindPlayback()">Rewind Playback</button>
+    </div>
+
+    <div id="map" style="height: 500px; width: 500px;"></div>
+
+
+    <!-- PJP Detail Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'PJP-Detail-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <th class="w120">Pjp Creation Date</th>
+              <th class="w100">Visit Date</th>
+              <ng-container *ngIf="headersCus[0] != '' ">
+                <th class="w200" *ngFor="let row of headersCus">{{row}}</th>
+              </ng-container>
+              <th class="w110">Status of PJP</th>
+              <th class="w110">Action on Date</th>
+              <th class="w110">Action By</th>
+              <th class="w170">Reason Of Rejection</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0] != '' ">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <td class="w120">{{row.date_created ? (row.date_created | date : 'd MMM y') : '---'}}</td>
+                  <td class="w100">{{row.date ? (row.date |date : 'd MMM y') : '---'}}</td>
+                  <ng-container *ngIf="row.dr[0] != '' ">
+                    <td class="w200" *ngFor="let cus of row.dr">{{cus}}</td>
+                  </ng-container>
+                  <td class="w110">{{row.status ? row.status : '---'}}</td>
+                  <td class="w110">{{row.updated_date != '0000-00-00' ? (row.updated_date | date : 'd MMM y') : '---'}}
+                  </td>
+                  <td class="w110">{{row.updated_by ? row.updated_by : '---'}}</td>
+                  <td class="w170">{{row.status_reason ? row.status_reason : '---'}}</td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="loader">
+                <tr>
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w120">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w170">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- PJP Detail Report End -->
+
+
+    <!-- PJP Summary-Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'PJP-Summary-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <th class="w120">Pjp Creation Date</th>
+              <th class="w100">Visit Date</th>
+              <th class="w100 text-center">Distrubutor</th>
+              <th class="w100 text-center">Dealer</th>
+              <th class="w100 text-center">Contractor</th>
+              <th class="w100 text-center">Architect</th>
+              <th class="w100 text-center">Interior Designer</th>
+              <th class="w100 text-center">Carpenter</th>
+              <th class="w100 text-center">Builder</th>
+              <th class="w100 text-center">OEM</th>
+              <th class="w100 text-center">Fabricator</th>
+              <th class="w100 text-center">Site</th>
+              <th class="w100 text-center">Total No of PJP</th>
+
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0] != '' ">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <td class="w120">{{row.date_created ? (row.date_created | date : 'd MMM y') : '---'}}</td>
+                  <td class="w100">{{row.date ? (row.date |date : 'd MMM y') : '---'}}</td>
+                  <td class="w100 text-center">{{row.distributor}}</td>
+                  <td class="w100 text-center">{{row.retailer}}</td>
+                  <td class="w100 text-center">{{row.contractor}}</td>
+                  <td class="w100 text-center">{{row.architect}}</td>
+                  <td class="w100 text-center">{{row.interior_designer}}</td>
+                  <td class="w100 text-center">{{row.carpenter}}</td>
+                  <td class="w100 text-center">{{row.Builder}}</td>
+                  <td class="w100 text-center">{{row.OEM}}</td>
+                  <td class="w100 text-center">{{row.Fabricator}}</td>
+                  <td class="w100 text-center">{{row.site}}</td>
+                  <td class="w100 text-center">
+                    {{row.distributor+row.retailer+row.contractor+row.architect+row.interior_designer+row.carpenter+row.Builder+row.OEM+row.Fabricator+row.site}}
+                  </td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="loader">
+                <tr>
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w120">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- PJP Summary-Report End -->
+
+
+    <!-- PJP Summary-Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'Attendance-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <th class="w120">Date</th>
+              <th class="w120">Punch In Time</th>
+              <th class="w120">Punch Out Time</th>
+              <th class="w100">Status</th>
+              <th class="w200">Punch In Address/Geo</th>
+              <th class="w200">Punch Out Address/Geo</th>
+              <th class="w120 text-center">No. of hours worked</th>
+              <th class="w120 text-center">Checkin hours</th>
+              <th class="w120 text-center">Total Km</th>
+              <th class="w120 text-center">Checkin Km</th>
+              <th class="w130">Punch-in Remark</th>
+              <th class="w170">Punch-out Remark</th>
+              <th class="w130">Status of Auto Punch-out</th>
+              <th class="w100">Mode of Travel </th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0] != '' ">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <td class="w120">{{row.attend_date ? (row.attend_date | date : 'd MMM y') : '---'}}</td>
+                  <td class="w120">{{row.start_time != '00:00:00' ? row.start_time : '---'}}</td>
+                  <td class="w120">{{row.stop_time != '00:00:00' ? row.stop_time : '---'}}</td>
+                  <td class="w100">{{row.status ? row.status : '---'}}</td>
+                  <td class="w200">
+                    {{row.start_address ? row.start_address : '---'}}
+                    {{row.start_lat ? ('Latitude' + row.start_lat) : ''}} {{row.start_lng ? ('Longitude' +
+                    row.start_lng) : ''}}</td>
+                  <td class="w200">
+                    {{row.start_address ? row.start_address : '---'}}
+                    {{row.stop_lat ? ('Latitude' + row.stop_lat) : ''}} {{row.stop_lng ? ('Longitude' +
+                    row.stop_lng) : ''}}</td>
+                  <td class="w120 text-center">{{row.Total_Working_Time ? row.Total_Working_Time :'---'}}</td>
+                  <td class="w120 text-center">{{row.Total_checkin_Time ? row.Total_checkin_Time :'---'}}</td>
+                  <td class="w120 text-center">{{row.distance ? (row.distance + 'KM') :'---'}}</td>
+                  <td class="w120 text-center">{{row.distance_from_last_checkin ? (row.distance_from_last_checkin +
+                    'KM') :'---'}}</td>
+                  <td class="w130">{{row.start_remark ? start_remark : '---'}}</td>
+                  <td class="w170">{{row.stop_remark ? stop_remark : '---'}}</td>
+                  <td class="w100">{{row.cron_stop == 1 ? 'Cron':'Self'}}</td>
+                  <td class="w100">{{row.vehicle ? row.vehicle : '--'}}</td>
+
+                </tr>
+              </ng-container>
+
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- PJP Summary-Report End -->
+
+
+    <!-- Vist Detail-Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'Visit-Detail-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <ng-container *ngIf="headersCus[0] != '' ">
+                <th class="w200" *ngFor="let row of headersCus">{{row}}</th>
+              </ng-container>
+              <th class="w120">Customer visit Date</th>
+              <th class="w100">Start time of visit</th>
+              <th class="w110">End time of visit</th>
+              <th class="w110"> Time duration between Start & End time</th>
+              <th class="w250">Start Geo location</th>
+              <th class="w250">End Geo location</th>
+              <th class="w170">Description/Purpose of visit</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0]  != ''">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <ng-container *ngIf="row.dr[0]  != ''">
+                    <td class="w200" *ngFor="let cus of row.dr">{{cus}}</td>
+                  </ng-container>
+                  <td class="w120">{{row.date_created ? (row.date_created | date : 'd MMM y') : '---'}}</td>
+                  <td class="w100">{{row.visit_start ? (row.visit_start | date : 'hh:mm a') : '---'}}</td>
+                  <td class="w110">{{row.visit_end ? (row.visit_end | date : 'hh:mm a') : '---'}}</td>
+                  <td class="w110">{{row.Total_visit_Time ? (row.Total_visit_Time) : '---'}}
+                  </td>
+                  <td class="w250">
+                    {{row.start_address ? row.start_address : '---'}}
+                    {{row.start_lat ? ('Latitude' + row.start_lat) : ''}} {{row.start_lng ? ('Longitude' +
+                    row.start_lng) : ''}}
+                  </td>
+                  <td class="w250">
+                    {{row.address ? row.address : '---'}}
+                    {{row.lat ? ('Latitude' + row.lat) : ''}} {{row.lng ? ('Longitude' +
+                    row.lng) : ''}}
+                  </td>
+                  <td class="w170">{{row.description ? row.description : '---'}}</td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="loader">
+                <tr>
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w120">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w170">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- Vist Detail-Report End -->
+
+
+    <!-- Vist Summary-Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'Visit-Summary-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <th class="w100">Customer Visit Date</th>
+              <th class="w100 text-center">Distrubutor</th>
+              <th class="w100 text-center">Dealer</th>
+              <th class="w100 text-center">Contractor</th>
+              <th class="w100 text-center">Architect</th>
+              <th class="w100 text-center">Interior Designer</th>
+              <th class="w100 text-center">Carpenter</th>
+              <th class="w100 text-center">Builder</th>
+              <th class="w100 text-center">OEM</th>
+              <th class="w100 text-center">Fabricator</th>
+              <th class="w100 text-center">Site</th>
+              <th class="w100 text-center">Total No of visit</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0] != '' ">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <td class="w100">{{row.date_created ? (row.date_created | date : 'd MMM y') : '---'}}</td>
+                  <td class="w100 text-center">{{row.distributor}}</td>
+                  <td class="w100 text-center">{{row.retailer}}</td>
+                  <td class="w100 text-center">{{row.contractor}}</td>
+                  <td class="w100 text-center">{{row.architect}}</td>
+                  <td class="w100 text-center">{{row.interior_designer}}</td>
+                  <td class="w100 text-center">{{row.carpenter}}</td>
+                  <td class="w100 text-center">{{row.Builder}}</td>
+                  <td class="w100 text-center">{{row.OEM}}</td>
+                  <td class="w100 text-center">{{row.Fabricator}}</td>
+                  <td class="w100 text-center">{{row.site}}</td>
+                  <td class="w100 text-center">
+                    {{row.distributor+row.retailer+row.contractor+row.architect+row.interior_designer+row.carpenter+row.Builder+row.OEM+row.Fabricator+row.site}}
+                  </td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="loader">
+                <tr>
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- Vist Summary-Report End -->
+
+    <!-- Deviation-Detail-Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'Deviation-Detail-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <ng-container *ngIf="headersCus[0] != '' ">
+                <th class="w200" *ngFor="let row of headersCus">{{row}}</th>
+              </ng-container>
+              <th class="w120">Customer visit Date</th>
+              <th class="w100">Start time of visit</th>
+              <th class="w110">End time of visit</th>
+              <th class="w110"> Time duration between Start & End time</th>
+              <th class="w250">Start Geo location</th>
+              <th class="w250">End Geo location</th>
+              <th class="w170">Description/Purpose of visit</th>
+              <th class="w120">Status of visit</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0] != '' ">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <ng-container *ngIf="row.dr[0] != '' ">
+                    <td class="w200" *ngFor="let cus of row.dr">{{cus}}</td>
+                  </ng-container>
+                  <td class="w120">{{row.date_created ? (row.date_created | date : 'd MMM y') : '---'}}</td>
+                  <td class="w100">{{row.visit_start ? (row.visit_start | date : 'hh:mm a') : '---'}}</td>
+                  <td class="w110">{{row.visit_end ? (row.visit_end | date : 'hh:mm a') : '---'}}</td>
+                  <td class="w110">{{row.Total_visit_Time ? (row.Total_visit_Time) : '---'}}
+                  </td>
+                  <td class="w250">
+                    {{row.start_address ? row.start_address : '---'}}
+                    {{row.start_lat ? ('Latitude' + row.start_lat) : ''}} {{row.start_lng ? ('Longitude' +
+                    row.start_lng) : ''}}
+                  </td>
+                  <td class="w250">
+                    {{row.address ? row.address : '---'}}
+                    {{row.lat ? ('Latitude' + row.lat) : ''}} {{row.lng ? ('Longitude' +
+                    row.lng) : ''}}
+                  </td>
+                  <td class="w170">{{row.remark ? row.remark : '---'}}</td>
+                  <td class="w120">{{row.visit_type ? row.visit_type : '---'}}</td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="loader">
+                <tr>
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w120">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w170">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w120">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- Deviation-Detail-Report End -->
+
+
+
+
+    <!-- Deviation-Summary-Report Start -->
+    <ng-container *ngIf="reportType.reportType == 'Deviation-Summary-Report'">
+      <div class="cs-table horizontal-scroll" *ngIf="list.length > 0">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No.</th>
+              <ng-container *ngIf="headersEmp[0] != ''">
+                <th class="w170" *ngFor="let row of headersEmp">{{row}}</th>
+              </ng-container>
+              <th class="w100">Customer Visit Date</th>
+              <th class="w100 text-center">Total visit Planned as per PJP</th>
+              <th class="w100 text-center">Actual Visit (Total visit in a day)</th>
+              <th class="w100 text-center">Planned visit (PJP)</th>
+              <th class="w100 text-center">Unplanned visit</th>
+              <th class="w100 text-center">Not visited according to pjp</th>
+
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of list; let i = index;">
+                  <td class="w50">{{i+1}}</td>
+                  <ng-container *ngIf="row.user[0] != '' ">
+                    <td class="w170" *ngFor="let emp of row.user">{{emp}}</td>
+                  </ng-container>
+                  <td class="w100">{{row.date_created ? (row.date_created | date : 'd MMM y') : '---'}}</td>
+                  <td class="w100 text-center">{{row.total_pjp ? row.total_pjp : '---'}}</td>
+                  <td class="w100 text-center">{{row.total_visit ? row.total_visit : '---'}}</td>
+                  <td class="w100 text-center">{{row.total_planned ? row.total_planned : '---'}}</td>
+                  <td class="w100 text-center">{{row.total_visit - row.total_planned}}</td>
+                  <td class="w100 text-center">{{row.total_visit - (row.total_visit - row.total_planned)}}</td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="loader">
+                <tr>
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100 text-center">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="list.length == 0  && noResult == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </ng-container>
+    <!-- Deviation-Summary-Report End -->
+  </div>
+
+
+
+  <div class="fab-btns" *ngIf="list.length > 0">
+    <button class="excel loading" mat-raised-button color="primary" [ngClass]="{'loading': excelFlag == true}"
+      (click)="downloadExcel();" [disabled]="excelFlag == true">
+      <i class="material-icons" *ngIf="excelFlag == false">download</i>
+
+      {{excelFlag == true ? 'Downloading' : 'Download Excel'}}
+    </button>
+  </div>
+</div>

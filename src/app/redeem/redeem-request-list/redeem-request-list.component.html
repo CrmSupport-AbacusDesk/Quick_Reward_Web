@@ -1,0 +1,782 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>{{redeemType}} Redeem Request</h2>
+    <!-- <h2> Redeem Request</h2> -->
+
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="redeemRequestList_data.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'All' ? 'active' : ''"
+          (click)="active_tab = 'All';redeemRequestList()"><i class="material-icons">inbox</i>
+          All ({{redeem_count.All ? redeem_count.All : '0'}})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending';redeemRequestList()"><i class="material-icons">pending_actions</i>Pending
+          ({{redeem_count.Pending ? redeem_count.Pending : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+          (click)="active_tab = 'Approved'; redeemRequestList()"><i class="material-icons">swap_horiz</i>Approved
+          ({{redeem_count.Approved ? redeem_count.Approved : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+          (click)="active_tab = 'Reject';redeemRequestList()"><i class="material-icons">cancel</i>Reject
+          ({{redeem_count.Reject ? redeem_count.Reject : '0'}})</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container container-scroll pb50" *ngIf="redeemType=='Cash'">
+    <div class="mat-tabbar" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+      <button mat-button [ngClass]="sub_active_tab == '0' ? 'active' : ''"
+        (click)="sub_active_tab = '0';redeemRequestList()"><i class="material-icons">pending_actions</i>Inprocess
+        ({{sub_count.Inprocess ? sub_count.Inprocess : '0'}})</button>
+      <button mat-button [ngClass]="sub_active_tab == '1' ? 'active' : ''"
+        (click)="sub_active_tab = '1'; redeemRequestList()"><i class="material-icons">done_all</i>Success
+        ({{sub_count.Success ? sub_count.Success : '0'}})</button>
+      <button mat-button [ngClass]="sub_active_tab == '2' ? 'active' : ''"
+        (click)="sub_active_tab = '2';redeemRequestList()"><i class="material-icons">cancel</i>Failed
+        ({{sub_count.Failed ? sub_count.Failed :'0'}})</button>
+    </div>
+
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <td class="w60">Sr No.</td>
+              <th class="w130">Request Created
+                <div class="sorting">
+                  <a (click)="openBottomSheet()" matTooltip="Date Filter">
+                    <i class="material-icons">filter_alt</i>
+                  </a>
+                </div>
+              </th>
+              <th class="w80">Req. ID</th>
+              <th class="w160">Name</th>
+              <th class="w110">Mobile</th>
+              <ng-container *ngIf="redeemType=='Cash'">
+                <th class="w150">UPI ID</th>
+                <th class="w110">Bank Name</th>
+                <th class="w150">Account No.</th>
+                <th class="w110">IFSC Code</th>
+              </ng-container>
+              <!-- <ng-container *ngIf="redeemType!='Bank'">
+                <th class="w150">{{redeemType == 'Paytm' ? 'Paytm Number': 'Khalti Number'}}</th>
+              </ng-container> -->
+              <th class="w130">State</th>
+              <th class="w100">District</th>
+              <th class="w80 text-right">Redeem Point</th>
+              <th class="w70 text-right">Point Value</th>
+              <th class="w80 text-right">Redeem Amount</th>
+              <th class="w120" *ngIf="active_tab == 'All'">Redeem Status</th>
+              <th class="w160" *ngIf="active_tab == 'Pending' || active_tab == 'All'">Action</th>
+              <th class="w100" *ngIf="active_tab != 'Pending'">Status</th>
+              <th class="w70 text-center" *ngIf="active_tab != 'Pending'">Mode</th>
+              <th class="w160" *ngIf="active_tab != 'Pending'">TXN No.</th>
+              <th class="w110 text-center" *ngIf="active_tab != 'Pending'">TXN Date</th>
+              <th class="w200" *ngIf="active_tab != 'Pending'">TXN Remark</th>
+              <th class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                Refund Status</th>
+              <th class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                Refund Date</th>
+              <th class="w120 " *ngIf="active_tab != 'Pending'">Action By</th>
+              <th class="w150  text-center" *ngIf="active_tab != 'Pending'">Action Date</th>
+              <th class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">Reason</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w130">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" [max]="today_date" (dateChange)="onDate($event)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w80">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="req_id" [(ngModel)]="filter.req_id"
+                      (keyup.enter)="redeemRequestList('')">
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w160">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="user_name" [(ngModel)]="filter.user_name"
+                      (keyup.enter)="redeemRequestList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input type="number" maxlength="10" matInput placeholder="Search..." name="mobile_no"
+                      [(ngModel)]="filter.mobile_no" (keyup.enter)="redeemRequestList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <ng-container *ngIf="redeemType=='Cash'">
+                <th class="w150">&nbsp;</th>
+
+                <th class="w110">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="bank_name"
+                        [(ngModel)]="filter.bank_name" (keyup.enter)="redeemRequestList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w150">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="account_no"
+                        [(ngModel)]="filter.account_no" (keyup.enter)="redeemRequestList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w110">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="ifsc_code"
+                        [(ngModel)]="filter.ifsc_code" (keyup.enter)="redeemRequestList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+              </ng-container>
+              <th class="w130">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-label>State</mat-label>
+                    <mat-select name="state" #state="ngModel" [(ngModel)]="filter.state"
+                      (selectionChange)="redeemRequestList()">
+                      <mat-option disabled="">Select State</mat-option>
+                      <mat-option *ngFor="let row of states" value="{{row.state_name}}">
+                        {{row.state_name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="district" [(ngModel)]="filter.district"
+                      (keyup.enter)="redeemRequestList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w80 text-right">&nbsp;</th>
+              <th class="w70 text-right">&nbsp;</th>
+              <th class="w80 text-right">&nbsp;</th>
+              <th class="w120" *ngIf="active_tab == 'All'">&nbsp;</th>
+
+              <th class="w160  text-center" *ngIf="active_tab == 'Pending' || active_tab == 'All'">&nbsp;</th>
+
+              <th class="w100  text-center" *ngIf="active_tab != 'Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select (selectionChange)="redeemRequestList()" name="gift_status" #gift_status="ngModel"
+                      [(ngModel)]="filter.gift_status">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="Pending">Under Process</mat-option>
+                      <mat-option value="Transferred">Transferred</mat-option>
+                      <mat-option value="Hold">Hold</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w70" *ngIf="active_tab != 'Pending'"></th>
+              <th class="w160" *ngIf="active_tab != 'Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <!-- <input matInput placeholder="Search..." type="text" name="razorpay_payout_id" [(ngModel)]="filter.razorpay_payout_id" (keyup.enter)="redeemRequestList('')"> -->
+                    <input matInput placeholder="Search..." type="text" name="transaction_no"
+                      [(ngModel)]="filter.transaction_no" (keyup.enter)="redeemRequestList('')">
+
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110" *ngIf="active_tab != 'Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker5" placeholder="Date" name="transfer_date"
+                      [(ngModel)]="filter.transfer_date" [max]="today_date" (dateChange)="onDate($event)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+                    <mat-datepicker #picker5 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w200" *ngIf="active_tab != 'Pending'">&nbsp;</th>
+              <th class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select (selectionChange)="redeemRequestList()" name="payout_transaction_refund"
+                      #payout_transaction_refund="ngModel" [(ngModel)]="filter.payout_transaction_refund">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="1">Refund</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker6" placeholder="Date" name="payout_transaction_refund_date"
+                      [(ngModel)]="filter.payout_transaction_refund_date" [max]="today_date"
+                      (dateChange)="onDate($event)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+                    <mat-datepicker #picker6 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120 " *ngIf="active_tab != 'Pending'">&nbsp;</th>
+              <th class="w150   text-center" *ngIf="active_tab != 'Pending'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker1" placeholder="Date" name="last_status_updated_on"
+                      [(ngModel)]="filter.last_status_updated_on" [max]="today_date" (dateChange)="onDate($event)"
+                      disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">&nbsp;</th>
+
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of redeemRequestList_data; let i = index;"
+                [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w60">{{sr_no+i+1}}</td>
+
+                <td class="w130">{{row.date_created | date :'dd MMM yyyy , h:mm a'}}</td>
+                <td class="w80">{{row.req_id ? row.req_id : '---'}}</td>
+
+                <td class="w160">{{row.user_name ? (row.user_name | titlecase) : '---'}}</td>
+                <td class="w110">{{row.user_mobile ? row.user_mobile : '---'}}</td>
+                <!-- <td class="w110">{{row.redeem_type ? row.redeem_type : '---'}}</td> -->
+                <ng-container *ngIf="redeemType=='Cash'">
+                  <td class="w150">{{row.upi_id ? row.upi_id : '---'}}</td>
+
+                  <td class="w110">{{row.bank_name ? (row.bank_name | titlecase) : '---'}}</td>
+                  <td class="w150">{{row.account_no ? row.account_no : '---'}}</td>
+                  <td class="w110">{{row.ifsc_code ? row.ifsc_code : '---'}}</td>
+                </ng-container>
+                <td class="w130">{{row.state ? row.state : '---'}}</td>
+                <td class="w100">{{row.district ? row.district : '---'}}</td>
+                <td class="w80 text-right">{{row.point ? (row.point) : '---'}}</td>
+                <td class="w70 text-right">{{row.point_range_value ? (row.point_range_value) : '---'}}</td>
+                <td class="w80 text-right">{{row.cash_point ? ('₹ '+row.cash_point) : '---'}}</td>
+                <td class="w120" *ngIf="active_tab == 'All'">{{row.status ? row.status : ''}}</td>
+
+                <td class="w160  text-right" *ngIf="active_tab == 'Pending' || active_tab == 'All'">
+                  <div class="flex-button" *ngIf="assign_login_data2.edit_redeem_request=='1'">
+                    <ng-container *ngIf="row.status == 'Pending' ">
+                      <a class="link-btn"
+                        (click)="openDialog(row.id,row.user_id,'redeem_status', '', row.cash_point)">Change Status</a>
+                    </ng-container>
+                  </div>
+                </td>
+
+                <td class="w100  text-center" *ngIf="active_tab != 'Pending'">
+                  <!-- <ng-container *ngIf="active_tab == 'Pending' && (redeemType=='Bank' || redeemType=='Paytm')">
+              {{row.status}}
+            </ng-container> -->
+                  <div *ngIf="row.gift_status == 'Transferred'">
+                    <strong class="Approved">
+                      {{row.gift_status ? row.gift_status : '---'}}
+                    </strong>
+                  </div>
+                  <div class="th-search-acmt" *ngIf="row.status == 'Approved' && row.gift_status != 'Transferred' ">
+                    <mat-form-field class="cs-input select-input">
+                      <mat-label>{{row.gift_status == 'Pending' ? 'Under Process' : row.gift_status}}</mat-label>
+                      <mat-select [name]="'gift_status'+'i'" #gift_status="ngModel" [(ngModel)]="row.gift_status"
+                        required
+                        (selectionChange)="opengiftDialog(row.id,row.user_id,'gift_status', row.redeem_type, row.gift_status)"
+                        *ngIf="assign_login_data2.edit_redeem_request=='1'">
+                        <mat-option disabled="">Under Process</mat-option>
+                        <mat-option value="Transferred">Transferred</mat-option>
+                        <mat-option value="Hold">Hold</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </td>
+                <td class="w70 text-center" *ngIf="active_tab != 'Pending'">{{row.payment_mode ? (row.payment_mode) :
+                  'NEFT'}}</td>
+                <td class="w160" *ngIf="active_tab != 'Pending'">
+                  <ng-container *ngIf="assign_login_data.organisation_data.payout =='0'">
+                    <strong>{{row.transaction_no ? row.transaction_no : '---'}}</strong>
+                  </ng-container>
+                  <ng-container *ngIf="assign_login_data.organisation_data.payout =='1'">
+                    <strong>{{row.payout_processed_id ? row.payout_processed_id : '---'}}</strong>
+                  </ng-container>
+                </td>
+                <td class="w110 text-center" *ngIf="active_tab != 'Pending'">
+                  <ng-container *ngIf="assign_login_data.organisation_data.payout =='0'">
+                    {{row.transfer_date !='0000-00-00' ? (row.transfer_date | date :'dd MMM yyyy') : '---'}}
+                  </ng-container>
+                  <ng-container *ngIf="assign_login_data.organisation_data.payout =='1'">
+                    {{row.payout_transaction_status_date !='0000-00-00 00:00:00' ? (row.payout_transaction_status_date |
+                    date :'dd MMM yyyy , h:mm:a') : '---'}}
+                  </ng-container>
+                </td>
+                <td class="w200" *ngIf="active_tab != 'Pending'">
+
+                  <ng-container *ngIf="assign_login_data.organisation_data.payout =='0'">
+                    {{row.transfer_remark?.replaceAll('_',' ') | titlecase}}
+                    <div class="action-button text-right"
+                      *ngIf="row.gift_status == 'Transferred' && assign_login_data2.edit_redeem_request=='1'">
+                      <button mat-icon-button matTooltip="Edit"
+                        (click)="editRemark(row.id,row.payment_mode,row.transaction_no,row.transfer_date,row.transfer_remark, row.redeem_type,row.gift_status)">
+                        <i class="material-icons edit">edit</i>
+                      </button>
+                    </div>
+                    <div class="action-button text-right"
+                      *ngIf="row.gift_status == 'Hold' && assign_login_data2.edit_redeem_request=='1'">
+                      <button mat-icon-button matTooltip="Edit"
+                        (click)="editRemark(row.id,row.payment_mode,row.transaction_no,row.transfer_date,row.transfer_remark, row.redeem_type,row.gift_status)">
+                        <i class="material-icons edit">edit</i>
+                      </button>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="assign_login_data.organisation_data.payout =='1'">
+                    {{row.payout_transaction_status_remark ? row.payout_transaction_status_remark : '---'}}
+                  </ng-container>
+                </td>
+                <td class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                  {{row.payout_transaction_refund == '1' ? 'Refund' : 'N/A'}}
+                </td>
+                <td class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                  {{row.payout_transaction_refund_date !='0000-00-00 00:00:00' ? (row.payout_transaction_refund_date |
+                  date :'dd MMM yyyy , h:mm') : '---'}}
+                </td>
+                <td class="w120 " *ngIf="active_tab != 'Pending'">{{row.last_status_updated_by_name ?
+                  (row.last_status_updated_by_name | titlecase) : '---'}}</td>
+                <td class="w150   text-center" *ngIf="active_tab != 'Pending'">{{row.last_status_updated_on
+                  !='0000-00-00 00:00:00' ?
+                  (row.last_status_updated_on | date :'dd MMM yyyy, h:mm a') : '---'}}</td>
+                <td class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">{{row.reject_reason}}</td>
+
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w130">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <ng-container *ngIf="redeemType=='Cash'">
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w150">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w110">
+                    <div>&nbsp;</div>
+                  </td>
+                </ng-container>
+                <td class="w130">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w70 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120  text-center" *ngIf="active_tab == 'All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160  text-center" *ngIf="active_tab == 'Pending' || active_tab == 'All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100" *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w70 text-center" *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160" *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110 text-center" *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200" *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160" *ngIf="active_tab == 'Approved' && assign_login_data.organisation_data.payout =='1'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120 " *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150  text-center" *ngIf="active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+
+
+      </div>
+
+      <ng-container *ngIf="redeemRequestList_data.length == 0 && datanotfound == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+
+
+  </div>
+
+  <div class="container container-scroll pb50" *ngIf="redeemType!='Cash'">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w90">Date</th>
+              <th class="w100">Req. ID</th>
+              <th class="w150">Name</th>
+              <th class="w110">Mobile No.</th>
+              <th class="w200">Gift</th>
+              <th class="w100 text-right">Points Request</th>
+              <th class="w110" *ngIf="active_tab =='All'">Status</th>
+              <th class="w100 text-right" *ngIf="active_tab == 'Approved' || active_tab =='All'">Shipping Type</th>
+              <th class="w100 text-right" *ngIf="active_tab == 'Approved' || active_tab =='All'">Estimate Date</th>
+              <th class="w200 text-left" *ngIf="active_tab == 'Approved' || active_tab =='All'">Shipping Remark</th>
+              <th class="w110" *ngIf="active_tab == 'Approved' || active_tab =='All'">Gift Status</th>
+              <th class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">Reason</th>
+              <th class="w110  text-center"
+                *ngIf="assign_login_data2.edit_redeem_request=='1' && active_tab == 'Pending'">Action</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" (dateChange)="onDate($event)" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="req_id" [(ngModel)]="filter.req_id"
+                      (keyup.enter)="redeemRequestList('')">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="user_name" [(ngModel)]="filter.user_name"
+                      (keyup.enter)="redeemRequestList('')">
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w110">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input type="number" matInput placeholder="Search..." name="mobile_no"
+                      [(ngModel)]="filter.mobile_no" (keyup.enter)="redeemRequestList('')">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="gift_name" [(ngModel)]="filter.gift_name"
+                      (keyup.enter)="redeemRequestList('')">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-right">&nbsp;
+              </th>
+              <th class="w110" *ngIf="active_tab == 'All' ">&nbsp;</th>
+
+              <th class="w100" *ngIf="active_tab == 'Approved' || active_tab == 'All' ">&nbsp;</th>
+
+              <th class="w100" *ngIf="active_tab == 'Approved' || active_tab == 'All' ">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker6" placeholder="Date" name="shipped_date"
+                      [(ngModel)]="filter.shipped_date" (dateChange)="onDate($event)" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+                    <mat-datepicker #picker6 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200" *ngIf="active_tab == 'Approved' || active_tab == 'All' ">&nbsp;</th>
+
+              <th class="w110" *ngIf="active_tab == 'Approved' || active_tab == 'All'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select [(ngModel)]="filter.gift_status" name="gift_status"
+                      (selectionChange)="redeemRequestList('')">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="Shipped">Shipped</mat-option>
+                      <mat-option value="Received">Received</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110  text-center"
+                *ngIf="assign_login_data2.edit_redeem_request=='1' && active_tab == 'Pending'">&nbsp;</th>
+              <th class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of redeemRequestList_data; let i = index;">
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w90">{{row.date_created | date :'dd MMM yyyy'}}</td>
+                <td class="w100">{{row.req_id ? row.req_id : '---'}}</td>
+
+                <td class="w150">{{row.user_name ? (row.user_name | titlecase) : '---'}}</td>
+                <td class="w110">{{row.user_mobile ? row.user_mobile : '---'}}</td>
+                <td class="w200">{{row.gift_name ? row.gift_name : '---'}}</td>
+                <td class="w100 text-right"><strong>{{row.point ? row.point : '---'}}</strong></td>
+                <!-- <td class="w100 text-right"><strong>{{row.point_range_value ? row.point_range_value : '---'}}</strong></td>
+              
+              <td class="w100 text-right"><strong>₹ {{row.cash_point ? row.cash_point : '---'}}</strong></td> -->
+                <td class="w110" *ngIf="active_tab == 'All'">
+                  <strong class="{{row.status}}">{{row.status}}</strong>
+                </td>
+                <td class="w100 text-right" *ngIf="active_tab == 'Approved' || active_tab == 'All'">
+                  <strong>{{row.shipping_type ? row.shipping_type : '---'}}</strong>
+                </td>
+                <td class="w100 text-right" *ngIf="active_tab == 'Approved' || active_tab == 'All'">
+                  <strong>{{row.shipped_date | date :'dd MMM yyyy'}}</strong>
+                </td>
+                <td class="w200 text-left" *ngIf="active_tab == 'Approved' || active_tab == 'All'">
+                  <strong>{{row.shipping_remark ? row.shipping_remark : '---'}}</strong>
+                </td>
+
+
+                <td class="w110" *ngIf="active_tab == 'Approved' || active_tab == 'All'">
+                  <ng-container *ngIf="assign_login_data2.edit_redeem_request=='1'">
+                    <div *ngIf="row.gift_status == 'Received'">
+                      <strong class="Approved">
+                        {{row.gift_status ? row.gift_status : '---'}}
+                      </strong>
+                    </div>
+                    <div class="th-search-acmt" *ngIf="row.status == 'Approved' && row.gift_status != 'Received'">
+                      <mat-form-field class="cs-input select-input">
+                        <mat-label>{{row.gift_status == 'Pending' ? 'Under Process' : row.gift_status}}</mat-label>
+                        <mat-select [name]="'gift_status'+'i'" #gift_status="ngModel" [(ngModel)]="row.gift_status"
+                          required
+                          (selectionChange)="opengiftDialog(row.id,row.user_id,'gift_status', row.redeem_type, row.gift_status)">
+                          <mat-option disabled="">Under Process</mat-option>
+                          <mat-option value="Shipped"
+                            [disabled]="row.gift_status == 'Shipped' || row.gift_status == 'Received'"
+                            *ngIf="row.redeem_type == 'Gift'">Shipped</mat-option>
+                          <mat-option value="Received" [disabled]="row.gift_status == 'Received'"
+                            *ngIf="row.gift_status == 'Shipped'">Received</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </ng-container>
+                </td>
+                <td class="w110  text-center"
+                  *ngIf="assign_login_data2.edit_redeem_request=='1' && active_tab == 'Pending'">
+                  <ng-container *ngIf="row.status == 'Pending' ">
+                    <div class="flex-button">
+                      <button mat-raised-button color="accent"
+                        (click)="opengiftDialog(row.id,row.user_id,'redeem_status', '', '')">Change Status</button>
+                      <!-- <a class="link-btn" (click)="openDialog(row.id,'redeem_status', '', '')" >Change Status</a> -->
+
+
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="row.status != 'Pending' ">
+                    ---
+                  </ng-container>
+                </td>
+                <td class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'All'">{{row.reject_reason}}</td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+
+
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w90">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110" *ngIf="active_tab =='All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right" *ngIf="active_tab == 'Approved' || active_tab =='All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right" *ngIf="active_tab == 'Approved' || active_tab =='All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200 text-left" *ngIf="active_tab == 'Approved' || active_tab =='All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110" *ngIf="active_tab == 'Approved' || active_tab =='All'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110  text-center"
+                  *ngIf="assign_login_data2.edit_redeem_request=='1' && active_tab == 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+
+        <ng-container *ngIf="redeemRequestList_data.length == 0">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- 
+<div class="fab-btns" *ngIf="redeemRequestList_data.length >0 && assign_login_data2.export_redeem_request=='1'">
+  <button mat-fab class="excel pulse" (click)="progressService.setCancelReq(false);upload_excel(Redeem Master);">
+    <img src="assets/img/excel.svg">
+    Upload Data
+  </button>
+  
+  <button mat-fab class="excel pulse" (click)="progressService.setCancelReq(false);downloadInChunks(active_tab);">
+    <img src="assets/img/excel.svg">
+    Download Excel
+  </button>
+</div> -->
+
+
+  <div class="fab-btns" *ngIf="redeemRequestList_data.length >0 && assign_login_data2.export_redeem_request=='1'">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+  </div>
+  <mat-menu #menu="matMenu">
+    <!-- <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunksRedeem(active_tab);">
+    <mat-icon>download</mat-icon>
+    <span>TXN Data excel</span>
+  </button> -->
+
+    <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunks();"
+      *ngIf="redeemRequestList_data.length > 0">
+      <mat-icon>download</mat-icon>
+      <span>Download in excel</span>
+    </button>
+    <button mat-menu-item (click)="upload_excel('Transation Redeem');"
+      *ngIf="assign_login_data2.export_redeem_request=='1' && assign_login_data2.organisation_data.upload_redeem_req=='1' && redeemType == 'Cash' && active_tab == 'Approved' && redeemRequestList_data.length > 0">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload Data</span>
+    </button>
+
+    <button mat-menu-item (click)="upload_excel('Redeem Status');"
+      *ngIf="assign_login_data2.export_redeem_request=='1' && assign_login_data2.organisation_data.upload_redeem_req=='1' && active_tab == 'Pending' && redeemRequestList_data.length > 0">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload Data</span>
+    </button>
+
+  </mat-menu>
+
+</div>

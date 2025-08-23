@@ -1,0 +1,103 @@
+
+<div class="edit-modal" *ngIf="data.from!='scan_limit_modal'">
+  <p class="heading">Coupon Details</p>
+  <div mat-dialog-content>
+    <div class="cs-table horizontal-scroll" >
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w110">Coupon Code</th>
+              <th class="w100">Coupon Type</th>
+              <th class="w100">Packing Size</th>
+              <th class="w100">Dispatch Date</th>
+              <th class="w110">Dispatch Type</th>
+              <th class="w110">Invoice Number</th>
+              <th class="w200">Primary Customer/Dealer Detail</th>
+              <th class="w120 text-center">Scanning Status</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <tr *ngFor="let row of couponList; let i = index;">
+              <td class="w60">{{i+1}}</td>
+              <td class="w110">{{row.coupon_code}}</td>
+              <td class="w100">{{row.coupon_type == 'Master Box' ? 'Box' :'Product'}}</td>
+              <td class="w100">{{row.master_packing_size}}</td>
+              <td class="w100">{{row.dispatch_date | date:'d MMM y'}}</td>
+              <td class="w110">{{row.dispatch_type}}</td>
+              <td class="w110">{{row.invoice_number}}</td>
+              <td class="w200">{{row.dr_detail}}</td>
+              <td class="w120 text-center">{{row.scan_status}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button  color="warn" [mat-dialog-close]="false">Cancel</button>
+    
+  </div>
+</div>
+
+
+<div class="edit-modal" *ngIf="data.from=='scan_limit_modal'">
+  <form name="detail" #f="ngForm" (ngSubmit)="f.valid && submit()">
+    <p class="heading">Scan Limit</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select name="limit_type" placeholder="" #limit_type="ngModel" [(ngModel)]="data.limit_type" required>
+                <mat-option value="Daily">Daily</mat-option>
+                <mat-option value="Monthly">Monthly</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="limit_type.touched || f.submitted">
+              <p *ngIf="limit_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <!-- <div class="col s12 l6 m6" *ngIf="!subType">
+            <mat-form-field appearance="outline">
+              <mat-label>Enter Scan Limit</mat-label>
+              <input type="number" matInput placeholder="Type Here ..." name="scan_limit" #scan_limit="ngModel"
+                [(ngModel)]="data.scan_limit" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="scan_limit.touched || f.submitted">
+              <p *ngIf="scan_limit.errors?.required">This field is required</p>
+            </div>
+          </div> -->
+        </div>
+
+        <div class="row" >
+          <div class="col s12 m6 l6" *ngFor="let row of service.InfluenceArray; let i = index">
+              <mat-form-field appearance="outline">
+                  <mat-label>{{row.module_name}}</mat-label>
+                  <input matInput 
+                  name="{{row.module_name}}" 
+                  #[row.module_name]="ngModel" 
+                  [(ngModel)]="service.InfluenceArray[i]['scan_limit']"
+                  type="number" required>
+              </mat-form-field>
+          </div>
+      </div>
+
+
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+        [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>

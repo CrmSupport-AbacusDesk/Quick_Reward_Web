@@ -1,0 +1,184 @@
+<div class="main-container">
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" routerLink="/badges-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>{{badges_id ? 'Edit' : 'Add New'}} Badges</h2>
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m6 l6">
+                    <mat-radio-group  id="day" name="day"  [(ngModel)]="data.day">
+                        <mat-radio-button class="wp30" color="primary" value="Day">Daywise</mat-radio-button>
+                        <mat-radio-button class="wp30" color="primary" value="Custom"  (change)="data.point_type = 'Fixed'" >Custom Date</mat-radio-button>
+                    </mat-radio-group>
+                   </div>
+                </div>
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Title</mat-label>
+                    <input matInput placeholder="Type Here ..."  name="title" #title="ngModel"
+                    [(ngModel)]="data.title" pattern="^(?! )[^\r\n]*$" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                    <p *ngIf="title.errors?.required">This field is required</p>
+                    <p *ngIf="title.errors?.pattern">This is not a valid!</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3" *ngIf="data.day == 'Day'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Select Slab</mat-label>
+                    <mat-select name="eligible_days" [(ngModel)]="data.eligible_days" #eligible_days="ngModel" required>
+                      <mat-option value="7">Last 7 Days</mat-option>
+                      <mat-option value="15">Last 15 Days</mat-option>
+                      <mat-option value="30">Last 30 Days</mat-option>
+                      <mat-option value="90">Last 90 Days</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="eligible_days.touched || f.submitted">
+                    <p *ngIf="eligible_days.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <ng-container *ngIf="data.day == 'Custom'">
+                  <div class="col s12 m3 l3">
+                    <mat-form-field  appearance="outline">
+                      <mat-label>Date From</mat-label>
+                      <input name="date_from" matInput [matDatepicker]="pickers" [min]="today_date" [max]="data.date_to"  #date_from="ngModel" readonly [(ngModel)]="data.date_from" required>
+                      <mat-datepicker-toggle matSuffix [for]="pickers"  ></mat-datepicker-toggle>
+                      <mat-datepicker #pickers></mat-datepicker>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="date_from.touched || f.submitted">
+                      <p *ngIf="date_from.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field  appearance="outline">
+                      <mat-label>Date To</mat-label>
+                      <input name="date_to" matInput [matDatepicker]="pickerTo" [min]="data.date_from ? data.date_from : today_date"  #date_to="ngModel" readonly [(ngModel)]="data.date_to" required>
+                      <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                      <mat-datepicker #pickerTo></mat-datepicker>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="date_to.touched || f.submitted">
+                      <p *ngIf="date_to.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                </ng-container>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Scanning Points</mat-label>
+                    <input matInput placeholder="Type Here ..." name="eligible_points" #eligible_points="ngModel"
+                    [(ngModel)]="data.eligible_points"
+                    onkeypress="return (event.charCode>=48 && event.charCode<=57) || event.charCode == 13"  required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="eligible_points.touched || f.submitted">
+                    <p *ngIf="eligible_points.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3" *ngIf="data.day == 'Day'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Badge Type</mat-label>
+                      <mat-select name="badge_type" #badge_type="ngModel"
+                        [(ngModel)]="data.badge_type" (selectionChange)="data.badge_type == 'Per Day' ?  (data.point_type = 'Fixed')  : data.point_type = '' "   required>
+                        <mat-option value="Per Transaction">Per Transaction</mat-option>
+                        <mat-option value="Per Day">Per Day</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="badge_type.touched || f.submitted">
+                    <p *ngIf="badge_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="row" >
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Point Incentive Type</mat-label>
+                    <mat-select name="point_type" [(ngModel)]="data.point_type" #point_type="ngModel" required [disabled]="data.day == 'Custom' || data.badge_type == 'Per Day'">
+                      <mat-option value="Percent wise">Percent Wise Point</mat-option>
+                      <mat-option value="Fixed">Fixed Point</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="point_type.touched || f.submitted">
+                    <p *ngIf="point_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Point {{data.point_type ? ('('+data.point_type+')') : ''}}</mat-label>
+                    <input matInput placeholder="Type Here ..." name="points" #points="ngModel"
+                      [(ngModel)]="data.points"
+                      onkeypress="return (event.charCode>=48 && event.charCode<=57) || event.charCode == 13"  required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="points.touched || f.submitted">
+                    <p *ngIf="points.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                  <div class="col s12 m3 l3" *ngIf="subType">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Influencer Type</mat-label>
+                        <mat-select name="influencer_type" #influencer_type="ngModel" multiple
+                          [(ngModel)]="data.influencer_type" required>
+                          <ng-container *ngFor="let row of InfluenceArray; let i = index" >
+                          <mat-option value="{{row.type}}"> {{row.module_name ? row.module_name : '---'}}
+                          </mat-option>
+                        </ng-container>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  
+              </div>
+
+            
+
+              <div class="row">
+                <div class="col s12">
+                  <div class="uploade-image" >
+                    <ul>
+                      <li *ngIf="img">
+                        <img src="{{img_id ? url+image : img}}">
+                      </li>
+                      <li class="add-bg-1">
+                        <label>
+                          <input type="file" (change)="onUploadChange($event)" style="display:none;"
+                            accept=".png, .jpg, .jpeg," multiple required />
+                          <div class="other">
+                            <i class="material-icons">cloud_upload</i>
+                            <p>Upload Image <span>Dimensions(100*100px)</span></p>
+                          </div>
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+              [disabled]="savingFlag == true">
+              {{(savingFlag == true || badges_id) ? (badges_id ? 'Update' : 'Saving') : 'Save'}}
+
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

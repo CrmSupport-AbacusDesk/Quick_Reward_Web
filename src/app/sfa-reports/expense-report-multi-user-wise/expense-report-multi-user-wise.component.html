@@ -1,0 +1,176 @@
+<div class="main-container">
+  
+  <div class="tools-container">
+    <h2>Expense Details</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <ng-container *ngIf="filter.date_from">
+        <div class="filteDate">
+          <span>Date From</span>
+          <h3>{{filter?.date_from | date:'dd MMM, yyyy'}}</h3>
+        </div>
+        <div class="filteDate">
+          <span>Date To</span>
+          <h3>{{filter?.date_to | date:'dd MMM, yyyy'}}</h3>
+        </div>
+      </ng-container>
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button>
+      
+      <!-- <div class="pagination" *ngIf="reportData.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0 || total_page == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div> -->
+      
+      
+    </div>
+  </div>
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr No.</th>
+              <th class="w125">Emp. Code</th>
+              <th class="w125">Emp. Name</th>
+              <th class="w120">Claim Date</th>
+              <th class="w90">Km</th>
+              <th class="w70">Bike</th>
+              <th class="w70">Car</th>
+              <th class="w70">Toll Tax</th>
+              <th class="w70">Train</th>
+              <th class="w70">Bus</th>
+              <th class="w70">Auto</th>
+              <th class="w70">Taxi</th>
+              <th class="w70">Hotel</th>
+              <th class="w70">Food</th>
+              <th class="w70">Other</th>
+              <th class="w100 text-right">Claim Amount</th>
+              <th class="w120 text-right">Approved Amount</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let report of reportData; let i=index">
+                <td class="w60">{{i+1}}</td>
+                <td class="w125">{{report.employee_code ? report.employee_code : '---'}}</td>
+                <td class="w125">{{report.userName ? report.userName : '---'}}</td>
+                <td class="w120">{{report.claimDate ? (report.claimDate | date) : '---'}}</td>
+                                <td class="w90">
+                  <ng-container *ngFor="let row of report.data">
+                    <ng-container>{{(row.modeOfTravel == 'Car' || row.modeOfTravel == 'Bike')? (row.distance + ' Km') : ''}}</ng-container>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Bike'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Car'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Tolltax'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Train'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Bus'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Auto'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Taxi'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Hotel'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Food'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w70">
+                  <ng-container *ngFor="let row of report.data">
+                    <a class="link-btn" (click)="openDialog(report.userName,row)" matTooltip="View Remark" matTooltipPosition="below">{{row.modeOfTravel == 'Other'? ('₹ ' +row.amount) : ''}}</a>
+                  </ng-container>
+                </td>
+                <td class="w100 text-right">{{report.totalAmt ? ( '₹'+ report.totalAmt) : '0'}}</td>
+                <td class="w120 text-right">{{report.totalApprovedAmount ? ( '₹'+ report.totalApprovedAmount) : '0'}}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                <td class="w60"><div>&nbsp;</div></td>
+                <td class="w125"><div>&nbsp;</div></td>
+                <td class="w125"><div>&nbsp;</div></td>
+                <td class="w120"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w90"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w70"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w120"><div>&nbsp;</div></td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+      <ng-container *ngIf="reportData.length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+  <div class="fab-btns">
+    <button mat-fab class="excel" *ngIf="reportData.length > 0"
+      (click)="progressService.setCancelReq(false); downloadInChunks();" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="container pt10 pl10 pr10 pb50 container-scroll">
+		<app-loader *ngIf="excelLoader"></app-loader>
+		<div class="row" *ngIf="!skLoading">
+		  <div class="col s12">
+			<div class="card">
+			  <div class="card-head">
+				<h2>Faq Question & Answer</h2>
+			  </div>
+			  <div class="card-body">
+				<div class="row cs-form">
+				  <div class="col s12">
+					<mat-accordion class="cs-mat-accordion">
+					  <mat-expansion-panel [expanded]="step === i" (opened)="setStep(i)"
+						*ngFor="let row of questionsData; let i = index">
+						<mat-expansion-panel-header>
+						  <mat-panel-title>
+							<div class="que">
+							  <img src="assets/img/que.png" class="h20">
+							  <span>{{i+1}}.</span>
+							</div>
+							{{row.question ? (row.question | titlecase) : '---'}}
+						</mat-panel-title>
+						<a class="accordion-action default" (click)="deleteQue(row.question_id)"> <i
+							class="material-icons">delete</i></a>
+						<a class="accordion-action editright" [routerLink]="[ 'faq-add/', row.question_id ]"> <i
+						class="material-icons">edit</i></a>	
+						</mat-expansion-panel-header>
+						<div class="panel-body-expansion">
+						  <div class="survey-ans" type="A" *ngIf="row.edit != 'Yes'">
+							  <strong>Ans.</strong>
+								{{row.answer}}
+						  </div>
+						</div>
+					  </mat-expansion-panel>
+					</mat-accordion>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<!-- Skeleton start -->
+			<div class="card" *ngIf="skLoading">
+				<div class="sk-head">
+				  <h2>&nbsp;</h2>
+				</div>
+				<div class="card" *ngIf="loader">
+					<div class="card-body skeleton" *ngFor="let row of [].constructor(4)">
+						<div>&nbsp;</div>
+					</div>
+				</div>
+			</div>
+			  <!-- Skeleton end -->
+
+			<ng-container *ngIf="questionsData== 0">
+				<app-not-result-found></app-not-result-found>
+			</ng-container>
+		  </div>
+		</div>
+		
+		<div class="fab-btns">
+			<button class="pulse" mat-fab (click)="lastBtnValue('add')"
+			  [ngClass]="{'pulse': fabBtnValue=='add'}" color="primary" routerLink="faq-add">
+			  <i class="material-icons">add</i>
+			  Add New
+			</button>
+		</div>
+</div>

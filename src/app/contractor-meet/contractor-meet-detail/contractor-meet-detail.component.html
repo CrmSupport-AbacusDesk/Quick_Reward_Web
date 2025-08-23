@@ -1,0 +1,174 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" routerLink="/contractor-meet">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Event Plan Details</h2>
+    </div>
+    <div class="container pt10 pl10 pr10 pb50">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <!-- product data start -->
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Basic Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+
+                                <span>Firm Name</span>
+                                <p>{{contractorMeetDetail.firm_name}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Created By</span>
+                                <p>{{contractorMeetDetail.created_by_user}}</p>
+                            </div>
+                            <div class="block-feilds">
+
+                              <span>Firm Mobile No.</span>
+                                <p>{{contractorMeetDetail.firm_mobile}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Date Of Event</span>
+                                <p>{{contractorMeetDetail.date_of_meeting| date:'dd-MMM-yyyy'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Last Updated Date</span>
+                                <p>{{contractorMeetDetail.date_updated| date:'dd-MMM-yyyy'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Status</span>
+                                <p>{{contractorMeetDetail.status}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Demanded Budget </span>
+                                <p>&#x20B9; {{contractorMeetDetail.total_budget}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Total Member</span>
+                                <p>{{contractorMeetDetail.total_member}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Per Member Demanded Budget </span>
+                                <p>{{contractorMeetDetail.per_person ? contractorMeetDetail.per_person : '---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Senior Approved Amount</span>
+                                <p>{{contractorMeetDetail.senior_approved_amount ? contractorMeetDetail.senior_approved_amount : '---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Admin Approved Amount</span>
+                                <p>{{contractorMeetDetail.approved_amount ? contractorMeetDetail.approved_amount : '---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Description</span>
+                                <p>{{contractorMeetDetail.description}}</p>
+                            </div>
+                        </div>
+                        <div class="grid-box single mt16" *ngIf="contractorMeetDetail.status=='rejected'">
+                            <div class="block-feilds">
+                                <span>Remark</span>
+                                <p>{{contractorMeetDetail.remarks}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt10">
+            <div class="col s12 m6 l6 ">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Event Image</h2>
+                    </div>
+                    <div class="card-body" style="overflow: auto;">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <div class="doc-img">
+                                    <ng-container *ngFor="let row of contractorMeetDetail.image">
+                                        <img src="{{img_url+row.img_path}}" (click)="goToImage(img_url+row.img_path)"
+                                            style="cursor: zoom-in;">
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m6 l6">
+                <!-- product data start -->
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Participants Details</h2>
+                    </div>
+                    <div class="cs-table  cs-table left-right-10">
+                        <div class="sticky-head">
+                            <div class="table-head">
+                                <table>
+                                    <tr>
+                                        <th class="w70">Sr. No.</th>
+                                        <th>Name</th>
+                                        <th class="w100">Customer Type</th>
+                                        <th class="w110">Mobile No.</th>
+                                        <th class="w70">Event Count </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-content">
+                                <table>
+                                    <tr *ngFor="let detail of contractorMeetDetail.participents; let i = index;">
+                                        <td class="w70">{{i+1}}</td>
+                                        <td>{{detail.participent_name}}</td>
+                                        <td class="w100">{{detail.customer_network_type ? detail.customer_network_type : '---'}}</td>
+                                        <td class="w110">{{detail.participent_mobile}}</td>
+                                        <td class="w70 text-center">
+                                          <a class="link-btn flat"
+                                             (click)="openDialog(detail.participent_mobile,contractorMeetDetail.id)">
+                                             {{detail.counts}}</a>
+                                          </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- product data end -->
+
+
+                <!-- Skeleton start -->
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton end -->
+            </div>
+            <div class="card-container" *ngIf="skLoading">
+                <div class="card-image skeleton" *ngFor="let row of [].constructor(10)">
+                    <div>&nbsp;</div>
+                </div>
+            </div>
+            <ng-container *ngIf="!contractorMeetDetail">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+    </div>
+    <div class="fab-btns">
+        <button class="pulse excel" mat-fab color="primary"   (click)="progressService.setCancelReq(false); downloadInChunks();">
+            <mat-icon>download</mat-icon>
+            Download in excel
+        </button>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+/* error-logs.component.scss */
+.progress-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 300px;
+    margin: 100px auto;
+  }
+  
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+  
+  .progress-ring__background,
+  .progress-ring__circle {
+    transition: stroke-dashoffset 0.35s;
+    transform-origin: 50% 50%;
+  }
+  
+  .progress-text {
+    position: absolute;
+    font-size: 2em; /* Adjust as needed */
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .progress-subtext {
+    position: absolute;
+    font-size: 1em; /* Adjust as needed */
+    top: 65%;
+    text-align: center;
+  }
+  

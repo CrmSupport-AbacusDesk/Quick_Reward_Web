@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "product-qr-code-model.component.scss"
+    ],
+    "names": [],
+    "file": "product-qr-code-model.component.css"
+}

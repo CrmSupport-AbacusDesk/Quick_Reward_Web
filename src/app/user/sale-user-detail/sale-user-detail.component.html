@@ -1,0 +1,887 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>
+            {{detail.user_type | titlecase}} Details
+            <span class="liveStatusText" *ngIf="detail.lived == '1' && login_data.id == '1' ">Live</span>
+        </h2>
+        <!-- <div class="left-auto">
+            <button class="mr16" matTooltip="Transfer Data" *ngIf="detail.user_type != 'System User' "
+            (click)="openDialog('transferData')" mat-raised-button color="primary"><i class="material-icons mr5">swap_horiz</i>
+            Transfer Data</button>
+            <button class="mr16" matTooltip="Transfer Data" *ngIf="detail.user_type == 'System User' "
+            (click)="openDialog('updatePassword')" mat-raised-button color="primary"><i class="material-icons mr5">vpn_key</i>
+            Change Credentials</button>
+            <ng-container *ngIf="login_data.edit_users_master=='1'">
+                <button matTooltip="Edit product" *ngIf="login_data.edit_users_master=='1'" [routerLink]="[ 'user-edit/', user_id ]"
+                mat-raised-button color="primary"><i class="material-icons mr5">edit</i> Edit {{detail.user_type |
+                titlecase}}</button>
+            </ng-container>
+        </div> -->
+
+        <div class="left-auto df ac flex-gap-10" style="overflow: auto;">
+            <div class="mat-tabbar df">
+                <button mat-button [ngClass]="{'active' :tabType== 'Profile'}" (click)="tabType= 'Profile'">
+                    <i class="material-icons">person</i>Basic Detail
+                </button>
+
+                <button mat-button [ngClass]="{'active' :tabType== 'Management'}"
+                    (click)="fetchData(); tabType= 'Management'" *ngIf="login_data.id=='1'">
+                    <!-- <i class="material-icons">person</i> -->
+                    Type Management
+                </button>
+
+                <ng-container *ngIf="detail.user_type == 'Sales User'">
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Network'}" (click)="tabType= 'Network';"
+                        *ngIf="detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">people_alt</i>Customer Network
+                    </button>
+                    <button mat-button [ngClass]="{'active' :tabType== 'Influencer'}" (click)="tabType= 'Influencer';"
+                        *ngIf="login_data.organisation_data.loyalty=='1'">
+                        <i class="material-icons">people_alt</i>Influencer Network
+                    </button>
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Attendance'}" (click)="tabType= 'Attendance';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">insert_invitation</i>Attendance
+                    </button>
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Checkin'}" (click)="tabType= 'Checkin';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">my_location</i>Checkin
+                    </button>
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Tracker'}" (click)="tabType= 'Tracker';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">person_pin_circle</i>Tracker
+                    </button>
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'AllCheckin'}" (click)="tabType= 'AllCheckin';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">my_location</i>All Checkin
+                    </button>
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Leave'}" (click)="tabType= 'Leave';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">exit_to_app</i>Leave
+                    </button>
+
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Expense'}" (click)="tabType= 'Expense';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">account_balance_wallet</i>Expense
+                    </button>
+
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Event'}" (click)="tabType= 'Event';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">groups</i>Event
+                    </button>
+
+                    <button mat-button [ngClass]="{'active' :tabType== 'Task'}" (click)="tabType= 'Task';"
+                        *ngIf=" detail.user_type != 'Service Engineer'">
+                        <i class="material-icons">assignment_add</i>Task
+                    </button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="container pb50" [ngClass]="{'pt10 pl10 pr10' :tabType== 'Profile'}">
+        <ng-container *ngIf="tabType == 'Profile'">
+            <div class="row">
+                <div class="col s12 m8 l8" *ngIf=" detail.user_type != 'Service Engineer'">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Basic Details</h2>
+
+                            <div class="left-auto" *ngIf="login_data.edit_users_master=='1'">
+                                <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+                                    [routerLink]="[ 'user-edit/', encrypt_id ]">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="block-feilds">
+                                    <span>Designation</span>
+                                    <p>{{detail.designation_name}}</p>
+                                </div>
+
+                                <div class="block-feilds user-dp">
+                                    <div class="profile-pic"
+                                        *ngIf="detail.user_type != 'System User' && detail.user_type != 'ORG' && detail.user_type != 'Service Engineer'">
+                                        <img src="{{detail.image != null ?(url + detail.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                            (click)="detail.image != null ? goToImage(url + detail.image) : '' ">
+                                    </div>
+                                    <div class="wp100">
+                                        <span>Name</span>
+                                        <p>{{detail.name | titlecase}}</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="block-feilds">
+                                    <span>Employee Code</span>
+                                    <p>{{detail.employee_id}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Mobile Number</span>
+                                    <p>{{detail.contact_01}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Email ID</span>
+                                    <p>{{detail.email ? detail.email :'---'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="detail.date_of_birth">
+                                    <span>Date of Birth</span>
+                                    <p *ngIf="detail.date_of_birth != '0000-00-00'">{{detail.date_of_birth | date}}</p>
+                                    <p *ngIf="detail.date_of_birth == '0000-00-00'">---</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="detail.date_of_wedding">
+                                    <span>Date of Wedding</span>
+                                    <p *ngIf="detail.date_of_wedding != '0000-00-00'">{{detail.date_of_wedding | date}}
+                                    </p>
+                                    <p *ngIf="detail.date_of_wedding == '0000-00-00'">---</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="detail.date_of_joining">
+                                    <span>Date of Joining</span>
+                                    <p *ngIf="detail.date_of_joining != '0000-00-00'">{{detail.date_of_joining | date}}
+                                    </p>
+                                    <p *ngIf="detail.date_of_joining == '0000-00-00'">---</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="detail.user_type != 'ORG' ">
+                                    <span>Weekly Off</span>
+                                    <p>{{detail.weekly_off ? detail.weekly_off :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds"
+                                    *ngIf="detail.user_type != 'Sales User' && detail.assign_unit > 0">
+                                    <span>Assigned Unit</span>
+                                    <p>{{detail.assign_unit_name ? detail.assign_unit_name :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds"
+                                    *ngIf="detail.user_type != 'Sales User' && detail.assign_company > 0">
+                                    <span>Assigned Billing Company</span>
+                                    <p>{{detail.company_name ? detail.company_name :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Status</span>
+                                    <p>{{detail.status == '1' ? 'Active' : 'Deactive'}}</p>
+                                </div>
+
+                                <div class="block-feilds"
+                                    *ngIf="detail.user_type != 'ORG'  &&  detail.user_type != 'System User'">
+                                    <span>Reporting Manager</span>
+                                    <p *ngIf="detail.assign_user != ''">{{detail.assign_user | titlecase}}</p>
+                                    <p *ngIf="!detail.assign_user">---</p>
+                                </div>
+                                <div class="block-feilds"
+                                    *ngIf="detail.user_type != 'ORG'  &&  detail.user_type != 'System User'">
+                                    <span>Manager Code</span>
+                                    <p *ngIf="detail.assign_user != ''">{{detail.assign_user_code}}</p>
+                                    <p *ngIf="!detail.assign_user">---</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Last Updated By</span>
+                                    <p>{{detail.last_updated_by_name ? detail.last_updated_by_name : '--'}}</p>
+                                </div>
+
+                                <ng-container *ngIf="login_data.id == '1' ">
+                                    <div class="block-feilds">
+                                        <span>Coupon Generation</span>
+                                        <p>
+                                            {{detail.qr_genration ? 'QR Wise' : 'Item Wise'}}
+                                        </p>
+                                    </div>
+
+                                    <div class="block-feilds">
+                                        <span>Order</span>
+                                        <p>
+                                            {{detail?.order_type ? 'Quantity Wise' : 'Price Wise'}}
+                                        </p>
+                                    </div>
+
+                                    <div class="block-feilds">
+                                        <span>App Id</span>
+                                        <p>
+                                            {{detail.app_id ? (detail.app_id) : '--'}}
+                                        </p>
+                                    </div>
+
+                                    <div class="block-feilds">
+                                        <span>Modules</span>
+                                        <p>
+                                            {{detail.sfa ? ('SFA, ') : null}}
+                                            {{detail.dms ? ('DMS, ') : null}}
+                                            {{detail.loyalty ? ('Loyalty') : null}}
+                                        </p>
+                                    </div>
+
+
+
+                                    <div class="block-feilds">
+                                        <span>Payout</span>
+                                        <p>
+                                            {{detail.payout ? ('Enabled') : 'Disabled'}}
+                                        </p>
+                                    </div>
+
+                                    <ng-container *ngIf="detail.user_type == 'ORG'">
+                                        <div class="block-feilds"
+                                            *ngIf="detail.enquiry_sfa == '1' || detail.enquiry_dms == '1'">
+                                            <span>Whatsapp Enable</span>
+                                            <p>
+                                                {{detail.whatsapp_enable == '1' ? 'Yes' : 'No'}}
+                                            </p>
+                                        </div>
+
+                                        <div class="block-feilds"
+                                            *ngIf="detail.enquiry_sfa == '1' || detail.enquiry_dms == '1'">
+                                            <span>Enquiry Enable</span>
+                                            <p>
+                                                {{detail.enquiry_sfa == '1' ? 'SFA' : ''}},&nbsp;{{detail.enquiry_dms ==
+                                                '1' ? 'DMS' : ''}}
+                                            </p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.primary_dist_edit">
+                                            <span>Primary Dis. Editable</span>
+                                            <p>{{detail.primary_dist_edit == '1' ? 'Yes' : 'No'}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.party_inactive_month">
+                                            <span>Party Inactive Month</span>
+                                            <p>{{detail.party_inactive_month ? detail.party_inactive_month : ''}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.exp_type">
+                                            <span>Expense Claim</span>
+                                            <p>{{detail.exp_type == '0' ? 'Manual Km' : 'Google Km'}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.scanning_sub_type_wise">
+                                            <span>Scanning Subtype</span>
+                                            <p>{{detail.scanning_sub_type_wise == '1' ? 'Yes' : 'No'}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.qr_genration">
+                                            <span>Coupon Generation</span>
+                                            <p>{{detail.qr_genration ? detail.qr_genration : '---'}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.secondary_network_loyalty">
+                                            <span>Secondary Network Loyalty</span>
+                                            <p>{{detail.secondary_network_loyalty == 1 ? 'Scanning Based' : 'Secondary
+                                                Billing Based'}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.party_deactive">
+                                            <span>Party Deactive Type</span>
+                                            <p>{{detail.party_deactive ? detail.party_deactive : '---'}}</p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.influencer_registration_auto_approval">
+                                            <span>Influencer Auto Approval</span>
+                                            <p>{{detail.influencer_registration_auto_approval == '1' ? 'Yes' : 'No'}}
+                                            </p>
+                                        </div>
+                                        <div class="block-feilds" *ngIf="detail.item_image">
+                                            <span>Order Item With Image</span>
+                                            <p>{{detail.item_image == '1' ? 'Yes' : 'No'}}</p>
+                                        </div>
+                                    </ng-container>
+
+
+
+                                    <div class="block-feilds" *ngIf="detail.assign_templates_name">
+                                        <span>Coupon Paper Size</span>
+                                        <p *ngFor="let row of detail.assign_templates_name">
+                                            {{row ? row : '---'}}
+                                        </p>
+                                    </div>
+
+                                    <div class="block-feilds" *ngIf="detail.party_deactive">
+                                        <span>Party Deactivation Type </span>
+                                        <p>{{detail.party_deactive == '0' ? 'Order Based' : 'Scanning Based'}}</p>
+                                    </div>
+
+                                </ng-container>
+
+                                <div class="block-feilds" *ngIf="detail.user_type == 'Sales User' ">
+                                    <span>First Mobile App Login</span>
+                                    <p>
+                                        {{detail.first_login && detail.first_login != '0000-00-00 00:00:00'?
+                                        (detail.first_login | date:'MMM d, y, h:mm:a') : '--'}}
+                                    </p>
+                                </div>
+                                <div class="block-feilds" *ngIf="detail.user_type == 'Sales User' ">
+                                    <span>Latest Mobile App Login</span>
+                                    <p>
+                                        {{detail.latest_login && detail.latest_login != '0000-00-00 00:00:00'?
+                                        (detail.latest_login |
+                                        date:'MMM d, y, h:mm:a') : '--'}}
+                                    </p>
+                                </div>
+
+                                <div class="block-feilds" *ngIf="detail.user_type == 'Sales User' ">
+                                    <span>Device Information</span>
+                                    <p>
+                                        {{detail.device_info ? detail.device_info : '---'}}
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="grid-box  mt16"
+                                [ngClass]="{'two': detail.user_type != 'System User', 'single': detail.user_type == 'System User'}">
+                                <div class="block-feilds  flex-heading"
+                                    *ngIf="detail.user_type != 'System User' && detail.user_type != 'ORG'">
+                                    <div>
+                                        <span>Attendance Punchin Address</span>
+                                        <p>{{detail.gps_address ? detail.gps_address : '---'}} <br> {{detail.lat ?
+                                            ('Latitude :-' +
+                                            detail.lat) : ''}} {{detail.lng
+                                            ?
+                                            (', Longitude :-' + detail.lng) : ''}}</p>
+                                    </div>
+
+                                    <div class="left-auto"
+                                        *ngIf="detail.gps_address !=''  && detail.lat != '' && detail.lng != ''">
+                                        <a class="sm-mat-icon-button" mat-icon-button matTooltip="Reset Punchin Address"
+                                            (click)="reset()">
+                                            <i class="material-icons">restart_alt</i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Address</span>
+                                    <p>{{detail.address}} {{detail.city ? ',' + detail.city + ',' : ''}}
+                                        {{detail.district_name ?
+                                        detail.district_name + ',' : ''}} {{detail.state_name ? detail.state_name + ','
+                                        : ''}}
+                                        {{detail.pincode}}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Last Updated On</span>
+                                    <p>
+                                        {{detail.last_updated_on && detail.last_updated_on != '0000-00-00 00:00:00'?
+                                        (detail.last_updated_on
+                                        |
+                                        date:'medium') : '--'}}
+                                    </p>
+                                </div>
+                                <ng-container *ngIf="login_data.id == '1' ">
+                                    <div class="block-feilds">
+                                        <span>State Wise Listing</span>
+                                        <p>{{detail.state_wise_listing==0?'No':'Yes'}}</p>
+                                    </div>
+                                </ng-container>
+
+                                <div class="block-feilds">
+                                    <span>Working State</span>
+                                    <p><span *ngFor="let row of detail.working_state_name">{{row.concat("
+                                            ,")}}&nbsp;&nbsp;</span> </p>
+                                </div>
+
+                                <ng-container *ngIf="detail.user_type != 'System User' && detail.user_type != 'ORG'">
+                                    <div class="block-feilds">
+                                        <span>Working District</span>
+                                        <p><span *ngFor="let row of detail.working_district_name">{{row.concat(" ,")}}
+                                                &nbsp;&nbsp;</span> </p>
+                                    </div>
+                                </ng-container>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- product data end -->
+
+
+                    <!-- Skeleton start -->
+                    <div class="card" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Skeleton end -->
+
+                </div>
+
+                <div class="col s12 m4 l4">
+                    <!-- *ngIf="detail.user_type == 'System User' || detail.user_type == 'ORG' " -->
+                    <ng-container>
+                        <div class="card mb10" *ngIf="!skLoading">
+                            <div class="card-head">
+                                <h2>Login Credentials</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="grid-box single">
+                                    <div class="block-feilds">
+                                        <span>User Name</span>
+                                        <p>{{detail.username}}</p>
+                                        <div class="copy-clipboard">
+                                            <button mat-button (click)="copyAddress(detail.username)">
+                                                <i class="material-icons">content_copy</i>Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-box single mt16">
+                                    <div class="block-feilds">
+                                        <span>Password</span>
+                                        <p>{{detail.password}}</p>
+                                        <div class="copy-clipboard">
+                                            <button mat-button (click)="copyAddress(detail.password)">
+                                                <i class="material-icons">content_copy</i>Copy
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card pb0 mb10" *ngIf="detail.user_type == 'System User'">
+                            <div class="card-head">
+                                <h2>Assigned Users</h2>
+                            </div>
+                            <div class="card-body pt0">
+                                <mat-list class="cs-list-box pt0">
+                                    <mat-list-item *ngFor="let row of detail.assign_system_user_name;">
+                                        <div class="alphabet">{{row ? row[0].toUpperCase():'' }}</div>
+                                        {{row | titlecase}}
+                                    </mat-list-item>
+                                </mat-list>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <!-- product data end -->
+
+
+                    <!-- Skeleton start -->
+                    <div class="card mb10" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="sk-box" *ngFor="let row of [].constructor(4)">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Skeleton end -->
+                </div>
+                <div class="col s12 m4 l4">
+                    <ng-container *ngIf="detail.user_type == 'Sales User'">
+                        <div class="card pb0 mb10" *ngIf="!skLoading">
+                            <div class="card-head">
+                                <h2>Leave Master</h2>
+                            </div>
+                            <div class="card-body pt0">
+                                <mat-list class="cs-list-box pt0">
+                                    <!-- <mat-list-item *ngFor="let row of detail.leaveTypes;">
+                            <div class="alphabet">{{row ? row.leave_type[0].toUpperCase():'' }}</div>
+                            {{row.leave_type | titlecase}} - {{row.leave_count}}
+                        </mat-list-item> -->
+                                    <mat-list-item>
+                                        <div class="alphabet">{{detail.leaveTypes? detail.leaveTypes.cl:'0'}}</div>
+                                        CL
+                                    </mat-list-item>
+                                    <mat-list-item>
+                                        <div class="alphabet">{{detail.leaveTypes? detail.leaveTypes.comp_off:'0'}}
+                                        </div>
+                                        COMP OFF
+                                    </mat-list-item>
+                                    <mat-list-item>
+                                        <div class="alphabet">{{detail.leaveTypes? detail.leaveTypes.el:'0'}}</div>
+                                        EL
+                                    </mat-list-item>
+                                    <mat-list-item>
+                                        <div class="alphabet">{{detail.leaveTypes? detail.leaveTypes.sl:'0'}}</div>
+                                        SL
+                                    </mat-list-item>
+                                </mat-list>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- product data end -->
+
+
+                    <!-- Skeleton start -->
+                    <div class="card mb10" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="sk-box" *ngFor="let row of [].constructor(4)">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Skeleton end -->
+                </div>
+                <div class="col s12 m8 l8" *ngIf="detail.user_type == 'Service Engineer'">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Basic Details</h2>
+
+                            <div class="left-auto" *ngIf="login_data.edit_users_master=='1'">
+                                <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+                                    [routerLink]="[ 'user-edit/', user_id ]">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="block-feilds user-dp">
+                                    <div class="wp100">
+                                        <span>Name</span>
+                                        <p>{{detail.name | titlecase}}</p>
+                                    </div>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Mobile Number</span>
+                                    <p>{{detail.contact_01}}</p>
+                                </div>
+                                <!-- <div class="block-feilds">
+                    <span> Paytm Number</span>
+                    <p>{{detail.paytm_mobileno}}</p>
+                </div> -->
+                                <div class="block-feilds">
+                                    <span>Email ID</span>
+                                    <p>{{detail.email ? detail.email :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Address</span>
+                                    <p>{{detail.address | titlecase}} {{detail.city ? ',' + (detail.city |titlecase) +
+                                        ',' : ''}}
+                                        {{detail.district_name ?
+                                        (detail.district_name |titlecase) + ',' : ''}} {{detail.state_name ?
+                                        (detail.state_name |titlecase)
+                                        + ',' : ''}}
+                                        {{detail.pincode}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Status</span>
+                                    <p>{{detail.status == '1' ? 'Active' : 'Deactive'}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cs-table left-right-10">
+                <div class="sticky-head">
+                    <div class="table-head ">
+                        <table>
+                            <tr>
+                                <th class="w50">S.No.</th>
+                                <th>Module Name</th>
+                                <th class="w120 text-center">View</th>
+                                <th class="w120 text-center">Edit</th>
+                                <th class="w120 text-center">Delete</th>
+                                <th class="w120 text-center">Add</th>
+                                <th class="w120 text-center">Download Excel</th>
+                                <th class="w120 text-center">Upload Excel</th>
+                                <th *ngIf="login_data.access_level_new == '1'" class="w120 text-center">Header Assigning
+                                </th>
+                                <th *ngIf="login_data.access_level_new == '1'" class="w80 text-center">Live Data</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="table-container mb70">
+                    <div class="table-content">
+                        <table>
+                            <tr *ngFor="let data of assign_module_data; let i = index">
+                                <td class="w50">{{i+1}}</td>
+                                <td>{{data.module_name}}</td>
+                                <td class="w120 text-center">
+                                    <mat-checkbox [disabled]=true *ngIf="data.view== 0 || data.view== 1"
+                                        [checked]="data.view== 1"
+                                        (change)="assign_module('view',$event,i)"></mat-checkbox>
+                                    <mat-checkbox *ngIf="data.view== 'disable'" [disabled]=true></mat-checkbox>
+                                </td>
+                                <td class="w120 text-center">
+                                    <mat-checkbox [disabled]=true *ngIf="data.edit== 0 || data.edit == 1"
+                                        [checked]="data.edit==1"
+                                        (change)="assign_module('edit',$event,i)"></mat-checkbox>
+                                    <mat-checkbox *ngIf="data.edit== 'disable'" [disabled]=true
+                                        [indeterminate]=true></mat-checkbox>
+                                </td>
+                                <td class="w120 text-center">
+                                    <mat-checkbox [disabled]=true *ngIf="data.delete== 0 || data.delete == 1"
+                                        [checked]="data.delete==1"
+                                        (change)="assign_module('delete',$event,i)"></mat-checkbox>
+                                    <mat-checkbox *ngIf="data.delete== 'disable'" [disabled]=true
+                                        [indeterminate]=true></mat-checkbox>
+                                </td>
+                                <td class="w120 text-center">
+                                    <mat-checkbox [disabled]=true [disabled]=true *ngIf="data.add== 0 || data.add == 1"
+                                        [checked]="data.add==1" (change)="assign_module('add',$event,i)"></mat-checkbox>
+                                    <mat-checkbox *ngIf="data.add== 'disable'" [disabled]=true
+                                        [indeterminate]=true></mat-checkbox>
+                                </td>
+                                <td class="w120 text-center">
+                                    <mat-checkbox [disabled]=true *ngIf="data.export== 0 || data.export == 1"
+                                        [checked]="data.export==1"
+                                        (change)="assign_module('export',$event,i)"></mat-checkbox>
+                                    <mat-checkbox *ngIf="data.export== 'disable'" [disabled]=true
+                                        [indeterminate]=true></mat-checkbox>
+                                </td>
+                                <td class="w120 text-center">
+                                    <mat-checkbox [disabled]=true *ngIf="data.import== 0 || data.import == 1"
+                                        [checked]="data.import==1"
+                                        (change)="assign_module('import',$event,i)"></mat-checkbox>
+                                    <mat-checkbox *ngIf="data.import== 'disable'" [disabled]=true
+                                        [indeterminate]=true></mat-checkbox>
+                                </td>
+                                <td *ngIf="login_data.access_level_new == '1'" class="w120 text-center">
+                                    <div class="action-button">
+                                        <button mat-icon-button matTooltip="Refresh" matTooltip="Header Settings"
+                                            (click)="settingModal(data.module_id,data.module_name,detail.app_id)">
+                                            <i class="material-icons">settings</i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td *ngIf="login_data.access_level_new == '1'" class="w80 text-center">
+                                    <!-- <button *ngIf="i!=3" mat-raised-button color="accent" (click)="delteDataRequest(row.id, row.name)">Delete </button> -->
+                                    <div class="action-button"
+                                        *ngIf="login_data.accessAllowed.includes(data?.module_name)">
+                                        <button mat-icon-button matTooltip="Delete" *ngIf="detail?.lived != '0'"
+                                            (click)="delteDataRequest({'module_name':data?.module_name, 'org_id':detail?.org_id})">
+                                            <i class="material-icons del">delete_sweep</i>
+                                        </button>
+                                        <span *ngIf="detail?.lived == '1'" matTooltip="Live data can't be deleted"
+                                            class="liveStatus"></span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="fab-btns">
+                <button mat-fab color="primary"
+                    *ngIf="detail.user_type != 'System User' && detail.user_type != 'ORG'  && detail.user_type != 'Service Engineer' && tabType != 'tracker' "
+                    (click)="openDialog('transferData')">
+                    <i class="material-icons">swap_horiz</i>
+                    Transfer Data
+                </button>
+
+                <button mat-fab color="primary"
+                    *ngIf="detail.user_type == 'System User' && login_data.edit_users_master=='1' "
+                    (click)="openDialog('updatePassword')">
+                    <i class="material-icons">vpn_key</i>
+                    Change Credentials
+                </button>
+            </div>
+        </ng-container>
+
+
+
+
+        <ng-container *ngIf="tabType == 'Management'">
+
+
+            <div class="tools-container">
+                <h2>Type Management</h2>
+                <div class="left-auto df ac flex-gap-10">
+                    <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                        <i class="material-icons">refresh</i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="container table-container">
+                <div class="cs-table">
+                    <div class="sticky-head">
+                        <div class="table-head">
+                            <table>
+                                <tr>
+                                    <th class="w50">S.No</th>
+                                    <th class="w200">Module Name</th>
+                                    <th>Dropdown</th>
+                                    <th class="w100 text-center">Options</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-content">
+                            <table>
+                                <ng-container *ngIf="!loader">
+                                    <tr *ngFor="let dist of typeList; let i = index;">
+                                        <td class="w50">{{i + 1 + sr_no}}</td>
+                                        <td class="w200">{{dist.module_name}}</td>
+                                        <td>{{dist.name}}</td>
+                                        <td class="w100 text-center">
+                                            <div class="action-button">
+                                                <button mat-icon-button matTooltip="View" (click)="openDialog2(dist)">
+                                                    <i class="material-icons edit">remove_red_eye</i>
+                                                </button>
+                                                <!-- <button mat-icon-button matTooltip="View" (click)="openDesignationModal2(dist)">
+                            <i class="material-icons edit">edit</i>
+                          </button> -->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+
+                                <ng-container *ngIf="loader">
+                                    <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                                        <td class="w50">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w100">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td>
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w100 text-center" *ngIf="userType=='System User'">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </table>
+                        </div>
+                    </div>
+
+                    <ng-container *ngIf="typeList.length == 0 && !loader">
+                        <app-not-result-found></app-not-result-found>
+                    </ng-container>
+
+                </div>
+
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="tabType == 'Network'">
+            <div class="mat-tabbar" *ngIf="service.drArray.length > 1">
+                <ng-container *ngFor="let row of service.drArray; let i = index">
+                    <button mat-button [ngClass]="{'active': netWorkType == row.type}"
+                        (click)="netWorkName = row.module_name;  netWorkType = row.type">
+                        {{row.module_name}}
+                    </button>
+                </ng-container>
+            </div>
+
+
+            <app-distribution-list
+                [dataToReceive]="{'type': netWorkType, 'user_id': detail.id, 'hide':false, 'netWorkName':netWorkName,'padding0':'padding0'}">
+            </app-distribution-list>
+
+
+        </ng-container>
+
+        <ng-container *ngIf="tabType == 'Influencer'">
+            <div class="mat-tabbar" *ngIf="service.InfluenceArray.length > 1">
+                <ng-container *ngFor="let row of service.InfluenceArray; let i = index">
+                    <button mat-button [ngClass]="{'active': InfluencerNetWorkType == row.type}"
+                        (click)="InfluencerNetWorkName = row.module_name;  InfluencerNetWorkType = row.type ; this.service.influencer_netwrk()">
+                        {{row.module_name}}
+                    </button>
+                </ng-container>
+            </div>
+            <app-influencer-list [dataToReceive]="{'type': InfluencerNetWorkType, 'module_name':InfluencerNetWorkName
+,  'user_id':detail.id,  'padding0':'padding0' ,'hide':false}"></app-influencer-list>
+        </ng-container>
+
+        <ng-container *ngIf="tabType == 'Tracker'">
+            <app-tracker
+                [dataToReceive]="{'start_date': today_date | date:'yyyy-MM-dd', 'user_id':detail.id,  'padding0':'padding0'}"></app-tracker>
+        </ng-container>
+
+
+
+
+
+        <ng-container *ngIf="tabType == 'Attendance'">
+            <app-attendence
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-attendence>
+        </ng-container>
+
+
+
+        <ng-container *ngIf="tabType == 'Checkin'">
+            <app-checkin
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-checkin>
+        </ng-container>
+
+
+        <ng-container *ngIf="tabType == 'Leave'">
+            <app-leaves
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-leaves>
+        </ng-container>
+
+        <ng-container *ngIf="tabType == 'AllCheckin'">
+            <app-checkin
+                [dataToReceive]="{'user_id':detail.id, 'employee_id':detail.employee_id,'filterTab':'dateWise',  'padding0':'padding0'}"></app-checkin>
+        </ng-container>
+
+        <ng-container *ngIf="tabType == 'Travel'">
+            <app-travel-list
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-travel-list>
+        </ng-container>
+
+
+
+        <ng-container *ngIf="tabType == 'Expense'">
+            <app-list-expense
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-list-expense>
+        </ng-container>
+
+
+
+        <ng-container *ngIf="tabType == 'Event'">
+            <app-contractor-meet-list
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-contractor-meet-list>
+        </ng-container>
+
+
+        <ng-container *ngIf="tabType == 'Task'">
+            <app-task-list
+                [dataToReceive]="{'hide': true, 'user_id':detail.id, 'employee_id':detail.employee_id,  'padding0':'padding0'}"></app-task-list>
+        </ng-container>
+
+    </div>
+
+
+    <!-- #################################service engineer detail page####################################### -->
+
+
+
+    <div class="container pb50" [ngClass]="{'pt10 pl10 pr10' :tabType== 'Profile'}">
+        <ng-container *ngIf="tabType == 'Profile'">
+            <div class="row">
+
+            </div>
+        </ng-container>
+    </div>
+
+
+
+
+
+</div>

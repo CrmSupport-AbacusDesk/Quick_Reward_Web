@@ -1,0 +1,1080 @@
+<div class="navigation">
+
+    <!-- //----------------Navigation Filter Start------------------// -->
+    <!-- <div class="navigation_filter" *ngIf="login_data.user_type !='DMS' && login_data.org_id != 0">
+        <mat-form-field appearance="outline">
+            <mat-select name="filter_type" [(ngModel)]="data.filter_type" #filter_type="ngModel"
+                (ngModelChange)="onFilterTypeChange($event)">
+                <mat-option value="All">All Modules</mat-option>
+                <mat-option *ngIf="login_data.organisation_data.sfa == '1'" value="SFA">SFA</mat-option>
+                <mat-option *ngIf="login_data.organisation_data.dms == '1'" value="DMS">DMS</mat-option>
+                <mat-option *ngIf="login_data.organisation_data.loyalty == '1'" value="LOYALTY">LOYALTY</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div> -->
+    <!-- //----------------Navigation Filter End------------------// -->
+
+    <div class="nav-container">
+        <ul>
+            <li
+                *ngIf="login_data.view_sfa_dashboard=='1' || login_data.view_dms_dashboard=='1' || login_data.view_loyalty_dashboard=='1' || login_data.view_service_dashboard=='1'">
+                <a mat-button (click)="activeTabHandler();clearFilter()" [routerLink]="['/dashboard', data.filter_type]"
+                    routerLinkActive="active">
+                    <i class="material-icons ">dashboard</i>Dashboard
+                </a>
+            </li>
+
+            <li *ngIf="login_data.view_enquiry=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler();clearFilter()" routerLink="/lead-list"
+                    routerLinkActive="active">
+                    <i class="material-icons ">contact_support</i>Enquiry
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray?.enquiry > 0">{{serve.counterArray?.enquiry}}</span>
+                </a>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="(login_data.view_site=='1') && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="clearFilter(); activeTabHandler('Sites');"
+                    [ngClass]="{'active':activeNavTab=='Sites' }"><i class="material-icons ">domain</i>Sites </a>
+                <ul>
+                    <li>
+                        <a mat-button (click)="clearFilter()" routerLink="/site" routerLinkActive="active">
+                            Site/Project
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter()" routerLink="/site-order/quotation"
+                            routerLinkActive="active">
+                            Quotation
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter()" routerLink="/site-order/order" routerLinkActive="active">
+                            Orders
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_influencer_network=='1' && serve.InfluenceArray?.length > 0 && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button (click)="clearFilter();serve.influencer_netwrk(); activeTabHandler('Influencer Network');"
+                    [ngClass]="{'active':activeNavTab=='Influencer Network' }">
+                    <i class="material-icons ">hub</i>Influencer Network
+                </a>
+                <ul>
+                    <li *ngFor="let row of serve.InfluenceArray">
+                        <a mat-button (click)="clearFilter()" routerLink="influencer/{{row.type}}/{{row.module_name}}/"
+                            routerLinkActive="active">
+                            {{row.module_name ? (row.module_name | titlecase) : ''}}
+                            <span class="nav-counter" *ngIf="row.dr_count > 0 ">{{row.dr_count}}</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="(login_data.view_primary_network=='1'|| login_data.view_secondary_network=='1')  && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Customer Network'); serve.dr_list(); clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Customer Network' }">
+                    <i class="material-icons ">people_alt</i>
+                    Customer Network
+                </a>
+                <ul>
+                    <li *ngIf="login_data.view_primary_network=='1'">
+                        <a mat-button (click)="clearFilter();" routerLink="/distribution-list/1/Primary"
+                            routerLinkActive="active">
+                            Primary
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_secondary_network=='1'">
+                        <a mat-button (click)="clearFilter();" routerLink="/distribution-list/3/Secondary"
+                            routerLinkActive="active">
+                            Secondary
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="login_data.view_orders=='1' && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'All')">
+                <a mat-button (click)="clearFilter(); activeTabHandler('Orders'); "
+                    [ngClass]="{'active':activeNavTab=='Orders'}"><i class="material-icons ">shopping_cart</i>Orders</a>
+                <ul>
+                    <li *ngIf=" login_data.view_primary_orders=='1'">
+                        <a mat-button (click)="clearFilter();" routerLink="/order-list" routerLinkActive="active">
+                            Primary Order
+                            <span class="nav-counter "
+                                *ngIf="serve.counterArray.primary_order > 0">{{serve.counterArray.primary_order}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_secondary_orders=='1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/secondary-order-list"
+                            routerLinkActive="active">
+                            Secondary Order
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.secondary_order}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="login_data.view_accounts=='1' && (data.filter_type== 'DMS' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Accounts');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Accounts'}">
+                    <i class="material-icons ">receipt_long</i> Accounts
+                </a>
+                <ul>
+                    <li *ngIf=" login_data.view_dms_invoice=='1'">
+                        <a mat-button routerLink="/billing" routerLinkActive="active" (click)="clearFilter()">
+                            Invoice
+                        </a>
+                    </li>
+                    <!-- <li *ngIf="login_data.view_ledger=='1' && login_data.dms_ledger_api == '1'">
+                        <a mat-button routerLink="/ledger" routerLinkActive="active" (click)="clearFilter()">
+                            Ledger
+                        </a>
+                    </li> -->
+                    <!-- <li *ngIf="login_data.view_bill=='1'">
+                        <a mat-button routerLink="/statement" routerLinkActive="active" (click)="clearFilter()">
+                            Pending Bills
+                        </a>
+                    </li> -->
+
+                    <li *ngIf="login_data.view_statement=='1'">
+                        <a mat-button routerLink="/pending-bills" routerLinkActive="active" (click)="clearFilter()">
+                            Statement
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.view_ledger=='1' && login_data.dms_ledger_api == '0'">
+                        <a mat-button routerLink="/payments" routerLinkActive="active" (click)="clearFilter()">
+                            Payments
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_scheme == '1' && (data.filter_type== 'DMS' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Scheme/Incentive');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Scheme/Incentive'}"><i class="material-icons ">receipt_long</i>
+                    Scheme/Incentive
+                </a>
+                <ul>
+                    <li>
+                        <a mat-button routerLink="/scheme/dealerscheme" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Primary/Secondary Scheme
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/secondary-bill-upload-list" (click)="clearFilter()"
+                            routerLinkActive="active">
+                            Secondary Billing
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li class="dropdown"
+                *ngIf="(login_data.view_dispatch== '1' || login_data.view_dispatch_packing== '1' || login_data.view_dispatch_billing == '1' || login_data.view_dispatch_guard== '1')">
+                <a mat-button (click)="activeTabHandler('Dispatch');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Dispatch'}">
+                    <i class="material-icons ">local_shipping</i>Dispatch
+                </a>
+                <ul>
+                    <li
+                        *ngIf="login_data.view_dispatch== '1' || login_data.view_dispatch_packing== '1' || login_data.view_dispatch_billing == '1' || login_data.view_dispatch_guard== '1' ">
+                        <a mat-button routerLink="/company-dispatch" (click)="clearFilter()" routerLinkActive="active">
+                            Dispatch
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.id=='1'">
+                        <a mat-button routerLink="/generate-master-box" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Master Box
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li *ngIf="login_data.view_stock =='1' && (data.filter_type== 'DMS' || data.filter_type== 'All')">
+                <a mat-button routerLink="/stock-list" (click)="activeTabHandler();clearFilter()"
+                    routerLinkActive="active">
+                    <i class="material-icons ">inventory</i>
+                    Stock
+                </a>
+            </li>
+
+            <!-- <li *ngIf="login_data.view_manual_dispatch== '1' ">
+                <a mat-button routerLink="/manual-dispatch" (click)="activeTabHandler();clearFilter()" routerLinkActive="active">
+                    <i class="material-icons ">local_shipping</i>
+                    Manual Dispatch
+                </a>
+            </li> -->
+
+            <!-- <li *ngIf="login_data.view_sales_return== '1' ">
+                <a mat-button routerLink="/sales-return" (click)="activeTabHandler();clearFilter()" routerLinkActive="active">
+                    <i class="material-icons ">update</i>
+                    Sales Return
+                </a>
+            </li> -->
+
+
+
+            <li *ngIf="login_data.view_attendence=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button routerLink="/attendance" (click)="clearFilter(); activeTabHandler();"
+                    routerLinkActive="active">
+                    <i class="material-icons ">insert_invitation</i>
+                    Attendance
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.today_attendance > 0">{{serve.counterArray.today_attendance > 0 ?
+                        serve.counterArray.today_attendance :''}}</span>
+                </a>
+            </li>
+
+            <li *ngIf="login_data.view_check_in=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button routerLink="/checkin" routerLinkActive="active"
+                    (click)="clearFilter(); activeTabHandler();">
+                    <i class="material-icons ">my_location</i>
+                    Check In
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.today_checkin > 0">{{serve.counterArray.today_checkin > 0 ?
+                        serve.counterArray.today_checkin : ''}}</span>
+                </a>
+            </li>
+
+            <li *ngIf="login_data.view_leaves=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="clearFilter(); activeTabHandler();" routerLink="/leave-list"
+                    routerLinkActive="active">
+                    <i class="material-icons ">exit_to_app</i>
+                    Leave
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.pending_leaves > 0">{{serve.counterArray.pending_leaves > 0 ?
+                        serve.counterArray.pending_leaves : ''}}</span>
+                </a>
+            </li>
+
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_travel_plan=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="clearFilter(); activeTabHandler('Travel Plan'); "
+                    [ngClass]="{'active':activeNavTab=='Travel Plan'}">
+                    <i class="material-icons ">directions_transit</i>Travel Plan
+                </a>
+                <ul>
+                    <li>
+                        <a mat-button (click)="clearFilter()" routerLink="/travel-list/poa-single"
+                            routerLinkActive="active" [queryParams]="{travelType: 'daily'}">
+                            Party Wise Journey Plan
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/travel-list" routerLinkActive="active"
+                            [queryParams]="{travelType: 'monthly'}">
+                            Area Wise Journey Plan
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li *ngIf="login_data.view_follow_up=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button routerLink="/followup-list" routerLinkActive="active"
+                    (click)="activeTabHandler(); clearFilter()">
+                    <i class="material-icons ">add_ic_call</i>
+                    Follow Up
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.pending_followup > 0">{{serve.counterArray.pending_followup > 0 ?
+                        serve.counterArray.pending_followup : ''}}</span>
+                </a>
+            </li>
+
+            <li
+                *ngIf="login_data.view_announcement=='1' && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'All')">
+                <a mat-button routerLink="/announcement-list" routerLinkActive="active" (click)="clearFilter()">
+                    <i class="material-icons ">campaign</i>
+                    Announcement
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.announcementList > 0">{{serve.counterArray.announcementList > 0 ?
+                        serve.counterArray.announcementList : ''}}</span>
+                </a>
+            </li>
+
+            <li *ngIf="login_data.view_expense=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button routerLink="/expense-list" routerLinkActive="active"
+                    (click)="activeTabHandler(); clearFilter()">
+                    <i class="material-icons ">account_balance_wallet</i>
+                    Expense
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.pending_expense > 0">{{serve.counterArray.pending_expense > 0 ?
+                        serve.counterArray.pending_expense : ''}}</span>
+                </a>
+            </li>
+
+
+
+
+            <li *ngIf="login_data.view_event_plan=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button routerLink="/contractor-meet" routerLinkActive="active"
+                    (click)="activeTabHandler(); clearFilter()">
+                    <i class="material-icons ">groups</i>
+                    Event Plan
+                    <span class="nav-counter" *ngIf="serve.counterArray.event > 0">{{serve.counterArray.event > 0 ?
+                        serve.counterArray.event : ''}}</span>
+                </a>
+            </li>
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_pop_gift=='1'  && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Pop & Gift');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Pop & Gift'}"><i class="material-icons ">card_giftcard</i>Pop &
+                    Gift</a>
+                <ul>
+                    <li>
+                        <a mat-button routerLink="/pop-gift-list" routerLinkActive="active" (click)="clearFilter()">
+                            Pop & Gift
+                        </a>
+                    </li>
+
+                    <li>
+                        <a mat-button routerLink="/pop-requisition" routerLinkActive="active" (click)="clearFilter()">
+                            Pop Requisition Req.
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+
+
+
+            <li *ngIf="login_data.view_survey=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button routerLink="/survey-list" routerLinkActive="active" (click)="clearFilter()">
+                    <i class="material-icons ">article</i>
+                    Survey
+                    <span class="nav-counter" *ngIf="serve.counterArray.survey > 0">{{serve.counterArray.survey > 0 ?
+                        serve.counterArray.survey : ''}}</span>
+                </a>
+            </li>
+
+            <!-- <li
+                *ngIf="login_data.view_gift=='1' && (data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button routerLink="/gift-list" routerLinkActive="active"
+                    (click)="activeTabHandler(); clearFilter()">
+                    <i class="material-icons ">card_giftcard</i>
+                    Gift Gallery
+                    <span class="nav-counter"
+                        *ngIf="serve.counterArray.gift_gallery > 0">{{serve.counterArray.gift_gallery > 0 ?
+                        serve.counterArray.gift_gallery : ''}}</span>
+
+                </a>
+            </li> -->
+
+            <li class="dropdown"
+                *ngIf="login_data.view_bonus_points=='1' && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Bonus');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Bonus'}">
+                    <i class="material-icons ">payments</i> Bonus
+                </a>
+                <ul>
+                    <li>
+                        <a mat-button routerLink="/bonus-list" routerLinkActive="active" (click)="clearFilter()">
+                            Bonus Points
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/badges-list" routerLinkActive="active" (click)="clearFilter()">
+                            Badges
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/spin-win-list" routerLinkActive="active" (click)="clearFilter()">
+                            Spin & Win
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- <li *ngIf="login_data.view_bonus_points=='1'">
+                <a mat-button (click)="activeTabHandler(); clearFilter()" routerLink="/bonus-list" routerLinkActive="active">
+                    <i class="material-icons">payments</i>
+                    Bonus Points
+                </a>
+            </li> -->
+
+            <li
+                *ngIf="login_data.view_coupon_code=='1' && (data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler(); clearFilter()" routerLink="/coupon-list"
+                    routerLinkActive="active">
+                    <i class="material-icons">qr_code</i>
+                    QR Code Label
+                </a>
+            </li>
+
+
+
+
+            <li
+                *ngIf="(login_data.view_coupon_code=='1' || login_data.add_coupon_code=='1') && (data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button routerLink="/reprint" (click)="activeTabHandler(); clearFilter()"
+                    routerLinkActive="active">
+                    <i class="material-icons ">print</i>
+                    Reprint Coupon
+                </a>
+            </li>
+
+            <li *ngIf="login_data.view_purchase=='1' && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler(); clearFilter()" routerLink="/purchase"
+                    routerLinkActive="active">
+                    <i class="material-icons">receipt</i>
+                    Purchase Request
+                </a>
+            </li>
+
+
+            <li
+                *ngIf="(login_data?.access_level_new == '3' && login_data?.organisation_data?.loyalty == '1') && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button routerLink="/payout" (click)="activeTabHandler(); clearFilter()"
+                    routerLinkActive="active">
+                    <i class="material-icons ">account_balance_wallet</i>
+                    Payout Wallet
+                </a>
+            </li>
+
+            <li
+                *ngIf="login_data.access_level_new == '3' && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button routerLink="/whatsapp" (click)="activeTabHandler()" routerLinkActive="active">
+                    <i class="material-icons ">chat</i>
+                    Whatsapp Integration
+                </a>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="login_data.view_redeem_request=='1' && (data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button (click)="clearFilter();activeTabHandler('Redeem Request');"
+                    [ngClass]="{'active':activeNavTab=='Redeem Request'}">
+                    <i class="material-icons">redeem</i>Redeem Request
+                </a>
+
+                <ul>
+                    <li>
+                        <a mat-button routerLink="/redeem-request/Cash" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Cash Request
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/redeem-request/Gift" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Gift Request
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+
+            <li *ngIf="login_data.view_task=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler(); clearFilter()" routerLink="/task-list"
+                    routerLinkActive="active">
+                    <i class="material-icons">assignment_add</i>
+                    Task
+                </a>
+            </li>
+
+            <!-- <li>
+                <a mat-button  routerLink="/chunkuploader/0" routerLinkActive="active" [queryParams]="{type: 'done'}">
+                    <i class="material-icons">cloud_upload</i>
+                    Uploading Center
+                </a>
+            </li> -->
+
+            <!-- <li *ngIf="login_data.view_app_control == '1'">
+                <a mat-button (click)="clearFilter()" routerLink="/app-control/System Alerts" routerLinkActive="active">
+                    <i class="material-icons">settings_cell</i>
+                    App Control
+                </a>
+            </li> -->
+
+            <li
+                *ngIf="login_data.view_support=='1' && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a (click)="activeTabHandler(); clearFilter()" mat-button routerLink="/support"
+                    routerLinkActive="active">
+                    <i class="material-icons">help</i>
+                    Ticket
+                </a>
+            </li>
+
+            <li *ngIf="login_data.view_brand_audit=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a (click)="activeTabHandler(); clearFilter()" mat-button routerLink="/brand-audit"
+                    routerLinkActive="active">
+                    <i class="material-icons">plagiarism</i>
+                    Brand Audit
+                </a>
+            </li>
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_customer=='1' || login_data.view_warranty == '1' || login_data.view_installation == '1' || login_data.view_spare == '1' || login_data.view_invoice == '1' || login_data.view_complaint_visit == '1' || login_data.view_complaint == '1'">
+                <a mat-button (click)="clearFilter(); activeTabHandler('Service & Warranty'); "
+                    [ngClass]="{'active':activeNavTab=='Service & Warranty'}">
+                    <i class="material-icons ">construction</i>Service & Warranty
+                </a>
+                <ul>
+                    <li *ngIf="login_data.view_customer == '1'">
+                        <a mat-button (click)="clearFilter();" routerLink="/customer-list" routerLinkActive="active">
+                            Customer
+                            <span class="nav-counter "
+                                *ngIf="serve.counterArray.primary_order > 0">{{serve.counterArray.service_customer}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_warranty == '1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/warranty-list" routerLinkActive="active">
+                            Warranty Registration
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.service_warranty}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_complaint == '1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/complaint-list" routerLinkActive="active">
+                            Complaint List
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.service_complaint}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_installation == '1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/installation-list" routerLinkActive="active">
+                            Installation List
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.service_installation}}</span>
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.view_spare == '1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/spare-list" routerLinkActive="active">
+                            Spare Part
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.service_spare_part}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_invoice == '1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/service-invoice-list"
+                            routerLinkActive="active">
+                            Invoice
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.service_invoice}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_complaint_visit == '1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/Complaint-visit-list"
+                            routerLinkActive="active">
+                            Complaint Visits
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.secondary_order > 0">{{serve.counterArray.service_complaint_visit}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <!-- <li *ngIf="login_data.view_support=='1'">
+                <a (click)="clearFilter()" mat-button routerLink="/document-gallary" routerLinkActive="active">
+                    <i class="material-icons">collections</i>
+                    Image Gallery
+                </a>
+            </li> -->
+
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_target=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Target'); clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Target'}">
+                    <i class="material-icons ">trending_up</i> Target
+                </a>
+
+                <ul>
+                    <li>
+                        <a mat-button (click)="clearFilter()" routerLink="/userview-target" routerLinkActive="active">
+                            Employee Target
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter()" routerLink="/distributor-target"
+                            routerLinkActive="active">
+                            Primary Customer Target
+                        </a>
+                    </li>
+
+                    <!-- <li>
+                        <a mat-button routerLink="/distributor-target-achievement" routerLinkActive="active">
+                            Primary Customer Target & Achievment
+                        </a>
+                    </li> -->
+                </ul>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="login_data.view_master=='1' && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('Masters'); clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Masters'}"><i class="material-icons ">star_rate</i>Masters </a>
+                <ul>
+                    <li *ngIf="login_data.view_category=='1'">
+                        <a mat-button routerLink="/segment-list" routerLinkActive="active" (click)="clearFilter()">
+                            Category
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.segment > 0">{{serve.counterArray.segment}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_sub_category=='1'">
+                        <a mat-button routerLink="/subcategory" routerLinkActive="active" (click)="clearFilter()">
+                            Sub Category
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.sub_segment > 0">{{serve.counterArray.sub_segment}}</span>
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_products=='1' ">
+                        <a mat-button routerLink="/product-list" routerLinkActive="active" (click)="clearFilter()">
+                            Products
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray.product > 0">{{serve.counterArray.product}}</span>
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.view_pdf=='1' ">
+                        <a mat-button routerLink="/catalogue" routerLinkActive="active" (click)="clearFilter()">
+                            PDF Catalogue
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_designation=='1'">
+                        <a mat-button routerLink="/user-designation" routerLinkActive="active" (click)="clearFilter()">
+                            Designation & Role
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.view_video_tutorial=='1'">
+                        <a mat-button routerLink="/video-tutorial" routerLinkActive="active" (click)="clearFilter()">
+                            Video Tutorial
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.view_users=='1' ">
+                        <a mat-button routerLink="/sale-user-list" routerLinkActive="active" (click)="clearFilter()">
+                            Users
+                            <span class="nav-counter"
+                                *ngIf="serve.counterArray?.active_user > 0">{{serve.counterArray?.active_user > 0 ?
+                                serve.counterArray.active_user : ''}}</span>
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.id=='1' ">
+                        <a mat-button routerLink="/form-list" routerLinkActive="active" (click)="clearFilter()">
+                            Form Builder
+
+                        </a>
+                    </li>
+
+                    <li *ngIf="login_data.id=='1' ">
+                        <a mat-button routerLink="/insights-dashboard" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Insights Dashboard
+                        </a>
+                    </li>
+
+
+                    <li
+                        *ngIf="login_data.view_leave_master=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/leave-master-list" routerLinkActive="active" (click)="clearFilter()">
+                            Leave Master
+                        </a>
+                    </li>
+                    <li
+                        *ngIf="login_data.view_customer_category=='1' && (data.filter_type!= 'LOYALTY' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/customer-category" routerLinkActive="active" (click)="clearFilter()">
+                            Customer Category
+                        </a>
+                    </li>
+                    <!-- <li *ngIf="login_data.view_infulencer_category=='1' ">
+                            <a mat-button routerLink="/influencer-user-list" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Influencer Category
+                        </a>
+                    </li> -->
+                    <li
+                        *ngIf="login_data.view_point_category=='1' && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/point-list" routerLinkActive="active" (click)="clearFilter()">
+                            Point Category
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.id=='1'">
+                        <a mat-button (click)="clearFilter()" routerLink="/generateqrcode-admin"
+                            routerLinkActive="active">
+                            Generate QR Code Admin
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_holiday=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/holiday-list" routerLinkActive="active" (click)="clearFilter()">
+                            Holiday
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.view_gallery=='1' && (data.filter_type!= 'SFA' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/banner-list" routerLinkActive="active" (click)="clearFilter()">
+                            Gallery
+                        </a>
+                    </li>
+                    <li
+                        *ngIf="login_data.view_referral_point_master=='1'  && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/point-master" routerLinkActive="active" (click)="clearFilter()">
+                            Referral Point Master
+                        </a>
+                    </li>
+                    <li
+                        *ngIf="login_data.view_allowance_master=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                        <a mat-button routerLink="/allowances" routerLinkActive="active" (click)="clearFilter()">
+                            Allowance Master
+                        </a>
+                    </li>
+                    <li
+                        *ngIf="login_data.view_territory_master=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                        <a mat-button (click)="clearFilter()" routerLink="/beat-code" routerLinkActive="active">
+                            Territory/Postal Code
+                        </a>
+                    </li>
+                    <li *ngIf="login_data.access_level_new == '3'">
+                        <a mat-button routerLink="/types-management" routerLinkActive="active" (click)="clearFilter()">
+                            Types Management
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- <li class="dropdown" *ngIf="login_data.view_sfa_report=='1'">
+                <a mat-button (click)="activeTabHandler('Report');clearFilter()" [ngClass]="{'active':activeNavTab=='Report'}">
+                    <i class="material-icons ">receipt_long</i>Report
+                </a>
+                <ul>
+                    
+                    <li *ngFor="let row of report">
+                        <a mat-button (click)="clearFilter();" routerLink="/report-list/report/{{row.type}}" routerLinkActive="active" [queryParams]="{reportType:row.type}">
+                            {{row.type.replaceAll('-', ' ')}}
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a mat-button routerLink="/report-list/product-wise-secondary-report-list" routerLinkActive="active" (click)="clearFilter()">
+                            Product Wise Secondary Report
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('tavel_plan')">
+                            Travel Plan Visit Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('month_wise_secondary_sale')">
+                            Month Wise Secondary Sale Report
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('primaryVsSecondaryReport')">
+                            Primary Vs Secondary Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('stateWisePrimarySecondaryReport')">
+                            State Wise Primary Secondary Report
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('ProductWisePrimaryReport')">
+                            Product Wise Primary Report
+                        </a>
+                    </li>
+                    
+                </ul>
+            </li> -->
+
+
+            <li class="dropdown"
+                *ngIf="login_data.view_loyalty_report=='1' && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <!-- loyaltyreportactive  toggleDropdown(11);-->
+                <a mat-button (click)="activeTabHandler('Loyalty Report');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='Loyalty Report'}">
+                    <i class="material-icons ">receipt_long</i>Loyalty Report
+                </a>
+                <ul>
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-report-influencer-reward-point"
+                            routerLinkActive="active" (click)="clearFilter();">
+                            Rewards Point Report
+                        </a>
+                    </li>
+
+                    <!-- <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-report-influencer-scan-point" routerLinkActive="active" (click)="clearFilter()">
+                            Influencer Scan Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-report-influencer-bonus-point" routerLinkActive="active" (click)="clearFilter()">
+                            Influencer Bonus Points
+                        </a>
+                    </li> -->
+
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-report-influencer-categorywise-scan-point"
+                            routerLinkActive="active" (click)="clearFilter()">
+                            Point Category Wise Scan Report
+                        </a>
+                    </li>
+
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/category-wise-scan-point" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Category Wise Scan Report
+                        </a>
+                    </li>
+
+                    <!-- <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-report-influencer-redemption" routerLinkActive="active" (click)="clearFilter()">
+                            Redemption Report
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-report-point-summary" routerLinkActive="active" (click)="clearFilter()">
+                            Points Summary
+                        </a>
+                    </li> -->
+
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-scan-ratio-report" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Scan Ratio
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-productwise-scan-ratio"
+                            routerLinkActive="active" (click)="clearFilter()">
+                            Productwise Scan Ratio
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/loyalty-report/loyalty-statewise-registration-ratio"
+                            routerLinkActive="active" (click)="clearFilter()">
+                            Statewise Registration Ratio
+                        </a>
+                    </li>
+
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('RedeemReport')">
+                            Redeem Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('ScanningRedemptionReport')">
+                            Scanning & Redemption Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('AdminLoyaltyReport')">
+                            Admin Loyalty Report
+                        </a>
+                    </li>
+
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('StateWiseRedeemReport')">
+                            State Wise Redeem Report
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('StateWiseCouponReport')">
+                            State Wise Coupon Report
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('scanningCategorywiseReport')">
+                            Influencer Scanning CategoryWise
+                        </a>
+                    </li>
+
+                    <!-- <li>
+                        <a mat-button (click)="clearFilter(); openDialog('ScannedRedemptionReport')">
+                            Scanned and Redemption Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('InfluencePointReport')">
+                            Influencer Point Report
+                        </a>
+                    </li> -->
+                </ul>
+            </li>
+
+            <li class="dropdown"
+                *ngIf="login_data.view_sfa_report=='1' && (data.filter_type== 'SFA' || data.filter_type== 'All')">
+                <a mat-button (click)="activeTabHandler('SFA Report');clearFilter()"
+                    [ngClass]="{'active':activeNavTab=='SFA Report'}">
+                    <i class="material-icons ">receipt_long</i>SFA Report
+                </a>
+                <ul>
+
+                    <li>
+                        <a mat-button routerLink="/report-list/primary-target-report" routerLinkActive="active"
+                            (click)="clearFilter();">
+                            Primary Target Report
+                        </a>
+
+                    </li>
+
+                    <li>
+                        <a mat-button routerLink="/report-list/secondary-target-report" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Secondary Target Report
+                        </a>
+                    </li>
+
+                    <li>
+                        <a mat-button routerLink="/report-list/c-p-sales-report" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Primary Sales Report
+                        </a>
+                    </li>
+
+                    <!-- <li>
+                        <a mat-button routerLink="/report-list/user-work-report" routerLinkActive="active" (click)="clearFilter()">
+                            User Work Report
+                        </a>
+                    </li> -->
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('orderSummary')">
+                            Sec. Order Summary Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('customerReport')">
+                            Customer Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/individual-attendance" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Individual Attendance Detail
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/attendance-summary" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Attendance Summary
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/checkin-detail" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Checkin Detail
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/checkin-report-multi-user-wise" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Checkin Report
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a mat-button routerLink="/sfa-reports/checkin-summary" routerLinkActive="active" (click)="clearFilter()">
+                            Checkin Summary
+                        </a>
+                    </li> -->
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/expense-report-multi-user-wise" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Expense Report
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/visit-ratio" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Visit Ratio
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/user-working" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            User Working
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/target-vs-achievement" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Target vs Achievement
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/product-sales" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Product Sales
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/pop-gift" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            POP & Gift
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/event-analysis" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Event Analysis
+                        </a>
+                    </li>
+                    <li>
+                        <a mat-button routerLink="/sfa-reports/enquiry-report" routerLinkActive="active"
+                            (click)="clearFilter()">
+                            Enquiry
+                        </a>
+                    </li>
+
+                    <li>
+                        <a mat-button (click)="clearFilter(); openDialog('UserMonthlyReport')">
+                            Monthly Sales Report
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li
+                *ngIf="login_data.view_video_tutorial!='1'&& (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
+                <a mat-button routerLink="/tutorial-videos" routerLinkActive="active" (click)="clearFilter()">
+                    <i class="material-icons">video_library</i>
+                    Video Tutorial
+                </a>
+            </li>
+
+        </ul>
+    </div>
+
+
+    <!-- <app-dashboard></app-dashboard> -->
+</div>

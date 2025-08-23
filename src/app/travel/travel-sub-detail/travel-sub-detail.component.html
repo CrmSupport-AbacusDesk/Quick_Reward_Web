@@ -1,0 +1,181 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Area Wise Journey Plan Detail</h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+
+      <div class="col s12 m12 l12">
+
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!skLoading">
+          <div class="card">
+            <div class="card-head">
+              <h2>Basic Details</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Plan ID</span>
+                  <p>#{{travel_detail.id}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Employee Code</span>
+                  <p>{{travel_detail.employee_id}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Employee Name</span>
+                  <p>{{travel_detail.name ? (travel_detail.name | titlecase) : '---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Reporting Manager</span>
+                  <p>{{travel_detail.r_name ? (travel_detail.r_name | titlecase) : '---'}}</p>
+                </div>
+
+                <div class="block-feilds flex-heading {{travel_detail.status}}">
+                  <div>
+                    <span>Status</span>
+                    <p>{{travel_detail.status ? travel_detail.status : '---'}}</p>
+                  </div>
+                  <div class="left-auto" *ngIf="travel_detail.status != 'Approved' && assign_login_data2.edit_event_plan == '1'">
+                    <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                    (click)="changeStatusDialog(travel_detail.id,'travelareawise')">
+                    <i class="material-icons">edit</i>
+                  </a>
+                </div>
+              </div>
+                <div class="block-feilds">
+                  <span>Status Updated By</span>
+                  <p>{{travel_detail.status_updated_by_name ? travel_detail.status_updated_by_name : '---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Status Updated On</span>
+                  <p>{{travel_detail.updated_date!='0000-00-00'? (travel_detail.updated_date | date:'d MMM y'):'--'}}
+                  </p>
+                </div>
+
+                <div class="block-feilds" *ngIf="travel_detail.status_remark">
+                  <span>Remark</span>
+                  <p>{{travel_detail.status_remark && travel_detail.status_remark != '' && travel_detail.status_remark
+                    !=
+                    null?travel_detail.status_remark:'--'}}</p>
+                </div>
+
+                <div class="block-feilds" *ngIf="travel_detail.reason">
+                  <span>Reason of Reject</span>
+                  <p>{{travel_detail.reason}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card pt0 mt10">
+            <div class="card-body pt0">
+              <div class="grid-box eight highlight-grid">
+                <div class="block-feilds">
+                  <span>Date Created</span>
+                  <p>{{travel_detail.date_created!='0000-00-00 00:00:00'? (travel_detail.date_created | date:'d MMM y,
+                    hh:mm a'):'--'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Created By</span>
+                  <p>{{travel_detail.created_by_name ? (travel_detail.created_by_name | titlecase) : '---'}}</p>
+                </div>
+
+                <!-- <div class="block-feilds">
+                  <span>Month</span>
+                  <p>
+                    <ng-container *ngIf="travel_detail.month == '01' ">January</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '02' ">February</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '03' ">March</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '04' ">April</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '05' ">May</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '06' ">June</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '07' ">July</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '08' ">August</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '09' ">September</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '10' ">October</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '11' ">November</ng-container>
+                    <ng-container *ngIf="travel_detail.month == '12' ">December</ng-container>
+                  </p>
+                </div> -->
+                <div class="block-feilds">
+                  <span>Date From</span>
+                  <p>{{travel_detail.date_from ? (travel_detail.date_from) : '---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Date To</span>
+                  <p>{{travel_detail.date_to ? (travel_detail.date_to) : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Working Days</span>
+                  <p>{{routesValue.working_days ? routesValue.working_days : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Plan Submit</span>
+                  <p>{{travel_detail.visit_plan_count ? travel_detail.visit_plan_count : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Actual Visit</span>
+                  <p>{{travel_detail.visit_actual_count ? travel_detail.visit_actual_count : '---'}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="cs-table left-right-10">
+              <div class=" border-top">
+                <div class="table-head">
+                  <table>
+                    <tr>
+                      <th class="w50  text-center">Sr.No</th>
+                      <th class="w150">State</th>
+                      <th class="w150">District</th>
+                      <th class="w120 text-center">Visit Plan Days</th>
+                      <th class="w120 text-center">Actual Visit</th>
+                      <th>Remark</th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <div class="table-container pb0">
+                <div class="table-content none-shadow">
+                  <table>
+                    <tr *ngFor="let row of travel_detail.visit_plan_data; let i = index;">
+                      <td class="w50  text-center">{{i+1}}</td>
+                      <td class="w150">{{row.state ? row.state:'---'}}</td>
+                      <td class="w150">{{row.district ? row.district : '---'}}</td>
+                      <td class="w120 text-center">{{row.visit_days ? row.visit_days: '--'}}</td>
+                      <td class="w120 text-center">{{row.visit_actual ? row.visit_actual: '--'}}</td>
+                      <td>{{row.remark ? row.remark: '--'}}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,170 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Holiday</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="start=0;data={};holiday_data();">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="holidays_data.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container container-scroll">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table class="sno-border">
+            <tr>
+              <th class="w30">&nbsp;</th>
+              <th class="w100">Date</th>
+              <th class="w100">Day</th>
+              <th class="w180">Title</th>
+              <th class="w100">Month</th>
+              <th class="w100">Year</th>
+              <th>Holiday Type</th>
+              <th>Region</th>
+              <th class="w60 text-center">Action</th>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table class="sno-border">
+            <tr>
+              <th class="w30">&nbsp;</th>
+              <th class="w100">&nbsp;</th>
+              <th class="w100">&nbsp;</th>
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="holiday_data()" name="holiday_title"
+                      #holiday_title="ngModel" [(ngModel)]="data.holiday_title">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="month" #month="ngModel" [(ngModel)]="data.month"
+                      (selectionChange)="holiday_data()">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="1">January</mat-option>
+                      <mat-option value="2">February</mat-option>
+                      <mat-option value="3">March</mat-option>
+                      <mat-option value="4">April</mat-option>
+                      <mat-option value="5">May</mat-option>
+                      <mat-option value="6">June</mat-option>
+                      <mat-option value="7">July</mat-option>
+                      <mat-option value="8">August</mat-option>
+                      <mat-option value="9">September</mat-option>
+                      <mat-option value="10">October</mat-option>
+                      <mat-option value="11">November</mat-option>
+                      <mat-option value="12">December</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="holiday_data()" name="year" #year="ngModel"
+                      [(ngModel)]="data.year">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th>&nbsp;</th>
+              <th>&nbsp;</th>
+              <th class="w60 text-center">&nbsp;</th>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container" *ngIf="holidays_data.length > 0">
+        <div class="table-content">
+          <table class="sno-border">
+            <ng-container *ngIf="!skLoading">
+              <tr *ngFor="let row of holidays_data; let i = index">
+                <td class="w30">{{i+1}}</td>
+                <td class="w100">{{row.holiday_date | date : 'd MMM y'}}</td>
+                <td class="w100">{{row.holiday_day | titlecase}}</td>
+                <td class="w180"><strong>{{row.holiday_title | titlecase}}</strong></td>
+                <td class="w100">{{row.holiday_date | date : 'MMM'}}</td>
+                <td class="w100">{{row.holiday_year}}</td>
+                <td>
+                  {{row.holiday_type}}
+                <td>
+                  <ng-container *ngIf="row.state_list.length <= 0">
+                    National
+                  </ng-container>
+                  <ng-container *ngFor="let item of row.state_list">
+                    {{item.state}}
+                  </ng-container>
+                </td>
+                <td class="w60 text-center">
+                  <div class="action-button" *ngIf="logined_user_data.delete_holiday_master=='1'">
+                    <button mat-icon-button matTooltip="Delete" (click)="delete(row.id)">
+                      <i class="material-icons del">delete</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngFor="let row of [].constructor(10)">
+              <tr class="sk-loading" *ngIf="skLoading">
+                <td class="w30">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="holidays_data.length == 0 && datanotfound == true">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+</div>
+
+<div class="fab-btns" *ngIf="logined_user_data.add_holiday_master=='1'">
+  <button mat-fab class="pulse" color="accent" routerLink="add-holiday">
+    <i class="material-icons">add</i>
+    Add New
+  </button>
+</div>

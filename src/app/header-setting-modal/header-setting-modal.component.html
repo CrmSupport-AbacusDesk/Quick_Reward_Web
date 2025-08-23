@@ -1,0 +1,91 @@
+<div class="edit-modal">
+    <p class="heading">Headers Assigning</p>
+    <div mat-dialog-content>
+        <mat-dialog-content class="mat-typography">
+            <div class="row drag-grid" cdkDropListGroup>
+                <div class="col s12 m6 l6">
+                    <div class="card mt10" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box single">
+                                <div class="sk-box" *ngFor="let row of [].constructor(4)">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head justify-between relative hidden">
+                            <h2 class="mb0">Header</h2>
+                            
+                            <!-- <a class="search-btn" mat-button (click)="allHeaderSearchActive = true">
+                                <i class="material-icons">search</i>
+                            </a>
+                            <div class="filter-input-search" [ngClass]="{'active' : allHeaderSearchActive}">
+                                <input type="text" placeholder="Search ..." name="searchAllHeader" [(ngModel)]="filter.searchAllHeader">
+                                <a class="close-btn" mat-button (click)="(filter.searchAllHeader = '' ); (allHeaderSearchActive = false)">
+                                    <i class="material-icons">close</i>
+                                </a>
+                            </div> -->
+                        </div>
+                        
+                        <div class="card-body scroll350">
+                            <div class="drag-container">
+                                <div cdkDropList [cdkDropListData]="todo" class="drag-list" (cdkDropListDropped)="drop($event,'searchSelectedHeader'); (selectedHeaderSearchActive = false);">
+                                    <!-- <a *ngIf="todo.length" class="wp100 sticky-anchor text-right link-btn" (click)="selectAllHeader()">Select All</a> -->
+                                    
+                                    <div class="no-centent-text" *ngIf="todo.length == 0">
+                                        <p>Drag header to here</p>
+                                    </div>
+                                    
+                                    <div class="drag-box" *ngFor="let item of todo" cdkDrag>{{item.header_name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col s12 m6 l6">
+                    <div class="card mt10" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box single">
+                                <div class="sk-box" *ngFor="let row of [].constructor(4)">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Selected Header</h2>
+                        </div>
+                        
+                        <div class="card-body scroll350" [ngClass]="{'highLight': done.length > 0}">
+                            <div cdkDropList [cdkDropListData]="done" class="drag-list" (cdkDropListDropped)="drop($event)">
+                                <div class="no-centent-text" *ngIf="done.length == 0">
+                                    <p>Drag header to here</p>
+                                </div>
+                                
+                                <div class="drag-box" *ngFor="let item of done" cdkDrag>{{item.header_name}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" (click)="saveHeader()">
+            Save
+        </button>
+    </div>
+</div>

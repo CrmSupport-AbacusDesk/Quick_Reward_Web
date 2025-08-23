@@ -1,0 +1,125 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <div class="mat-tabbar">
+      <button mat-button [ngClass]="userType == 'Sales User' ? 'active' : ''"
+        (click)="userType = 'Sales User';get_sales_user_type()" *ngIf="logined_user_data.id!='1' && logined_user_data.organisation_data.sfa == '1'"><i
+          class="material-icons">people_alt</i>Sales User</button>
+      <button mat-button [ngClass]="userType == 'System User' ? 'active' : ''"
+        (click)="userType='System User';get_sales_user_type();" *ngIf="logined_user_data.id!='1' && (logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms == '1' || logined_user_data.organisation_data.loyalty == '1' || logined_user_data.organisation_data.dispatch == '1')"><i
+          class="material-icons">computer</i>System
+        User</button>
+
+      <button mat-button [ngClass]="userType == 'ORG' ? 'active' : ''" (click)="userType='ORG';get_sales_user_type();"
+        *ngIf="logined_user_data.id=='1'"><i class="material-icons">computer</i>ORG</button>
+    </div>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="container table-container">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S.No</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">Created By</th>
+              <th>Name</th>
+              <th class="w100 text-center">Action</th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w50"></th>
+              <th class="w100">
+              </th>
+              <th class="w100">
+              </th>
+              <th>
+              </th>
+              <th class="w100"></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let dist of userlist; let i = index;">
+                <td class="w50">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{dist.created_at | date :'dd MMM yyyy'}}</td>
+                <td class="w100">{{dist.created_by_name && dist.created_by_name != '' ? dist.created_by_name : '--'}}
+                </td>
+                <td>{{dist.role_name}}</td>
+                <td class="w100 text-center">
+                  <div class="action-button" *ngIf="logined_user_data.edit_users_designation=='1'">
+                    <button mat-icon-button matTooltip="View" (click)="openDialog2(dist)">
+                      <i class="material-icons edit">remove_red_eye</i>
+                    </button>
+                    <button mat-icon-button matTooltip="View" (click)="openDesignationModal2(dist)">
+                      <i class="material-icons edit">edit</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+
+                <td class="w100 text-center" *ngIf="userType=='System User'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+
+      <ng-container *ngIf="userlist.length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+
+    </div>
+
+  </div>
+
+
+  <div class="fab-btns"
+    *ngIf="logined_user_data.add_users_designation=='1' || logined_user_data.edit_users_designation=='1'">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnfilter=='add'}"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item *ngIf="logined_user_data.add_users_designation=='1'" (click)="openDesignationModal()">
+        <mat-icon>add</mat-icon>
+        <span>Add New</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>

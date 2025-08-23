@@ -1,0 +1,125 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Uploading Center</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()" *ngIf="errorLog.length > 0">
+        <i class="material-icons">refresh</i>
+      </a>
+
+      <div class="pagination" *ngIf="errorLog.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mat-tabbar">
+    <ng-container *ngIf="!uploaderActive$">
+      <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+        (click)="active_tab = 'Reject';  exportLogs()">
+        <i class="material-icons">cancel</i>Reject({{tab_count.rejectCount ? tab_count.rejectCount : 0}})
+      </button>
+      <button mat-button [ngClass]="active_tab == 'Suspect' ? 'active' : ''"
+        (click)="active_tab = 'Suspect'; exportLogs()">
+        <i class="material-icons">question_mark</i>Suspect({{tab_count.suspectCount ? tab_count.suspectCount : 0}})
+      </button>
+      <button mat-button [ngClass]="active_tab == 'Duplicate' ? 'active' : ''"
+        (click)="active_tab = 'Duplicate'; exportLogs()">
+        <i class="material-icons">content_copy</i>Duplicate({{tab_count.duplicateCount ? tab_count.duplicateCount : 0}})
+      </button>
+    </ng-container>
+  </div>
+
+  <div class="container container-scroll">
+
+    <div class="progress-container" *ngIf="uploaderActive$">
+      <svg class="progress-ring" width="300" height="300">
+        <circle class="progress-ring__background" stroke="#e0e0e0" stroke-width="8" fill="transparent" r="140" cx="150"
+          cy="150" />
+        <circle class="progress-ring__circle" stroke="green" stroke-width="8" fill="transparent" r="140" cx="150"
+          cy="150" />
+      </svg>
+
+      <div class="progress-text">{{transform(uploadPercent$ | async)}}%</div>
+      <div class="progress-subtext">Uploading... <span>{{1+ (remainingCount | async)}}</span> of <span>{{totalCount |
+          async}}</span></div>
+    </div>
+
+
+
+    <div class="cs-table horizontal-scroll mb50" *ngIf="errorLog.length > 0">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50 text-left ">S No.</th>
+              <ng-container *ngFor="let row of getObjectKey();">
+
+                <th class="w400 text-left " *ngIf="row == 'Failed Remark'">{{row}}</th>
+                <th class="w150 text-left " *ngIf="row != 'Failed Remark' && row !== 'id'">{{row}}</th>
+
+              </ng-container>
+              <th class="w50 text-left " *ngIf="active_tab == 'Suspect'">Action</th>
+            </tr>
+          </table>
+        </div>
+
+
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngFor="let row of errorLog; let i = index">
+              <tr>
+                <td class="w50">{{ i + 1 + sr_no}}</td>
+                <ng-container *ngFor="let subRow of mergeKey(row);">
+                  <td class="w400 text-left" *ngIf="subRow == 'Failed Remark'">
+                    <span [innerHTML]=" row[subRow]"></span>
+                  </td>
+                  <td class="w150 text-left" *ngIf="subRow != 'Failed Remark'  && subRow !== 'id'">{{row[subRow] ?
+                    row[subRow] :'---'}}</td>
+                </ng-container>
+
+                <td class="w50 text-left" *ngIf="active_tab == 'Suspect'">
+                  <div class="action-button">
+                    <button mat-icon-button matTooltip="Delete" (click)="deleteRow(row.id)">
+                      <i class="material-icons red-clr">delete</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="(errorLog.length < 0 ||!errorLog.length) && !uploaderActive$">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+
+  </div>
+  <div>
+
+    <div class="fab-btns" *ngIf="errorLog.length > 0">
+      <button class="pulse excel" mat-fab color="primary" (click)="uploadSuspectData()" *ngIf="active_tab == 'Suspect'">
+        <i class="material-icons">cloud_upload</i>
+        Upload Suspect Data
+      </button>
+      <button class="pulse excel" mat-fab color="primary" (click)="downloadExcel()"
+        *ngIf="active_tab != 'Suspect' && errorLog.length > 0">
+        <i class="material-icons">download</i>
+        Download Excel
+      </button>
+    </div>

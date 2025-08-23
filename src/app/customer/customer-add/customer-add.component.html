@@ -1,0 +1,185 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>{{ id ? "Edit" : "Add New" }} Customer </h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)="f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{ 'has-error': name.invalid }">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Type Here ..." name="name" #name="ngModel" [(ngModel)]="data.name"
+                      onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode === 32"
+                      required />
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="name.touched || f.submitted">
+                    <p *ngIf="name.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Mobile Number</mat-label>
+                    <input matInput placeholder="Type Here ..." name="mobile_no" #mobile_no="ngModel"
+                      [(ngModel)]="data.mobile_no" minlength="10" maxlength="10" min="0"
+                      (keypress)="MobileNumber($event)" pattern="^[6-9][0-9]{0,9}$" (ngModelChange)="checkMobile()"
+                      required>
+
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="mobile_no.touched || f.submitted">
+                    <p *ngIf="mobile_no.errors?.required">This field is required</p>
+                    <p *ngIf="mobile_no.errors?.pattern">Invalid Mobile Number</p>
+                    <p
+                      *ngIf="!mobile_no.errors?.pattern  && (mobile_no.errors?.maxlength || mobile_no.errors?.minlength)">
+                      Mobile
+                      No should be of 10 digits..
+                    </p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{ 'has-error': alternate_mobile_no.invalid }">
+                    <mat-label>Alternate Mobile Number</mat-label>
+
+                    <input type="text" name="alternate_mobile_no" minlength="10" maxlength="10" matInput placeholder=""
+                      #alternate_mobile_no="ngModel" [(ngModel)]="data.alternate_mobile_no"
+                      onkeypress="return event.charCode>=48 && event.charCode<=57" (keypress)="MobileNumber($event)"
+                      pattern="^[6-9][0-9]{0,9}$" />
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="alternate_mobile_no.touched || f.submitted">
+                    <p *ngIf="alternate_mobile_no.errors?.required">This field is required</p>
+                    <p *ngIf="alternate_mobile_no.errors?.pattern">Invalid Mobile Number</p>
+                    <p
+                      *ngIf="!alternate_mobile_no.errors?.pattern  && (alternate_mobile_no.errors?.maxlength || alternate_mobile_no.errors?.minlength)">
+                      Mobile
+                      No should be of 10 digits..
+                    </p>
+                  </div>
+                </div>
+                <ng-container>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Email ID</mat-label>
+                      <input type="email" name="email" matInput placeholder="" #email="ngModel"
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" [(ngModel)]="data.email" />
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="email.touched || f.submitted">
+                      <p *ngIf="email.errors?.pattern">
+                        This is not a valid Email ID !
+                      </p>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+              <div class="row mb0">
+                <div class="col s12 m6 l6">
+                  <div class="row">
+                    <ng-container>
+                      <div class="col s12 m6 l6">
+                        <mat-form-field appearance="outline">
+
+                          <mat-label>State</mat-label>
+                          <mat-select name="state" #state="ngModel" [(ngModel)]="data.state" required
+                            (selectionChange)="getDistrict(1)">
+                            <mat-option disabled="">Select State</mat-option>
+                            <mat-option *ngFor="let row of states" value="{{ row.state_name }}">
+                              {{ row.state_name }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+
+                        <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+                          <p *ngIf="state.errors?.required">
+                            This field is required
+                          </p>
+
+                        </div>
+                      </div>
+                      <div class="col s12 m6 l6">
+                        <mat-form-field appearance="outline">
+                          <mat-label>District</mat-label>
+                          <mat-select name="district" #district="ngModel" [(ngModel)]="data.district" required>
+                            <mat-option disabled="">Select District</mat-option>
+                            <mat-option *ngFor="let row of district_list" value="{{ row.district_name }}">
+                              {{ row.district_name }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="district.touched || f.submitted">
+                          <p *ngIf="district.errors?.required">
+                            This field is required
+                          </p>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+
+                  <div class="row">
+                    <div class="col s12 m6 l6">
+                      <mat-form-field appearance="outline">
+                        <mat-label>City</mat-label>
+                        <input matInput placeholder="Type here..." name="city" #city="ngModel" [(ngModel)]="data.city"
+                          required
+                          onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode === 32" />
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="city.touched || f.submitted">
+                        <p *ngIf="city.errors?.required">
+                          This field is required
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col s12 m6 l6">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Pincode</mat-label>
+                        <input matInput type="text" name="pincode" placeholder="Type Here ..." #pincode="ngModel"
+                          minlength="6" maxlength="6" [(ngModel)]="data.pincode"
+                          onkeypress="return event.charCode>=48 && event.charCode<=57" required />
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="pincode.touched || f.submitted">
+                        <p *ngIf="pincode.errors?.required">
+                          This field is required
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s12 m6 l6">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Address</mat-label>
+                    <textarea matInput placeholder="Type Here ..." name="address" #address="ngModel"
+                      [(ngModel)]="data.address" class="h80" required></textarea>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="address.touched || f.submitted">
+                    <p *ngIf="address.errors?.required">
+                      This field is required
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{ loading: savingFlag == true }" mat-raised-button color="accent" type="submit"
+              [disabled]="savingFlag == true">
+              {{ savingFlag == true ? "Saving" : id ? "Update" : "Save" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

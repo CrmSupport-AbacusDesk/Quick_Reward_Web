@@ -1,0 +1,44 @@
+.update-block{
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    background: #e8e8e8;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    height: calc(100% - 10px);
+    transform: translateY(-50%);
+    border: 1px solid #989898;
+    border-radius: 6px;
+    
+    p{
+        font-size: 12px;
+        font-weight: 500;
+    }
+    
+    input, select{
+        width: 100px;
+        min-width: 100px;
+        height: 34px;
+        margin: 0px 10px;
+        background: #ffff;
+        border-radius: 6px;
+        border: 1px solid #cccc;
+        padding: 0px 5px;
+        box-sizing: border-box;
+        font-size: 12px;
+    }
+    select{
+        width: 150px;
+    }
+    
+    &.flat{
+        border: 0px;
+        padding: 0px;
+    }
+    &.flat-block{
+        position: relative;
+        top: inherit;
+        transform: inherit;
+    }
+}

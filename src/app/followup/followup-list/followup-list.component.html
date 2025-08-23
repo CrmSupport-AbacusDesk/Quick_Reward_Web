@@ -1,0 +1,257 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Follow Ups</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="clearFilter()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button>
+      <button mat-icon-button matTooltip="Sorting" (click)="sortData()">
+        <i class="material-icons">swap_vert</i>
+      </button>
+
+      <div class="pagination" *ngIf="followup_list.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'pending' ? 'active' : ''"
+          (click)="active_tab = 'pending';followUpList();"><i class="material-icons">pending_actions</i>Pending
+          ({{tabCount.pending?tabCount.pending:0}})</button>
+        <button mat-button [ngClass]="active_tab == 'upcoming' ? 'active' : ''"
+          (click)="active_tab = 'upcoming';followUpList();"><i class="material-icons">upcoming</i>Upcoming
+          ({{tabCount.upcoming?tabCount.upcoming:0}})</button>
+        <button mat-button [ngClass]="active_tab == 'complete' ? 'active' : ''"
+          (click)="active_tab = 'complete';followUpList();"><i class="material-icons">task_alt</i>Complete
+          ({{tabCount.complete?tabCount.complete:0}})</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="cs-table horizontal-scroll" style="width: 100%">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S No.</th>
+              <th class="w80">Date Created</th>
+              <th class="w100">Created By</th>
+              <th class="w150">Company Name</th>
+              <th class="w80">Company Type</th>
+
+              <th class="w80">Followup Date</th>
+              <th class="w100">Assign To</th>
+              <th class="w150">Description</th>
+              <!-- <th class="w40" *ngIf="assign_login_data2.delete_follow_up=='1'">Action</th> -->
+            </tr>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w50">&nbsp;</th>
+              <th class="w80">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput [matDatepicker]="picker2" placeholder="Date" name="date_created"
+                      [(ngModel)]="search.date_created" (dateChange)="followUpList()" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." name="sales_user" [(ngModel)]="search.sales_user"
+                      (keyup.enter)="followUpList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." name="company_name" [(ngModel)]="search.company_name"
+                      (keyup.enter)="followUpList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w80">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="company_type" placeholder="Select" #status="ngModel"
+                      [(ngModel)]="search.company_type" (selectionChange)="followUpList()">
+                      <mat-option value="Primary">Primary</mat-option>
+                      <mat-option value="Secondary">Secondary</mat-option>
+                      <mat-option value="Enquiry">Enquiry </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w80">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="followup_date"
+                      [(ngModel)]="search.followup_date" (dateChange)="followUpList()" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." name="assign_to" [(ngModel)]="search.assign_to"
+                      (keyup.enter)="followUpList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150"></th>
+              <!-- <th class="w40"></th> -->
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let list of followup_list;let i=index"
+                [ngClass]="{'Current': service.currentUserID == list.id || service.currentUserID == list.dr_id}">
+                <td class="w50">{{ i + 1 + sr_no }}</td>
+                <td class="w80">{{list.date_created |date : 'd MMM y'}}</td>
+                <td class="w100">{{list.name!=''?list.name:'--'}}</td>
+                <td class="w150" *ngIf="list.dr_id != '0'">
+                  <!--  [routerLink]="[ 'distribution-detail/', list.dr_encrypt_id,'Profile' ]"
+                    [queryParams]="{'state':list.state, 'id':list.dr_encrypt_id, 'type':list.type}"
+                    routerLinkActive="active" -->
+                  <a *ngIf="list.dr_type != 4" class="link-btn" mat-button
+                    (click)="goToPage(list.dr_encrypt_id,list.dr_type)">{{list.company_name | titlecase}}</a>
+
+                  <a class="link-btn" mat-button *ngIf="list.dr_type == 4"
+                    [routerLink]="[ 'lead-detail/',list.dr_encrypt_id]" routerLinkActive="active">{{list.company_name |
+                    titlecase}}</a>
+                </td>
+                <td class="w80">
+                  {{list.dr_type_name ? list.dr_type_name:'---'}}
+                </td>
+                <td class="w80"><a *ngIf="view_edit" class="link-btn" mat-button (click)="service.setData(search)"
+                    routerLink="followup-detail/{{list.encrypt_id}}"
+                    routerLinkActive="active">{{list.next_follow_date!=''?(list.next_follow_date | date : 'd MMM
+                    y'):'--'}}</a></td>
+                <td class="w100">{{list.assigned_to_name!=''?(list.assigned_to_name | titlecase):'--' | date : 'd MMM
+                  y'}}</td>
+                <td class="w150" matTooltip="{{list.description!=''?list.description:'--'}}" matTooltipPosition="above">
+                  <p class="one-line">{{list.description}}</p>
+                </td>
+                <!-- <td class="w40 text-center" *ngIf="assign_login_data2.delete_follow_up=='1'">
+                  <div class="action-button">
+                    <button *ngIf="view_delete && assign_login_data2.delete_follow_up=='1'" mat-icon-button  matTooltip="Delete" (click)="delete_followup(list.id)">
+                      <i class="material-icons del">delete</i>
+                    </button>
+                  </div>
+                </td> -->
+              </tr>
+            </ng-container>
+
+
+            <ng-container *ngFor="let lead of skelton">
+              <tr class="sk-loading" *ngIf="loader">
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <!-- <td class="w40" *ngIf="assign_login_data2.delete_follow_up=='1'"><div>&nbsp;</div></td> -->
+              </tr>
+            </ng-container>
+          </table>
+          <div class="search-results" data-infinite-scroll debounce [infiniteScrollDistance]="1"
+            [infiniteScrollUpDistance]="2" [infiniteScrollThrottle]="10" (scrolled)="followUpList()">
+          </div>
+          <div *ngIf="loader" class="lazy-loading">
+            <img src="../../../prayag/assets/img/lazy_loader.gif" alt="">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <ng-container *ngIf="followup_list.length == 0 && datanotfound==true">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+
+</div>
+<!-- <div class="fab-btns">
+  <button mat-fab class="excel pulse" (click)="exportAsXLSX()" [ngClass]="{'pulse': fabBtnValue=='excel'}"
+    *ngIf="followup_list.length && assign_login_data2.export_follow_up=='1'">
+    <img src="assets/img/excel.svg">
+    Download Excel
+  </button>
+
+</div> -->
+
+<div class="fab-btns pulse"
+  *ngIf="(assign_login_data2.export_follow_up=='1' || assign_login_data2.add_follow_up=='1') ">
+  <button class="excel pulse " mat-fab color="primary" [matMenuTriggerFor]="menu">
+    <i class="material-icons">apps</i>
+    Action
+  </button>
+  <mat-menu #menu="matMenu">
+
+    <button mat-menu-item (click)="openDialog('followup')" *ngIf="assign_login_data2.add_follow_up=='1'">
+      <mat-icon>add</mat-icon>
+      <span>Add Follow Up</span>
+    </button>
+    <!-- <button mat-menu-item (click)="exportAsXLSX()"
+      *ngIf="followup_list.length && assign_login_data2.export_follow_up=='1'">
+      <mat-icon>download</mat-icon>
+      <span>Download</span>
+    </button> -->
+    <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunks();"
+      *ngIf="assign_login_data2.export_follow_up=='1'">
+      <mat-icon>download</mat-icon>
+      <span>Download in excel</span>
+    </button>
+  </mat-menu>
+</div>

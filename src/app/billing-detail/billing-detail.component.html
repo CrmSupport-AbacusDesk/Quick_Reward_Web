@@ -1,0 +1,403 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Invoice Details</h2>
+    <div class="left-auto left-auto df ac flex-gap-10" *ngIf="login_data.org_id=='11'">
+      <div class="group-btn">
+        <button mat-button class="ouline-btns pdf" *ngIf="invoice_detail.pdf_name!=''" (click)="exportPdf()"><img
+            src="assets/img/icons/pdf.png">Export PDF</button>
+        <!-- <button mat-button class="ouline-btns whatsapp"><img src="assets/img/icons/whatsapp.png"> Send Whatsapp</button>
+        <button mat-button class="ouline-btns email"><img src="assets/img/icons/email.png"> Send Mail</button> -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m6 l6">
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Customer Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Company Name</span>
+                <p>{{invoice_detail.customer_name | titlecase}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Account Code</span>
+                <p>{{invoice_detail.customer_code}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Contact Person</span>
+                <p>{{invoice_detail.contact_person_name | titlecase}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Contact Details</span>
+                <p>{{invoice_detail.mobile}}</p>
+              </div>
+            </div>
+
+            <div class="grid-box single mt16" *ngIf="invoice_detail.address">
+              <div class="block-feilds">
+                <span>Address</span>
+                <p>{{invoice_detail.address}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <ng-container *ngIf="!skLoading">
+          <!-- <div class="card mt10" *ngIf="dispatch_detail.total_scanned_box > 0 || dispatch_detail.total_scanned_product > 0">
+            <div class="card-head">
+              <h2>Dispatch Item Details</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box three">
+                <div class="block-feilds">
+                  <span>Dispatch Date</span>
+                  <p>{{dispatch_detail.dispatch_date |  date:'d MMM y'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Box Coupon</span>
+                  <p>{{dispatch_detail.total_scanned_box}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Product Coupon</span>
+                  <p>{{dispatch_detail.total_scanned_product}}</p>
+                </div>
+              </div>
+              
+              
+              <div class="grid-box single mt10" *ngIf="dispatch_detail.remark">
+                <div class="block-feilds">
+                  <span>Remark</span>
+                  <p>{{dispatch_detail.remark}}</p>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        </ng-container>
+
+
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="col s12 m6 l6">
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Invoice Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date</span>
+                <p>{{invoice_detail.billing_date | date:'dd MMM yyyy , h:mm a'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Invoice Number</span>
+                <p>#{{invoice_detail.bill_number}}</p>
+              </div>
+
+
+              <div class="block-feilds">
+                <span>Total Item</span>
+                <p>{{invoice_detail.total_billing_item}}</p>
+              </div>
+
+
+              <div class="block-feilds">
+                <span>Total QTY.</span>
+                <p>{{invoice_detail.total_billing_item_qty}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Amount</span>
+                <p>&#x20B9; {{invoice_detail.net_amount}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Payment</span>
+                <p>&#x20B9; {{invoice_detail.billing_receive_amount}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Balance Amount</span>
+                <p>&#x20B9; {{invoice_detail.pending_balance}}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="tools-container no-sticky">
+        <div class="mat-tabbar">
+          <button mat-button [ngClass]="{'active' :orderType== 'order'}" (click)="orderType= 'order'"><i
+              class="material-icons">receipt_long</i>Billing Details</button>
+          <!-- <button mat-button [ngClass]="{'active' :orderType== 'billing'}" (click)="orderType = 'billing'"><i class="material-icons">receipt</i>Payment Detail</button> -->
+          <!-- <button mat-button [ngClass]="{'active' :orderType== 'coupon'}" (click)="orderType = 'coupon'"><i class="material-icons">local_shipping</i>Dispatch Coupon List</button> -->
+        </div>
+      </div>
+      <ng-container *ngIf="orderType== 'order'">
+        <div class="cs-table">
+          <div class="sticky-head" style="top: -10px;">
+            <div class="table-head">
+              <table>
+                <tr>
+                  <th class="w30">S.no.</th>
+                  <th class="w250">Item Details</th>
+                  <th class="w80 text-center">QTY.</th>
+                  <th class="w80 text-right">Rate</th>
+                  <th class="w80 text-right">Price</th>
+                  <th class="w80 text-right">Discount (%)</th>
+                  <th class="w80 text-right">Sub Total</th>
+                  <th class="w80 text-right">GST</th>
+                  <th class="w80 text-right">Net Amount</th>
+                  <th class="w40 text-right" *ngIf="status  == 'Pending'">Action</th>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+
+          <div class="table-container">
+            <div class="table-content" *ngIf="billing_list.length > 0">
+              <table>
+                <ng-container *ngIf="!skLoading">
+                  <tr *ngFor="let row of billing_list; let i =index">
+                    <td class="w30">{{i+1}}</td>
+                    <td class="w250">{{row.item_name | titlecase}} <strong>({{row.item_code}})</strong></td>
+                    <td class="w80 text-center">{{row.sale_qty}}
+                      <div class="action-button text-right" *ngIf="status  == 'Pending'">
+                        <a mat-icon-button matTooltip="Edit">
+                          <i class="material-icons edit">edit</i>
+                        </a>
+                      </div>
+                    </td>
+                    <td class="w80 text-right">&#x20B9; {{row.price}}</td>
+                    <td class="w80 text-right">&#x20B9; {{row.total_price}} </td>
+                    <td class="w80 text-right"> &#x20B9; {{row.discount_amount}} ({{row.discount_percent}}%)</td>
+                    <td class="w80 text-right">&#x20B9; {{row.sub_total}}</td>
+                    <td class="w80 text-right">&#x20B9; {{row.gst_amount}} ({{row.gst_percent}}%)</td>
+                    <td class="w80 text-right"><strong>&#x20B9; {{row.net_amount}}</strong></td>
+                    <td class="w40 text-center" *ngIf="status  == 'Pending'">
+                      <div class="action-button text-center">
+                        <a mat-icon-button matTooltip="Delete">
+                          <i class="material-icons del">delete</i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+
+                <ng-container *ngIf="skLoading">
+                  <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                    <td class="w30">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w250">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-right">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-right">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-right">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-center">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-right">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-right">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w80 text-right">
+                      <div>&nbsp;</div>
+                    </td>
+                    <td class="w40 text-right" *ngIf="status  == 'Pending'">
+                      <div>&nbsp;</div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+
+            <ng-container *ngIf="billing_list.length == 0;">
+              <app-not-result-found></app-not-result-found>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s4 offset-s8">
+            <div class="invoice-table">
+              <table>
+                <tr>
+                  <td>Discount</td>
+                  <td class="w10 text-center"><strong>:</strong></td>
+                  <td class="w120 text-right ">&#8377; {{invoice_detail.discount_amount}}</td>
+                </tr>
+
+                <tr>
+                  <td>Sub-Total</td>
+                  <td class="text-center">:</td>
+                  <td class="text-right ">&#8377;{{invoice_detail.sub_total}}</td>
+                </tr>
+
+                <tr>
+                  <td>GST</td>
+                  <td class="text-center">:</td>
+                  <td class="text-right ">&#8377;{{invoice_detail.gst_amount}}</td>
+                </tr>
+                <tr *ngIf="invoice_detail.other_charges">
+                  <td>TCS Amount</td>
+                  <td class="text-center">:</td>
+                  <td class="text-right ">&#8377;{{invoice_detail.other_charges}}</td>
+                </tr>
+
+                <tr *ngIf="invoice_detail.roundoff_amount">
+                  <td>RoundOff Amount</td>
+                  <td class="text-center">:</td>
+                  <td class="text-right ">&#8377;{{invoice_detail.roundoff_amount}}</td>
+                </tr>
+
+                <tr>
+                  <td>Net Amount</td>
+                  <td class="text-center">:</td>
+                  <td class="text-right ">&#8377;{{invoice_detail.net_amount}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div class="cs-table" *ngIf="orderType== 'billing'">
+        <div class="sticky-head" style="top: -10px;">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w30">S.no.</th>
+                <th class="w100">Payment Date</th>
+                <th class="w100">Receipt Number</th>
+                <th class="w100">Payment Mode</th>
+                <th class="w100 text-right">Amount</th>
+                <th class="w220">Transaction Details</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+
+        <div class="table-container">
+          <div class="table-content" *ngIf="payment_list.length > 0">
+            <table>
+              <tr *ngFor="let row of payment_list; let i =index">
+
+                <td class="w30">{{i+1}}</td>
+                <td class="w100">{{row.payment_date | date:'dd MMM yyyy'}}</td>
+                <td class="w100">{{row.bill_number}}</td>
+                <td class="w100">{{row.payment_mode}}</td>
+                <td class="w100 text-right"><strong>&#x20B9; {{row.payment_amount}}</strong></td>
+                <td class="w220">{{row.remarks}}</td>
+              </tr>
+            </table>
+          </div>
+          <ng-container *ngIf="payment_list.length == 0;">
+            <app-not-result-found></app-not-result-found>
+          </ng-container>
+        </div>
+      </div>
+
+
+
+
+      <div class="cs-table" *ngIf="orderType== 'coupon'">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w60">Sr.No</th>
+                <th class="w110">Dispatch Date</th>
+                <th class="w120">Dispatch By</th>
+                <th class="w120">Dispatch Type</th>
+                <th class="w120">Coupon Type</th>
+                <th class="w120">Coupon Code</th>
+                <th>Product Detail</th>
+
+              </tr>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="table-container">
+          <div class="table-content" *ngIf="dispatch_coupon.length > 0">
+            <table>
+              <tr *ngFor="let row of dispatch_coupon let i = index;">
+                <td class="w60">{{i+1}}</td>
+                <td class="w110">{{row.dispatch_date | date:'d MMM y'}}</td>
+                <td class="w120">{{row.created_by_name}}</td>
+                <td class="w120">{{row.dispatch_type}}</td>
+                <td class="w120">{{row.coupon_type}}</td>
+                <td class="w120">{{row.coupon_code}}</td>
+                <td>{{row.product_detail}}</td>
+              </tr>
+            </table>
+          </div>
+
+
+          <ng-container *ngIf="dispatch_coupon.length == 0">
+            <app-not-result-found></app-not-result-found>
+          </ng-container>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

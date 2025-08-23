@@ -1,0 +1,404 @@
+<div class="main-container">
+
+    <div class="tools-container">
+        <h2>Enquiry List</h2>
+        <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+            <i class="material-icons">refresh</i>
+        </button>
+        <div class="pagination" *ngIf="lead_List.length > 0 ">
+            <div class="pagination-content">
+                Pages
+                <span>{{pagenumber}}</span>
+                of
+                <span>{{total_page}}</span>
+            </div>
+            <div class="page-nav">
+                <button mat-icon-button matTooltip="Older" (click)="previous()"
+                    [disabled]="start == 0 || total_page == 0">
+                    <i class="material-icons">navigate_before</i>
+                </button>
+
+                <input type="number" [(ngModel)]="gotoPageNumber" (keyup.enter)="goToPage()" [min]="1"
+                    [max]="total_page" placeholder="Enter page" class="page-input">
+
+                <button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+                    [disabled]="pagenumber == total_page || total_page == 0">
+                    <i class="material-icons">navigate_next</i>
+                </button>
+            </div>
+            <!-- <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0 || total_page == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+                    [disabled]="pagenumber == total_page || total_page == 0">
+                    <i class="material-icons">navigate_next</i>
+                </button>
+            </div> -->
+        </div>
+        <div class="left-auto df ac flex-gap-10" style="overflow: auto;">
+
+
+            <div class="mat-tabbar df">
+                <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+                    <i class="material-icons">filter_alt</i>
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+                    (click)="active_tab = 'Pending'; leadList('Pending')">
+                    <i class="material-icons">pending_actions</i>Review Pending ({{count.Pending}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Assigned' ? 'active' : ''"
+                    (click)="active_tab = 'Assigned'; refresh(); leadList('Assigned')">
+                    <i class="material-icons">thumb_up_alt</i>Assigned ({{count.Assigned}})
+                </button>
+                <button mat-button [ngClass]="( active_tab == 'Inprocess') ? 'active' : ''"
+                    (click)="active_tab = 'subTab'; leadList('subTab')">
+                    <i class="material-icons">hourglass_top</i>
+                    Inprocess ({{(count.Inprocess ? count.Inprocess :0)}})
+                    <!--  + (count.Win ? count.Win : 0) + (count.Lost ?
+                    count.Lost : 0) + (count.Dropped ? count.Dropped : 0) + (count.Negotiation ? count.Negotiation :
+                    0) -->
+                </button>
+
+                <button mat-button [ngClass]="active_tab == 'Win' ? 'active' : ''"
+                    (click)="active_tab = 'Win'; leadList('Win')">
+                    <i class="material-icons">emoji_events</i>
+                    Win ({{count.Win ? count.Win : '0'}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Lost' ? 'active' : ''"
+                    (click)="active_tab = 'Lost'; leadList('Lost')">
+                    <i class="material-icons">cancel</i>
+                    Lost ({{count.Lost ? count.Lost : '0'}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Dropped' ? 'active' : ''"
+                    (click)="active_tab = 'Dropped'; leadList('Dropped')">
+                    <i class="material-icons">delete</i>
+                    Dropped ({{count.Dropped ? count.Dropped : '0'}})
+                </button>
+
+                <button mat-button [ngClass]="active_tab == 'Disqualified' ? 'active' : ''"
+                    (click)="active_tab = 'Disqualified'; leadList('Disqualified')"><i
+                        class="material-icons">thumb_down_alt</i>Junk & Close ({{count.Disqualified ? count.Disqualified
+                    :
+                    '0'}})</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container container-scroll">
+        <!-- <div class="tools-container no-sticky"
+            *ngIf="active_tab == 'subTab' || active_tab == 'Inprocess' || active_tab == 'Win' || active_tab == 'Lost' || active_tab == 'Dropped' || active_tab == 'Negotiation'">
+            <div class="mat-tabbar">
+                <button mat-button [ngClass]="active_tab == 'Inprocess' ? 'active' : ''"
+                    (click)="active_tab = 'Inprocess'; leadList('Inprocess')">
+                    <i class="material-icons">hourglass_top</i>
+                    Inprocess ({{count.Inprocess ? count.Inprocess :'0'}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Win' ? 'active' : ''"
+                    (click)="active_tab = 'Win'; leadList('Win')">
+                    <i class="material-icons">emoji_events</i>
+                    Win ({{count.Win ? count.Win : '0'}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Lost' ? 'active' : ''"
+                    (click)="active_tab = 'Lost'; leadList('Lost')">
+                    <i class="material-icons">cancel</i>
+                    Lost ({{count.Lost ? count.Lost : '0'}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Dropped' ? 'active' : ''"
+                    (click)="active_tab = 'Dropped'; leadList('Dropped')">
+                    <i class="material-icons">delete</i>
+                    Dropped ({{count.Dropped ? count.Dropped : '0'}})
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Negotiation' ? 'active' : ''"
+                    (click)="active_tab = 'Negotiation'; leadList('Negotiation')">
+                    <i class="material-icons">handshake</i>
+                    Negotiation ({{count.Negotiation ? count.Negotiation : '0'}})
+                </button>
+            </div>
+        </div> -->
+
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w60 text-center">Sr.No</th>
+                            <ng-container *ngFor="let header of headerData; let h = index">
+                                <th class="w{{header.header_width}}">{{header.headerName}}</th>
+                            </ng-container>
+                            <!-- <th class="w200" *ngIf="active_tab == 'Assigned'">Assigned To</th>
+                            <th class="w200" *ngIf="active_tab == 'Disqualified' ">Reason</th> -->
+                            <th class="w70 text-center"
+                                *ngIf="login_data5.edit_enquiry=='1' && (active_tab == 'Pending'||active_tab == 'Assigned')">Action</th>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60 text-center">&nbsp;</th>
+                            <ng-container *ngFor="let header of headerData; let h = index">
+                                <th class="w{{header.header_width}}"
+                                    *ngIf="header.headerEncodedName == 'date_created' && header.headerEncodedName != 'enquiry_type'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input date-column infix-bodr">
+                                            <input matInput [matDatepicker]="picker" placeholder="Date"
+                                                [name]="header.headerEncodedName"
+                                                [ngModel]="filter[header.headerEncodedName] | date:'d-MMM-y'"
+                                                (dateChange)="onDate($event)" [max]="today_date" disabled>
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker disabled="false"></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}"
+                                    *ngIf="(header.headerEncodedName != 'date_created' && header.headerEncodedName != 'enquiry_type') && (header.headerEncodedName != 'assigned_to_user_name'&& header.headerEncodedName != 'state') && header.headerEncodedName != 'source' && header.headerEncodedName != 'stage'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <input matInput placeholder="Search..." type="text"
+                                                name="header.headerEncodedName"
+                                                [(ngModel)]="filter[header.headerEncodedName]"
+                                                (keyup.enter)="leadList(active_tab)">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}" *ngIf="header.headerEncodedName == 'enquiry_type'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <mat-label>Select...</mat-label>
+                                            <mat-select name="enquiry_type" #enquiry_type="ngModel"
+                                                [(ngModel)]="filter.enquiry_type"
+                                                (selectionChange)="leadList(active_tab)">
+                                                <ng-container *ngFor="let row of networkType">
+                                                    <mat-option
+                                                        value="{{row.module_name}}">{{row.module_name}}</mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}" *ngIf="header.headerEncodedName == 'state'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <mat-label>Select...</mat-label>
+                                            <mat-select name="state" #state="ngModel" [(ngModel)]="filter.state"
+                                                (selectionChange)="leadList(active_tab)">
+                                                <mat-option>
+                                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                        placeholderLabel="Search.."
+                                                        (keyup)="getStateList($event.target.value)"></ngx-mat-select-search>
+                                                </mat-option>
+                                                <ng-container *ngFor="let row of states">
+                                                    <mat-option
+                                                        value="{{row.state_name}}">{{row.state_name}}</mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}" *ngIf="header.headerEncodedName == 'source'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <mat-label>Select...</mat-label>
+                                            <mat-select name="source" #source="ngModel" [(ngModel)]="filter.source"
+                                                (selectionChange)="leadList(active_tab)" multiple>
+                                                <div class="padding12" *ngIf="allSourceList.length>0">
+                                                    <mat-checkbox [(ngModel)]="filter.allSource"
+                                                        (change)="selectAll2('allSource')" name="allSource"
+                                                        value="true">Select All</mat-checkbox>
+                                                </div>
+                                                <ng-container *ngFor="let row of allSourceList">
+                                                    <mat-option value="{{row.source}}">{{row.source}}</mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}" *ngIf="header.headerEncodedName == 'stage'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <mat-label>Select...</mat-label>
+                                            <mat-select name="stage" #stage="ngModel" [(ngModel)]="filter.stage"
+                                                (selectionChange)="leadList(active_tab)">
+                                                <ng-container *ngFor="let row of allStageList">
+                                                    <mat-option value="{{row.stage}}">{{row.stage}}</mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}"
+                                    *ngIf="header.headerEncodedName == 'assigned_to_user_name'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <mat-label>Select...</mat-label>
+                                            <mat-select name="assigned_to_user_name" #assigned_to_user_name="ngModel"
+                                                [(ngModel)]="filter.assigned_to_user_name"
+                                                (selectionChange)="leadList(active_tab)">
+                                                <mat-option>
+                                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                        placeholderLabel="Search.."
+                                                        (keyup)="getSalesUser($event.target.value)"></ngx-mat-select-search>
+                                                </mat-option>
+                                                <ng-container *ngFor="let row of salesUser">
+                                                    <mat-option value="{{row.id}}">{{row.name}}</mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                            </ng-container>
+                            <!-- <th class="w200" *ngIf="active_tab == 'Assigned'">&nbsp;</th>
+                            <th class="w200" *ngIf="active_tab == 'Disqualified' ">&nbsp;</th> -->
+                            <th class="w70 text-center"
+                                *ngIf="login_data5.edit_enquiry=='1' && (active_tab == 'Pending'||active_tab == 'Assigned')">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of lead_List; let i = index;"
+                                [ngClass]="{'Current': service.currentUserID == row.id,'red-new-bg':(active_tab == 'Assigned' && row.date_created < sevenDaysBeforeDate) || (active_tab == 'Pending' && row.date_created < threeDaysBeforeDate)}">
+                                <td class="w60 text-center" [ngClass]="{
+                                    'red-new-bg':(active_tab == 'Assigned' && row.date_created < sevenDaysBeforeDate) || (active_tab == 'Pending' && row.date_created < threeDaysBeforeDate)
+                                }">{{i+1+sr_no}}</td>
+                                <ng-container *ngFor="let header of headerData; let h = index">
+                                    <td class="w{{header.header_width}}" [ngClass]="{
+                                    'red-new-bg':(active_tab == 'Assigned' && row.date_created < sevenDaysBeforeDate) || (active_tab == 'Pending' && row.date_created < threeDaysBeforeDate)
+                                }">
+
+
+                                        <p *ngIf="header.headerEncodedName == 'date_created' ">
+                                            {{row[header.headerEncodedName] !='0000-00-00 00:00:00' ?
+                                            (row[header.headerEncodedName] | date:'dd MMM yyyy') : '---'}}
+                                        </p>
+
+                                        <p
+                                            *ngIf="(header.headerEncodedName != 'date_created' && header.headerEncodedName != 'enquiry_id')">
+                                            {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName]}}
+                                        </p>
+
+                                        <p matTooltip="{{!row[header.headerEncodedName]?'':row[header.headerEncodedName]}}"
+                                            matTooltipPosition="above"
+                                            *ngIf="header.headerEncodedName == 'enquiry_id' ">
+                                            <a class="link-btn" (click)="service.setData(filter)"
+                                                routerLink="lead-detail/{{row.encrypt_id}}">
+                                                {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName]}}
+                                            </a>
+                                        </p>
+                                    </td>
+                                </ng-container>
+                                <!-- <td class="w200" *ngIf="active_tab == 'Assigned'">{{row.assigned_to_user_name}}</td>
+                                <td class="w200" *ngIf="active_tab == 'Disqualified' ">{{row.reason}}</td> -->
+                                <td class="w70 text-center"
+                                    *ngIf="login_data5.edit_enquiry=='1' && (active_tab == 'Pending'||active_tab == 'Assigned') " [ngClass]="{
+                                    'red-new-bg':(active_tab == 'Assigned' && row.date_created < sevenDaysBeforeDate) || (active_tab == 'Pending' && row.date_created < threeDaysBeforeDate)
+                                }">
+                                    <div class="action-button">
+                                        <button mat-icon-button matTooltip="Change Status" (click)="changeStatus(row)"
+                                            *ngIf="active_tab == 'Pending'||active_tab == 'Assigned'">
+                                            <i class="material-icons edit">change_circle</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w40">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w90">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w80">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w220">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w90">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+
+
+            <div *ngIf="datanotfound == true">
+                <app-not-result-found></app-not-result-found>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="fab-btns">
+        <button class="pulse excel" mat-fab
+            *ngIf="login_data5.export_enquiry=='1' || login_data5.import_enquiry=='1' || login_data5.edit_enquiry=='1' || login_data5.add_enquiry=='1'"
+            color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}" [matMenuTriggerFor]="menu"
+            (click)="lastBtnValue('upload');">
+            <i class="material-icons">apps</i>
+            Action
+        </button>
+        <mat-menu #menu="matMenu">
+            <button *ngIf="login_data5.export_enquiry=='1'&&lead_List.length != 0" mat-menu-item
+                (click)="progressService.setCancelReq(false);downloadInChunks(active_tab);">
+                <mat-icon>download</mat-icon>
+                <span>Download Excel</span>
+            </button>
+            <button *ngIf="login_data5.import_enquiry=='1'" mat-menu-item (click)="upload_excel('insert');">
+                <mat-icon>cloud_upload</mat-icon>
+                <span>Upload New Data</span>
+            </button>
+            <!-- <button *ngIf="login_data5.import_enquiry=='1'" mat-menu-item (click)="upload_excel('update');">
+    <mat-icon>update</mat-icon>
+    <span>Update Existing Data</span>
+</button> -->
+            <button *ngIf="login_data5.add_enquiry=='1'" mat-menu-item routerLink="add-lead"
+                (click)="lastBtnValue('add')" [ngClass]="{'pulse': fabBtnValue=='add'}">
+                <mat-icon>add</mat-icon>
+                Add New
+            </button>
+        </mat-menu>
+    </div>
+
+</div>

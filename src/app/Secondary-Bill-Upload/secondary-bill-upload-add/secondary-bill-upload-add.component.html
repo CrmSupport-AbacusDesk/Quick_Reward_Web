@@ -1,0 +1,194 @@
+<div class="main-container">
+  <app-loader *ngIf="loader"></app-loader>
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add Secondary Bill</h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-body cs-form">
+              <div class="card-head">
+                <h2>Purchase Information</h2>
+              </div>
+              <div class="row">
+                <div class="col s12 m3 l4">
+                  <mat-form-field class="cs-input" appearance="outline">
+                    <mat-label>Select Retailer</mat-label>
+                    <mat-select name="dealer_id" placeholder="Type Here ..." #dealer_id="ngModel"
+                      [disabled]="add_list.length>0" (selectionChange)="getAssignedDistributors(data.dealer_id); getProductList('', data.dealer_id)"
+                      [(ngModel)]="data.dealer_id" [ngClass]="{'has-error' : dealer_id.invalid }" required>
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getRetailers($event.target.value)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let row of retailerList" value="{{row.id}}">{{row.company_name}} ({{row.name}}-{{row.mobile}})</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col s12 m3 l4">
+                  <mat-form-field class="cs-input" appearance="outline">
+                    <mat-label>Select Assigned Primary</mat-label>
+                    <mat-select name="dr_id" placeholder="Type Here ..." #dr_id="ngModel"
+                      [disabled]="add_list.length>0"
+                      [(ngModel)]="data.dr_id" [ngClass]="{'has-error' : dr_id.invalid }" required>
+                      <!-- <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getAssignedDistributors($event.target.value)"></ngx-mat-select-search>
+                      </mat-option> -->
+                      <mat-option *ngFor="let row of drList" value="{{row.id}}">{{row.display_name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col s12 m3 l2">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : bill_no.invalid } ">
+                      <mat-label>Bill Number</mat-label>
+                      <input type="text" name="bill_no" matInput
+                                        placeholder="" #bill_no="ngModel"
+                                        [(ngModel)]="data.bill_no"  required>
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="bill_number.touched">
+                    <p *ngIf="bill_number.errors?.required">This field is required</p>
+                  </div> -->
+                </div>
+                <div class="col s12 m3 l2" >
+                  <mat-form-field appearance="outline">
+                      <mat-label>Bill Date</mat-label>
+                      <input matInput [matDatepicker]="picker1" name="bill_date" #bill_date="ngModel" [max]="today_date"
+                      [max]="data.date_to" [(ngModel)]="data.bill_date" readonly required>
+                      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                      <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+
+              </div>
+              <div class="card-head mt16">
+                <h2>Bill Image</h2>
+              </div>
+              <div class="row">
+                <div class="col s12">
+                  <div class="uploade-image">
+                      <ul>
+                          <li *ngFor="let row of selected_image; let i=index">
+                              <img src="{{row.id ? upload_url+row.banner : row.image}}">
+                              <span class="cancel-icon">
+                                  <i class="material-icons crose-icon"
+                                  (click)="deleteProductImage(i,row.img_id, row.image)">clear</i>
+                              </span>
+                          </li>
+                          <li class="add-bg-1">
+                              <label>
+                                  <input type="file" (change)="onUploadChange($event)" style="display:none;"
+                                  accept=".png, .jpg, .jpeg," multiple required />
+                                  <div class="other">
+                                      <i class="material-icons">cloud_upload</i>
+                                      <p>Upload Bill</p>
+                                  </div>
+                              </label>
+                          </li>
+                      </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-head mt16" *ngIf="data.dealer_id && data.dr_id">
+                <h2>Product Information</h2>
+              </div>
+              <div class="row" *ngIf="data.dealer_id && data.dr_id">
+                <div class="col s12 m3 l4">
+                  <mat-form-field class="cs-input" appearance="outline">
+                    <mat-label>Select Product</mat-label>
+                    <mat-select name="product_id" placeholder="Type Here ..." #product_id="ngModel"
+                      [(ngModel)]="data.product_id" [ngClass]="{'has-error' : product_id.invalid }" >
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getProductList($event.target.value, data.dealer_id)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let row of productList" value="{{row.id}}"> [{{row.product_code}}] {{row.product_name}} </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col s12 m3 l2">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : qty.invalid } ">
+                      <mat-label>Product Qty</mat-label>
+                      <input type="number" name="qty" matInput min="1"
+                                        placeholder="" #qty="ngModel"
+                                        [(ngModel)]="data.qty">
+                  </mat-form-field>
+                </div>
+                <div class="col s12 m3 l2">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : price.invalid } ">
+                      <mat-label>Product Price</mat-label>
+                      <input type="number" name="price" matInput min="1"
+                                        placeholder="" #price="ngModel"
+                                        [(ngModel)]="data.price">
+                  </mat-form-field>
+                </div>
+                <div class="mt3">
+                  <button mat-raised-button class="add-item" (click)="addToList()" [disabled]="!data.product_id || !data.qty || !data.price" type="button" >
+                    <i class="material-icons">add</i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-container *ngIf="add_list.length">
+              <div class="cs-table">
+                <div class="sticky-head" style="top: -10px;">
+                  <div class="table-head">
+                    <table>
+                      <tr>
+                        <th class="w30">S.no.</th>
+                        <th class="w250">Product Details</th>
+                        <th class="w80 text-right">QTY.</th>
+                        <th class="w80 text-right">Price</th>
+                        <th class="w80 text-right">Amount</th>
+                        <th class="w40 text-right">Action</th>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="table-container">
+                  <div class="table-content">
+                    <table>
+                      <tr *ngFor="let row of add_list;let i=index">
+                        <td class="w30">{{i+1}}</td>
+                        <td class="w250"> [{{row.product.product_code}}] {{row.product.product_name}} </td>
+                        <td class="w80 text-right">{{row.qty}} </td>
+                        <td class="w80 text-right">{{row.price}}</td>
+                        <td class="w80  text-right">₹ {{row.amount | number:'1.2-2'}}</td>
+                        <td class="w40 text-center">
+                          <div class="action-button">
+                            <button mat-icon-button matTooltip="Delete" (click)="listdelete(i)">
+                              <i class="material-icons del">delete</i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div> 
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+              [disabled]="savingFlag == true || add_list.length == 0 || f.invalid">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>  
+  </div>
+</div>           
+

@@ -1,0 +1,293 @@
+<div class="main-container">
+    <!-- <app-loader *ngIf="loader"></app-loader> -->
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <!-- <h2>Add New Gift</h2> -->
+        <h2>Scheme/Incentive Detail</h2>
+        
+        <div class="left-auto">
+
+            <!-- <button class="mr15" matTooltip="excel" mat-raised-button color="accent" [routerLink]="[ 'scheme-sub-add/', scheme_id ]" [queryParams]="{'criteria_type': schemeDetails.criteria_type, 'gift_type':schemeDetails.gift_type, 'point_type': schemeDetails.point_type}" *ngIf="schemeDetails.gift_type != 'Gift'">
+                <mat-icon>library_add</mat-icon>
+                Add Sub Scheme
+            </button>
+            <button class="mr15" matTooltip="excel" mat-raised-button color="accent" [routerLink]="[ 'scheme-sub-list/', scheme_id ]" *ngIf="schemeDetails.gift_type != 'Gift'">
+                <mat-icon>visibility</mat-icon>
+                View Sub Schemes
+            </button> -->
+            <!-- <button class="mr15" matTooltip="excel" mat-raised-button color="accent" (click)="exportAsXLSX()" *ngIf="schemeDetails && schemeDetails.slabData.length > 0">
+                <mat-icon>download</mat-icon>
+                Download Excel
+            </button> -->
+            <button class="mr15" matTooltip="Edit product" mat-raised-button color="primary" [routerLink]="[ 'scheme-add/', scheme_id ]">
+                <mat-icon>edit</mat-icon>
+                Edit Scheme/Incentive
+            </button>
+        </div>
+    </div>
+    
+    <div class="container pt10 pl10 pr10 pb50">
+        <div class="row">
+            <div class="col s12">
+                <div class="card pb0" *ngIf="!skLoading">
+                    <!-- <div class="card-head">
+                        <h2>Scheme/Incentive Information</h2>
+                    </div> -->
+                    <div class="card-body cs-form">
+                        
+                        <div class="grid-box" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr">
+                            <div class="block-feilds">
+                                <span>Date Created</span>
+                                <p>{{schemeDetails.date_created | date: 'dd MMM yyyy , h:mm a'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Scheme For</span>
+                                <p> {{schemeDetails.scheme_for == 'Distributor' ? 'Primary Customer' : schemeDetails.scheme_for}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Scheme Type</span>
+                                <p> {{schemeDetails.scheme_type}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Criteria Type</span>
+                                <p> {{schemeDetails.criteria_type}}</p>
+                            </div>
+                            
+                            <div class="block-feilds" *ngIf="schemeDetails.gift_type">
+                                <span>Gift Type</span>
+                                <p> {{schemeDetails.gift_type}}</p>
+                            </div>
+                            
+                            <div class="block-feilds" *ngIf="schemeDetails.point_type">
+                                <span>Point Type</span>
+                                <p> {{schemeDetails.point_type}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Genric</span>
+                                <p> {{schemeDetails.genric}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Title</span>
+                                <p>{{schemeDetails.title}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Date From</span>
+                                <p>{{schemeDetails.start_date | date: 'dd MMM yyyy'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Date To</span>
+                                <p>{{schemeDetails.end_date | date: 'dd MMM yyyy'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Status</span>
+                                <p [ngClass]="{'Approved': schemeDetails.status == 'Active' , 'Reject' : schemeDetails.status == 'Deactive'}">{{schemeDetails.status}}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-box mt10">
+                            <div class="block-feilds" *ngIf="schemeDetails.terms">
+                                <span>Terms & Conditions</span>
+                                <p [innerHTML]="schemeDetails.terms">{{schemeDetails.terms}}</p>
+                            </div>
+                            <div class="block-feilds" *ngIf="schemeDetails.description">
+                                <span>Scheme Description</span>
+                                <p>{{schemeDetails.description}}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="uploade-image mt10">
+                                    <ul>
+                                        <li *ngFor="let row of schemeDetails.bannerData ">
+                                            <img  (click)="goToImage(upload_url+row.banner)" style="cursor: zoom-in;"
+                                            src="{{upload_url + row.banner}}">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-head mt10" *ngIf="schemeDetails.genric=='No'">
+                            <h2>Area Wise Detail</h2>
+                        </div>
+                        
+                        <div class="row" *ngIf="schemeDetails.genric=='No'">
+                            <div class="col s12 m4 l4">
+                                <div class="check-box">
+                                    <div class="check-head">
+                                        <h2>State</h2>
+                                    </div>
+                                    <div class="check-body">
+                                        <ng-container *ngFor="let row of schemeDetails.scheme_states">
+                                            <mat-checkbox [labelPosition]="labelPosition" color="primary" checked="true"
+                                            disabled>{{row}}</mat-checkbox>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m4 l4">
+                                <div class="check-box">
+                                    <div class="check-head">
+                                        <h2>District</h2>
+                                    </div>
+                                    <div class="check-body">
+                                        <div class="check-body">
+                                            <ng-container *ngFor="let row of schemeDetails.scheme_district">
+                                                <mat-checkbox [labelPosition]="labelPosition" color="primary" checked="true"
+                                                disabled>{{row}}</mat-checkbox>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m4 l4">
+                                <div class="check-box">
+                                    <div class="check-head">
+                                        <h2>{{schemeDetails.scheme_for == 'Distributor' ? 'Primary Customer' : schemeDetails.scheme_for}}</h2>
+                                    </div>
+                                    <div class="check-body">
+                                        <div class="check-body">
+                                            <ng-container *ngFor="let row of schemeDetails.users_name">
+                                                <mat-checkbox [labelPosition]="labelPosition" color="primary" checked="true" disabled>{{row}}
+                                                </mat-checkbox>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-head" *ngIf="schemeDetails.scheme_type!='Collection'">
+                            <h2>Product Detail</h2>
+                        </div>
+                        <div class="row" *ngIf="schemeDetails.scheme_type!='Collection'">
+                            <div class="col s12 m4 l4">
+                                <div class="check-box">
+                                    <div class="check-head">
+                                        <h2>Category</h2>
+                                    </div>
+                                    <div class="check-body">
+                                        <ng-container *ngFor="let row of schemeDetails.scheme_category">
+                                            <mat-checkbox [labelPosition]="labelPosition" color="primary" checked="true"
+                                            disabled>{{row}}</mat-checkbox>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col s12 m4 l4">
+                                <div class="check-box">
+                                    <div class="check-head">
+                                        <h2>Sub Category</h2>
+                                    </div>
+                                    <div class="check-body">
+                                        <div class="check-body">
+                                            <ng-container *ngFor="let row of schemeDetails.scheme_sub_category">
+                                                <mat-checkbox [labelPosition]="labelPosition" color="primary" checked="true"
+                                                disabled>{{row}}</mat-checkbox>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="col s12 m4 l4">
+                                <div class="check-box">
+                                    <div class="check-head">
+                                        <h2>Products</h2>
+                                    </div>
+                                    <div class="check-body">
+                                        <div class="check-body">
+                                            <ng-container *ngFor="let row of schemeDetails.product_name">
+                                                <mat-checkbox [labelPosition]="labelPosition" color="primary" checked="true"
+                                                disabled>{{row}}</mat-checkbox>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row" *ngIf="schemeDetails.gift_type == 'Point' && schemeDetails.point_type == 'Product Qty'">
+                            <div class="col s12 m12 l12 text-right">
+                                <button class="mr15" matTooltip="View Results" mat-raised-button color="primary" routerLink="scheme-sub-details/{{schemeDetails.id}}/{{schemeDetails.criteria_type}}" routerLinkActive="active">
+                                    <mat-icon>visibility</mat-icon>
+                                    View Results
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div *ngIf="schemeDetails && schemeDetails.slabData.length && schemeDetails.point_type != 'Product Qty'">
+                            <div class="card-head">
+                                <h2>Target Detail</h2>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="cs-table left-right-10">
+                                        <div class="table-head border-bottom">
+                                            <table class="sno-border">
+                                                <tr>
+                                                    <th class="w60">Sr.No</th>
+                                                    <!-- <th class="w130">Slab Type</th> -->
+                                                    <th class="w110">Slab Start</th>
+                                                    <th class="w110">Slab End</th>
+                                                    <th class="w110 text-right" *ngIf="schemeDetails.gift_type == 'Point'">Point Value</th>
+                                                    <th *ngIf="schemeDetails.gift_type == 'Gift'">Gift Detail</th>
+                                                    <th class="w120 text-center">Total Achievers</th>
+                                                    <!-- <th class="w110 text-center">Upto 50%</th> -->
+                                                    <!-- <th class="w110 text-center">Above 50%</th> -->
+                                                    <th class="w100">Action</th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        
+                                        <div class="table-container">
+                                            <div class="table-content">
+                                                <table class="sno-border">
+                                                    <tr *ngFor="let row of schemeDetails.slabData; let i = index">
+                                                        <td class="w60">{{i+1}}</td>
+                                                        <!-- <td class="w130">{{row.slab_type}}</td> -->
+                                                        <td class="w110">{{row.slab_start}}</td>
+                                                        <td class="w110">{{row.slab_end}}</td>
+                                                        <td class="w110 text-right" *ngIf="schemeDetails.gift_type == 'Point'">{{row.point_value ? row.point_value : '--'}} PT</td>
+                                                        <td class="text-left" *ngIf="schemeDetails.gift_type == 'Gift'">{{row.gift_detail ? row.gift_detail : '--'}}</td>
+                                                        <td class="w120 text-center">{{row.total_achievers ? row.total_achievers : '0'}}</td>
+                                                        <!-- <td class="w110 text-center">{{row.upto50_participants ? row.upto50_participants : '0'}}</td> -->
+                                                        <!-- <td class="w110 text-center">{{row.above50_participants ? row.above50_participants : '0'}}</td> -->
+                                                        <td class="w100">
+                                                            <a class="link-btn" mat-button routerLink="scheme-sub-detail/{{schemeDetails.id}}/{{row.id}}/{{schemeDetails.criteria_type}}" routerLinkActive="active">View Result</a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

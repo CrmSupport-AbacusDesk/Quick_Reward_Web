@@ -1,0 +1,326 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" routerLink="/expense-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Expense Detail</h2>
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <!-- product data start -->
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Basic Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date Created</span>
+                <p>{{expenseDetail.dateCreated | date:'d MMM y'}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="expenseDetail.claimDate!='0000-00-00'">
+                <span>Claim Date</span>
+                <p>{{expenseDetail.claimDate | date : 'd MMM y'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Expense Type</span>
+                <p>{{expenseDetail.expenseType ? expenseDetail.expenseType : '---'}}</p>
+              </div>
+
+
+              <div class="block-feilds">
+                <span>Expense ID</span>
+                <p>#CLM-{{expenseDetail.id != '' ? expenseDetail.id : '--' }}</p>
+              </div>
+              <!-- <div class="block-feilds">
+                <span>Created By</span>
+                <p> {{expenseDetail.createdByName ? (expenseDetail.createdByName | titlecase) : '---'}}</p>
+              </div> -->
+              <div class="block-feilds">
+                <span>Claim Amount</span>
+                <p><strong>{{expenseDetail.totalAmt ? ('₹ ' +expenseDetail.totalAmt) : '0'}}</strong></p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Senior Approved Amount</span>
+                <p><strong>{{expenseDetail.seniorApprovedAmount ? ('₹ ' + expenseDetail.seniorApprovedAmount) :
+                    '0'}}</strong></p>
+              </div>
+
+              <div class="block-feilds">
+                <span>A/C Approved Amount</span>
+                <p><strong>{{expenseDetail.totalApprovedAmount ? ('₹ ' + expenseDetail.totalApprovedAmount) :
+                    '0'}}</strong></p>
+              </div>
+
+
+              <div class="block-feilds">
+                <span>Employee Code</span>
+                <p>{{expenseDetail.emp_code ? expenseDetail.emp_code : 'N/A'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Employee Name</span>
+                <p>{{expenseDetail.userName != '' ? expenseDetail.userName : '--'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Reporting Manager</span>
+                <p>{{expenseDetail.reporting_name}}-{{expenseDetail.reporting_code}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Designation</span>
+                <p>{{expenseDetail.userType != '' ? expenseDetail.userType : '--' }}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Google Km</span>
+                <p>{{expenseDetail.googleKm != '' ? expenseDetail.googleKm : '--' }}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Start Meter Reading</span>
+                <img *ngIf="expenseDetail.start_meter_image!=null &&expenseDetail.start_meter_image!=''" src="{{service.uploadUrl+'meter_image/'+expenseDetail.start_meter_image}}"
+                (click)="imageModel(service.uploadUrl+'meter_image/'+expenseDetail.start_meter_image)">
+                <p>{{expenseDetail.start_meter_reading ? expenseDetail.start_meter_reading : '0' }}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Stop Meter Reading</span>
+                <img *ngIf="expenseDetail.stop_meter_image!=null &&expenseDetail.stop_meter_image!=''" src="{{service.uploadUrl+'meter_image/'+expenseDetail.stop_meter_image}}"
+                (click)="imageModel(service.uploadUrl+'meter_image/'+expenseDetail.stop_meter_image)">
+                <p>{{expenseDetail.stop_meter_reading ? expenseDetail.stop_meter_reading : '0' }}</p>
+              </div>
+              <div class="block-feilds" >
+                <span>Actual Km</span>
+                <p *ngIf="expenseDetail.start_meter_reading > 0 && expenseDetail.stop_meter_reading > 0">{{expenseDetail.stop_meter_reading - expenseDetail.start_meter_reading}}</p>
+                <p *ngIf="expenseDetail.start_meter_reading == 0 || expenseDetail.stop_meter_reading == 0">0</p>
+              </div>
+              <div class="block-feilds" *ngIf="expenseDetail.seniorUpdateDate != '0000-00-00'">
+                <span>Senior Status Updated On</span>
+                <p>{{expenseDetail.seniorUpdateDate | date : 'd MMM y'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Senior Status</span>
+                <p
+                  [ngClass]="expenseDetail.seniorStatus=='Approved' ? 'green-clr' : expenseDetail.seniorStatus=='Pending'? 'yellow-clr':'red-clr'">
+                  {{expenseDetail.seniorStatus}}</p>
+
+                <!-- <div class="action-button right-action-btn text-right" *ngIf="expenseDetail.seniorStatus=='Approved' && expenseDetail.acStatus == 'Pending' && assign_login_data2.edit_expense=='1'"> -->
+                <div class="action-button right-action-btn text-right" *ngIf="assign_login_data2.id=='1'">
+                  <button mat-icon-button matTooltip="Change Status"
+                    (click)="expModal('seniorStatus',expenseDetail.id,'')">
+                    <i class="material-icons edit">edit</i>
+                  </button>
+                </div>
+                <div class="action-button right-action-btn text-right"
+                  *ngIf="expenseDetail.seniorStatus=='Pending' && assign_login_data2.edit_expense=='1'">
+                  <button mat-icon-button matTooltip="Change Status"
+                    (click)="expModal('seniorStatus',expenseDetail.id,'')">
+                    <i class="material-icons edit">edit</i>
+                  </button>
+                </div>
+              </div>
+              <div class="block-feilds">
+                <span>A/C Status</span>
+                <p
+                  [ngClass]="expenseDetail.acStatus=='Approved' ? 'green-clr' : expenseDetail.acStatus=='Pending'? 'yellow-clr':'red-clr'">
+                  {{expenseDetail.acStatus}}</p>
+
+                <!-- <div class="action-button right-action-btn text-right" *ngIf="expenseDetail.seniorStatus=='Approved' && expenseDetail.acStatus == 'Pending' && assign_login_data2.edit_expense=='1'"> -->
+                <div class="action-button right-action-btn text-right" *ngIf="assign_login_data2.id=='1'">
+                  <button mat-icon-button matTooltip="Change Status"
+                    (click)="expModal('acStatus',expenseDetail.id,expenseDetail.totalAmt)">
+                    <i class="material-icons edit">edit</i>
+                  </button>
+                </div>
+                <div class="action-button right-action-btn text-right"
+                  *ngIf="expenseDetail.seniorStatus=='Approved' && expenseDetail.acStatus == 'Pending' && assign_login_data2.edit_expense=='1'">
+                  <button mat-icon-button matTooltip="Change Status"
+                    (click)="expModal('acStatus',expenseDetail.id,expenseDetail.totalAmt)">
+                    <i class="material-icons edit">edit</i>
+                  </button>
+                </div>
+              </div>
+              <div class="block-feilds" *ngIf="expenseDetail.acUpdateDate != '0000-00-00'">
+                <span>A/C Status Updated On</span>
+                <p>{{expenseDetail.acUpdateDate | date : 'd MMM y'}}</p>
+              </div>
+            </div>
+            <!-- <div class="grid-box single mt16" *ngIf="expenseDetail.acStatus=='Reject'"> -->
+            <div class="grid-box single mt16" *ngIf="expenseDetail.acRemark">
+              <div class="block-feilds">
+                <span>Reason </span>
+                <p>{{expenseDetail.acRemark != '' ? expenseDetail.acRemark : '--' }}</p>
+              </div>
+            </div>
+            <div class="grid-box single mt16" *ngIf="expenseDetail.acRemark">
+              <div class="block-feilds">
+                <span>Remark </span>
+                <p>{{expenseDetail.acRemark != '' ? expenseDetail.acRemark : '--' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- product data end -->
+        <!-- Skeleton start -->
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Skeleton end -->
+
+      </div>
+    </div>
+    <div class="cs-form mt10">
+      <div class="row ">
+        <div class="col s12">
+          <div class="cs-collapse">
+            <mat-accordion class="example-headers-align">
+              <!-- out-Local Conveyance mat-expansion--->
+              <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle
+                *ngIf="expenseDetail.expenseType == 'Travel'">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Expense List
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="collapse-body pt0">
+                  <div class="cs-form">
+                    <div class="cs-table left-right-10">
+                      <div class="table-head border-bottom">
+                        <table>
+                          <tr>
+                            <th class="w140">Type Of Expense</th>
+                            <th class="w100 text-center">Distance</th>
+                            <th class="w100 text-right">Amount</th>
+                            <th>Remark</th>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <div class="table-container">
+                        <div class="table-content">
+                          <table>
+                            <tr *ngFor="let row of expenseDetail.localConv;">
+                              <td class="w140">{{row.modeOfTravel}}</td>
+                              <td class="w100 text-center">{{(row.modeOfTravel === 'Car' || row.modeOfTravel === 'Bike') ? (row.distance + ' Km') : '---'}}</td>
+                              <td class="w100 text-right">{{row.amount ? ('Rs. ' + row.amount) : '--'}}</td>
+                              <td>{{row.remark ? row.remark: '--'}}</td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+
+
+              <mat-expansion-panel [expanded]="step === 5" (opened)="setStep(5)" hideToggle
+                *ngIf="expenseDetail.expenseType == 'Event'">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Event Expense
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="collapse-body pt0">
+                  <div class="cs-form">
+                    <div class="cs-table left-right-10">
+                      <div class="table-head">
+                        <table>
+                          <tr>
+                            <th class="w150 text-right">Amount</th>
+                            <th>Remark</th>
+                          </tr>
+                        </table>
+                      </div>
+                      <div class="table-container">
+                        <div class="table-content">
+                          <table>
+                            <tr>
+                              <td class="w485 padding0">
+                                <table>
+                                  <tr *ngFor="let row of expenseDetail.event;">
+                                    <td class="w150 text-right">&#x20B9;{{row.amount}}
+                                    </td>
+                                    <td>{{row.remark ? row.remark : ''}}</td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+              <!-- Misc Expense mat-expansion--->
+            </mat-accordion>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s8">
+          <div class="cs-file" *ngIf="(expenseDetail.expBills && expenseDetail.expBills.length > 0) || (expenseDetail.expPDF && expenseDetail.expPDF.length > 0)">
+            <p>Upload File</p>
+            <ul class="product-images">
+              <li class="multi-images">
+                <label class="cs-file-img" *ngFor="let val of expenseDetail.expBills">
+                  <img *ngIf="val.image!=null &&val.image!=''" src="{{service.uploadUrl+'expense/'+val.image}}"
+                    (click)="imageModel(service.uploadUrl+'expense/'+val.image)">
+                </label>
+
+
+                <a class="cs-file-img pointer" *ngFor="let val of expenseDetail.expPDF" target="_blank" href="{{service.uploadUrl+'ExpensePdf/'+val.pdf}}">
+                  <img src="assets/img/icons/pdf.png">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col s4">
+          <div class="summary">
+            <table>
+              <tr>
+                <td>Claim Amount</td>
+                <td class="text-center"><strong>:</strong></td>
+                <td class="text-right">{{expenseDetail.totalAmt ? ('₹ ' + expenseDetail.totalAmt) : ''}} /-</td>
+              </tr>
+
+              <tr *ngIf="expenseDetail.acStatus == 'Approved'">
+                <td>Approved Amount</td>
+                <td class="text-center"><strong>:</strong></td>
+
+                <td class="text-right">{{expenseDetail.totalApprovedAmount ? ('₹ ' +
+                  expenseDetail.totalApprovedAmount) :'0'}} /-</td>
+              </tr>
+
+
+              <!-- <tr>
+                <td>Advance</td>
+                <td class="text-right">&#x20B9; 12,000 /-</td>
+              </tr>
+              <tr>
+                <td>Claim</td>
+                <td class="text-right">&#x20B9; 12,000 /-</td>
+              </tr> -->
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- </div> -->

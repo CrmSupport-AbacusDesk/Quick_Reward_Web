@@ -1,0 +1,37 @@
+<div class="edit-modal">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail(type)">
+    <p class="heading">Add New Designation</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>Title</mat-label>
+              <input matInput placeholder="Type Here ..." name="title" #title="ngModel" [(ngModel)]="info.title"
+                required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+              <p *ngIf="title.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>Count</mat-label>
+              <input type="number" matInput placeholder="Type Here ..." name="count" #count="ngModel"
+                [(ngModel)]="info.count" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="count.touched || f.submitted">
+              <p *ngIf="count.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+        [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>

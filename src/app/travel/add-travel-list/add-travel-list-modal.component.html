@@ -1,0 +1,75 @@
+<div class="edit-modal" *ngIf="deliveryFrom!='add_travel_plan'">
+  <form #add_travel="ngForm" name="add_travel">
+    <div mat-dialog-content>
+      <div>
+        <p class="heading">Update Travel Plan</p>
+      </div>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Area/Route Name</mat-label>
+              <!-- <input type="text"  matInput placeholder="route name" name="route_name"  [(ngModel)]="data1.route_name" (keyup.enter)="area_list()"> -->
+            </mat-form-field>
+          </div>
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Select Beat Code</mat-label>
+              <mat-select name="beat_code" placeholder="beat_code" #beat_code="ngModel" [(ngModel)]="data1.beat_code">
+                <mat-option *ngFor="let list of city_list " placeholder="beat_code"
+                  value="{{list.beat_code}}">{{list.beat_code}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <textarea class="h60" matInput name="status_remark" #status_remark="ngModel"
+                [(ngModel)]="data1.status_remark" placeholder="Status Remark"
+                value="{{data1.status_remark}}"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+          <button type="submit" (click)="update_travel_plan()" mat-button color="accent">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div class="edit-modal" *ngIf="deliveryFrom=='add_travel_plan'">
+  <form #add_travel="ngForm" name="add_travel" (ngSubmit)="updateTravelPlan()">
+    <div mat-dialog-content>
+      <div>
+        <p class="heading">Add Area Plan</p>
+      </div>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Area/Route Name</mat-label>
+              <input type="text" matInput placeholder="route name" name="area" [(ngModel)]="data.area">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Purpose Of Visit</mat-label>
+              <textarea class="h60" matInput name="reason" #reason="ngModel" [(ngModel)]="data.reason"
+                placeholder="Purpose Of Visit"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+          <button type="submit" [disabled]="savingFlag"  mat-button color="accent">Save</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

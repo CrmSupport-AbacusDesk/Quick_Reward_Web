@@ -1,0 +1,302 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container" *ngIf="hide !=  true">
+    <h2>Party Wise Journey Plan </h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh();">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button>
+
+      <div class="pagination" *ngIf="travel_list.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending';getTravelList();"><i class="material-icons">pending_actions</i>Pending
+          <!-- ({{tabCount.Pending}}) -->
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+          (click)="active_tab = 'Approved';getTravelList();"><i class="material-icons">done_all</i>Approved
+          <!-- ({{tabCount.Pending}}) -->
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+          (click)="active_tab = 'Reject';getTravelList();"><i class="material-icons">cancel</i>Reject
+          <!-- ({{tabCount.Reject}}) -->
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="left-auto df ac flex-gap-10">
+    <div class="mat-tabbar">
+      <button mat-button [ngClass]="active_tabType == 'Today' ? 'active' : ''"
+        (click)="active_tabType = 'Today';getTravelList();"><i class="material-icons">pending_actions</i>Today
+      </button>
+
+      <button mat-button [ngClass]="active_tabType == 'All' ? 'active' : ''"
+        (click)="active_tabType = 'All';getTravelList();"><i class="material-icons">done_all</i>All
+      </button>
+
+    </div>
+
+
+  </div>
+
+  <div class="container pb100">
+
+    <div class="cs-table horizontal-scroll" style="width: 100%">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+
+              <th class="w60">Sr.no</th>
+              <th class="w120">Date Created</th>
+              <th class="w150">Created By</th>
+              <th class="w100">Territory Code</th>
+              <th class="w100">Plan ID</th>
+              <th class="w110">Employee Code</th>
+              <th class="w150">Employee Name </th>
+              <th class="w150">Reporting Manager</th>
+              <th class="w100">Visit Date</th>
+              <th class="w100 text-center">Visit Plan</th>
+              <th class="w100 text-center">Visit Actual</th>
+              <th class="w100 text-center">Plan Follow</th>
+              <th class="w100 text-center">Plan Deviation</th>
+              <th class="w150" *ngIf="active_tab == 'Reject'">
+                Reason Of Reject
+              </th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker1" placeholder="" name="date_created"
+                      [(ngModel)]="search.date_created" [max]="today_date" (dateChange)="getTravelList()" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="created_by_name" [(ngModel)]="search.created_by_name"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="beat_code" [(ngModel)]="search.beat_code"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="id" [(ngModel)]="search.id"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="employee_id" [(ngModel)]="search.employee_id"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="sales_user" [(ngModel)]="search.sales_user"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="reporting_manager_id" #reporting_manager_id="ngModel"
+                      [(ngModel)]="search.reporting_manager_id" (selectionChange)="getTravelList();">
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getReportManager($event.target.value, 'rsm1')"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let list of report_manager;let index=index" value="{{list.id}}">
+                        {{list.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="" name="visit_date"
+                      [(ngModel)]="search.visit_date" [max]="today_date" (dateChange)="getTravelList()" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-center">&nbsp;</th>
+              <th class="w100 text-center">&nbsp;</th>
+              <th class="w100 text-center">&nbsp;</th>
+              <th class="w100 text-center">&nbsp;</th>
+              <th class="w150" *ngIf="active_tab == 'Reject'">
+                &nbsp;
+              </th>
+            </tr>
+
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let list of travel_list; let i = index;"
+                [ngClass]="{'Current': service.currentUserID == list.id}">
+                <td class="w60">{{ i + 1 + sr_no }}</td>
+                <td class="w120">{{list.date_created!='0000-00-00 00:00:00'? (list.date_created | date:'d MMM y,
+                  hh:mm a'):'--'}}</td>
+                <td class="w150">{{list.created_by_name ? (list.created_by_name | titlecase) : '---'}}</td>
+                <td class="w100">{{list.beat_code ? (list.beat_code) : '---'}}</td>
+                <td class="w100">
+                  <a class="link-btn" (click)="service.setData(search)" [routerLink]="[ 'poa-travel-detail/', list.encrypt_id ]"
+                    [queryParams]="{'id':list.encrypt_id, 'type':list.type}">#{{list.id}}</a>
+                </td>
+                <td class="w110">{{list.employee_id}}</td>
+                <td class="w150">{{list.name | titlecase}}</td>
+                <td class="w150">{{list.r_name ? (list.r_name | titlecase) : ''}}</td>
+                <td class="w100">{{list.date_from ? (list.date_from | date:'d MMM y') : '---'}}</td>
+                <td class="w100 text-center">{{list.visit_plan_count ? list.visit_plan_count : '---'}}</td>
+                <td class="w100 text-center light-blue"><strong>{{list.visit_actual_count ? list.visit_actual_count :
+                    '---'}}</strong></td>
+                <td class="w100 text-center yellow-bgclr">
+                  <strong>{{list.visit_plan_follow ? (list.visit_plan_follow.toFixed(2) + '%') : '---'}}</strong>
+                </td>
+                <td class="w100 text-center light-green">
+                  <strong>{{list.visit_plan_deviation ? (list.visit_plan_deviation + '%') : '---'}}</strong>
+                </td>
+
+                <td class="w150" *ngIf="active_tab == 'Reject'">
+                  {{list.reason ? list.reason : ''}}
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let lead of skelton">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150" *ngIf="active_tab == 'Reject'">
+                  <div>&nbsp;</div>
+                </td>
+
+            </ng-container>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <ng-container *ngIf="travel_list.length == 0 && datanotfound == true">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+
+</div>
+<div class="fab-btns">
+  <button class="pulse excel" mat-fab color="primary" [matMenuTriggerFor]="menu">
+    <i class="material-icons">apps</i>
+    Action
+  </button>
+  <mat-menu #menu="matMenu">
+  <button mat-menu-item 
+      (click)="openTravelListModal('Travel Plan Daily')">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload Party Wise Daily Travel Plan</span>
+    </button>
+
+    <button mat-menu-item 
+    (click)="openTravelListModal('Territory Travel Plan')">
+    <mat-icon>cloud_upload</mat-icon>
+    <span>Upload Territory Wise Daily Travel Plan</span>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item *ngIf="travel_list.length > 0 && assign_login_data2.export_travel_list=='1'"
+      (click)="progressService.setCancelReq(false); downloadInChunks();">
+      <mat-icon>download</mat-icon>
+      <span>Download Excel</span>
+    </button>
+  </mat-menu>
+  </mat-menu>
+</div>

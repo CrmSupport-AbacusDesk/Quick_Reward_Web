@@ -1,0 +1,202 @@
+  <div class="main-container">
+    <div class="tools-container">
+      <a mat-icon-button  matTooltip="Back" routerLink="/announcement-list">
+        <i class="material-icons">arrow_back</i>
+      </a>
+      <h2>Announcement Detail</h2>
+    </div>
+    
+    <div class="container pt10 pl10 pr10 pb50" >
+      <div class="row">
+        <div class="col s12 m8 l8">
+          <!-- product data start -->
+          <div class="card" *ngIf="!skLoading">
+            <div class="card-head">
+              <h2>Basic Details</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Announcement Date</span>
+                  <p>{{noticeDetail.date_created |date : 'd MMM y'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Created By</span>
+                  <p>{{noticeDetail.created_by_name}}</p>
+                </div>
+              </div>
+              <div class="grid-box single mt16">
+                <div class="block-feilds">
+                  <span>Message</span>
+                  <p>{{noticeDetail.msg}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- product data end -->
+          
+          
+          <!-- Skeleton start -->
+          <div class="card" *ngIf="skLoading">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Skeleton end -->
+          
+        </div>
+        <div class="col s12 m12 l4">
+          <div class="card" *ngIf="!skLoading">
+            <div class="card-head">
+              <h2>Attachment File</h2>
+            </div>
+            <div class="card-body">
+              <div class="img-container">
+                <!-- <div class="image-block" *ngFor="let val of noticeDetail.doc; let i = index">
+                  <a target="blank" href="{{url}}/notices/{{val.image}}">
+                    <img *ngIf ="val.tittle == 'jpg' || val.tittle == 'jpeg' || val.tittle == 'png'" height="75" width="75" src="{{url}}/notices/{{val.image}}" alt="">
+                    <img *ngIf ="val.tittle == 'pdf'" height="75" width="75" src="assets/img/pdf1.svg">
+                    <img *ngIf ="val.tittle == 'docx'" height="75" width="75" src="assets/img/doc.png">
+                  </a>
+                </div> -->
+                <div class="image-block">
+                  <a target="blank" href="{{url}}/notices/{{noticeDetail.image}}">
+                    <img *ngIf ="noticeDetail.tittle == 'jpg' || noticeDetail.tittle == 'jpeg' || noticeDetail.tittle == 'png'" height="75" width="75" src="{{url}}/notices/{{noticeDetail.image}}" alt="">
+                    <img *ngIf ="noticeDetail.tittle == 'pdf'" height="75" width="75" src="assets/img/pdf1.svg">
+                    <img *ngIf ="noticeDetail.tittle == 'docx'" height="75" width="75" src="assets/img/doc.png">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Skeleton start -->
+          <div class="card" *ngIf="skLoading">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="img-container">
+                <div class="image-block sk-loading" *ngFor="let row of [].constructor(3)">
+                  &nbsp; 
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Skeleton end -->
+          
+        </div>
+      </div>
+      
+      <div class="row">
+        
+        <div class="col s12 m6 l6" *ngIf="noticeDetail.distributors != ''">
+          <div class="card" >
+            <div class="card-head">
+              <h2>To Primary</h2>
+            </div>
+            <div class="card-body pt0">
+              <mat-list class="cs-list-box">
+                <mat-list-item *ngFor="let val of noticeDetail.distributors; let i = index" >
+                  {{val.company_name | titlecase}}
+                  <div class="left-auto">
+                    <i class="material-icons" style="font-size: 18px;" [ngClass]="val.read_status == 1 ? 'Approve' : ''">{{val.read_status == 1 ? 'done_all' : 'done'}}</i>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+              
+              <ng-container *ngIf="noticeDetail.distributors == 'N/A'">
+                <div class="no-content">
+                  <i class="material-icons">find_in_page </i>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col s12 m6 l6" *ngIf="noticeDetail.direct_dealer != ''">
+          <div class="card" >
+            <div class="card-head">
+              <h2>To Direct Dealer</h2>
+            </div>
+            <div class="card-body pt0">
+              <mat-list class="cs-list-box">
+                <mat-list-item *ngFor="let val of noticeDetail.direct_dealer; let i = index" >{{val.company_name | titlecase}}
+
+                  <div class="left-auto">
+                    <i class="material-icons" style="font-size: 18px;" [ngClass]="val.read_status == 1 ? 'Approve' : ''">{{val.read_status == 1 ? 'done_all' : 'done'}}</i>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+            </div>
+          </div>
+        </div> -->
+        <div class="col s12 m6 l6" *ngIf="noticeDetail.dealers != ''">
+          <div class="card" >
+            <div class="card-head">
+              <h2>To Secondary</h2>
+            </div>
+            <div class="card-body pt0">
+              <mat-list class="cs-list-box">
+                <mat-list-item *ngFor="let val of noticeDetail.dealers; let i = index" >
+                  {{val.company_name | titlecase}}
+                  <div class="left-auto">
+                    <i class="material-icons" style="font-size: 18px;" [ngClass]="val.read_status == 1 ? 'Approve' : ''">{{val.read_status == 1 ? 'done_all' : 'done'}}</i>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+              
+              <ng-container *ngIf="noticeDetail.dealers == 'N/A'">
+                <div class="no-content">
+                  <i class="material-icons">find_in_page </i>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m6 l6" *ngIf="noticeDetail.users != ''">
+          <div class="card" >
+            <div class="card-head">
+              <h2>To Sales Executives</h2>
+            </div>
+            <div class="card-body pt0">
+              <mat-list class="cs-list-box">
+                <mat-list-item *ngFor="let val of noticeDetail.users; let i = index">
+                  {{val.name | titlecase}}
+                  <div class="left-auto">
+                    <i class="material-icons" style="font-size: 18px;" [ngClass]="val.read_status == 1 ? 'Approve' : ''">{{val.read_status == 1 ? 'done_all' : 'done'}}</i>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m6 l6" *ngIf="noticeDetail.influencer != ''">
+          <div class="card" >
+            <div class="card-head">
+              <h2>To Influencer</h2>
+            </div>
+            <div class="card-body pt0">
+              <mat-list class="cs-list-box">
+                <mat-list-item *ngFor="let val of noticeDetail.influencer; let i = index">
+                  {{val.name | titlecase}} <strong class="ml10"> ({{val.influencer_type |titlecase}})</strong>
+                  <div class="left-auto">
+                    <i class="material-icons" style="font-size: 18px;" [ngClass]="val.read_status == 1 ? 'Approve' : ''">{{val.read_status == 1 ? 'done_all' : 'done'}}</i>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  

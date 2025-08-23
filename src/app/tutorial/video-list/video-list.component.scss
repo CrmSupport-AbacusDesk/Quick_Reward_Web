@@ -1,0 +1,14 @@
+.deleteButtonWrapper{
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    .deleteButton{
+        padding: 5px;
+        background: transparent;
+        color: red !important;
+        border: none;
+        outline: none;
+    }
+}
+

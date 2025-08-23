@@ -1,0 +1,105 @@
+.deleteBtn{
+    padding: 3px;
+    border-radius: 5px;
+    border: 1px solid #ffa4a4;
+    color: #ff3b3b;
+    font-size: 18px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.editBtn{
+    padding: 3px;
+    border-radius: 5px;
+    border: 1px solid #a2a2a2;
+    color: #707070;
+    font-size: 18px;
+    cursor: pointer;
+}
+.btnwrapper{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.grid-box{
+    &.custom-eight {
+        grid-template-columns: 1fr 2fr 3fr 1fr 2fr 2fr 2fr 1fr;
+    }
+}
+
+.schemeStatus{
+    padding: 3px;
+    border-radius: 4px;
+}
+
+.running{
+    background-color: #E0FAF9;
+    color: #00B0AB !important;
+}
+
+.expired{
+    background-color: #fbe2e2;
+    color: #d57373 !important;
+}
+
+.upcoming{
+    background-color: #c3eeff;
+    color: #0879cb !important;
+}
+
+.jumpBtn{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    a.link-btn{
+        color: #0097ff !important;
+        text-decoration-color: #0097ff !important;
+    }
+    .arrow{
+        font-size: 16px !important;
+        color: #6cc3ff;
+    }
+}
+.slabHeader{
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #00B0AB;
+    background-color: #E0FAF9;
+    color: #00B0AB !important;
+}
+
+.card-box{
+    background: #E7F5FF;
+    border-radius: 5px;
+    padding: 10px;
+    span{
+        font-weight: bold;
+    }
+}
+
+.banner-img{
+    cursor: zoom-in;
+    transition: 1s;
+    .zoomIcon{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba($color: #000000, $alpha: .3);
+        display: none;
+        border-radius: 5px;
+    }
+
+    img
+    {
+        box-shadow: 0px 2px 3px 0px #ccc;
+    }
+    &:hover .zoomIcon{
+        display: flex;
+    }
+}
+
+.addNewSlabBtn{
+    background: #E7F5FF;
+    border: 1px solid #d6d6d6;
+}

@@ -1,0 +1,676 @@
+<div class="main-container">
+    <div class="tools-container">
+        <div class="mat-tabbar">
+            <button mat-button [ngClass]="userType == 'Sales User' ? 'active' : ''"
+                (click)="getUserList('Sales User'); userType = 'Sales User'" *ngIf="logined_user_data2.id != '1' && (logined_user_data2.organisation_data.sfa == '1')"><i
+                    class="material-icons">people_alt</i>Sales User ({{sales_count}})</button>
+
+            <button mat-button [ngClass]="userType == 'System User' ? 'active' : ''"
+                (click)="getUserList('System User'); userType = 'System User'" *ngIf="logined_user_data2.id != '1' && (logined_user_data2.organisation_data.sfa == '1' || logined_user_data2.organisation_data.loyalty == '1' || logined_user_data2.organisation_data.dispatch == '1')"><i
+                    class="material-icons">computer</i>System User ({{system_count}})</button>
+
+            <button mat-button [ngClass]="userType == 'ORG' ? 'active' : ''"
+                (click)="getUserList('ORG'); userType = 'ORG'" *ngIf="logined_user_data2.id == '1'"><i
+                    class="material-icons">computer</i>ORG
+                ({{org_count}})</button>
+
+            <!-- <button mat-button [ngClass]="userType == 'Service Engineer' ? 'active' : ''"
+                (click)="getUserList('Service Engineer'); userType = 'Service Engineer'"
+                *ngIf="logined_user_data2.id != '1'"><i class="material-icons">computer</i>Service
+                Engineer({{service_count}})</button> -->
+
+            <button mat-button [ngClass]="userType == 'Hierarchy' ? 'active' : ''"
+                (click)="getHierarchy(); userType = 'Hierarchy'" *ngIf="logined_user_data2.id != '1' && logined_user_data2.organisation_data.sfa == '1' ">
+                <i class="material-icons">reduce_capacity</i>Hierarchy
+            </button>
+        </div>
+        <div class="left-auto df ac flex-gap-10" *ngIf="userType != 'Hierarchy'">
+            <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                <i class="material-icons">refresh</i>
+            </button>
+            <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+                <i class="material-icons">filter_alt</i>
+            </button>
+            <button mat-icon-button matTooltip="Sorting" (click)="sortData()">
+                <i class="material-icons">swap_vert</i>
+            </button>
+            <div class="pagination" *ngIf="userlist.length > 0 ">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+                        [disabled]="pagenumber == total_page ">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container container-scroll" *ngIf="userType != 'Hierarchy' && userType != 'Service Engineer'">
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w50 text-center"></th>
+                            <th class="w100">Date Created</th>
+                            <th class="w100">Created By</th>
+                            <th class="w120">Designation</th>
+                            <th class="w160">Name</th>
+                            <th class="w90">Mobile No.</th>
+                            <th class="w120">Employee Code</th>
+                            <th class="w250">Email ID</th>
+                            <th class="w70">Weekly off</th>
+                            <th *ngIf="userType == 'Sales User'" class="w160">Reporting Manager</th>
+                            <th *ngIf="userType == 'Sales User'" class="w160">Working State</th>
+                            <th *ngIf="userType == 'Sales User'" class="w100">Manager Code</th>
+                            <th class="w100">Updated By</th>
+                            <th class="w100">Updated At</th>
+                            <th class="w120 text-center" *ngIf="logined_user_data2.edit_users_master=='1'">Status</th>
+                            <th class="w120 text-center" *ngIf="userType == 'Sales User'">Third Party App</th>
+                            <th *ngIf="userType == 'Sales User'" class="w110 text-center">Action</th>
+                            
+                        </tr>
+                    </table>
+                </div>
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w50 text-center"></th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input date-column infix-bodr">
+                                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                                            #date_created="ngModel" [(ngModel)]="filter.date_created"
+                                            (ngModelChange)="date_format()" [max]="today_date" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            #created_by_name="ngModel" [(ngModel)]="filter.created_by_name">
+                                    </mat-form-field>
+                                </div>
+
+                            </th>
+                            <th class="w120">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            #designation_name="ngModel" [(ngModel)]="filter.designation_name">
+                                    </mat-form-field>
+                                </div>
+
+                            </th>
+                            <th class="w160">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            [(ngModel)]="filter.name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w90">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            onkeypress="return event.charCode>=48 && event.charCode<=57" maxlength="10"
+                                            [(ngModel)]="filter.contact_01">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w120">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            [(ngModel)]="filter.employee_id">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w250">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="text" matInput placeholder="Search ..."
+                                            (keyup.enter)="getUserList(userType)" [(ngModel)]="filter.email">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+
+                            <th class="w70">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input select-input">
+                                        <mat-select name="weekly_off" [(ngModel)]="filter.weekly_off"
+                                            (selectionChange)="getUserList(userType)">
+                                            <mat-option value="">All</mat-option>
+                                            <mat-option value="Sunday">Sunday</mat-option>
+                                            <mat-option value="Monday">Monday</mat-option>
+                                            <mat-option value="Tuesday">Tuesday</mat-option>
+                                            <mat-option value="Wednesday">Wednesday</mat-option>
+                                            <mat-option value="Thursday">Thursday</mat-option>
+                                            <mat-option value="Friday">Friday</mat-option>
+                                            <mat-option value="Saturday">Saturday</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+               
+                            <th *ngIf="userType == 'Sales User'" class="w160">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="text" matInput placeholder="Search ..."
+                                            (keyup.enter)="getUserList(userType)" [(ngModel)]="filter.assign_user">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+
+                            <th *ngIf="userType == 'Sales User'" class="w160">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="text" matInput placeholder="Search ..."
+                                            (keyup.enter)="getUserList(userType)"
+                                            [(ngModel)]="filter.working_state_name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th *ngIf="userType == 'Sales User'" class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="text" matInput placeholder="Search ..."
+                                            (keyup.enter)="getUserList(userType)" [(ngModel)]="filter.assign_user_code">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">&nbsp;</th>
+                            <th class="w100">&nbsp; </th>
+                            <th class="w120" *ngIf="logined_user_data2.edit_users_master=='1'">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input select-input">
+                                        <mat-select name="status" placeholder="Select" [(ngModel)]="filter.status"
+                                            (selectionChange)="getUserList(userType)">
+                                            <mat-option value="">All</mat-option>
+                                            <mat-option value="active">Active</mat-option>
+                                            <mat-option value="deactive">Deactive </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th *ngIf="userType == 'Sales User'" class="w120">
+                            </th>
+                            <th *ngIf="userType == 'Sales User'" class="w110">&nbsp;</th>
+                            
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of userlist;let i=index"
+                                [ngClass]="{'Current': service.currentUserID == row.id}">
+                                <td class="w50 text-center">{{i+1+sr_no}}</td>
+                                <td class="w100">{{row.date_created | date}}</td>
+                                <td class="w100">{{row.created_by_name}}</td>
+                                <td class="w120">{{row.designation_name}}</td>
+                                <td class="w160">
+                                    <ng-container *ngIf="logined_user_data2.id == '1'">
+                                <span class="liveStatusText liveStatusTextPosition" *ngIf="row.lived == 1">Live</span>
+                                 </ng-container>
+                                    <button class="link-btn" (click)="service.setData(filter); service.setTabData(userType)"
+                                        routerLink="sale-user-detail/{{row.encrypt_id}}" routerLinkActive="active"
+                                        mat-button [disabled]="row.contact_01 == '9319180958' && userType == 'Sales User'">{{row.name | titlecase}}</button>
+                                </td>
+                                <td class="w90">
+                                    {{row.contact_01 ? row.contact_01:'---'}}
+                                </td>
+                                <td class="w120">
+                                    {{row.employee_id ? row.employee_id :'---'}}
+                                </td>
+                                <td class="w250">{{row.email}}</td>
+                                <td class="w70">{{row.weekly_off ? row.weekly_off: '---'}}</td>
+                     
+                                <td *ngIf="userType == 'Sales User'" class="w160">{{row.assign_user ? row.assign_user
+                                    :'---'}}</td>
+
+                                <td *ngIf="userType == 'Sales User'" class="w160">{{row.working_state_name ?
+                                    row.working_state_name :'---'}}</td>
+                                <td *ngIf="userType == 'Sales User'" class="w100">{{row.assign_user_code ?
+                                    row.assign_user_code :'---'}}</td>
+                                <td class="w100">{{row.last_updated_by_name ?
+                                    row.last_updated_by_name :'---'}}</td>
+                                <td class="w100">{{row.last_updated_on != '0000-00-00 00:00:00' ?
+                                    (row.last_updated_on | date : 'MMM d, y, h:mm a') :'---'}}</td>
+                                <td class="w120 text-center" *ngIf="logined_user_data2.edit_users_master=='1'">
+                                    <div class="action-button">
+                                        <mat-slide-toggle color="accent" [name]="'status'+i"
+                                            [(ngModel)]="row.user_status" (change)="updateStatus(i,row.id,$event)" [disabled]="row.contact_01 == '9319180958' && userType == 'Sales User'">
+                                        </mat-slide-toggle>
+                                    </div>
+                                </td>
+                                <td *ngIf="userType == 'Sales User'" class="w120">{{row.third_party_disable =='1' ?
+                                    'Account Blocked Due To ':' '}}
+                                    <strong>{{(row.third_party_app)}}</strong>
+                                </td>
+                                <td *ngIf="userType == 'Sales User'" class="w110">
+                                    <button mat-raised-button color="accent" *ngIf="row.device_unique_id != ''"
+                                        (click)="resetDevice(i,row.id)">Reset Device </button>
+                                </td>
+                                
+                            </tr>
+                        </ng-container>
+
+                        <ng-container *ngFor="let row of [].constructor(10);">
+                            <tr class="sk-loading" *ngIf="loader">
+                                <td class="w30 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w160">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w90">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w250">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                           
+
+                                <td *ngIf="userType == 'Sales User'" class="w160">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td *ngIf="userType == 'Sales User'" class="w160">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td *ngIf="userType == 'Sales User'" class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td *ngIf="userType == 'Sales User'" class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120 text-center" *ngIf="logined_user_data2.edit_users_master=='1'">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td *ngIf="userType == 'Sales User'" class="w110">
+                                    <div>&nbsp;</div>
+                                </td>
+
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div>
+        </div>
+        <div class="no-data" *ngIf="userlist.length == 0 && datanotfound == true;">
+            <img src="assets/img/no-data.gif" alt="">
+            <p>Data not <span>available !</span></p>
+        </div>
+    </div>
+
+
+
+
+    <div class="container" *ngIf="userType == 'Hierarchy'">
+        <div class="hierarchy">
+            <!-- <ul>
+                        <li class="first-level">
+                            <div class="user-card">
+                                <div class="dp">
+                                    <img src="{{detail.image != null ?(url + detail.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                    (click)="detail.image != null ? goToImage(url + detail.image) : '' ">
+                                </div>
+                                <div class="user-content">
+                                    <h6>Ajay Kumar Sha</h6>
+                                    <span class="em-code">ADL006</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul> -->
+            <ul class="second-level">
+                <li *ngFor="let hod of hierarchy; ">
+                    <div class="user-card">
+                        <div class="dp">
+                            <img src="{{hod.image != null ?(url + hod.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                (click)="hod.image != null ? goToImage(url + hod.image) : '' ">
+                        </div>
+                        <div class="user-content">
+                            <h6>{{hod.name ? (hod.name | titlecase) : '---'}}</h6>
+                            <span class="em-code">{{hod.employee_id}}</span>
+                        </div>
+                    </div>
+
+                    <div class="third-level">
+                        <ng-container *ngFor="let reporting of hod.level2">
+                            <div class="user-card level-line">
+                                <div class="dp">
+                                    <img src="{{reporting.image != null ?(url + reporting.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                        (click)="reporting.image != null ? goToImage(url + reporting.image) : '' ">
+                                </div>
+                                <div class="user-content">
+                                    <h6>{{reporting.name ? (reporting.name | titlecase) : '---'}}</h6>
+                                    <span class="em-code">{{reporting.employee_id}}</span>
+                                </div>
+                            </div>
+
+                            <div class="fouth-level">
+                                <ng-container *ngFor="let row of reporting.level3">
+                                    <div class="user-card level-line">
+                                        <div class="dp">
+                                            <img src="{{row.image != null ?(url + row.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                                (click)="row.image != null ? goToImage(url + row.image) : '' ">
+                                        </div>
+                                        <div class="user-content">
+                                            <h6>{{row.name ? (row.name | titlecase) : '---'}}</h6>
+                                            <span class="em-code">{{row.employee_id}}</span>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngFor="let item of row.level4">
+                                        <div class="five-level">
+                                            <div class="user-card level-line">
+                                                <div class="dp">
+                                                    <img src="{{item.image != null ?(url + item.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                                        (click)="item.image != null ? goToImage(url + item.image) : '' ">
+                                                </div>
+                                                <div class="user-content">
+                                                    <h6>{{item.name ? (item.name | titlecase) : '---'}}</h6>
+                                                    <span class="em-code">{{item.employee_id}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="six-level">
+                                                <ng-container *ngFor="let end of item.level5">
+                                                    <div class="user-card level-line">
+                                                        <div class="dp">
+                                                            <img src="{{end.image != null ?(url + end.image) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                                                (click)="end.image != null ? goToImage(url + end.image) : '' ">
+                                                        </div>
+                                                        <div class="user-content">
+                                                            <h6>{{end.name ? (end.name | titlecase) : '---'}}</h6>
+                                                            <span class="em-code">{{end.employee_id}}</span>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <!--  ####################################$$$$$$$$$$ Service engineer  $$$$$$$$$$$$$######################## -->
+
+
+
+
+    <div class="container container-scroll" *ngIf="userType == 'Service Engineer'">
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w50 text-center"></th>
+                            <th class="w100">Date Created</th>
+                            <th class="w100">Created By</th>
+
+                            <th class="w160">Name</th>
+                            <th class="w90">Mobile No.</th>
+                            <th class="w250">Email ID</th>
+                            <th class="w250">Address</th>
+                            <th class="w50 text-center" *ngIf="logined_user_data2.edit_users_master=='1'">Status</th>
+
+                        </tr>
+                    </table>
+                </div>
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w50 text-center"></th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input date-column infix-bodr">
+                                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                                            #date_created="ngModel" [(ngModel)]="filter.date_created"
+                                            (ngModelChange)="date_format()" [max]="today_date" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            #created_by_name="ngModel" [(ngModel)]="filter.created_by_name">
+                                    </mat-form-field>
+                                </div>
+
+                            </th>
+
+                            <th class="w160">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            [(ngModel)]="filter.name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w90">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input matInput placeholder="Search ..." (keyup.enter)="getUserList(userType)"
+                                            [(ngModel)]="filter.contact_01">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+
+                            <th class="w250">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="text" matInput placeholder="Search ..."
+                                            (keyup.enter)="getUserList(userType)" [(ngModel)]="filter.email">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w250">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="text" matInput placeholder="Search ..."
+                                            (keyup.enter)="getUserList(userType)" [(ngModel)]="filter.address">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w50" *ngIf="logined_user_data2.edit_users_master=='1'">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input select-input">
+                                        <mat-select name="status" [(ngModel)]="filter.status"
+                                            (selectionChange)="getUserList(userType)">
+                                            <mat-option value="">All</mat-option>
+                                            <mat-option value="active">Active</mat-option>
+                                            <mat-option value="deactive">Deactive </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+
+
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of userlist;let i=index"
+                                [ngClass]="{'Current': service.currentUserID == row.id}">
+                                <td class="w50 text-center">
+                                    {{i+1+sr_no}}
+                                </td>
+                                <td class="w100">
+                                    {{row.date_created | date}}
+                                </td>
+                                <td class="w100">
+                                    {{row.created_by_name | titlecase}}
+                                </td>
+
+                                <td class="w160">
+                                    <a class="link-btn" (click)="service.setData(filter); service.setTabData(userType)"
+                                        routerLink="sale-user-detail/{{row.id}}" routerLinkActive="active" mat-button>
+                                        {{row.name | titlecase}}
+                                    </a>
+                                </td>
+                                <td class="w90">
+                                    {{row.contact_01 ? row.contact_01:'---'}}
+                                </td>
+
+                                <td class="w250">
+                                    {{row.email}}
+                                </td>
+                                <td class="w250">
+                                    {{row.address | titlecase}}
+                                </td>
+                                <td class="w50 text-center" *ngIf="logined_user_data2.edit_users_master=='1'">
+                                    <div class="action-button">
+                                        <mat-slide-toggle color="accent" [name]="'status'+i"
+                                            [(ngModel)]="row.user_status" (change)="updateStatus(i,row.id,$event)">
+                                        </mat-slide-toggle>
+                                    </div>
+                                </td>
+
+
+                            </tr>
+                        </ng-container>
+
+                        <ng-container *ngFor="let row of [].constructor(10);">
+                            <tr class="sk-loading" *ngIf="loader">
+                                <td class="w30 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+
+                                <td class="w160">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w90">
+                                    <div>&nbsp;</div>
+                                </td>
+
+                                <td class="w250">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w250">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w50 text-center" *ngIf="logined_user_data2.edit_users_master=='1'">
+                                    <div>&nbsp;</div>
+                                </td>
+
+
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div>
+        </div>
+        <div class="no-data" *ngIf="userlist.length == 0 && datanotfound == true;">
+            <img src="assets/img/no-data.gif" alt="">
+            <p>Data not <span>available !</span></p>
+        </div>
+    </div>
+
+    <!--  ####################################$$$$$$$$$$ Action Button  $$$$$$$$$$$$$######################## -->
+
+    <div class="fab-btns" *ngIf="userType != 'Hierarchy'">
+        <div class="fab-btns"
+            *ngIf="(logined_user_data2.export_users_master=='1') ||( logined_user_data2.add_users_master=='1' )|| (logined_user_data2.import_users_master=='1')">
+            <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+                [matMenuTriggerFor]="menu">
+                <i class="material-icons">apps</i>
+                Action
+            </button>
+        </div>
+        <mat-menu #menu="matMenu">
+
+            <button mat-menu-item (click)="getUserExcel(userType);"
+                *ngIf="userlist.length > 0 && (logined_user_data2.export_users_master=='1')">
+                <mat-icon>download</mat-icon>
+                <span>Download in excel</span>
+            </button>
+            <!-- <ng-container *ngIf="userType == 'Sales User'">
+                <button mat-menu-item (click)="upload_excel('insert');"
+                    *ngIf="(logined_user_data2.import_users_master=='1')">
+                    <mat-icon>cloud_upload</mat-icon>
+                    <span>Upload New Data</span>
+                </button>
+                <button mat-menu-item (click)="upload_excel('update');"
+                    *ngIf="userlist.length > 0 && (logined_user_data2.import_users_master=='1')">
+                    <mat-icon>update</mat-icon>
+                    <span>Update Existing Data</span>
+                </button>
+            </ng-container> -->
+
+            <button mat-menu-item (click)="upload_excel('Sales User');"
+            *ngIf="logined_user_data2.import_users_master=='1'">
+            <mat-icon>cloud_upload</mat-icon>
+            <span>Upload New Data</span>
+          </button>
+
+            <button mat-menu-item (click)="lastBtnValue('add');" routerLink="user-add"
+                *ngIf="(logined_user_data2.add_users_master=='1')">
+                <mat-icon>add</mat-icon>
+                <span>Add New</span>
+            </button>
+        </mat-menu>
+    </div>
+</div>

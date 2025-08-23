@@ -1,0 +1,211 @@
+<div class="edit-modal" *ngIf="data.type=='issue_pop'">
+
+  <div mat-dialog-content>
+    <p class="heading">Pop & Gift</p>
+    <div class="cs-form">
+      <div class="row">
+
+        <div class="col s12 m3 l3">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>User Type</mat-label>
+            <mat-select name="issue_type" #issue_type="ngModel" [(ngModel)]="PopData.issue_type"
+              (ngModelChange)="get_user(''); PopData.user_id = '';" [disabled]="listarray.length > 0">
+              <mat-option value="Executive">Executive</mat-option>
+              <mat-option value="Distributor" *ngIf="PopData.gift_type == 'Marketing Material'">Channel
+                Partner</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col s12 m6 l6" *ngIf="PopData.issue_type">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>{{PopData.issue_type == 'Executive'? 'Executive' : 'Channel Partner'}}</mat-label>
+            <mat-select name="user_id" #user_id="ngModel" [(ngModel)]="PopData.user_id"
+              (ngModelChange)="remaining_stockItemInfo='true'; " [disabled]="listarray.length > 0">
+              <!-- getPartyPoint(PopData.user_id) -->
+              <mat-option>
+                <ngx-mat-select-search noEntriesFoundLabel="'no data found'" (keyup)="get_user($event.target.value)"
+                  placeholderLabel="Search.."></ngx-mat-select-search>
+              </mat-option>
+
+
+              <mat-option *ngFor="let model of model_data " value="{{model.id}}">{{model.name}}</mat-option>
+
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Delivery Note </mat-label>
+            <textarea matInput placeholder="Type Here ..." class="h70" name="delivery_note" #delivery_note="ngModel"
+              [(ngModel)]="PopData.delivery_note" required></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="remaining_stockItemInfo">
+        <div class="col s12">
+          <div class="details-info flat pb0">
+            <div class="basic-details">
+              <div class="cs-heading">
+                <h2>Item Information</h2>
+              </div>
+
+              <div class="row">
+                <div class="col s4">
+                  <mat-form-field class="cs-input" appearance="outline">
+                    <mat-label>Items</mat-label>
+                    <mat-select name="item" #item="ngModel" [(ngModel)]="list.item_id"
+                      (selectionChange)="get_Stock(list.item_id); get_points(list.item_id);">
+                      <mat-option *ngFor="let use of user_data" value="{{use.id}}">{{use.item_name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col s2">
+                  <mat-form-field class="cs-input" appearance="outline">
+                    <mat-label>QTY</mat-label>
+                    <input matInput type="text" onkeypress=" return event.charCode >= 48 && event.charCode <= 57"
+                      placeholder="Type Here ..." name="qty" #qty_stock="ngModel" [(ngModel)]="list.qty"
+                      (ngModelChange)="getValue(list.qty)">
+                  </mat-form-field>
+
+                </div>
+
+                <div class="col s4">
+                  <div class="df">
+                    <mat-form-field class="cs-input" appearance="outline">
+                      <mat-label>Stock QTY</mat-label>
+                      <input matInput type="number" name="list.remaining_stock" [(ngModel)]="list.remaining_stock"
+                        #list.remaining_stock="ngModel" placeholder="Type Here ..." readonly>
+                    </mat-form-field>
+
+                    <a *ngIf="((list.item_id) && ((list.qty) && (list.qty>0 )&& (list.qty)<=(list.remaining_stock)))"
+                      (click)="addtolist()" class="add-item ml15" mat-raised-button
+                      [disabled]="((list.qty==0) || ((list.qty)>(list.remaining_stock)))">
+                      <i class="material-icons">add</i>
+                    </a>
+                  </div>
+                  <div class="alert alert-danger" *ngIf="((list.qty)>(list.remaining_stock))">
+                    <p>QTY. should be less then Stock QTY.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="cs-table  left-right-10" *ngIf="listarray.length > 0">
+        <div class="sticky-head">
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w30 text-center"></th>
+                <th>Items</th>
+                <th class="w50 text-center">QTY</th>
+                <th class="w60 text-center">Action</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <tr *ngFor="let list of listarray; let i=index;">
+                <td class="w30 text-center">{{i+1}}</td>
+                <td>{{list.item_name}}</td>
+                <td class="w50 text-center">{{list.qty}}</td>
+
+                <td class="w60">
+                  <button mat-button class="delete-mat"><i class="material-icons red-clr"
+                      (click)="delete(i)">delete_sweep</i></button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- <div class="cs-table mt24 left-right-10" *ngIf="remaining_stockItemInfo && customerType != ''">
+        <div class="sticky-head">
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th>CP Marketing Points</th>
+                <th>Last Added Per Gift Point</th>
+                <th>Last Added Total Gift Point</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <tr>
+                <td>{{marketing_points ? marketing_points : '0'}}</td>
+                <td>{{eligible_point ? eligible_point : '0'}}</td>
+                <td>{{totalPoints ? totalPoints : '0'}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <div mat-dialog-actions>
+    <div class="text-right wp100">
+      <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" [ngClass]="{'loading': savingFlag == true}" (click)="submit()"
+        [disabled]="(!listarray.length ||!PopData.issue_type) || savingFlag == true">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div class="edit-modal" *ngIf="data.type=='Update_stock'">
+
+  <div mat-dialog-content>
+    <p class="heading">Add Stock</p>
+    <div class="cs-form">
+
+      <div class="row">
+        <div class="col s6">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Item Name</mat-label>
+            <input matInput type="text" placeholder="Type Here ..." name="item_name" #item_name="ngModel"
+              [(ngModel)]="stockData.item_name" readonly>
+          </mat-form-field>
+        </div>
+        <div class="col s6">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>QTY</mat-label>
+            <input matInput placeholder="Type Here ..." name="qty" #qty="ngModel" [(ngModel)]="data1.qty"
+              (ngModelChange)="totalAmount(data1.qty)" onkeypress="return event.charCode>=48 && event.charCode<=57">
+          </mat-form-field>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions>
+    <div class="text-right wp100">
+      <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" [ngClass]="{'loading': savingFlag == true}"
+        [disabled]="savingFlag == true" (click)="add_stock()">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+    </div>
+  </div>
+</div>

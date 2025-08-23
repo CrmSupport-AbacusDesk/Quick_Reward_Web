@@ -1,0 +1,40 @@
+
+.input-check
+{
+    line-height: 0px;
+}
+
+.padding-tb0 {
+    padding-top: 0 !important;
+    padding-bottom: 0px !important;
+}
+
+input[type="number"] 
+{
+    width: calc(100% - 10px);
+    text-align: left;
+    height: 20px;
+    padding: 0px 5px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.input-check input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin-top: 0px;
+    cursor: pointer;
+}
+
+.scroll-tables{
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+
+

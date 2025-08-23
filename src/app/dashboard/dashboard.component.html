@@ -1,0 +1,1486 @@
+<div class="main-container"
+    *ngIf="logined_user_data.view_sfa_dashboard=='1' || logined_user_data.view_dms_dashboard=='1' || logined_user_data.view_service_dashboard=='1' || logined_user_data.view_loyalty_dashboard=='1'">
+    <div class="toolsContainer dashboardNavigation">
+        <mat-tab-group mat-stretch-tabs="true" (selectedTabChange)="getTabValue($event)">
+            <mat-tab label="Sales"
+                *ngIf="logined_user_data.view_sfa_dashboard=='1' && (departmentType == 'SFA' || departmentType == 'All')"></mat-tab>
+            <mat-tab label="Enquiry"
+                *ngIf="logined_user_data.view_sfa_dashboard=='1' && (departmentType == 'SFA' || departmentType == 'All')"></mat-tab>
+            <!-- <mat-tab label="Influencer Reward"
+                *ngIf="logined_user_data.view_loyalty_dashboard=='1' && (departmentType == 'LOYALTY' || departmentType == 'All')"></mat-tab> -->
+            <mat-tab label="Account"
+                *ngIf="logined_user_data.view_dms_dashboard=='1' && (departmentType == 'DMS' || departmentType == 'All')"></mat-tab>
+        </mat-tab-group>
+    </div>
+
+
+
+    <div class="container pr8 pl8 pb40">
+        <div class="filter-strip" *ngIf="filter.date_from && filter.date_to">
+            <p>Date From <strong>{{filter.date_from |date : 'd MMM y'}}</strong> Date To <strong>{{filter.date_to |date
+                    : 'd MMM y'}}</strong></p>
+            <a class="link-btn" mat-button (click)="clearAll()">Clear</a>
+        </div>
+
+        <ng-container
+            *ngIf="tabValue == 'Sales' && logined_user_data.view_sfa_dashboard=='1' && (departmentType == 'SFA' || departmentType == 'All')">
+            <div class="row">
+                <div class="col s12">
+                    <div class="counter-container pt10">
+                        <div class="counter-card salesTargetBox">
+                            <div class="card-head pl0 pr0">
+                                <h2>Sales Target - {{today_date | date:'MMM, yyyy'}}</h2>
+                            </div>
+                            <div class="amountBox">
+                                <div class="amountValues">
+                                    <p class="title">Target</p>
+                                    <p class="targetAmount">{{logined_user_data.organisation_data.order_place=='0'?
+                                        '₹':''}} {{currentMonthTarget?.target?.toLocaleString('en-IN',{style:'decimal',
+                                        currency:'INR'}) }}</p>
+                                </div>
+                                <div class="amountValues">
+                                    <p class="title">Achievement</p>
+                                    <p class="monthAchievement">{{logined_user_data.organisation_data.order_place=='0'?
+                                        '₹':''}} {{currentMonthTarget.achieve?.toLocaleString('en-IN',{style:'decimal',
+                                        currency:'INR'})}}</p>
+                                </div>
+                            </div>
+
+                            <div class="progress-container">
+                                <div class="progress-bar" [style.width.%]="currentMonthTarget.percent"
+                                    style="background-color: #28a745;"></div>
+                            </div>
+                            <p class="progress-text">{{currentMonthTarget.percent}}% Completed</p>
+                            <!-- <div class="top-column">
+                                <div class="innerBox">
+                                    <div class="valuebox">
+                                        {{'₹'+currentMonthTarget?.target?.toLocaleString('en-IN',{style:'decimal',
+                                        currency:'INR'}) }}</div>
+                                    <div class="titlebox">Target</div>
+                                </div>
+                                <div class="innerBox">
+                                    <div class="valuebox">{{'₹'+
+                                        currentMonthTarget.achieve?.toLocaleString('en-IN',{style:'decimal',
+                                        currency:'INR'})}}</div>
+                                    <div class="titlebox">Achievement</div>
+                                </div>
+                            </div> -->
+                        </div>
+
+                        <div class="counter-card salesTargetBox">
+                            <div class="card-head pl0 pr0">
+                                <h2>Sales Target ({{today_date | date:'yyyy'}}-{{currentDate.getFullYear()+1}})</h2>
+                            </div>
+
+                            <div class="amountBox">
+                                <div class="amountValues">
+                                    <p class="title">Target</p>
+                                    <p class="targetAmount"> {{logined_user_data.organisation_data.order_place =='0'?
+                                        '₹':''}} {{(currentFinancialYearTarget.target?.toLocaleString("en-IN",
+                                        {style:'decimal',currency:"INR"})||0)}}</p>
+                                </div>
+                                <div class="amountValues">
+                                    <p class="title">Achievement</p>
+                                    <p class="yearAchievement"> {{logined_user_data.organisation_data.order_place=='0'?
+                                        '₹':''}}{{(currentFinancialYearTarget.achieve?.toLocaleString("en-IN",
+                                        {style:'decimal',currency:"INR"})||0)}}</p>
+                                </div>
+
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" [style.width.%]="currentFinancialYearTarget.percent"
+                                    style="background-color: #fdc201;"></div>
+                            </div>
+                            <p class="progress-text">{{currentFinancialYearTarget.percent}}% Completed</p>
+                            <!-- <div class="top-column">
+                                <div class="innerBox">
+                                    <div class="valuebox">{{(currentFinancialYearTarget.target?.toLocaleString("en-IN",
+                                        {style:"currency", currency:"INR"})||0)}}</div>
+                                    <div class="titlebox">Target</div>
+                                </div>
+                                <div class="innerBox">
+                                    <div class="valuebox">{{(currentFinancialYearTarget.achieve?.toLocaleString("en-IN",
+                                        {style:"currency", currency:"INR"})||0)}}</div>
+                                    <div class="titlebox">Achievement</div>
+                                </div>
+                            </div> -->
+                        </div>
+
+                        <!-- <div class="counter-card achievementBox">
+                            <div class="top-column">
+                                <div class="titlebox">
+                                    <span>Target<br>Achievement</span>
+                                </div>
+                                <div class="valuebox">
+                                    <span>{{targetTilesData.targetVsAchievement+'%'}}</span>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <div class="counter-card currentRateBox">
+                            <div class="card-body">
+                                <div class="titlebox">
+                                    <h2>Current Rate Per Day</h2>
+                                    <h5 style="text-align: center;">({{today_date | date:'MMM, yyyy'}})</h5>
+                                </div>
+                                <div class="valuebox">
+                                    <span>{{logined_user_data.organisation_data.order_place=='0'? '₹':''}}
+                                        {{(targetTilesData.currentRatePerDay?.toLocaleString("en-IN",
+                                        {style:"decimal", currency:"INR"})||0)}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="counter-card currentRateBox">
+                            <div class="card-body">
+                                <div class="titlebox">
+                                    <h2>Required Rate Per Day</h2>
+                                    <h5 style="text-align: center;">({{today_date | date:'MMM, yyyy'}})</h5>
+                                </div>
+                                <div class="valuebox">
+                                    <span>{{logined_user_data.organisation_data.order_place=='0'? '₹':''}}
+                                        {{(targetTilesData.requiredRatePerDay?.toLocaleString("en-IN",
+                                        {style:"decimal", currency:"INR"})||0)}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+
+
+                <div class="col s12 m12 l12">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Actual Sales vs Target ({{today_date | date:'yyyy'}}-{{currentDate.getFullYear()+1}})
+                            </h2>
+                        </div>
+                        <div class="card-body bulletChartTwo">
+                            <div class="indicatorsBox">
+                                <ul type="square">
+                                    <li class="above100">Actual >= 100% of Target</li>
+                                    <li class="above90">Actual < 100% of Target and>= 90% of Target</li>
+                                    <li class="below90">Actual < 90% of Target</li>
+                                    <li class="target">Target</li>
+                                </ul>
+                            </div>
+                            <zingchart-angular [config]="vbulletConfig" class="mt-30"
+                                [height]="300"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Last Year VS Last Month Sales Growth ({{today_date |
+                                date:'yyyy'}}-{{currentDate.getFullYear()+1}})
+                            </h2>
+                        </div>
+                        <div class="card-body bulletChartTwo">
+                            <div class="indicatorsBox">
+                                <ul type="square">
+                                    <li class="above100">Previous Year</li>
+                                    <li class="below90">Current Year</li>
+                                </ul>
+                            </div>
+                            <zingchart-angular [config]="comparisionConfig" class="mt-30"
+                                [height]="300"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pb50" *ngIf="logined_user_data.org_id == '17'">
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>State wise Target vs Achievement</h2>
+                        </div>
+
+                        <div class="cs-table scroll340">
+                            <div class="sticky-head">
+                                <div class="table-head">
+                                    <table>
+                                        <tr>
+                                            <th class="w160">&nbsp;</th>
+                                            <th class="text-center" colspan="2">Month</th>
+                                            <th class="text-center" colspan="2">Year</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="table-head border-top">
+                                    <table>
+                                        <tr>
+                                            <th class="w160">State</th>
+                                            <th class="text-center">Target</th>
+                                            <th class="text-center">Achievement</th>
+                                            <th class="text-center">Target</th>
+                                            <th class="text-center">Achievement</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <div class="table-content">
+                                    <table>
+                                        <tr *ngFor="let row of stateTargetAchievement">
+                                            <!-- <a (click)="openModal()">Andhra Pradesh</a> -->
+                                            <td class="w160">{{row.state_name}}</td>
+                                            <td class="text-center">{{row.monthly_target}}</td>
+                                            <td class="text-center">{{row.monthly_achieved}}</td>
+                                            <td class="text-center">{{row.yearly_target}}</td>
+                                            <td class="text-center">{{row.yearly_achieved}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>RSM wise Target vs Achievement</h2>
+                        </div>
+                        <div class="cs-table scroll340">
+                            <div class="sticky-head">
+                                <div class="table-head">
+                                    <table>
+                                        <tr>
+                                            <th class="w160">&nbsp;</th>
+                                            <th class="text-center" colspan="2">Month</th>
+                                            <th class="text-center" colspan="2">Year</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="table-head border-top">
+                                    <table>
+                                        <tr>
+                                            <th class="w160">RSM</th>
+                                            <th class="text-center">Target</th>
+                                            <th class="text-center">Achievement</th>
+                                            <th class="text-center">Target</th>
+                                            <th class="text-center">Achievement</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <div class="table-content">
+                                    <table>
+                                        <tr *ngFor="let row of rsmTargetAchievement">
+                                            <td class="w160"><a class="link-btn" mat-button
+                                                    (click)="openModal('rsmWiseSales',row.id)">{{row.rsm_name}}</a></td>
+                                            <td class="text-center">{{row.monthly_target}}</td>
+                                            <td class="text-center">{{row.monthly_achieved}}</td>
+                                            <td class="text-center">{{row.yearly_target}}</td>
+                                            <td class="text-center">{{row.yearly_achieved}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>State Wise Sale Matrix</h2>
+                        </div>
+                        <div class="card-body mapchart">
+                            <div id="indiaMapBox" class="stateSale"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m6 l6">
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="card">
+                                <div class="card-head">
+                                    <h2>Categorywise Sales</h2>
+                                </div>
+                                <div class="card-body">
+                                    <zingchart-angular [config]="segmentPieChart" [height]="200"
+                                        class="dflex"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div class="card salesGrowth">
+                                <div class="card-head">
+                                    <h2>Sales Growth ({{today_date | date:'yyyy'}}-{{currentDate.getFullYear()+1}})</h2>
+                                </div>
+                                <div class="card-body multiStackchart">
+                                    <zingchart-angular [config]="multiStackedConfig" class="mt-30 mb4"
+                                        [height]="300"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- <div class="row pb50">
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>RSM wise Orders</h2>
+                        </div>
+
+                    <div class="cs-table scroll340">
+                        <div class="sticky-head">
+                            <div class="table-head border-top">
+                                <table>
+                                    <tr>
+                                        <th class="w190">RSM</th>
+                                        <th class="text-center">Today</th>
+                                        <th class="text-center">Month</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-content">
+                                <table>
+                                    <tr *ngFor="let row of rsmWiseOrders">
+                                        <td class="w190">{{row.rsm_name}}</td>
+                                        <td class="text-center">{{row.today}}</td>
+                                        <td class="text-center">{{row.month}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>RSM wise Target vs Achievement</h2>
+                        </div>
+                    <div class="cs-table scroll340">
+                        <div class="sticky-head">
+                            <div class="table-head">
+                                <table>
+                                    <tr>
+                                        <th class="w160">&nbsp;</th>
+                                        <th class="text-center" colspan="2">Month</th>
+                                        <th class="text-center" colspan="2">Year</th>
+                                    </tr> 
+                                </table>
+                            </div>
+                            <div class="table-head border-top">
+                                <table>
+                                    <tr>
+                                        <th class="w160">RSM</th>
+                                        <th class="text-center">Target</th>
+                                        <th class="text-center">Achievement</th>
+                                        <th class="text-center">Target</th>
+                                        <th class="text-center">Achievement</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-content">
+                                <table>
+                                    <tr *ngFor="let row of rsmTargetAchievement">
+                                        <td class="w160">{{row.rsm_name}}</td>
+                                        <td class="text-center">{{row.monthly_target}}</td>
+                                        <td class="text-center">{{row.monthly_achieved}}</td>
+                                        <td class="text-center">{{row.yearly_target}}</td>
+                                        <td class="text-center">{{row.yearly_achieved}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+            </div> -->
+
+
+
+        </ng-container>
+
+
+        <ng-container
+            *ngIf="tabValue == 'Enquiry' && logined_user_data.view_sfa_dashboard=='1' && (departmentType == 'SFA' || departmentType == 'All')">
+            <div class="row mt5">
+                <div class="col m6 l6">
+                    <div class="card upperBox">
+                        <div class="card-head">
+                            <h2>Total Enquiry</h2>
+                            <div class="col s12">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Type</mat-label>
+                                    <mat-select name="enquirycounts" #enquirycounts="ngModel"
+                                        [(ngModel)]="search.enquirycounts" (ngModelChange)="getTotalEnquiry()">
+                                        <mat-option value="">Till Today</mat-option>
+                                        <mat-option value="Monthly">Current Month</mat-option>
+                                        <mat-option value="Yesterday">Yesterday</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="card-body p10">
+                            <div class="dflex h190">
+                                <div class="wp50 detailsBox">
+                                    <ul class="totalEnquiryDetails">
+                                        <li class="total">Total<span>{{totalEnquiry.total}}</span></li>
+                                        <li class="reviewPending">Review Pending<span>{{totalEnquiry.Pending}}</span>
+                                        </li>
+                                        <li class="assigned">Assigned<span>{{totalEnquiry.Assigned}}</span></li>
+                                        <li class="inprocess">Inprocess<span>{{totalEnquiry.Inprocess}}</span></li>
+                                        <li class="win">Win<span>{{totalEnquiry.Win}}</span></li>
+                                        <li class="disqualified">Junk & Close<span>{{totalEnquiry.Disqualified}}</span>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                                <div class="wp50 chartBox pt20">
+                                    <zingchart-angular [config]="totalEnquiryPieChart"
+                                        [height]="150"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="col  m4 l4">
+                    <div class="upperBox">
+                        <div class="card">
+                            <div class="card-head">Qualified Enquiry</div>
+                            <div class="card-body p10">
+                                <div class="dflex h190">
+                                    <div class="wp50">
+                                        <ul class="totalEnquiryDetails">
+                                            <li class="total">Total: <span>{{qualifiedEnquiry.total}}</span></li>
+                                            <li class="reviewPending">Qualified:
+                                                <span>{{qualifiedEnquiry.Inprocess}}</span>
+                                            </li>
+                                            <li class="qualified">Win: <span>{{qualifiedEnquiry.Win}}</span></li>
+                                            <li class="disqualified">Lost: <span>{{qualifiedEnquiry.Lost}}</span>
+                                            </li>
+                                          
+                                        </ul>
+                                    </div>
+                                    <div class="wp50 chartBox pt20">
+                                        <zingchart-angular [config]="qualifiedEnquiryPieChart"
+                                            [height]="150"></zingchart-angular>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div> -->
+
+                <div class="col m6 l6">
+                    <div class="upperBox">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Source Wise Enquiry</h2>
+                                <div class="col s12">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Type</mat-label>
+                                        <mat-select name="enquirySources" #enquirySources="ngModel"
+                                            [(ngModel)]="search.enquirySources"
+                                            (ngModelChange)="getSourceWiseEnquiry()">
+                                            <mat-option value="">Till Today</mat-option>
+                                            <mat-option value="Monthly">Current Month</mat-option>
+                                            <mat-option value="Yesterday">Yesterday</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="card-body p10">
+                                <div class="dflex space-btw">
+                                    <div class="wp50">
+                                        <div class="dflex">
+                                            <ul class="indicators sourceIndicators">
+                                                <ng-container *ngFor="let row of sourceWiseEnquiry">
+                                                    <li> <span [style.background]="row.color"></span> {{row.source}}
+                                                        <strong>({{row.value}})</strong>
+                                                    </li>
+                                                </ng-container>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="wp50 chartBox pt20">
+                                        <zingchart-angular [config]="sourceEnquiryPieChart"
+                                            [height]="150"></zingchart-angular>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Source Wise Conversion</h2>
+                        </div>
+                        <div class="card-head">
+
+                            <div class="col s12">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Type</mat-label>
+                                    <mat-select name="Sourcewiseconv" #Sourcewiseconv="ngModel"
+                                        [(ngModel)]="search.Sourcewiseconv" (ngModelChange)="getSourceWiseConversion()">
+                                        <mat-option value="">Till Today</mat-option>
+                                        <mat-option value="Monthly">Current Month</mat-option>
+                                        <mat-option value="Yesterday">Yesterday</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="card-body sourceWiseLead">
+                            <!-- <div class="indicatorsBox">
+                                <ul type="square">
+                                    <li class="above50">Conversion >= 50% of Enquiry</li>
+                                    <li class="above25">Conversion < 50% of Enquiry and> 25% of Enquiry</li>
+                                    <li class="below25">Conversion <= 25% of Enquiry</li>
+                                    <li class="totalEnquiry">Enquiry</li>
+                                </ul>
+                            </div> -->
+                            <zingchart-angular [config]="sourceleadConfig" class="sourceleadConfig"
+                                [height]="270"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Category Wise Enquiry</h2>
+                        </div>
+                        <div class="card-head">
+
+                            <div class="col s12">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Type</mat-label>
+                                    <mat-select name="categoryWiseenq" #categoryWiseenq="ngModel"
+                                        [(ngModel)]="search.categoryWiseenq"
+                                        (ngModelChange)="getcategoryWiseConversion()">
+                                        <mat-option value="">Till Today</mat-option>
+                                        <mat-option value="Monthly">Current Month</mat-option>
+                                        <mat-option value="Yesterday">Yesterday</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="card-body categoryWiseLead">
+                            <zingchart-angular [config]="categoryleadConfig" class="categoryleadConfig"
+                                [height]="270"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card">
+                        <div class="col s12">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Type</mat-label>
+                                <mat-select name="stateWiseenq" #stateWiseenq="ngModel"
+                                    [(ngModel)]="search.stateWiseenq" (ngModelChange)="getStateWiseEnquiry()">
+                                    <mat-option value="">Till Today</mat-option>
+                                    <mat-option value="Monthly">Current Month</mat-option>
+                                    <mat-option value="Yesterday">Yesterday</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="card-head">
+                            <h2>State Wise Enquiry ({{today_date |
+                                date:'yyyy'}}-{{currentDate.getFullYear()+1}})</h2>
+                        </div>
+
+                        <div class="card-body pt0 pb10">
+                            <div class="cs-table">
+                                <div class="bdrt">
+                                    <div class="table-head">
+                                        <table>
+                                            <tr>
+                                                <th class="w60 text-center">S.No.</th>
+                                                <th>State</th>
+                                                <th class="w100 text-center">Total</th>
+                                                <th class="w110 text-center">Review Pending</th>
+                                                <th class="w100 text-center">Assigned</th>
+                                                <th class="w100 text-center">Inprocess</th>
+                                                <th class="w100 text-center">Win </th>
+                                                <th class="w100 text-center">Junk & Close</th>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table-container pr0 pl0 pb0">
+                                    <div class="table-content scroll340">
+                                        <table>
+                                            <tr *ngFor="let row of stateWiseEnquiry; let i =index">
+                                                <td class="w60 text-center">{{i+1}}</td>
+                                                <td>{{row.state_name}}</td>
+                                                <td class="w100 text-center">{{row.total}}</td>
+                                                <td class="w110 text-center">{{row.Pending}}</td>
+                                                <td class="w100 text-center">{{row.Assigned}}</td>
+                                                <td class="w100 text-center">{{row.Inprocess}}</td>
+                                                <td class="w100 text-center">{{row.Win}}</td>
+                                                <td class="w100 text-center">{{row.Disqualified}}</td>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="no-data" *ngIf="!stateWiseEnquiry.length">
+                                        <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                                        <p>Data not <span>available !</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="logined_user_data.org_id == '17'">
+                <div class="col s12 m12 l12">
+
+                    <div class="card">
+                        <div class="col s12">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Type</mat-label>
+                                <mat-select name="rsmWiseenq" #rsmWiseenq="ngModel" [(ngModel)]="search.rsmWiseenq"
+                                    (ngModelChange)="getRsmWiseEnquiry()">
+                                    <mat-option value="">Till Today</mat-option>
+                                    <mat-option value="Monthly">Current Month</mat-option>
+                                    <mat-option value="Yesterday">Yesterday</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="card-head">
+                            <h2>RSM Wise Enquiry ({{today_date | date:'yyyy'}}-{{currentDate.getFullYear()+1}})</h2>
+                        </div>
+
+                        <div class="card-body pt0 pb10">
+                            <div class="cs-table">
+                                <div class="bdrt border-top">
+                                    <div class="table-head">
+                                        <table>
+                                            <tr>
+                                                <th class="w60 text-center">S.No.</th>
+                                                <th>RSM</th>
+                                                <th class="w100 text-center">Total</th>
+                                                <th class="w110 text-center">Review Pending</th>
+                                                <th class="w100 text-center">Assigned</th>
+                                                <th class="w100 text-center">Inprocess</th>
+                                                <th class="w100 text-center">Win </th>
+                                                <th class="w100 text-center">Junk & Close</th>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table-container pr0 pl0 pb0">
+                                    <div class="table-content scroll340">
+                                        <table>
+                                            <tr *ngFor="let row of rsmWiseEnquiry; let i =index">
+                                                <td class="w60 text-center">{{i+1}}</td>
+                                                <td><a class="link-btn ml10" mat-button
+                                                        (click)="openModal('rsmWiseEnquiry',row.id)">{{row.rsm_name}}</a>
+                                                </td>
+                                                <td class="w100 text-center">{{row.total}}</td>
+                                                <td class="w110 text-center">{{row.Pending}}</td>
+                                                <td class="w100 text-center">{{row.Assigned}}</td>
+                                                <td class="w100 text-center">{{row.Inprocess}}</td>
+                                                <td class="w100 text-center">{{row.Win}}</td>
+                                                <td class="w100 text-center">{{row.Disqualified}}</td>
+
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="no-data" *ngIf="!rsmWiseEnquiry.length">
+                                        <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                                        <p>Data not <span>available !</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div [ngClass]="logined_user_data.org_id == '17' ? 'col s12 m4 l4' : 'col s12 m6 l6'">
+                    <div class="topSalesUsers">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Top 10 Sales Users</h2>
+                            </div>
+                            <div class="card-body" *ngIf="salesusers.length">
+                                <div class="salesUser" *ngFor="let row of salesusers">
+                                    <div class="userDetail">
+                                        <span>{{row.name}} ({{row.employee_id}})</span>
+                                        <span>{{row.state_name}} - {{row.pincode ?row.pincode:'N/a'}}</span>
+                                    </div>
+                                    <div class="innerbox">
+                                        <div class="wp100">
+                                            <div class="leadDetail">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                                    width="60" alt="">
+                                                <div class="leadlist">
+                                                    <ul>
+                                                        <li class="leadData">Total Assigned: {{row.total}}</li>
+                                                        <li class="leadData">In Process: {{row.inProcess}}</li>
+                                                        <li class="leadData">Win: {{row.win}}</li>
+                                                        <li class="leadData">Lost: {{row.lost}}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="conversionValue">
+                                            <span>{{row.conversionPercent}}%</span><br>
+                                            <span>Conversion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="no-data" *ngIf="!salesusers.length">
+                                <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                                <p>Data not <span>available !</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div [ngClass]="logined_user_data.org_id == '17' ? 'col s12 m4 l4' : 'col s12 m6 l6'">
+                    <div class="leastSalesUsers">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Least 10 Sales Users</h2>
+                            </div>
+                            <div class="card-body" *ngIf="leastSalesUsers.length">
+                                <div class="salesUser" *ngFor="let row of leastSalesUsers">
+                                    <div class="userDetail">
+                                        <span>{{row.name}} ({{row.employee_id}})</span>
+                                        <span>{{row.state_name}} - {{row.pincode ?row.pincode:'N/a'}}</span>
+                                    </div>
+                                    <div class="innerbox">
+                                        <div class="wp100">
+                                            <div class="leadDetail">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                                    width="60" alt="">
+                                                <div class="leadlist">
+                                                    <ul>
+                                                        <li class="leadData">Total Assigned: {{row.total}}</li>
+                                                        <li class="leadData">In Process: {{row.inProcess}}</li>
+                                                        <li class="leadData">Win: {{row.win}}</li>
+                                                        <li class="leadData">Lost: {{row.lost}}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="conversionValue">
+                                            <span>{{row.conversionPercent}} %</span><br>
+                                            <span>Conversion</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="no-data" *ngIf="!leastSalesUsers.length">
+                                <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                                <p>Data not <span>available !</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col s12 m4 l4" *ngIf="logined_user_data.org_id == '17'">
+                    <div class="topSalesUsers">
+                        <div class="card">
+                            <div class="card-head">
+                                <h2>Top 10 Dealer Wise Conversion</h2>
+                            </div>
+                            <div class="card-body" *ngIf="topDealersEnquiry.length">
+                                <div class="salesUser" *ngFor="let row of topDealersEnquiry">
+                                    <div class="userDetail">
+                                        <span>{{row.user_name}}</span>
+                                        <!-- <span>{{row.state_name}} - {{row.pincode ?row.pincode:'N/a'}}</span> -->
+                                    </div>
+                                    <div class="innerbox">
+                                        <div class="wp100">
+                                            <div class="leadDetail">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                                    width="60" alt="">
+                                                <div class="leadlist">
+                                                    <ul>
+                                                        <li class="leadData">Total Assigned: {{row.total_count}}</li>
+                                                        <li class="leadData">In Process: {{row.inprocess_count}}</li>
+                                                        <li class="leadData">Win: {{row.win_count}}</li>
+                                                        <li class="leadData">Lost: {{row.lost_count}}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="conversionValue">
+                                            <span>{{row.conversionPercent? row.conversionPercent:'0'}} %</span><br>
+                                            <span>Conversion</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="no-data" *ngIf="!topDealersEnquiry.length">
+                                <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                                <p>Data not <span>available !</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </ng-container>
+        <ng-container
+            *ngIf="tabValue == 'Account' && logined_user_data.view_dms_dashboard=='1' && (departmentType == 'DMS' || departmentType == 'All')">
+            <div class="accountsHighlights">
+                <div class="balanceTab tab">
+                    <div>
+                        <img src="assets/img/icons/money-bag.png" alt="">
+                    </div>
+                    <div>
+                        <div class="valueBox" *ngIf="OutstandingBalanceGraphSkeleton == false">₹
+                            {{formatNumberIndianStyle(totalOutstandingBalance) ?
+                            formatNumberIndianStyle(totalOutstandingBalance) : '0'}}</div>
+                        <div class="graphSkeleton h30" *ngIf="OutstandingBalanceGraphSkeleton == true"></div>
+                        <div class="titleBox">Balance</div>
+                    </div>
+                </div>
+                <div class="withinDueTab tab">
+                    <div>
+                        <img src="assets/img/icons/process.png" alt="">
+                    </div>
+                    <div>
+                        <div class="valueBox" *ngIf="WithinDueBalanceGraphSkeleton == false">₹
+                            {{formatNumberIndianStyle(totalWithinDueBalance) }}</div>
+                        <div class="graphSkeleton h30" *ngIf="WithinDueBalanceGraphSkeleton == true"></div>
+                        <div class="titleBox">Within Due</div>
+                    </div>
+                </div>
+                <div class="overDueTab tab">
+                    <div>
+                        <img src="assets/img/icons/overdue.png" alt="">
+                    </div>
+                    <div>
+                        <div class="valueBox" *ngIf="totalOverdueBalance != 0">₹
+                            {{formatNumberIndianStyle(totalOverdueBalance)}}</div>
+                        <div class="valueBox" *ngIf="totalOverdueBalance == 0">₹ 0</div>
+                        <div class="graphSkeleton h30" *ngIf="totalOverdueBalance == 0"></div>
+                        <div class="titleBox">Over Due</div>
+                    </div>
+                </div>
+                <div class="overDuePercentage tab">
+                    <div>
+                        <img src="assets/img/icons/rate.png" alt="">
+                    </div>
+                    <div>
+                        <div class="valueBox" *ngIf="overduePercentage != 0">{{overduePercentage | number : '1.2-2'}}%
+                        </div>
+                        <div class="valueBox" *ngIf="overduePercentage == 0">0 %</div>
+                        <div class="graphSkeleton h30" *ngIf="overduePercentage == 0"></div>
+                        <div class="titleBox">Over Due %</div>
+                    </div>
+                </div>
+                <div class="expTab tab">
+                    <div>
+                        <img src="assets/img/icons/expenses.png" alt="">
+                    </div>
+                    <div class="expenseBox">
+                        <div class="dflex">
+                            <div class="valueBox" *ngIf="totalExpense"><span>YTD-({{currentYear}})</span><br />₹
+                                <span>{{totalExpense.YTD}}</span>
+                            </div>
+                            <div class="valueBox" *ngIf="totalExpense">
+                                <span>MTD-({{monthList[currentMonth]}})</span><br />₹
+                                <span>{{totalExpense.MTD}}</span>
+                            </div>
+                            <div class="graphSkeleton h30" *ngIf="!totalExpense"></div>
+                        </div>
+                        <div class="titleBox"> Expense(Approved)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Invoice v/s Collection ({{currentDate | date: 'MMM, yyyy' }}) </h2>
+                        </div>
+                        <div class="card-body invoiceCollectionBox">
+                            <div class="indicatorsBox">
+                                <ul type="square">
+                                    <li class="invoice">Invoice</li>
+                                    <li class="collection">Collection</li>
+                                </ul>
+                            </div>
+                            <zingchart-angular [config]="invoiceCollectionChart" class="invoiceCollectionChart"
+                                [height]="300"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Invoice v/s Collection (2022-2023) </h2>
+                        </div>
+                        <div class="card-body invoiceCollectionBarBox">
+                            <div class="indicatorsBox">
+                                <ul type="square">
+                                    <li class="invoice">Invoice</li>
+                                    <li class="collection">Collection</li>
+                                </ul>
+                            </div>
+                            <zingchart-angular [config]="invoiceCollectionBarChart"
+                                class="mt-30 invoiceCollectionBarChart" [height]="325"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m3 l3">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Age Analysis of Due Balance </h2>
+                        </div>
+                        <div class="card-body">
+                            <zingchart-angular [config]="duBalanceAgeChart" class="duBalanceAgeChart"
+                                [height]="270"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m3 l3">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Overdue Breakup By Region </h2>
+                        </div>
+                        <div class="card-body">
+                            <zingchart-angular [config]="overdueByRegionPieChart" [height]="270"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Top Customers by Over Due Amount</h2>
+                        </div>
+                        <div class="card-body" *ngIf="topOverDueCustomerData.length">
+                            <div class="overDueCustomersTableBox">
+                                <div class="overDueCustomersTableBody">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <th class="w200 text-left">Customer
+
+                                                </th>
+                                                <th class="w100 text-left">Balance (₹)
+                                                    <!-- <div class="sorting"> -->
+                                                    <a class="" style="cursor:pointer"
+                                                        (click)="column = 'balance';sorting_type='ASC';gettopOverDueCustomer('balance','ASC')">
+                                                        <i class="material-icons">arrow_drop_up</i>
+                                                    </a>
+                                                    <a class="ml63" style="cursor:pointer"
+                                                        (click)="column = 'balance';sorting_type='DESC';gettopOverDueCustomer('balance','DESC')">
+                                                        <i class="material-icons">arrow_drop_down</i>
+                                                    </a>
+                                                    <!-- </div> -->
+                                                </th>
+                                                <th class="w100 text-left">Within Due (₹)</th>
+                                                <th class="w100 text-left">Over Due (₹)
+                                                    <a class="" style="cursor:pointer"
+                                                        (click)="column = 'overdue';sorting_type='ASC';gettopOverDueCustomer('overdue','ASC');topOverDueCustomerDataSkeleton = true;">
+                                                        <i class="material-icons">arrow_drop_up</i>
+                                                    </a>
+                                                    <a class="ml70 " style="cursor:pointer"
+                                                        (click)="column = 'overdue';sorting_type='DESC';gettopOverDueCustomer('overdue','DESC');topOverDueCustomerDataSkeleton = true;">
+                                                        <i class="material-icons">arrow_drop_down</i>
+                                                    </a>
+                                                </th>
+                                                <th class="w80 text-left">Over Due %</th>
+                                                <th class="w80 text-left">Over Due Invoices</th>
+                                                <th class="w80 text-left">Above Credit Limit</th>
+                                            </tr>
+
+                                            <tr *ngFor="let row of topOverDueCustomerData; let i =index">
+                                                <td class="w200 text-left">{{row.company_name}} ({{row.name}} |
+                                                    {{row.mobile}})</td>
+                                                <td class="w100 text-left">₹
+                                                    {{formatNumberIndianStyle(row.outstanding_balance) }}</td>
+                                                <td class="w100 text-left">₹
+                                                    {{formatNumberIndianStyle(row.withinDue_balance)}}</td>
+                                                <td class="w100 text-left">₹
+                                                    {{formatNumberIndianStyle(row.overdue_balance) }}
+                                                </td>
+                                                <td class="w80 text-left">
+                                                    {{formatNumberIndianStyle(row.overDuePercent)}} %
+                                                </td>
+                                                <td class="w80 text-left">{{formatNumberIndianStyle(row.dueInvoice)}}
+                                                </td>
+                                                <td class="w80 text-left">
+                                                    <img src="assets/img/icons/flagmini.png" class="h30" alt=""
+                                                        *ngIf="row.flag == 'Red'">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table>
+                                        <tr class="totalRow">
+                                            <td class="w200 text-left">Total</td>
+                                            <td class="w100 text-left">₹
+                                                {{formatNumberIndianStyle(topOverDueTotalData.total_outstanding_balance)}}
+                                            </td>
+                                            <td class="w100 text-left">₹
+                                                {{formatNumberIndianStyle(topOverDueTotalData.total_withinDue_balance)}}
+                                            </td>
+                                            <td class="w100 text-left">₹
+                                                {{formatNumberIndianStyle(topOverDueTotalData.total_overdue)}}</td>
+                                            <td class="w80 text-left">
+                                                {{formatNumberIndianStyle(topOverDueTotalData.totalDuePercentage)}}%
+                                            </td>
+                                            <td class="w80 text-left">
+                                                {{formatNumberIndianStyle(topOverDueTotalData.total_due_invoices)}}</td>
+                                            <td class="w80 text-left"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="graphSkeleton h200 "
+                        *ngIf="!topOverDueCustomerData.length && topOverDueCustomerDataSkeleton == true  "></div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>State Wise Invoice Matrix</h2>
+                        </div>
+                        <div class="card-body mapchart">
+                            <div id="indiaMapBox" class="stateSale"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+
+
+        <ng-container
+            *ngIf="tabValue == 'Influencer Reward' && logined_user_data.view_loyalty_dashboard=='1' && (departmentType == 'LOYALTY' || departmentType == 'All')">
+            <div class="dflex space-btw influencerHighlights mt10">
+                <div class="col">
+                    <div class="card upperBox">
+                        <div class="card-head dflex space-btw">Total Influencer</div>
+                        <div class="card-body">
+                            <ng-container *ngIf="loaderInfluencer">
+                                <div class="skeleton-loading">
+                                    <p *ngFor="let row of [].constructor(3)"></p>
+                                </div>
+                            </ng-container>
+                            <div class="dflex" *ngIf="!loaderInfluencer">
+                                <div class="wp50 detailsBox">
+                                    <ul class="totalInfluencerDetails">
+                                        <li *ngFor="let count of influencerWiseCount; let i = index">
+                                            {{count.influencer_type}}:
+                                            <span [style.background]="count.color">{{count.influencer_count}}</span>
+                                        </li>
+                                        <li *ngIf="influencerWiseCount.length > 0">
+                                            Total
+                                            <span style="background: #00aee6;">{{totalInfluencer ? totalInfluencer :
+                                                '0'}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="wp50 chartBox">
+                                    <zingchart-angular [config]="totalInfluencerPieChart"
+                                        [height]="120"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card upperBox">
+                        <div class="card-head dflex space-btw">Influencer Status</div>
+                        <div class="card-body">
+                            <ng-container *ngIf="loaderInfluencer">
+                                <div class="skeleton-loading">
+                                    <p *ngFor="let row of [].constructor(3)"></p>
+                                </div>
+                            </ng-container>
+
+                            <div class="dflex" *ngIf="!loaderInfluencer">
+                                <div class="wp50 detailsBox">
+                                    <ul class="totalInfluencerDetails">
+                                        <li *ngFor="let count of influencerStatusWiseCount">
+                                            {{count.status}}:
+                                            <span [style.background]="count.color">{{count.influencer_count}}</span>
+                                        </li>
+                                        <li>
+                                            Total
+                                            <span style="background: #00aee6;">{{totalStatus ? totalStatus :
+                                                '0'}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="wp50 chartBox">
+                                    <zingchart-angular [config]="influencerStatusPieChart"
+                                        [height]="120"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card upperBox">
+                        <div class="card-head dflex space-btw">Pending KYC & Redeem Request</div>
+                        <div class="card-body">
+                            <ng-container *ngIf="loaderInfluencer">
+                                <div class="skeleton-loading">
+                                    <p *ngFor="let row of [].constructor(3)"></p>
+                                </div>
+                            </ng-container>
+
+                            <div class="dflex" *ngIf="!loaderInfluencer">
+                                <div class="wp50 detailsBox">
+                                    <ul class="totalInfluencerDetails">
+                                        <li *ngFor="let count of redeemKycCount">
+                                            {{count.type}}:
+                                            <span [style.background]="count.color">{{count.redeem_kyc_count}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="wp50 chartBox">
+                                    <zingchart-angular [config]="kycStatusPieChart" [height]="120"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col">
+                    <div class="card upperBox">
+                        <div class="card-head dflex space-btw">QR Codes</div>
+                        <div class="card-body">
+                            <ng-container *ngIf="loaderInfluencer">
+                                <div class="skeleton-loading">
+                                    <p *ngFor="let row of [].constructor(3)"></p>
+                                </div>
+                            </ng-container>
+
+                            <div class="detailsBox" *ngIf="!loaderInfluencer">
+                                <ul class="totalInfluencerDetails">
+                                    <li>
+                                        Total Generated <span style="background: #00aee6;">{{
+                                            couponScanCount.total_genrate.coupon_count}}</span>
+                                    </li>
+                                    <li>
+                                        Total Scanning
+                                        <span style="background: #00a855;">
+                                            {{couponScanCount.total_scan.coupon_count}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+            </div>
+            <div class="row">
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Last 30 Days Scanning</h2>
+                        </div>
+                        <div class="card-body couponChartBox">
+                            <ng-container *ngIf="last30Loader">
+                                <div class="skeleton-loading">
+                                    <p *ngFor="let row of [].constructor(3)"></p>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="!last30Loader">
+                                <zingchart-angular [config]="scanningInDaysChart" class="invoiceCollectionChart"
+                                    [height]="300"></zingchart-angular>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Last 6 Month Coupon Generate V/S Scanning</h2>
+                        </div>
+                        <div class="card-body invoiceCollectionBarBox">
+                            <div class="indicatorsBox">
+                                <ul type="square">
+                                    <li class="invoice">Coupon Generate</li>
+                                    <li class="collection">Coupon Scan</li>
+                                </ul>
+                            </div>
+                            <zingchart-angular [config]="couponStatusBarChart" class="mt-30 invoiceCollectionBarChart"
+                                [height]="325"></zingchart-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Top 10 Influencers </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="cs-table topInfluencersTable" *ngIf="topInfluencer.length > 0">
+                                <div class="bdrt">
+                                    <div class="table-head">
+                                        <table>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th class="w100">Mobile No</th>
+                                                <th class="w120">State</th>
+                                                <th class="w100 text-right">Points</th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table-container">
+                                    <div class="table-content scroll200">
+                                        <table>
+                                            <tr *ngFor="let row of topInfluencer; let i = index">
+                                                <td>{{row.name ? (row.name | titlecase) : ''}}</td>
+                                                <td class="w100">{{row.mobile_no}}</td>
+                                                <td class="w120">{{row.state ? (row.state | titlecase) : '----'}}</td>
+                                                <td class="w100 text-right"><strong>{{row.total_point}} PT</strong></td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="not-avl" *ngIf="topInfluencer.length === 0">
+                                <p>Data Not Available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col m6 l6">
+                    <div class="row mb0">
+                        <div class="col s12 m6 l6">
+                            <div class="card">
+                                <div class="card-head mb4">
+                                    <h2>Region Wise Influencer v/s Scanning</h2>
+                                </div>
+                                <div class="card-body horizontalBarChartBox">
+                                    <div class="indicatorsBox relative spacing">
+                                        <ul type="square">
+                                            <li class="navyBlue-dots">Influencer</li>
+                                            <li class="blue-dots">Scanning</li>
+                                        </ul>
+                                    </div>
+
+                                    <zingchart-angular [config]="regionScanningBarChart"
+                                        class="mt-30 regionScanningBarChart" [height]="290"></zingchart-angular>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col s12 m6 l6">
+                            <div class="card">
+                                <div class="card-head">
+                                    <h2>Scan Ageing</h2>
+                                </div>
+                                <div class="card-body">
+                                    <zingchart-angular [config]="scanningAgeChart" class="duBalanceAgeChart"
+                                        [height]="265"></zingchart-angular>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col m6 l6">
+                    <div class="row">
+                        <div class="col s12 m6 l6">
+                            <div class="topProductCategories">
+                                <div class="card">
+                                    <div class="card-head">
+                                        <h2>Top 5 Categorywise Scanned</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <ng-container *ngIf="topProductCategory.length > 0">
+                                            <div class="productCategoryDetails dflex1 space-btw"
+                                                *ngFor="let row of topProductCategory">
+                                                <div class="productCategory">
+                                                    <h2>{{row.category ? (row.category | titlecase) : ''}}</h2>
+                                                </div>
+                                                <div class="scannedPercentage">
+                                                    <span>{{ row.percentage > 0 ? (row.percentage | number:'1.2-2') :
+                                                        '0' }} %</span>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+
+                                        <div class="not-avl" *ngIf="topProductCategory.length === 0">
+                                            <p>Data Not Available</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col s12 m6 l6">
+                            <div class="topBonusScheme">
+                                <div class="card">
+                                    <div class="card-head">
+                                        <h2>Top 5 Statewise Scanned</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <ng-container *ngIf="topState.length > 0">
+                                            <div class="productCategoryDetails dflex1 space-btw"
+                                                *ngFor="let row of topState">
+                                                <div class="productCategory">
+                                                    <h2>{{row.state ? (row.state | titlecase) : ''}}</h2>
+                                                </div>
+                                                <div class="scannedPercentage">
+                                                    <span>{{ row.percentage > 0 ? (row.percentage | number:'1.2-2') :
+                                                        '0' }} %</span>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        <div class="not-avl" *ngIf="topState.length === 0">
+                                            <p>Data Not Available</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col m6 l6">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>Top Influencer source</h2>
+                        </div>
+                        <div class="card-body">
+                            <zingchart-angular [config]="influencerConversionPieChart"
+                                [height]="270"></zingchart-angular>
+                            <div class="enquiryScoreDetails">
+                                <ul>
+
+                                    <ng-container *ngFor="let row of InflunecerSource">
+                                        <li>
+                                            <span [style.background]="row.color">{{row.percentage}}%</span>
+                                            {{row.registration_source}}
+                                        </li>
+                                    </ng-container>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <ng-container >
+                <div style="
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 70vh;">
+                    <img src="https://img.freepik.com/free-vector/flat-coming-soon-background-with-megaphone_1017-33737.jpg?w=2000"
+                        style="height:500px;">
+                </div>
+            </ng-container> -->
+
+
+            <div class="row">
+
+                <div class="col s12 m12 l12">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>State Wise Scanning</h2>
+                        </div>
+                        <div class="card-body couponChartBox">
+                            <ng-container *ngIf="last30Loader">
+                                <div class="skeleton-loading">
+                                    <p *ngFor="let row of [].constructor(3)"></p>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="!last30Loader">
+                                <zingchart-angular [config]="areaWiseCouponScanChart" class="invoiceCollectionChart"
+                                    [height]="300"></zingchart-angular>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <div *ngIf="dashboardView == true" class="no-data-text">
+            <p>You do not have access to view the <strong>{{departmentType}}</strong> dashboard data</p>
+        </div>
+
+        <div class="fab-btns" *ngIf="dashboardView == false">
+            <button mat-fab class="excel pulse" (click)="openBottomSheet()">
+                <i class="material-icons ">tune</i>Filter
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,299 @@
+<div class="main-container" >
+  
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" >
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>{{active_tab}} Code List</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button  matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      
+      <div class="pagination" >
+        <ng-container *ngIf="(active_tab == 'Territory' && beat_code_data.length > 0) || (active_tab == 'Postal' && postal_code_data.length > 0)">
+          <div class="pagination-content" >
+            Pages
+            <span>{{pagenumber}}</span>
+            of
+            <span>{{total_page}}</span>
+          </div>
+          <div class="page-nav">
+            
+            <button mat-icon-button  matTooltip="Older" (click)="pervious()"  [disabled]="start == 0">
+              <i class="material-icons">navigate_before</i>
+            </button>
+            <button mat-icon-button  matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+              <i class="material-icons">navigate_next</i>
+            </button>
+          </div>
+        </ng-container>
+        
+        <div class="mat-tabbar">
+          <button mat-button (click)="active_tab = 'Territory'; start= 0; beatCode()" [ngClass]="active_tab == 'Territory' ? 'active' : ''">
+            Territory Code
+          </button>
+          <button mat-button (click)="active_tab = 'Postal'; start= 0; postalCode()" [ngClass]="active_tab == 'Postal' ? 'active' : ''">
+            Postal Code
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container pl10 pr10  pb100">
+    
+    <ng-container *ngIf="active_tab == 'Territory'">
+      <div class="cs-table left-right-10" >
+        <div class="sticky-head">
+          <div class="table-head">
+            <table class="sno-border">
+              <tr>
+                <th class="w50">S.no</th>
+                <th class="w100">Date</th>
+                <th class="w120">State</th>
+                <th class="w120">District</th>
+                <th class="w120">Pincode</th>
+                <th>Area Name</th>
+                <th class="w100">Territory Code</th>
+                <th class="w110 text-center">Total Network</th>
+                <th class="w80 text-center">Action</th>
+              </table>
+            </div>
+            <div class="table-head border-top">
+              <table class="sno-border">
+                <tr>
+                  <th class="w50">&nbsp;</th>
+                  <th class="w100">
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input date-column infix-bodr">
+                        <input matInput [matDatepicker]="picker" placeholder="Date" (dateChange)="onDate($event)"
+                        name="date_from" [(ngModel)]="filter.date_created"  [max]="today_date" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w120">
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input select-input">
+                        <input matInput placeholder="Search..."  (keyup.enter)="beatCode()" name="state" #state="ngModel" [(ngModel)]="filter.state">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w120">
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input select-input">
+                        <input matInput placeholder="Search..."  (keyup.enter)="beatCode()" name="district" #district="ngModel" [(ngModel)]="filter.district">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w120">&nbsp;</th>
+                  <th>
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input select-input">
+                        <input matInput placeholder="Search..."  (keyup.enter)="beatCode()" name="area" #area="ngModel" [(ngModel)]="filter.area">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w100">
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input select-input">
+                        <input matInput placeholder="Search..."  (keyup.enter)="beatCode()" name="beat_code" #beat_code="ngModel" [(ngModel)]="filter.beat_code">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w110">&nbsp;</th>
+                  <th class="w80 text-center" >&nbsp;</th>
+                </table>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <div class="table-content">
+                <table class="sno-border">
+                  <ng-container *ngIf="!skLoading">
+                    <tr *ngFor="let row of beat_code_data; let i = index">
+                      <td class="w50">{{sr_no+i+1}}</td>
+                      <td class="w100">{{row.date_created | date : 'd MMM y'}}</td>
+                      <td class="w120">{{row.state | titlecase}}</td>
+                      <td class="w120">{{row.distirct | titlecase}}</td>
+                      <td class="w120">{{row.pincode}}</td>
+                      <td>{{row.area}}</td>
+                      <td class="w100">{{row.beat_code}}</td>
+                      <td class="w110 text-center">
+                        <button class="link-btn" mat-button (click)="openDialog(row,'beat_code_view')" [disabled]="row.outlets == 0">{{row.outlets}}</button>
+                        &nbsp;<a *ngIf="row.outlets > 0" class="link-btn" mat-button (click)="openDialog(row,'beat_code_map_view')">Mapview</a>
+                      </td>
+                      <td class="w80 text-center" >
+                        <div class="action-button">
+                          <button  mat-icon-button  matTooltip="Edit" (click)="openDialog(row, 'beat_code_edit')" *ngIf="login_data.edit_territory_master=='1'">
+                            <i class="material-icons edit">edit</i>
+                          </button>
+                          <button  mat-icon-button  matTooltip="Delete" (click)="delete(row.id)" *ngIf="login_data.delete_territory_master=='1'">
+                            <i class="material-icons del">delete</i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <ng-container *ngFor="let row of [].constructor(10)">
+                    <tr class="sk-loading" *ngIf="skLoading">
+                      <td class="w50"><div>&nbsp;</div></td>
+                      <td class="w100"><div>&nbsp;</div></td>
+                      <td class="w120"><div>&nbsp;</div></td>
+                      <td class="w120"><div>&nbsp;</div></td>
+                      <td class="w120"><div>&nbsp;</div></td>
+                      <td><div>&nbsp;</div></td>
+                      <td class="w100"><div>&nbsp;</div></td>
+                      <td class="w110"><div>&nbsp;</div></td>
+                      <td class="w80" ><div>&nbsp;</div></td>
+                    </tr>
+                  </ng-container>
+                </table>
+              </div>
+            </div>
+          </div>
+          <ng-container *ngIf="beat_code_data.length == 0 && datanotfound == true">
+            <app-not-result-found></app-not-result-found>
+          </ng-container>
+        </ng-container>
+        
+        
+        <ng-container *ngIf="active_tab == 'Postal'">
+          <div class="cs-table left-right-10" >
+            <div class="sticky-head">
+              <div class="table-head">
+                <table class="sno-border">
+                  <tr>
+                    <th class="w50">S.no</th>
+                    <th class="w150">State</th>
+                    <th class="w150">District</th>
+                    <th class="w150">City</th>
+                    <th class="w150">Area</th>
+                    <th class="w80">Pincode</th>
+                    <th class="w90 text-center">Customer Network</th>
+                    <th class="w90 text-center">Influencer Network</th>
+                    <th class="w70 text-center">Enquiry</th>
+                    <th class="w70 text-center">Sites</th>
+                  </table>
+                </div>
+                <div class="table-head border-top">
+                  <table class="sno-border">
+                    <tr>
+                      
+                      <th class="w50">&nbsp;</th>
+                      
+                      <th class="w150">
+                        <div class="th-search-acmt">
+                          <mat-form-field class="cs-input select-input">
+                            <input matInput placeholder="Search..."  (keyup.enter)="postalCode()" name="state_name" #state_name="ngModel" [(ngModel)]="filter.state_name">
+                          </mat-form-field>
+                        </div>
+                      </th>
+                      <th class="w150">
+                        <div class="th-search-acmt">
+                          <mat-form-field class="cs-input select-input">
+                            <input matInput placeholder="Search..."  (keyup.enter)="postalCode()" name="district_name" #district_name="ngModel" [(ngModel)]="filter.district_name">
+                          </mat-form-field>
+                        </div>
+                      </th>
+                      <th class="w150">
+                        <div class="th-search-acmt">
+                          <mat-form-field class="cs-input select-input">
+                            <input matInput placeholder="Search..."  (keyup.enter)="postalCode()" name="city" #city="ngModel" [(ngModel)]="filter.city">
+                          </mat-form-field>
+                        </div>
+                      </th>
+                      <th class="w150">
+                        <div class="th-search-acmt">
+                          <mat-form-field class="cs-input select-input">
+                            <input matInput placeholder="Search..."  (keyup.enter)="postalCode()" name="area" #area="ngModel" [(ngModel)]="filter.area">
+                          </mat-form-field>
+                        </div>
+                      </th>
+                      <th class="w80">
+                        <div class="th-search-acmt">
+                          <mat-form-field class="cs-input select-input">
+                            <input matInput placeholder="Search..."  (keyup.enter)="postalCode()" name="pincode" #pincode="ngModel" [(ngModel)]="filter.pincode">
+                          </mat-form-field>
+                        </div>
+                      </th>
+                      <th class="w90 text-center">&nbsp;</th>
+                      <th class="w90 text-center">&nbsp;</th>
+                      <th class="w70 text-center">&nbsp;</th>
+                      <th class="w70 text-center">&nbsp;</th>
+                    </table>
+                  </div>
+                </div>
+                
+                <div class="table-container">
+                  <div class="table-content">
+                    <table class="sno-border">
+                      <ng-container *ngIf="!skLoading">
+                        <tr *ngFor="let row of postal_code_data; let i = index">
+                          <td class="w50">{{sr_no+i+1}}</td>
+                          <td class="w150">{{row.state_name | titlecase}}</td>
+                          <td class="w150">{{row.district_name | titlecase}}</td>
+                          <td class="w150">{{row.city | titlecase}}</td>
+                          <td class="w150">{{row.area ? row.area : ''}}</td>
+                          <td class="w80">{{row.pincode}}</td>
+                          <td class="w90 text-center">{{row.customer_counts ? row.customer_counts : '0'}}</td>
+                          <td class="w90 text-center">{{row.influencer_counts ? row.influencer_counts : '0'}}</td>
+                          <td class="w70 text-center">{{row.enquiry_counts ? row.enquiry_counts : '0'}}</td>
+                          <td class="w70 text-center">{{row.site_counts ? row.site_counts : '0'}}</td>
+                        </tr>
+                      </ng-container>
+                      <ng-container *ngFor="let row of [].constructor(10)">
+                        <tr class="sk-loading" *ngIf="skLoading">
+                          <td class="w50"><div>&nbsp;</div></td>
+                          <td class="w150"><div>&nbsp;</div></td>
+                          <td class="w150"><div>&nbsp;</div></td>
+                          <td class="w150"><div>&nbsp;</div></td>
+                          <td class="w150"><div>&nbsp;</div></td>
+                          <td class="w80"><div>&nbsp;</div></td>
+                          <td class="w90"><div>&nbsp;</div></td>
+                          <td class="w90"><div>&nbsp;</div></td>
+                          <td class="w70"><div>&nbsp;</div></td>
+                          <td class="w70"><div>&nbsp;</div></td>
+                        </tr>
+                      </ng-container>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <ng-container *ngIf="postal_code_data.length == 0 && datanotfound == true">
+                <app-not-result-found></app-not-result-found>
+              </ng-container>
+            </ng-container>
+          </div>
+          
+          <div class="fab-btns" *ngIf="active_tab == 'Territory'">
+            <button class="pulse excel" mat-fab   color="primary" [matMenuTriggerFor]="menu">
+              <i class="material-icons">apps</i>
+              Action
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item routerLink="add-beat-code" routerLinkActive="router-link-active" *ngIf="login_data.add_territory_master=='1'">
+                <mat-icon>add</mat-icon>
+                <span>Add New</span>
+              </button>
+              
+              <!-- <button mat-menu-item routerLink="add-map-beat-code" routerLinkActive="router-link-active" *ngIf="login_data.add_territory_master=='1'">
+                <mat-icon>add</mat-icon>
+                <span>Add New Map</span>
+              </button> -->
+              
+              
+              <button mat-menu-item [disabled]="download_excel_loader == true" (click)="upload_excel('Territory Code')" *ngIf="login_data.import_territory_master=='1'">
+                <mat-icon>cloud_upload</mat-icon>
+                <span>Upload New Data</span>
+              </button>
+              <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunks();"  [ngClass]="{'loading': download_excel_loader == true}" *ngIf="login_data.export_territory_master=='1'" [disabled]="download_excel_loader == true">
+                <mat-icon>download</mat-icon>
+                <span>Download in excel</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+        

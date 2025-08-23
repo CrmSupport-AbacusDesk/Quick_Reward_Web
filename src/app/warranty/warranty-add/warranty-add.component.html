@@ -1,0 +1,213 @@
+<div class="main-container">
+  <app-loader *ngIf="loader"></app-loader>
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>{{id ? 'Edit Warranty' : 'Add Warranty'}} {{params_network}}</h2>
+
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)="f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Warranty Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Mobile Number</mat-label>
+                    <input matInput placeholder="Type Here ..." name="customer_mobile" #customer_mobile="ngModel"
+                      [(ngModel)]="data.customer_mobile" minlength="10" maxlength="10" min="0"
+                      (keypress)="MobileNumber($event)" pattern="^[6-9][0-9]{0,9}$" (ngModelChange)="checkMobile()" required>
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="customer_mobile.touched || f.submitted">
+                    <p *ngIf="customer_mobile.errors?.required">This field is required</p>
+                    <p *ngIf="customer_mobile.errors?.pattern">Invalid Mobile Number</p>
+                    <p
+                      *ngIf="!customer_mobile.errors?.pattern  && (customer_mobile.errors?.maxlength || customer_mobile.errors?.minlength)">
+                      Mobile
+                      No should be of 10 digits..
+                    </p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : customer_name?.invalid } ">
+                    <mat-label>Customer Name</mat-label>
+                    <input matInput placeholder="Type Here ..." name="customer_name" #customer_name="ngModel"
+                      [(ngModel)]="data.customer_name"
+                      onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode === 32"
+                      required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="f.submitted && customer_name?.invalid">
+                    This field is required
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : serial_no?.invalid } ">
+                    <mat-label>Serial No.</mat-label>
+                    <input matInput placeholder="Type Here ..." name="serial_no" #serial_no="ngModel"
+                      [(ngModel)]="data.serial_no">
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="f.submitted && serial_no?.invalid">
+                    This field is required
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : bill_no?.invalid } ">
+                    <mat-label>Bill No.</mat-label>
+                    <input matInput placeholder="Type Here ..." name="bill_no" #bill_no="ngModel"
+                      [(ngModel)]="data.bill_no" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="f.submitted && bill_no?.invalid">
+                    This field is required
+                  </div>
+                </div>
+
+
+              </div>
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : segment_id.invalid } ">
+                    <mat-label>Category</mat-label>
+                    <mat-select name="segment_id" #segment_id="ngModel" [(ngModel)]="data.segment_id"
+                      (selectionChange)="getSubCatgory(data.segment_id)" required>
+                      <mat-option *ngFor="let row of segmentList" value="{{row.id}}" color="accent">{{row.category |
+                        titlecase}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="f.submitted && segment_id?.invalid ">
+                    This field is required
+                  </div>
+                </div>
+                <div class="col s12 m3 l3" *ngIf="SubcategoryList.length > 0">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : sub_segment_id.invalid } ">
+                    <mat-label>Sub Category </mat-label>
+                    <mat-select name="sub_segment_id" #sub_segment_id="ngModel" [(ngModel)]="data.sub_segment_id"
+                      (selectionChange)="getProduct(data.segment_id,data.sub_segment_id)" required>
+                      <mat-option *ngFor="let row of SubcategoryList" value="{{row.id}}"
+                        color="accent">{{row.sub_category_name | titlecase}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="f.submitted && sub_segment_id?.invalid ">
+                    This field is required
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" [ngClass]="{'has-error' : product_id.invalid } ">
+                    <mat-label>Product Name</mat-label>
+                    <mat-select name="product_id" #product_id="ngModel" [(ngModel)]="data.product_id"
+                      (selectionChange)="getProductInfo(data.product_id);id?blankdata():''"
+                      (ngModelChange)="findId(data.product_id)" required>
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getProductName($event.target.value)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let row of productList" value="{{row.id}}" color="accent">{{row.product_name |
+                        titlecase}}
+                        - {{row.product_code}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="f.submitted && product_id?.invalid ">
+                    This field is required
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Warranty In Months</mat-label>
+                    <input matInput type="text" name="warranty_period" placeholder="Type Here ..."
+                      #warranty_period="ngModel" [(ngModel)]="data.warranty_period" readonly>
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="warranty_period.touched || f.submitted">
+                    <p *ngIf="warranty_period.errors?.required">This field is required</p>
+                  </div> -->
+                </div>
+              </div>
+              <div class="row">
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Date Of Purchase</mat-label>
+                    <input name="date_of_purchase" matInput placeholder="" #date_of_purchase="ngModel"
+                      [(ngModel)]="data.date_of_purchase" [matDatepicker]="picker" [max]="currentDate" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="date_of_purchase.touched || f.submitted">
+                    <p *ngIf="date_of_purchase.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <!-- <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline" aria-readonly="true">
+                    <mat-label>Warranty End Date </mat-label>
+                    <input name="warranty_end_date" matInput placeholder="" #warranty_end_date="ngModel"
+                      [(ngModel)]="data.warranty_end_date" [matDatepicker]="picker2" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2 disabled="true"></mat-datepicker>
+                  </mat-form-field>
+                </div> -->
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col s3">
+                <div class="uploade-image">
+                  <ul>
+                    <li class="add-bg-1 wp100">
+                      <img
+                        src="{{warranty_img_id ? uploadurl+data.warranty_card_copy_img :data.warranty_card_copy_img}}"
+                        *ngIf="data.warranty_card_copy_img">
+                      <label class="fix-label">
+                        <input type="file" (change)="warrannty_Upload($event)" style="display:none;"
+                          accept=".png, .jpg, .jpeg," required />
+                        <div class="other" *ngIf="!data.warranty_card_copy_img">
+                          <i class="material-icons">cloud_upload</i>
+                          <p>Upload Warranty Copy</p>
+                        </div>
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col s3">
+                <div class="uploade-image">
+                  <ul>
+                    <li class="add-bg-1 wp100">
+                      <img src="{{bill_img_id ? uploadurl+data.bill_copy_img :data.bill_copy_img}}"
+                        *ngIf="data.bill_copy_img">
+                      <label class="fix-label">
+                        <input type="file" (change)="bill_Upload($event)" style="display:none;"
+                          accept=".png, .jpg, .jpeg," required />
+                        <div class="other" *ngIf="!data.bill_copy_img">
+                          <i class="material-icons">cloud_upload</i>
+                          <p>Upload Bill Copy</p>
+                        </div>
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+              [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : id ? 'Update' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

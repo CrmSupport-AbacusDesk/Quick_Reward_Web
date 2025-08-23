@@ -1,0 +1,125 @@
+<div class="edit-modal">
+  <form #f="ngForm" (ngSubmit)="f.valid && addInvoice()">
+    <div mat-dialog-content>
+      <p class="heading">ADD INVOICE</p>
+      <div class="cs-form">
+        <div class="row" *ngIf="spareList.length > 0">
+          <div class="col s12">
+            <div class="edit-modal border-top">
+              <p class="heading mt-10">Parts Used</p>
+              <div mat-dialog-content>
+                <div class="cs-table left-right-10">
+                  <div class="table-head">
+                    <table>
+                      <tr>
+                        <th class="w30 text-center">Sr.No</th>
+                        <th class="w100">Part Details</th>
+                        <th class="w80 text-center">MRP</th>
+                        <th class="w80 text-center">Qty</th>
+                        <th class="w100 text-center ">Discount</th>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="table-container pb0">
+                    <div class="table-content none-shadow">
+                      <table>
+                        <ng-container>
+                          <tr *ngFor="let formData of spareList; let i = index">
+                            <td class="w30 text-center">{{ i + 1 }}</td>
+                            <td class="w100">{{ formData.part_name |titlecase }}-{{ formData.part_no}}</td>
+                            <td class="w80 text-center">{{formData.mrp}}</td>
+                            <td class="w80 text-center">{{formData.qty}}</td>
+                            <td class="w100 text-center ">
+                              <mat-form-field appearance="outline" [ngClass]="{'has-error' : discount.invalid } ">
+                                <mat-label>Discount(%)</mat-label>
+                                <input matInput placeholder="Type Here ..." name="discount{{i}}" #discount="ngModel"
+                                  [(ngModel)]="formData.discount" (ngModelChange)="calculation(i)"
+                                  onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+                              </mat-form-field>
+                              <div class="alert alert-danger" *ngIf="f.submitted && discount?.invalid ">
+                                This field is required
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4">
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : service_flag.invalid } ">
+              <mat-label>Service Charge</mat-label>
+              <mat-select name="service_flag" [(ngModel)]="technicianData.service_flag" #service_flag="ngModel"
+                required>
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="f.submitted && service_flag?.invalid ">
+              This field is required
+            </div>
+          </div>
+          <div class="col s4" [ngClass]="{'has-error' : service_charge.invalid } "
+            *ngIf="technicianData.service_flag == 'Yes'">
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : service_charge?.invalid } ">
+              <mat-label>Service Charge Amount</mat-label>
+              <input matInput placeholder="Type Here ..." name="service_charge" #service_charge="ngModel"
+                [(ngModel)]="technicianData.service_charge" onkeypress="return event.charCode>=48 && event.charCode<=57"
+                (blur)="calculateServiceCharge()" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="f.submitted && service_charge?.invalid ">
+              This field is required
+            </div>
+          </div>
+        </div>
+        <div mat-dialog-content>
+          <div class="card-head">
+            <h2>Invoice Info</h2>
+          </div>
+          <div class="row">
+            <div class="col s6 offset-s6">
+              <div class="invoice-table">
+                <table>
+                  <tr>
+                    <td>Sub Total</td>
+                    <th>{{technicianData.sub_total | number:'1.2-2'}}</th>
+                  </tr>
+                  <tr>
+                    <td>Discount</td>
+                    <th>{{technicianData.discount | number:'1.2-2'}}</th>
+                  </tr>
+                  <tr>
+                    <td>GST</td>
+                    <th>{{technicianData.gst_amount | number:'1.2-2'}}</th>
+                  </tr>
+                  <tr>
+                    <td>Service Charge</td>
+                    <th>{{technicianData.service_charge | number:'1.2-2'}}</th>
+                  </tr>
+                  <tr>
+                    <td>Total</td>
+                    <th>{{technicianData.total | number:'1.2-2'}}</th>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+          [disabled]="savingFlag == true ">{{savingFlag == true ? 'Saving' : 'Save'}}
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

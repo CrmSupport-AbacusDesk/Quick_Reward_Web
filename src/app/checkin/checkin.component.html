@@ -1,0 +1,455 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container" *ngIf="hide !=  true">
+    <h2>Check In</h2>
+
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh"
+        (click)="show_today ? refresh('todayCheckinList',1) : refresh('checkinAll',2)" *ngIf="!filterDateWise">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Download Checkin Excel" *ngIf="!show_today"
+        (click)="openBottomSheet('checkin_list')">
+        <i class="material-icons">filter_alt</i>
+      </button>
+      <button mat-icon-button matTooltip="Download Checkin Excel" *ngIf="show_today"
+        (click)="openBottomSheet('today_checkin_list')">
+        <i class="material-icons">filter_alt</i>
+      </button>
+      
+
+      <div class="pagination" *ngIf="checkins.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious(show_today ? 'todayCheckinList' : 'checkinAll')"
+            [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <input type="number" [(ngModel)]="gotoPageNumber" (keyup.enter)="pageChange()" [min]="1" [max]="total_page"
+            placeholder="Enter page" class="page-input">
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage(show_today ? 'todayCheckinList' : 'checkinAll')"
+            [disabled]="pagenumber == total_page || total_page==0 ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mat-tabbar" *ngIf="filterDateWise != 'dateWise'">
+        <button mat-button [ngClass]="show_today ? 'active' : ''" (click)="change_tab('todayCheckinList',1)">
+          <i class="material-icons">today</i>Today
+        </button>
+        <button mat-button [ngClass]="!show_today ? 'active' : ''" (click)="change_tab('checkinAll',2)">
+          <i class="material-icons">calendar_month</i>Month
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="container table-container">
+    <div>
+      <div class="scroll-tables">
+        <table>
+          <tr>
+            <td class="w600">
+              <table>
+                <tr>
+                  <th class="w50">S.no</th>
+                  <th class="w110" *ngIf="show_today || filterDateWise == 'dateWise'">Date Created
+                    <div class="sorting" *ngIf="filterDateWise == 'dateWise'">
+                      <a (click)="openBottomSheet()" matTooltip="Date Filter">
+                        <i class="material-icons">filter_alt</i>
+                      </a>
+                    </div>
+                  </th>
+                  <th class="w110">Employee Code</th>
+                  <th>Employee Name</th>
+                </tr>
+                <tr>
+                  <th class="w50">&nbsp;</th>
+                  <th class="w100" *ngIf="show_today || filterDateWise == 'dateWise'">
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input date-column infix-bodr">
+                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                          #date_created="ngModel" [(ngModel)]="data.date_created" (ngModelChange)="date_format()"
+                          [max]="today_date" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w100">
+                    <div class="th-search-acmt" *ngIf="show_today && !filterDateWise">
+                      <mat-form-field>
+                        <input type="text" matInput placeholder="Search ..." name="employee_id"
+                          (keyup.enter)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')"
+                          #employee_id="ngModel" [(ngModel)]="data.employee_id">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-search-acmt">
+                      <mat-form-field>
+                        <input type="text" matInput placeholder="Search ..." name="name"
+                          (keyup.enter)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')"
+                          #name="ngModel" [(ngModel)]="data.name">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                </tr>
+                <ng-container *ngIf="!loader">
+                  <tr *ngFor="let list of checkins;let i=index">
+                    <td class="w50">{{i + 1 + sr_no}}</td>
+                    <td *ngIf="show_today">{{list.date_created | date:'dd MMM yyyy , h:mm a'}}</td>
+                    <td>{{list.employee_id}}</td>
+                    <td [ngClass]="list.isLocationExist==true && list.distance < 0.310686 ? 'light-green' : ''">
+                      {{list.name ? (list.name | titlecase): ''}}</td>
+                  </tr>
+                </ng-container>
+
+                <ng-container *ngIf="loader">
+                  <tr *ngFor="let row of [].constructor(10);">
+                    <td>
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                    <td *ngIf="show_today || filterDateWise == 'dateWise'">
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                    <td>
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                    <td>
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </table>
+            </td>
+            <td style="overflow-x: auto;overflow-y: hidden;">
+              <table>
+                <tr>
+                  <th class="w200">Reporting Manager</th>
+                  <ng-container *ngIf="show_today || filterDateWise == 'dateWise'">
+                    <th class="w400">Company Name</th>
+                    <th class="w150">Status</th>
+                    <th class="w120">Type</th>
+                    <th class="w250">Check In</th>
+                    <th class="w250">Check Out</th>
+                    <th class="w120">Total Time Spend</th>
+                    <th class="w200">Check List</th>
+                    <th class="w200">Remark</th>
+                    <th class="w80">Document</th>
+                    <!-- <th class="w80">Order</th> -->
+                  </ng-container>
+                  <ng-container *ngIf="!show_today && !filterDateWise">
+                    <th class="w100">Month</th>
+                    <th class="w80 text-center">Year</th>
+                    <th class="w100 text-center">Total CheckIn</th>
+                    <th class="w80  text-center">Productive</th>
+                    <th class="w90 text-center">New Counter</th>
+                    <th class="w110 text-center" *ngFor="let row of attendanceDate; let i = index;">{{row.date_created |
+                      date : 'd MMM y'}}</th>
+                  </ng-container>
+                </tr>
+                <tr>
+                  <th class="w150">
+                    <div class="th-search-acmt">
+                      <mat-form-field class="cs-input select-input">
+                        <mat-select name="reporting_manager_id" #reporting_manager_id="ngModel"
+                          [(ngModel)]="data.reporting_manager_id"
+                          (selectionChange)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')">
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getReportManager($event.target.value, 'rsm1')"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let list of report_manager;let index=index" value="{{list.id}}">
+                            {{list.name}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <ng-container *ngIf="show_today || filterDateWise == 'dateWise'">
+                    <th class="w180">
+                      <div class="th-search-acmt">
+                        <mat-form-field class="example-full-width cs-input select-input">
+                          <input matInput placeholder="Search..."
+                            (keyup.enter)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')"
+                            name="name" #name="ngModel" [(ngModel)]="data.dr_name">
+                        </mat-form-field>
+                      </div>
+                    </th>
+                    <th class="w150"></th>
+                    <th class="w120">
+                      <div class="th-search-acmt">
+                        <mat-form-field class="cs-input select-input">
+                          <mat-label>Select Type</mat-label>
+                          <mat-select name="month" #month="ngModel" [(ngModel)]="data.type"
+                            (selectionChange)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')">
+                            <mat-option value="">All</mat-option>
+                            <mat-option *ngFor="let row of networkType" value={{row.type}}>{{row.module_name}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </th>
+                    <th class="w180"></th>
+                    <th class="w180"></th>
+                    <th class="w180">
+                      {{totalCheckinTime ? totalCheckinTime : ''}}
+                    </th>
+                    <th class="w180"></th>
+                    <th class="w80"></th>
+                    <th class="w80"></th>
+
+                    <!-- <th class="w80"></th> -->
+                  </ng-container>
+                  <ng-container *ngIf="!show_today && !filterDateWise">
+                    <th class="w100">
+                      <div class="th-search-acmt">
+                        <mat-form-field class="cs-input select-input">
+                          <mat-select name="month" #month="ngModel" [(ngModel)]="data.month"
+                            (selectionChange)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')">
+                            <mat-option value="">All</mat-option>
+                            <mat-option value="01">January</mat-option>
+                            <mat-option value="02">February</mat-option>
+                            <mat-option value="03">March</mat-option>
+                            <mat-option value="04">April</mat-option>
+                            <mat-option value="05">May</mat-option>
+                            <mat-option value="06">June</mat-option>
+                            <mat-option value="07">July</mat-option>
+                            <mat-option value="08">August</mat-option>
+                            <mat-option value="09">September</mat-option>
+                            <mat-option value="10">October</mat-option>
+                            <mat-option value="11">November</mat-option>
+                            <mat-option value="12">December</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </th>
+                    <th class="w80 text-center">
+                      <div class="th-search-acmt">
+                        <mat-form-field class="example-full-width cs-input select-input">
+                          <input matInput placeholder="Search..." minlength="4" maxlength="4"
+                            (keyup)="CheckinList(show_today ? 'todayCheckinList' : 'checkinAll', show_today ? '1' : '2')"
+                            name="year" #year="ngModel" [(ngModel)]="data.year">
+                        </mat-form-field>
+                      </div>
+                    </th>
+                    <th class="w100 text-center"><strong>{{checkins_count.total_checkin_overall}}</strong></th>
+                    <th class="w80  text-center"><strong>{{checkins_count.total_productive_checkin}}</strong></th>
+                    <th class="w70 text-center"><strong>{{checkins_count.total_new_checkin_overall}}</strong></th>
+                    <ng-container *ngIf="!loader">
+                      <th class="w110 text-center" *ngFor="let row of attendanceDate; let i = index;">
+                        <strong>{{row.total_checkin > 0 ? row.total_checkin : '---'}}</strong>
+                      </th>
+                    </ng-container>
+                  </ng-container>
+                </tr>
+                <ng-container *ngIf="!loader">
+                  <tr *ngFor="let list of checkins;let i=index">
+                    <td class="w150 one-line" matTooltip="{{list.reporting_manager_name}}">
+                      {{(list.reporting_manager_name | titlecase)||'--'}}
+                    </td>
+
+                    <ng-container *ngIf="show_today || filterDateWise == 'dateWise'">
+                      <!-- <td class="w250 one-line" matTooltip="{{list.company_name | titlecase}}"
+                        *ngIf="list.dr_id != '0'">{{list.dr_name | titlecase}}</td> -->
+
+
+                      <td class="w250 one-line" matTooltip="{{list.company_name | titlecase}}"
+                        *ngIf="list.dr_id != '0'">
+                        <button class="hyper-link-btn one-line flat wp100" mat-button (click)="service.setData(data)"
+                          [disabled]="list.dr_type == 'other'" (click)="goToPage(list.dr_id, list.dr_type)">
+                          <!-- [routerLink]="[ 'distribution-detail/', list.dr_id,'Profile' ]" [queryParams]="{'id':list.dr_id, 'type':list.dr_type}" -->
+                          {{list.dr_name | titlecase}}
+                        </button>
+
+                      </td>
+
+                      <td class="w250 one-line" matTooltip="{{list.other_name}}" *ngIf="list.dr_id == '0'">
+                        {{list.other_name}}</td>
+                      <td
+                        class="w150 {{(list.visit_start != '0000-00-00 00:00:00' && list.visit_end != '0000-00-00 00:00:00') ? 'Approved' : 'Pending' }}">
+                        {{(list.visit_start != '0000-00-00 00:00:00' && list.visit_end != '0000-00-00 00:00:00') ?
+                        'Complete' : 'Inprocess' }}</td>
+                      <td class="w120">{{list.dr_type_name}}</td>
+                      <td class="w180 one-line copyCell"
+                        matTooltip="{{list.visit_start != '0000-00-00 00:00:00' ? (list.visit_start | date : 'h:mm a') : '--'}} {{list.start_address}}">
+                        {{list.visit_start != '0000-00-00 00:00:00' ? (list.visit_start | date : 'h:mm a') : '--'}}
+                        <ng-container *ngIf="list.start_address">({{list.start_address}})
+                          <div class="action-copy-btn">
+                            <button mat-button class="view" matToolTip="Copy Checkin Address"
+                              (click)="copyAddress( list.start_address)"><i
+                                class="material-icons">content_copy</i>Copy</button>
+                          </div>
+                        </ng-container>
+
+                      </td>
+                      <td class="one-line copyCell"
+                        matTooltip="{{list.visit_end != '0000-00-00 00:00:00' ? (list.visit_end | date : 'h:mm a') : '--'}} {{list.address}}">
+                        {{list.visit_end != '0000-00-00 00:00:00' ? (list.visit_end | date: 'h:mm a') : '--'}}
+                        <ng-container *ngIf="list.address">({{list.address}} )
+                          <div class="action-copy-btn">
+                            <button mat-button class="view" (click)="copyAddress( list.address)"><i
+                                class="material-icons">content_copy</i>Copy</button>
+                          </div>
+                        </ng-container>
+
+                      </td>
+                      <td class="w180">
+                        {{list.total_time_spend}}
+                      </td>
+                      <td class="w180 one-line" matTooltip="{{list.checklist}}">
+                        {{list.checklist?list.checklist:'--' }}
+                      </td>
+                      <td class="w180 one-line" matTooltip="{{list.description}} {{list.address}}">
+                        {{list.description?list.description:'--' }}
+                      </td>
+                      <td class="w80 text-center">
+                        <div class="dflex1" *ngIf="list.documents.length>0">
+                          <a download="checkinDoc.png" style="padding: 0px !important;" class="link-btn flat"
+                            (click)="opendoc(list.documents,list.type)">View</a>
+                        </div>
+                        <div class="one-line" *ngIf="list.documents.length==0">
+                          --
+                        </div>
+                      </td>
+                      <!-- <td class="w80">
+                        <div class="fix-icons" *ngIf="list.order_flag!=0">
+                          <span class="material-icons green-clr">done</span>
+                        </div>
+                        <div class="fix-icons" *ngIf="list.order_flag==0">
+                          <span class="material-icons red-clr">close</span>
+                        </div>
+                      </td> -->
+                    </ng-container>
+
+                    <ng-container *ngIf="!show_today && !filterDateWise">
+                      <td class="w100">
+                        <ng-container *ngIf="list.month == '01' ">January</ng-container>
+                        <ng-container *ngIf="list.month == '02' ">February</ng-container>
+                        <ng-container *ngIf="list.month == '03' ">March</ng-container>
+                        <ng-container *ngIf="list.month == '04' ">April</ng-container>
+                        <ng-container *ngIf="list.month == '05' ">May</ng-container>
+                        <ng-container *ngIf="list.month == '06' ">June</ng-container>
+                        <ng-container *ngIf="list.month == '07' ">July</ng-container>
+                        <ng-container *ngIf="list.month == '08' ">August</ng-container>
+                        <ng-container *ngIf="list.month == '09' ">September</ng-container>
+                        <ng-container *ngIf="list.month == '10' ">October</ng-container>
+                        <ng-container *ngIf="list.month == '11' ">November</ng-container>
+                        <ng-container *ngIf="list.month == '12' ">December</ng-container>
+                      </td>
+                      <td class="w80 text-center">{{list.year}}</td>
+                      <td class="w100 text-center light-blue"><strong>{{list.total_checkin_overall}}</strong></td>
+                      <td class="w80  text-center light-green"><strong>{{list.total_productive_checkin}}</strong></td>
+                      <td class="w70 text-center red-bgclr"><strong>{{list.total_new_checkin_overall}}</strong></td>
+                      <td class="w110  text-center" *ngFor="let item of list.all_date; let i = index;">
+                        <ng-container *ngIf="item.totalcheckin == 0">---</ng-container>
+                        <a class="link-btn flat" *ngIf="item.totalcheckin > 0"
+                          (click)="checkinDetail(list.id, item.date)">{{item.totalcheckin}}</a>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+
+                <ng-container *ngIf="loader">
+                  <tr *ngFor="let row of [].constructor(10)">
+                    <td>
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                    <ng-container *ngIf="show_today || filterDateWise == 'dateWise'">
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <!-- <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td> -->
+                    </ng-container>
+
+                    <ng-container *ngIf="!show_today && !filterDateWise">
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td>
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+              </table>
+
+            </td>
+
+          </tr>
+
+        </table>
+      </div>
+      <ng-container *ngIf="checkins.length == 0 && datanotfound == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+
+
+  <div>
+  </div>
+  <div class="fab-btns">
+    <!-- <button mat-fab class="excel pulse" (click)="exportAsXLSX('todayCheckinList',1)"
+      *ngIf="show_today && assign_login_data2.export_checkin=='1'">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button> -->
+    <button mat-fab class="excel pulse"
+      (click)="progressService.setCancelReq(false); downloadInChunks('todayCheckinList',1);"
+      *ngIf="filterDateWise == 'dateWise' && assign_login_data2.export_checkin=='1'">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+    <!-- <button mat-fab class="excel pulse" (click)="exportAsXLSX('checkinAll',2)"
+      *ngIf="!show_today && assign_login_data2.export_checkin=='1'">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button> -->
+    <button mat-fab class="excel pulse" (click)="progressService.setCancelReq(false); downloadInChunks('checkinAll',2);"
+      *ngIf="!show_today && !filterDateWise  && assign_login_data2.export_checkin=='1'">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div>
+</div>

@@ -1,0 +1,361 @@
+<div class="main-container {{padding0}}">
+    <app-loader *ngIf="excelLoader"></app-loader>
+    <div class="tools-container">
+        <h2>{{type}}</h2>
+        <div class="left-auto df ac  flex-gap-10">
+            <button
+                *ngIf="selectedLead.length>0 &&( assign_login_data2.edit_primary_network=='1'||assign_login_data2.edit_primary_network =='1')"
+                mat-raised-button color="accent" type="submit" (click)="StatusChangeModel(selectedLead)">
+                {{savingFlag == true ? 'Saving' : 'Convert'}}
+            </button>
+            <a mat-icon-button matTooltip="Refresh" *ngIf="dataToReceive==undefined" (click)="refresh()">
+                <i class="material-icons">refresh</i>
+            </a>
+            <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+                <i class="material-icons">filter_alt</i>
+            </button>
+
+            <div class="pagination" *ngIf="dr_list_temp.length > 0">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious()"
+                        [disabled]="start == 0 || total_page == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <input type="number" [(ngModel)]="gotoPageNumber" (keyup.enter)="goToPage()" [min]="1"
+                        [max]="total_page" placeholder="Enter page" class="page-input">
+
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+                        [disabled]="pagenumber == total_page || total_page == 0 ">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- <div class="mat-tabbar" *ngIf="type=='Retailer'">
+            <button mat-button (click)="active_tab = 'active'; filter.active_tab=active_tab; distributorList('', '', '')" [ngClass]="active_tab == 'active' ? 'active' : ''">
+                <span [ngClass]="active_tab == 'active'? 'material-icons': 'material-icons-outlined'">toggle_on</span> Active
+            </button>
+            <button mat-button (click)="active_tab = 'inactive'; filter.active_tab=active_tab; distributorList('', '', '')" [ngClass]="active_tab == 'inactive' ? 'active' : ''">
+                <span [ngClass]="active_tab == 'inactive'? 'material-icons': 'material-icons-outlined'">toggle_off</span> Inactive
+            </button>
+        </div> -->
+
+        </div>
+
+        <div class="mat-tabbar"
+            *ngIf="(logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+
+            <button mat-button
+                (click)="active_tab = 'Active'; filter.active_tab=active_tab; distributorList('', '', '')"
+                [ngClass]="active_tab == 'Active' ? 'active' : ''">
+                <span [ngClass]="active_tab == 'active'? 'material-icons': 'material-icons-outlined'">toggle_on</span>
+                Active
+            </button>
+
+            <button mat-button
+                (click)="active_tab = 'Inactive'; filter.active_tab=active_tab; distributorList('', '', '')"
+                [ngClass]="active_tab == 'Inactive' ? 'active' : ''">
+                <span
+                    [ngClass]="active_tab == 'inactive'? 'material-icons': 'material-icons-outlined'">toggle_off</span>Inactive
+            </button>
+
+            <button mat-button (click)="active_tab = 'Lead'; filter.active_tab=active_tab; distributorList('', '', '')"
+                [ngClass]="active_tab == 'Lead' ? 'active' : ''">
+                <span [ngClass]="active_tab == 'active'? 'material-icons': 'material-icons-outlined'">person</span> Lead
+            </button>
+
+            <button mat-button
+                (click)="active_tab = 'Reject'; filter.active_tab=active_tab; distributorList('', '', '')"
+                [ngClass]="active_tab == 'Reject' ? 'active' : ''">
+                <span [ngClass]="active_tab == 'active'? 'material-icons': 'material-icons-outlined'">error</span>
+                Reject
+            </button>
+        </div>
+
+    </div>
+
+    <div class="container container-scroll">
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w60 text-center">S.No.</th>
+                            <ng-container *ngFor="let header of headerData; let h = index">
+                                <th class="w{{header.header_width}}">{{header.headerName}}</th>
+                            </ng-container>
+                            <!-- <th class="w120" *ngIf="type != 'Retailer' ">Account Code</th> -->
+                            <!-- <th class="w120" *ngIf="type_id!=1 && type_id !=3 && type_id==7">Type</th> -->
+                            <!-- <th *ngIf="type_id=='3' && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default') " class="w150">Assign Distributor</th> -->
+                            <!-- <th class="w150" *ngIf="hide == true && this.logined_user_data?.organisation_data?.sfa==1">Assigned To</th> -->
+                            <!-- <ng-container *ngIf="(logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')"> -->
+                            <!-- <th class="w100" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">Last Visit</th> -->
+                            <!-- </ng-container> -->
+                            <th class="w70 text-center"
+                                *ngIf="(assign_login_data2.edit_primary_network=='1' || assign_login_data2.edit_secondary_network=='1') && active_tab != 'Reject'">
+                                Status</th>
+                            <th class="w200 text-center" *ngIf="active_tab == 'Lead'">Convert</th>
+                            <th class="w110 text-center">Action</th>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60">&nbsp;</th>
+                            <ng-container *ngFor="let header of headerData; let h = index">
+                                <th class="w{{header.header_width}}" *ngIf="header.headerEncodedName == 'date_created'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input date-column infix-bodr">
+                                            <input matInput [matDatepicker]="picker" placeholder="Date"
+                                                [name]="header.headerEncodedName"
+                                                [ngModel]="filter[header.headerEncodedName] | date:'d-MMM-y'"
+                                                (dateChange)="date_format($event)" [max]="today_date" readonly>
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w{{header.header_width}}" *ngIf="header.headerEncodedName != 'date_created'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <input matInput placeholder="Search..."
+                                                (keyup.enter)="distributorList('', '', '')"
+                                                name="header.headerEncodedName"
+                                                [(ngModel)]="filter[header.headerEncodedName]">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                            </ng-container>
+
+
+                            <!-- <th class="w120" *ngIf="type != 'Retailer' ">
+                            <div class="th-search-acmt">
+                                <mat-form-field class="example-full-width cs-input select-input">
+                                    <input matInput placeholder="Search..." name="acc_code" (keyup.enter)="distributorList('', '', '')"
+                                    [(ngModel)]="filter.acc_code">
+                                </mat-form-field>
+                            </div>
+                        </th> -->
+                            <!-- <th class="w120" *ngIf="type_id!=1 && type_id !=3 && type_id==7">
+                            <div class="th-search-acmt">
+                                <mat-form-field class="example-full-width cs-input select-input">
+                                    <input matInput placeholder="Search..." name="direct_dealer_type"
+                                    (keyup.enter)="distributorList('', '', '')" [(ngModel)]="filter.direct_dealer_type">
+                                </mat-form-field>
+                            </div>
+                        </th> -->
+
+
+                            <!-- <ng-container *ngIf="(logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+                            <th class="w100 text-right" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">&nbsp;</th>
+                        </ng-container> -->
+                            <th class="w70 text-center"
+                                *ngIf="(assign_login_data2.edit_primary_network=='1' || assign_login_data2.edit_secondary_network=='1' || assign_login_data2.edit_direct_dealers=='1') && active_tab != 'Reject'">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input select-input">
+                                        <mat-select name="status" #status="ngModel" [(ngModel)]="filter.status"
+                                            (selectionChange)="distributorList('', '', '')">
+                                            <mat-option value="">All</mat-option>
+                                            <mat-option value="1">Active</mat-option>
+                                            <mat-option value="0">Deactive </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+
+
+                            <th *ngIf="active_tab == 'Lead'" class="w200">&nbsp; <div *ngIf="dr_list_temp.length>0">
+                                    <mat-checkbox [(ngModel)]="data.alllead" (change)="updateAllLead('lead')"
+                                        name="alllead" value="true">Select All</mat-checkbox>
+                                </div>
+                            </th>
+
+
+                            <th class="w110">
+                                <div>&nbsp;</div>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of dr_list_temp; let i = index;"
+                                [ngClass]="{'Current': service.currentUserID == row.id}">
+                                <td class="w60 text-center">{{i + 1 + sr_no}}</td>
+                                <ng-container *ngFor="let header of headerData; let h = index">
+                                    <td class="w{{header.header_width}}">
+                                        <p *ngIf="header.headerEncodedName == 'date_created' ">
+                                            {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName] |
+                                            date:'dd MMM yyyy'}}
+                                        </p>
+
+                                        <p
+                                            *ngIf="header.headerEncodedName != 'date_created' && header.headerEncodedName != 'company_name'">
+                                            {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName]}}
+                                        </p>
+
+                                        <p matTooltipPosition="above"
+                                            *ngIf="header.headerEncodedName == 'company_name' ">
+                                            <button class="link-btn" [disabled]="row.mobile == '9319180958'" mat-button
+                                                (click)="service.setData(filter)"
+                                                [routerLink]="[ 'distribution-detail/', row.encrypt_id,'Profile' ]"
+                                                [queryParams]="{'state':row.state, 'id':row.encrypt_id, 'type':row.type, 'user_type':type, 'tab':active_tab}">
+                                                {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName]}}
+                                            </button>
+                                        </p>
+                                    </td>
+                                </ng-container>
+                                <!-- <td class="w110">{{row.customer_network_type ? row.customer_network_type : '---'}}</td> -->
+                                <!-- <td class="w120" *ngIf="type != 'Retailer'">{{row.dr_code}}</td> -->
+                                <!-- <td class="w120" *ngIf="type_id!=1 && type_id !=3 && type_id==7">{{row.direct_dealer_type}}</td> -->
+                                <!-- <td *ngIf="type_id=='3' && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default') " class="w150">{{row.assign_distributors_company_name}}</td> -->
+                                <!-- <td class="w150" *ngIf="hide == true && this.logined_user_data?.organisation_data?.sfa==1">
+                                <ng-container *ngFor="let item of row.assign_user; let j = index;">
+                                    <span>{{item.name.concat(" ,")}}</span>
+                                </ng-container>
+                            </td> -->
+
+                                <!-- <ng-container *ngIf="(logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')"> -->
+                                <!-- <td class="w100 text-right" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">
+                                    
+                                    <ng-container *ngIf="row.last_visit_days">
+                                        {{row.last_visit_days == 0 ? 'Today' : row.last_visit_days + " day's ago" }}
+                                    </ng-container>
+                                </td> -->
+                                <!-- <td class="w100 text-right">
+                                    <ng-container *ngIf="row.last_order_days">
+                                        {{row.last_order_days == 0 ? 'Today' : row.last_order_days + " day's ago" }}
+                                    </ng-container>
+                                </td> -->
+                                <!-- <td class="w100 text-center">{{row.order_frequency == '0' ? '---' : row.order_frequency + " day"}}</td> -->
+                                <!-- <td class="w100 text-right"><strong>&#x20B9; {{row.current_year_sales}}</strong></td> -->
+
+                                <!-- </ng-container> -->
+                                <!-- <td class="w100 text-right">{{row.last_updated_on!='0000-00-00 00:00:00'? (row.last_updated_on | date:'d MMM y, h:mm a'):'--'}}</td> -->
+                                <td class="w70 text-center"
+                                    *ngIf="(assign_login_data2.edit_primary_network=='1' || assign_login_data2.edit_secondary_network=='1') && active_tab != 'Reject'">
+                                    <div class="action-button">
+                                        <mat-slide-toggle color="accent" [name]="'status'+i"
+                                            [disabled]="row.mobile == '8800132607'" [(ngModel)]="row.newStatus"
+                                            (change)="updateStatus(i,row.id,$event)">
+                                        </mat-slide-toggle>
+                                    </div>
+                                </td>
+
+                                <td class="w200 " *ngIf="active_tab == 'Lead'">
+
+                                    <mat-checkbox name="approval{{i}}" [(ngModel)]="row.approval"
+                                        [checked]="row.approval == '1' ? true : ''"
+                                        (change)="updateMultipleLead(row.approval, i)">&nbsp;</mat-checkbox>
+
+
+                                    <a class="link-btn after-border ml10" mat-button (click)="moveToActive(row.id)">
+                                        Convert
+                                    </a>
+
+                                    <a class="link-btn" style="padding-left: 16px !important;" mat-button
+                                        (click)="onClickRejectLead(row.id)">
+                                        Reject
+                                    </a>
+                                </td>
+                                <td class="w110">
+                                    <button mat-raised-button color="accent" *ngIf="row.device_unique_id != ''"
+                                        (click)="resetDevice(i,row.id)">Reset Device</button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(100)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <ng-container *ngFor="let header of headerData; let h = index">
+                                    <td class="w{{header.header_width}}">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                </ng-container>
+                                <td class="w70 text-center"
+                                    *ngIf="(assign_login_data2.edit_primary_network=='1' || assign_login_data2.edit_secondary_network=='1') && active_tab != 'Reject'">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150" *ngIf="active_tab == 'Lead'">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w110">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+
+            <ng-container *ngIf="dr_list_temp.length <= 0 && datanotfound ==  true">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+    </div>
+
+    <ng-container *ngIf="hide == true;">
+        <div class="fab-btns"
+            *ngIf="(assign_login_data2.add_primary_network=='1' || assign_login_data2.add_secondary_network=='1' || ((type_id==1 && assign_login_data2.add_channel_partner=='1') || (type_id==3 && assign_login_data2.add_dealer=='1') || (type_id==7 && assign_login_data2.add_direct_dealers=='1') ) )          || ( assign_login_data2.import_primary_network=='1' || assign_login_data2.import_secondary_network=='1' || (type_id==1 && assign_login_data2.import_channel_partner=='1') || (type_id==3 && assign_login_data2.import_dealer=='1') || (type_id==7 && assign_login_data2.import_direct_dealers=='1'))    || ((assign_login_data2.export_primary_network=='1' || assign_login_data2.export_secondary_network=='1' || (type_id==1 && assign_login_data2.export_channel_partner=='1') || (type_id==3 && assign_login_data2.export_dealer=='1') || (type_id==7 && assign_login_data2.export_direct_dealers=='1')) )  ">
+            <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+                [matMenuTriggerFor]="menu">
+                <i class="material-icons">apps</i>
+                Action
+            </button>
+            <mat-menu #menu="matMenu">
+                <!-- <button mat-menu-item (click)="upload_excel('insert');" *ngIf="( assign_login_data2.import_primary_network=='1' || assign_login_data2.import_secondary_network=='1' || (type_id==1 && assign_login_data2.import_channel_partner=='1') || (type_id==3 && assign_login_data2.import_dealer=='1') || (type_id==7 && assign_login_data2.import_direct_dealers=='1'))">
+                <mat-icon>cloud_upload</mat-icon>
+                <span>Upload New Data</span>
+            </button>
+            <button mat-menu-item (click)="upload_excel('update');" *ngIf="dr_list_temp.length > 0 && ( assign_login_data2.import_primary_network=='1' || assign_login_data2.import_secondary_network=='1' || (type_id==1 && assign_login_data2.import_channel_partner=='1') || (type_id==3 && assign_login_data2.import_dealer=='1') || (type_id==7 && assign_login_data2.import_direct_dealers=='1'))">
+                <mat-icon>update</mat-icon>
+                <span>Update Existing Data</span>
+            </button>
+            <button mat-menu-item (click)="upload_excel('credit_limit');" *ngIf="dr_list_temp.length > 0 && type_id != 3 && ( assign_login_data2.import_primary_network=='1' || assign_login_data2.import_secondary_network=='1' || (type_id==1 && assign_login_data2.import_channel_partner=='1')  || (type_id==7 && assign_login_data2.import_direct_dealers=='1'))">
+                <mat-icon>currency_rupee</mat-icon>
+                <span>Credit Limit</span>
+            </button>
+            <button mat-menu-item (click)="upload_excel('geo_location');" *ngIf="dr_list_temp.length > 0 && ( assign_login_data2.import_primary_network=='1' || assign_login_data2.import_secondary_network=='1' || (type_id==1 && assign_login_data2.import_channel_partner=='1') || (type_id==3 && assign_login_data2.import_dealer=='1') || (type_id==7 && assign_login_data2.import_direct_dealers=='1'))">
+                <mat-icon>edit_location_alt</mat-icon>
+                <span>Update Geo Location</span>
+            </button> -->
+                <button mat-menu-item (click)="upload_excel(type);"
+                    *ngIf="((assign_login_data2.export_primary_network=='1' || assign_login_data2.export_secondary_network=='1' || (type_id==1 && assign_login_data2.export_channel_partner=='1') || (type_id==3 && assign_login_data2.export_dealer=='1') || (type_id==7 && assign_login_data2.export_direct_dealers=='1')) )">
+                    <mat-icon>cloud_upload</mat-icon>
+                    <span>Upload New Data</span>
+                </button>
+                <button mat-menu-item (click)="upload_excel2('update');"
+                    *ngIf="dr_list_temp.length > 0 && ( assign_login_data2.import_primary_network=='1' || assign_login_data2.import_secondary_network=='1' || (type_id==1 && assign_login_data2.import_channel_partner=='1') || (type_id==3 && assign_login_data2.import_dealer=='1') || (type_id==7 && assign_login_data2.import_direct_dealers=='1'))">
+                    <mat-icon>update</mat-icon>
+                    <span>Update Existing Data</span>
+                </button>
+                <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunks();"
+                    *ngIf="dr_list_temp.length > 0 && ((assign_login_data2.export_primary_network=='1' || assign_login_data2.export_secondary_network=='1' || (type_id==1 && assign_login_data2.export_channel_partner=='1') || (type_id==3 && assign_login_data2.export_dealer=='1') || (type_id==7 && assign_login_data2.export_direct_dealers=='1')) )">
+                    <mat-icon>download</mat-icon>
+                    <span>Download in excel</span>
+                </button>
+                <button mat-menu-item
+                    *ngIf="(assign_login_data2.add_primary_network=='1' || assign_login_data2.add_secondary_network=='1' || ((type_id==1 && assign_login_data2.add_channel_partner=='1') || (type_id==3 && assign_login_data2.add_dealer=='1' ) || (type_id==7 && assign_login_data2.add_direct_dealers=='1')))"
+                    (click)="lastBtnValue('add')" routerLink="add-distribution/{{type}}/{{type_id}}/add"
+                    [queryParams]="{pageType:'add', 'network_type':type}">
+                    <mat-icon>add</mat-icon>
+                    Add New
+                </button>
+            </mat-menu>
+        </div>
+    </ng-container>
+</div>

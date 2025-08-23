@@ -1,0 +1,58 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>{{active_tab | titlecase}}</h2>
+
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh(active_tab)">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <div class="pagination" *ngIf="video_list.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <ng-container>
+    <div class="container pb100" (contextmenu)="revok($event)">
+
+      <div class="card-container" *ngIf="!videoloader">
+        <div class="card-image db" *ngFor="let row of video_list; let i = index;">
+          <video width="100%" height="160" poster="assets/img/logo.png" controls controlslist="nodownload">
+            <source src="{{row.video}}" type="video/mp4">
+            Your browser does not support HTML video.
+          </video>
+          <div class="video-content">
+            <p *ngIf="row.desc"><b>Description: </b>{{row.desc}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-container" *ngIf="videoloader">
+        <div class="card-image skeleton" *ngFor="let row of [].constructor(10)">
+          <div>&nbsp;</div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="video_list== 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+
+    </div>
+  </ng-container>
+
+</div>

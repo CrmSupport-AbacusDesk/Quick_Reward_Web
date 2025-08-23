@@ -1,0 +1,159 @@
+<div *ngIf="!locationAssign && this.data['from'] == 'travel-status'" class="edit-modal">
+  <div mat-dialog-content>
+    <p class="heading">Change Status </p>
+    <div class="cs-form">
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select name="Status" [(ngModel)]="data.status">
+              <mat-option value="Approved">Approved</mat-option>
+              <!-- <mat-option value="Pending">Pending</mat-option> -->
+              <mat-option value="Reject">Reject</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="data.status=='Reject'">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Reason Of Reject</mat-label>
+            <textarea matInput placeholder="Type Here ..." class="h90" type="text" name="reason"
+              [(ngModel)]="data.reason"></textarea>
+            <!-- <div class="alert alert-danger" *ngIf="!street.valid && update_basic.submitted">
+              Address is required....
+            </div> -->
+          </mat-form-field>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-stroked-button class="mr10" color="warn" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="accent" (click)="update_status()"
+      [disabled]="!data.status || (data.status=='Reject' && !(data.reason))">Save</button>
+    <!-- <button mat-button color="accent"(click)="update_status()" [disabled]="(!(data.status) || !((data.status=='Reject') && (data.reason))) ">Save</button> -->
+
+  </div>
+</div>
+
+
+
+<div *ngIf="locationAssign || this.data['from'] == 'location-master'" class="edit-modal">
+
+  <div mat-dialog-content>
+    <p class="heading">Assign Area </p>
+    <div class="cs-form">
+
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Area List</mat-label>
+            <mat-select name="area" #area="ngModel" [(ngModel)]="data.area">
+              <!-- <mat-option disabled="">Select area</mat-option> -->
+              <mat-option *ngFor="let area of arealist" value="{{area.area}}">{{area.area}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="noBorder">
+      <div class="basic-details">
+        <div class="profile-info">
+          <ul class="ais">
+            <li>
+              <div class="cs-box">
+                <img src="../../../paraflex/assets/img/info.svg" class="fix-img">
+                <p>You have to select new Area for linked Parties.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    <button mat-button color="accent" (click)="assign_area()" [disabled]="!data.area">Save</button>
+
+  </div>
+</div>
+
+<!-- Plan Edit Start-->
+<div *ngIf="this.data['from'] == 'plan-edit'" class="edit-modal">
+  <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail() ">
+    <div mat-dialog-content>
+      <p class="heading">Add Travel Plan</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date</mat-label>
+              <input name="travel_day" matInput [matDatepicker]="pickers2" placeholder="" #travel_day="ngModel" readonly
+                [(ngModel)]="planData.travel_day" disabled>
+              <mat-datepicker-toggle matSuffix [for]="pickers2"></mat-datepicker-toggle>
+              <mat-datepicker #pickers2></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select name="customerType" [(ngModel)]="planData.customerType"
+                (ngModelChange)="getCustomer(planData.customerType, '')" #customerType="ngModel" required>
+                <mat-option *ngFor="let row of allNetwork" value="{{row.module_name}}">{{row.module_name}}</mat-option>             
+              </mat-select>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="customerType.touched || f.submitted">
+              <p *ngIf="customerType.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="planData.customerType">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>{{planData.customerType}}</mat-label>
+              <mat-select name="customerId" [(ngModel)]="planData.customerId"
+                (ngModelChange)="checkId(planData.customerId)" #customerId="ngModel" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                    (keyup)="getCustomer(planData.customerType,$event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let row of partyList" value="{{row.id}}">{{row.display_name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="customerId.touched || f.submitted">
+              <p *ngIf="customerId.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-stroked-button class="mr10" color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+
+
+    </div>
+  </form>
+</div>

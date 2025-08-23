@@ -1,0 +1,37 @@
+/* styles.css */
+
+// .main-container {
+//   padding: 0;
+// }
+
+.tools-container {
+  padding: 10px;
+}
+
+.attendance-mat-tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+.grid-box {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 600px) {
+  .grid-box {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-box {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}

@@ -1,0 +1,83 @@
+<div class="edit-modal">
+  <form #addFollowUp="ngForm" *ngIf="followUp.leadType=='remark'" (ngSubmit)="addFollowUp.valid && submitActivity()">
+    <div mat-dialog-content>
+      <p class="heading">Add Remark</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Activity Remark</mat-label>
+              <textarea matInput placeholder="Type here ..." name="activity_remark" #activity_remark="ngModel"
+                [(ngModel)]="followUp.activity_remark"
+                [ngClass]="{'has-error' : activity_remark.invalid && addFollowUp.submitted }"
+                required pattern=".*\S.*"></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="(activity_remark.invalid || activity_remark.errors?.pattern) && addFollowUp.submitted">
+              Follow Up Remark is required and cannot be only spaces...
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+          [disabled]="savingFlag == true">
+          {{savingFlag == true ? 'Saving' : 'Save'}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <form #addFollowUp="ngForm" *ngIf="followUp.leadType=='followup'" (ngSubmit)="addFollowUp.valid && submitFollowUp()">
+    <div mat-dialog-content>
+      <p class="heading">Add Follow-up</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Next Follow Up Date</mat-label>
+              <input matInput min="{{today_date}}" [matDatepicker]="create_date" type="text" name="followup_date"
+                #followup_date="ngModel" [(ngModel)]="followUp.followup_date"
+                [ngClass]="{'has-error' : followup_date.invalid } " required>
+              <mat-datepicker-toggle matSuffix [for]="create_date"></mat-datepicker-toggle>
+              <mat-datepicker #create_date></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="!followup_date.valid && addFollowUp.submitted">
+              Follow Up Date is required...
+            </div>
+          </div>
+          <div class="col s6">
+            <input type="time" required name="followup_time" #followup_time="ngModel"
+              [(ngModel)]="followUp.followup_time" class="time-input">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Follow Up Remark</mat-label>
+              <textarea matInput placeholder="Type here ..." name="remarks" #remarks="ngModel"
+                [(ngModel)]="followUp.remarks" [ngClass]="{'has-error' : remarks.invalid } " required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="!remarks.valid && addFollowUp.submitted">
+              Follow Up Remark is required...
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+          [disabled]="savingFlag == true">
+          {{savingFlag == true ? 'Saving' : 'Save'}}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

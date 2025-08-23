@@ -1,0 +1,12 @@
+.card-column{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row-gap: 10px;
+    grid-column-gap: 10px;
+}
+
+mat-card-content span {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+}

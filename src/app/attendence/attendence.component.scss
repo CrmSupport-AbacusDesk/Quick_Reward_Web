@@ -1,0 +1,31 @@
+.action-copy-btn {
+	position: absolute;
+	width: max-content;
+	top: 50%;
+	right: 0;
+	transform: translateY(-50%);
+	opacity: 0;
+}
+
+.copyCell {
+	&:hover {
+		// background: #efffec;
+
+		.action-copy-btn {
+			position: absolute;
+			width: max-content;
+			top: 50%;
+			right: 0;
+			background: #fff;
+			transform: translateY(-50%);
+			opacity: 1;
+		}
+
+		button {
+			color: #000;
+			// background: #cdb2b2;
+			z-index: 2;
+		}
+
+	}
+}

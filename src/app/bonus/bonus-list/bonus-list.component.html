@@ -1,0 +1,159 @@
+<div class="main-container" >
+  
+  <div class="tools-container">
+    <h2>Bonus Point Scheme</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button  matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+      
+      <div class="pagination" *ngIf="bonusList_data.length > 0">
+        
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          
+          <button mat-icon-button  matTooltip="Older" (click)="pervious()"  [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button  matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'active' ? 'active' : ''" (click)="active_tab = 'active';bonusList()"><i class="material-icons">toggle_on</i>Active ({{tabCount.active}})</button>
+        <button mat-button [ngClass]="active_tab == 'inactive' ? 'active' : ''" (click)="active_tab = 'inactive';bonusList()"><i class="material-icons">toggle_off</i>Inactive ({{tabCount.inactive}})</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="container pb100" >
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No.</th>
+              <th class="w100">Date Created</th>
+              <th class="w110">Start Date</th>
+              <th class="w110">End Date</th>
+              <th class="w150">User Type</th>
+              <th>Title</th>
+              <th class="w100 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">Status</th>
+            </tr>
+          </table>
+        </div>
+        
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="" name="date_created" [(ngModel)]="filter.date_created" [max]="today_date" (dateChange)="bonusList()"  disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"  ></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="startDate" placeholder="" name="start_date" [(ngModel)]="filter.start_date" [max]="today_date" (dateChange)="bonusList()" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="startDate" ></mat-datepicker-toggle>
+                    <mat-datepicker #startDate disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="endDate" placeholder="" name="end_date" [(ngModel)]="filter.end_date" [min]="filter.start_date" [max]="today_date" (dateChange)="bonusList()" [disabled]="!filter.start_date">
+                    <mat-datepicker-toggle matSuffix [for]="endDate"  ></mat-datepicker-toggle>
+                    <mat-datepicker #endDate disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">&nbsp;</th>
+              <th>
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="title" [(ngModel)]="filter.title" (keyup.enter)="bonusList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-content" *ngIf="bonusList_data.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of bonusList_data; let i = index;"  [ngClass]="{'Current': service.currentUserID == row.id}" >
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{row.date_created | date:'d MMM y'}}</td>
+                <td class="w110">{{row.start_date | date:'d MMM y'}}</td>
+                <td class="w110">{{row.end_date | date:'d MMM y'}}</td>
+                <td class="w150">
+                  <span>{{row.types}}</span>
+                </td>
+                <td><a class="link-btn" (click)="service.setData(filter)" routerLink="bonus-detail/{{row.encrypt_id}}">{{row.tittle | titlecase}}</a></td>
+                <td class="w100 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">
+                  <div class="action-button">
+                    <mat-slide-toggle color="accent" checked="{{active_tab == 'active' ? 'true' :'false'}}" (change)="change_status(row.id,i)"></mat-slide-toggle>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w110"><div>&nbsp;</div></td>
+                <td class="w110"><div>&nbsp;</div></td>
+                <td class="w150"><div>&nbsp;</div></td>
+                <td><div>&nbsp;</div></td>
+                <td class="w100 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'"><div>&nbsp;</div> </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+        
+        <ng-container *ngIf="bonusList_data.length == 0 && noResult">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+    
+    
+  </div>
+  
+  
+  
+  <div class="fab-btns">
+    
+    <!-- <button  mat-fab class="excel" *ngIf="bonusList_data.length > 0 && assign_login_data2.export_bonus_points=='1'" (click)="progressService.setCancelReq(false); downloadInChunks();" >
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button> -->
+    
+    <button class="pulse" mat-fab (click)="lastBtnValue('add')" *ngIf="assign_login_data2.add_bonus_points=='1'" [ngClass]="{'pulse': fabBtnValue=='add'}"  color="primary"  routerLink="bonus-add">
+      <i class="material-icons">add</i>
+      Add New
+    </button>
+  </div>
+</div>

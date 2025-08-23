@@ -1,0 +1,238 @@
+
+
+<ng-container *ngIf="modal_data.assignType != 'updateStatus'">
+  <h1 mat-dialog-title>Change Status</h1>
+  <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+    <div mat-dialog-content>
+      <div class="dialog-content">
+        <div class="cs-form mt10">
+          <div class="row">
+            <div class="col s12 m6 l6">
+              <mat-form-field  appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select name="lead_status" #lead_status="ngModel" [(ngModel)]="data.lead_status"  (selectionChange)="(data.lead_status == 'Assigned' && data.sfa == 1) ? getReportManager('') : (data.lead_status == 'Assigned' && data.dms == 1) ? getDealer('') :''" required>
+                  <mat-option *ngIf="Active_Tab_status!='Assigned'" value="Assigned">Assigned</mat-option>
+                  <mat-option value="Win">Win</mat-option>
+                  <mat-option value="Disqualified">Junk & CLose</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="lead_status.touched || f.submitted">
+                <p *ngIf="lead_status.errors?.required">This field is required</p>
+              </div>
+            </div>
+            
+            <div class="col s12 m6 l6" *ngIf="data.sfa == 1 &&  data.dms == 1 && data.lead_status == 'Assigned'">
+              <mat-form-field  appearance="outline">
+                <mat-label>Assign Type</mat-label>
+                <mat-select name="assign_type" #assign_type="ngModel" [(ngModel)]="data.assign_type"  (selectionChange)="(data.assign_type == 'sales_user' && data.sfa == 1) ? getReportManager('') : (data.assign_type == 'Dealer' && data.dms == 1) ? getDealer('') :''" required>
+                  <mat-option value="Dealer">Customer Network</mat-option>
+                  <mat-option value="sales_user">Sales User</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="assign_type.touched || f.submitted">
+                <p *ngIf="assign_type.errors?.required">This field is required</p>
+              </div>
+            </div>
+            
+            <div class="col s12 m6 l6" *ngIf="data.lead_status == 'Assigned' && data.assign_type == 'sales_user'">
+              <mat-form-field  appearance="outline">
+                <mat-label>Assign To</mat-label>
+                <mat-select name="sales_user_id" #sales_user_id="ngModel" [(ngModel)]="data.sales_user_id" required (selectionChange)="findUser(data.sales_user_id)">
+                  <mat-option >
+                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getReportManager($event.target.value)"></ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let list of report_manager;let index=index" value="{{list.id}}">
+                    {{list.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="sales_user_id.touched || f.submitted">
+                <p *ngIf="sales_user_id.errors?.required">This field is required</p>
+              </div>
+            </div>
+            
+            <div class="col s12 m6 l6" *ngIf="data.lead_status == 'Assigned' && data.assign_type == 'Dealer'">
+              <mat-form-field  appearance="outline">
+                <mat-label>Assign To Customer Network</mat-label>
+                <mat-select name="sales_user_id" #sales_user_id="ngModel" [(ngModel)]="data.sales_user_id" required (selectionChange)="findDealer(data.sales_user_id)">
+                  <mat-option >
+                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getDealer($event.target.value)"></ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let list of dealers;let index=index" [value]="list.id">
+                    {{list.company_name ? list.company_name : ''}} {{list.employee_id ? ('('+list.employee_id+')') : ''}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="sales_user_id.touched || f.submitted">
+                <p *ngIf="sales_user_id.errors?.required">This field is required</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- <div class="row" *ngIf="data.lead_convert == 1 && data.lead_status == 'Assigned'">
+            <div class="col s12 m6 l6">
+              <mat-form-field  appearance="outline">
+                <mat-label>Conversion Type</mat-label>
+                <mat-select name="convert_type" #convert_type="ngModel" [(ngModel)]="data.convert_type"  (selectionChange)="getNetworkType(data.convert_type)" required>
+                  <mat-option value="Primary">Primary</mat-option>
+                  <mat-option value="Secondary">Secondary</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="convert_type.touched || f.submitted">
+                <p *ngIf="convert_type.errors?.required">This field is required</p>
+              </div>
+            </div>
+            
+            <div class="col s13 m6 l6" *ngIf="data.convert_type">
+              <mat-form-field appearance="outline">
+                <mat-label>Customer Type</mat-label>
+                <mat-select name="customer_network_type" #customer_network_type="ngModel" [(ngModel)]="data.customer_network_type" required>
+                  <mat-option *ngFor="let row of customerNetwork" value="{{row.name}}">
+                    {{row.name ? row.name : '---'}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <div class="alert alert-danger" *ngIf="customer_network_type.touched || f.submitted">
+                <p *ngIf="customer_network_type.errors?.required">This field is required</p>
+              </div>
+              
+            </div>
+          </div> -->
+          
+          
+          <ng-container  *ngIf="data.lead_status == 'Assigned'">
+            <div class="row">
+              <div class="col s12">
+                <mat-form-field  appearance="outline">
+                  <mat-label>Requirement</mat-label>
+                  <textarea matInput placeholder="Type Here ..." name="requirement" #requirement="ngModel"
+                  [(ngModel)]="data.requirement" class="h50"  required></textarea>
+                </mat-form-field>
+                <div class="alert alert-danger" *ngIf="requirement.touched || f.submitted">
+                  <p *ngIf="requirement.errors?.required">This field is required</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12 m6 l6">
+                <p class="mb10">Do you want create followup</p>
+                <mat-radio-group class="example-section"  name="create_follow_up" [(ngModel)]="data.create_follow_up"  (change)="data.create_follow_up == 'Yes' ? '' :'' " >
+                  <mat-radio-button class="wp50" color="primary" value="No">
+                    No
+                  </mat-radio-button>
+                  <mat-radio-button class="wp50" color="primary" value="Yes">
+                    Yes
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+              
+              <div class="col s12 m6 l6" *ngIf="data.create_follow_up == 'Yes'">
+                <mat-form-field  appearance="outline">
+                  <mat-label>Next Follow Up Date</mat-label>
+                  <input name="next_followup_date" matInput (dateChange)="onDate($event)" [matDatepicker]="pickers" [min]="date" placeholder="" #next_followup_date="ngModel" readonly [(ngModel)]="data.next_followup_date" required>
+                  <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                  <mat-datepicker #pickers></mat-datepicker>
+                </mat-form-field>
+                <div class="alert alert-danger" *ngIf="next_followup_date.touched || f.submitted">
+                  <p *ngIf="next_followup_date.errors?.required">This field is required</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row" *ngIf="data.create_follow_up == 'Yes'">
+              <div class="col s6">
+                <input type="time" required name="next_followup_time" #next_followup_time="ngModel" [(ngModel)]="data.next_followup_time" class="time-input">
+              </div>
+            </div>
+            
+            <div class="row" *ngIf="data.create_follow_up == 'Yes'">
+              <div class="col s12">
+                <mat-form-field class="cs-input" appearance="outline">
+                  <mat-label>Follow Up Remark</mat-label>
+                  <textarea matInput placeholder="Enter Follow Up Remark ..." name="remark"
+                  #remark="ngModel" [(ngModel)]="data.remark"
+                  [ngClass]="{'has-error' : remark.invalid } " required></textarea>
+                </mat-form-field>
+                <div class="alert alert-danger" *ngIf="remark.touched || f.submitted">
+                  <p *ngIf="remark.errors?.required">This field is required</p>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          
+          <div class="row" *ngIf="data.lead_status == 'Disqualified'">
+            <div class="col s12">
+              <mat-form-field  appearance="outline">
+                <mat-label>Reason</mat-label>
+                <textarea matInput placeholder="Type Here ..." name="reason" #reason="ngModel"
+                [(ngModel)]="data.reason" class="h50" required></textarea>
+              </mat-form-field>
+              
+              <div class="alert alert-danger" *ngIf="reason.touched || f.submitted">
+                <p *ngIf="reason.errors?.required">This field is required</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10"  mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent"  [ngClass]="{'loading': savingFlag == true}" [disabled]="savingFlag == true">
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>
+
+<ng-container *ngIf="modal_data.assignType == 'updateStatus'">
+  <h1 mat-dialog-title>Change Status</h1>
+  <form #f="ngForm" (ngSubmit)=" f.valid && changeStatus()">
+    <div mat-dialog-content>
+      <div class="dialog-content">
+        <div class="cs-form mt10">
+          <div class="row">
+            <div class="col s12 m6 l6">
+              <mat-form-field  appearance="outline">
+                <mat-label>Status {{data.lead_status}}</mat-label>
+                <mat-select name="lead_status" #lead_status="ngModel" [(ngModel)]="data.lead_status"  (selectionChange)="(data.lead_status=='Lost' || data.lead_status=='Dropped') ? getReasons(data.lead_status) : ''" required>
+                  <mat-option *ngFor="let row of statusList" value="{{row.type}}">{{row.type}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="lead_status.touched || f.submitted">
+                <p *ngIf="lead_status.errors?.required">This field is required</p>
+              </div>
+            </div>
+
+
+            <div class="col s12 m6 l6"  *ngIf="data.lead_status=='Lost' || data.lead_status=='Dropped'">
+              <mat-form-field  appearance="outline">
+                <mat-label>Reason</mat-label>
+                <mat-select name="lead_reason" #lead_reason="ngModel" [(ngModel)]="data.lead_reason" required>
+                  <mat-option *ngFor="let row of reasonList" value="{{row.reason}}">{{row.reason}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="lead_reason.touched || f.submitted">
+                <p *ngIf="lead_reason.errors?.required">This field is required</p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10"  mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent"  [ngClass]="{'loading': savingFlag == true}" [disabled]="savingFlag == true">
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-container>

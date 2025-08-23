@@ -1,0 +1,96 @@
+.cs-modal {
+    .mat-dialog-title {
+        margin: -10px -10px 0px -10px;
+        padding: 10px;
+        border-bottom: 1px solid var(--bodrColor);
+        font-size: 16px;
+        color: var(--text-color);
+        line-height: 20px;
+        position: relative;
+        button,
+        a {
+            &.fix-btn {
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+            }
+        }
+    }
+    .mat-dialog-container {
+        background: var(--tertiary) !important;
+    }
+    .mat-dialog-container {
+        padding: 10px !important;
+    }
+    .mat-dialog-content {
+        padding: 0px 10px !important;
+        margin: 0 -10px !important;
+    }
+    .mat-dialog-actions {
+        margin-bottom: 0px !important;
+    }
+    .excel-box {
+        padding: 16px 0px;
+        width: 90%;
+        margin: 0 auto;
+        text-align: right;
+        label {
+            width: 100%;
+            border: 3px dashed var(--success);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 0 auto;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            grid-row-gap: 10px;
+            transition: 0.5s;
+            cursor: pointer;
+            p {
+                font-size: 13px;
+                color: var(--text-color);
+            }
+            i {
+                color: var(--success);
+                font-size: 24px;
+            }
+            &:hover {
+                border: 4px dashed var(--success);
+                i {
+                    color: var(--black);
+                    transform: scale(1.3);
+                }
+            }
+        }
+        a {
+            color: var(--link-color);
+            font-size: 12px;
+            margin-top: 10px;
+            display: inline-flex;
+            grid-column-gap: 5px;
+            align-items: center;
+            cursor: pointer;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        &.error {
+            label {
+                border-color: var(--danger);
+                background: #FFF3F3;
+                i {
+                    color: var(--danger);
+                }
+            }
+            p.error-text {
+                text-align: left;
+                color: var(--danger);
+                margin-top: 10px;
+                font-size: 14px;
+            }
+        }
+    }
+}

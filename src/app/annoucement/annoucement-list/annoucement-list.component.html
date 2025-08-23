@@ -1,0 +1,96 @@
+<div class="main-container" >
+  
+  <div class="tools-container">
+    <h2>Announcement</h2>
+    <!-- <ng-container *ngIf="(search.date_created || search.sales_user)  || (search.company_name || search.followup_date || search.assign_to)">
+      <a  mat-raised-button color="primary" (click)="clearFilter();"> <i class="material-icons mr10">filter_alt</i>Clear Filter</a>
+    </ng-container> -->
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button  matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      
+      <div class="pagination" *ngIf="announcementList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button  matTooltip="Older" (click)="pervious()"  [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button  matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mb100" >
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table class="sno-border">
+            <tr>
+              <th class="w30">&nbsp;</th>
+              <th class="w100">Date Created</th>
+              <th class="w130">Created By</th>
+              <th class="w130">User Type</th>
+              <th>Message</th>
+              <th class="w90 text-center">Total Unread</th>
+              <th class="w80 text-center">Total Read</th>
+              <th class="w80 text-center">Total Count</th>
+            </table>
+          </div>
+        </div>
+        
+        <div class="table-container mb100">
+          <div class="table-content" *ngIf="announcementList.length > 0">
+            <table class="sno-border">
+              <tr *ngFor="let val of announcementList; let i = index"  [ngClass]="{'Current': service.currentUserID == val.id}" >
+                <td class="w30">{{ i + 1 + sr_no }}</td>
+                <td class="w100">{{val.date_created |date : 'd MMM y'}}</td>
+                <td class="w130"><a class="link-btn" mat-button routerLink="detail-announcement/{{val.encrypt_id}}" routerLinkActive="active">{{val.created_by_name}}</a></td>
+                <td class="w130">
+                  {{val.type == 'direct_dealer' ? 'Direct Dealer' : val.type == 'dealers' ? 'Retailer' :  val.type == 'users' ? 'Sales Executive' : (val.type | titlecase) }}
+                </td>
+                <td>{{val.msg}}</td>
+                <td class="w90 text-center"><strong>{{val.unread_count}}</strong></td>
+                <td class="w80 text-center"><strong>{{val.read_count}}</strong></td>
+                <td class="w80 text-center"><strong>{{val.total_count}}</strong></td>
+              </tr>
+              
+              <ng-container *ngFor="let lead of skelton">
+                <tr class="sk-loading"  *ngIf="loader">
+                  <td class="w30"><div>&nbsp;</div></td>
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w130"><div>&nbsp;</div></td>
+                  <td class="w130"><div>&nbsp;</div></td>
+                  <td><div>&nbsp;</div></td>
+                  <td class="w90"><div>&nbsp;</div></td>
+                  <td class="w80"><div>&nbsp;</div></td>
+                  <td class="w80"><div>&nbsp;</div></td>
+                  
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+        
+        
+        <ng-container *ngIf="announcementList.length == 0 && datanotfound==true">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  
+  <div class="fab-btns" *ngIf="assign_login_data2.add_announcement=='1'">
+    <button mat-fab  class="pulse" color="primary" routerLink="add-announcement">
+      <i class="material-icons">add</i>
+      Add New
+    </button>
+  </div>

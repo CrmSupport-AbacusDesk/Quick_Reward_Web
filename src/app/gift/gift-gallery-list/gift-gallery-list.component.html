@@ -1,0 +1,199 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <h2>Gift Gallery</h2>
+
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <div class="pagination" *ngIf="giftList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Gift' ? 'active' : ''"
+          (click)="active_tab = 'Gift';gift_gallery_list();"><i class="material-icons">redeem</i>Gift
+          ({{tabCount.giftCount}})</button>
+        <button mat-button [ngClass]="active_tab == 'Cash' ? 'active' : ''"
+          (click)="active_tab = 'Cash';gift_gallery_list();"><i class="material-icons">currency_rupee</i>Cash
+          ({{tabCount.cashCount}})</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pb100">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w70">Images</th>
+              <th class="w90">Date</th>
+              <th>Title</th>
+              <th class="w100 text-center" *ngIf="active_tab == 'Gift'">Gift Value</th>
+              <th class="w180">User Type</th>
+              <ng-container *ngIf="active_tab == 'Cash'">
+                <th class="w100">Range Start</th>
+                <th class="w100">Range End</th>
+                <th class="w100 text-right">Per Point Value</th>
+              </ng-container>
+              <th class="w100" *ngIf="logined_user_data2.edit_gift_gallery=='1'">Action</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w70">&nbsp;</th>
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" (dateChange)="onDate($event)" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th>
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="title" [(ngModel)]="filter.title"
+                      (keyup.enter)="gift_gallery_list()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-center" *ngIf="active_tab == 'Gift'">&nbsp;</th>
+              <th class="w180">
+                <!-- <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="user_type" [(ngModel)]="filter.user_type"
+                    (keyup.enter)="gift_gallery_list()">
+                  </mat-form-field>
+                </div> -->
+              </th>
+              <ng-container *ngIf="active_tab == 'Cash'">
+                <th class="w100">&nbsp;</th>
+                <th class="w100">&nbsp;</th>
+                <th class="w100">&nbsp;</th>
+              </ng-container>
+              <th class="w100" *ngIf="logined_user_data2.edit_gift_gallery=='1'">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="giftList.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of giftList; let i = index;">
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w70 text-center">
+                  <a class="img-avtar" (click)="row.gift_type == 'Gift' ? goToImage(url+row.gift_img) : ''">
+                    <img src="{{row.gift_img != '' && row.gift_img != null ? url+row.gift_img: 'assets/img/cash.png'}}">
+                  </a>
+                </td>
+                <td class="w90">{{row.date_created | date:'dd MMM yyyy ,h:mm a'}}</td>
+                <td>{{row.title}}</td>
+                <td class="w100 text-center" *ngIf="active_tab == 'Gift'"><strong>{{row.gift_point}} PT</strong></td>
+                <td class="w180">{{row.object}}</td>
+                <ng-container *ngIf="active_tab == 'Cash'">
+                  <td class="w100">{{row.range_start}} PT</td>
+                  <td class="w100">{{row.range_end}} PT</td>
+                  <td class="w100 text-right"><strong>&#x20B9; {{row.point_range_value}}</strong></td>
+                </ng-container>
+                <td class="w100 text-center" *ngIf="logined_user_data2.edit_gift_gallery=='1'">
+                  <div class="action-button">
+                    <mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="row.newStatus"
+                      (change)="updateStatus(i,row.id,$event)">
+                    </mat-slide-toggle>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w70 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w90">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center" *ngIf="active_tab == 'Gift'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <ng-container *ngIf="active_tab == 'Cash'">
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+
+                </ng-container>
+                <td class="w100 text-center" *ngIf="logined_user_data2.edit_gift_gallery=='1'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+      <div class="no-data" *ngIf="!giftList.length && datanotfound == true">
+        <app-not-result-found></app-not-result-found>
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+  <div class="fab-btns">
+
+    <!-- <button mat-fab class="excel" (click)="lastBtnValue('excel'); getGiftListExcel()" *ngIf="logined_user_data2.export_gift_gallery=='1'" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+    <img src="assets/img/excel.svg">
+    Download Excel
+  </button> -->
+
+  <button class="pulse" mat-fab (click)="lastBtnValue('add')" [ngClass]="{'pulse': fabBtnValue=='add'}" *ngIf="logined_user_data2.add_gift_gallery=='1'"
+  color="primary" routerLink="gift-add">
+  <i class="material-icons">add</i>
+  Add New
+</button>
+  </div>
+
+</div>

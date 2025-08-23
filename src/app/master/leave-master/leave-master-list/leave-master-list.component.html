@@ -1,0 +1,134 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <h2>Leave Master</h2>
+
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div>
+  </div>
+
+
+  <div class="container pb100">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">S.No.</th>
+              <th>User Name</th>
+              <th class="w150">Employee Code</th>
+              <th class="w100">EL</th>
+              <th class="w100">CL</th>
+              <th class="w100">SL</th>
+              <th class="w100">COMP OFF</th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60"></th>
+              <th>
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="name" [(ngModel)]="filter.name"
+                      (keyup.enter)="getLeaveMasterList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150"></th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of leaveMasterList; let i = index;">
+                <td class="w60">{{i+1}}</td>
+                <td>{{row.name}}</td>
+                <td class="w150">{{row.emp_code}}</td>
+                <td class="w100">
+                  <div class="fix-input">
+                    <input type="text" name="el{{i}}" [(ngModel)]="row.el" value="{{row.el}}">
+                  </div>
+                </td>
+                <td class="w100">
+                  <div class="fix-input">
+                    <input type="text" name="cl{{i}}" [(ngModel)]="row.cl" value=" {{row.cl}}">
+                  </div>
+                </td>
+                <td class="w100">
+                  <div class="fix-input">
+                    <input type="text" name="sl{{i}}" [(ngModel)]="row.sl" value="{{row.sl}}">
+                  </div>
+                </td>
+                <td class="w100">
+                  <div class="fix-input">
+                    <input type="text" name="comp_off{{i}}" [(ngModel)]="row.comp_off" value="{{row.comp_off}}">
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+
+
+      </div>
+    </div>
+
+    <ng-container *ngIf="leaveMasterList.length == 0 && noResult">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+
+
+
+  <div class="fab-btns" *ngIf="logined_user_data.add_leave_master=='1' || logined_user_data.edit_leave_master=='1' || logined_user_data.export_leave_master=='1'">
+    <button mat-fab class="pulse" color="accent" (click)="updateLeaveMaster()">
+      <i class="material-icons">update</i>
+      Update
+    </button>
+    <button class="pulse excel" mat-fab color="primary" (click)="getLeaveMasterExcel()"  *ngIf="leaveMasterList.length > 0 && logined_user_data.export_leave_master=='1'">
+			<mat-icon>download</mat-icon>
+			Download in excel
+		</button>
+  </div>
+
+</div>

@@ -1,0 +1,281 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="backToList()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Travel Plan Detail</h2>
+    <!--  && cus_network.length==1 && travelType!='Area'-->
+    <div class="left-auto" *ngIf="logined_user_data.add_travel_list=='1' ">
+      <button matTooltip="Add Area" class="mr10" (click)="addArea()" mat-raised-button color="primary"><i
+          class="material-icons">add</i>Add Area Travel Plan</button>
+      <button matTooltip="Add Party Wise Travel Plan" (click)="addCustomerNetwork()" mat-raised-button
+        color="primary"><i class="material-icons">add</i>Add Party Wise Travel Plan</button>
+
+    </div>
+    <!-- && cus_network.length==1 && travelType=='Area' -->
+    <!-- <div class="left-auto" *ngIf="logined_user_data.add_travel_list=='1'  ">
+    </div> -->
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <!-- product data start -->
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Basic Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Created By </span>
+                <p>{{travellist.created_by_name}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Travel Date</span>
+                <p *ngIf="travellist.date_from == '0000-00-00'">N/A</p>
+                <p *ngIf="travellist.date_from != '0000-00-00'">{{travellist.date_from |date : 'd MMM y'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Employee Code</span>
+                <p>{{travellist.employee_id}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Employee Name</span>
+                <p>{{travellist.name}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Reporting Manager</span>
+                <p>{{travellist.reporting_manager_name}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Plan Type</span>
+                <p>{{travellist.travel_type | titlecase}}</p>
+              </div>
+              <div class="block-feilds {{travellist.status}}">
+                <span>Status</span>
+                <p>{{travellist.status && travellist.status != '' && travellist.status != null?travellist.status:'--'}}
+                </p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Status Updated On</span>
+                <p>{{travellist.updated_date!='0000-00-00'? (travellist.updated_date | date:'d MMM y'):'--'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Remark</span>
+                <p>{{travellist.status_remark && travellist.status_remark != '' && travellist.status_remark !=
+                  null?travellist.status_remark:'--'}}</p>
+              </div>
+
+              <div class="block-feilds" *ngIf="travellist.reason">
+                <span>Reason of Reject</span>
+                <p>{{travellist.reason && travellist.reason != '' && travellist.reason != null?travellist.reason:'--'}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- product data end -->
+        <!-- Skeleton start -->
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Skeleton end -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m7 l7" *ngIf="cus_network.length>0">
+        <div class="card">
+          <div class="card-head">
+            <h2>{{travelType == 'Area' ? 'Area Detail' : 'Customer Network Detail'}}</h2>
+          </div>
+          <div class="card-body">
+            <div class="cs-table left-right-10" *ngIf="travelType  != 'Area'">
+              <div class="sticky-head border-top">
+                <div class="table-head">
+                  <table>
+                    <tr>
+                      <th>Company Name</th>
+                      <th class="w120">Customer Type</th>
+                      <th class="w120"
+                        *ngIf="logined_user_data.edit_travel_list=='1' || logined_user_data.delete_travel_list=='1'">
+                        Action</th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="table-container">
+                <div class="table-content">
+                  <table>
+                    <tr *ngFor="let list of cus_network">
+                      <td>{{(list.company_name?list.company_name :'--') | uppercase }}</td>
+                      <td class="w120" *ngIf="list.type == '1'">Distributor</td>
+                      <td class="w120" *ngIf="list.type == '3'">Dealer</td>
+                      <td class="w120" *ngIf="list.type == '7'">Direct Dealer</td>
+                      <td class="w120"
+                        *ngIf="logined_user_data.edit_travel_list=='1' || logined_user_data.delete_travel_list=='1'">
+                        <button mat-icon-button matTooltip="View" *ngIf="logined_user_data.edit_travel_list=='1'"
+                          (click)="openDialog(list)">
+                          <i class="material-icons edit">edit</i>
+                        </button>
+                        <button mat-icon-button matTooltip="Delete" *ngIf="logined_user_data.delete_travel_list=='1'"
+                          (click)="deleteCustomerNetwork(list)">
+                          <i class="material-icons red-clr">delete</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <!-- <ng-container *ngIf="traveldistributor.length == 0">
+                  <app-not-result-found></app-not-result-found>
+                </ng-container> -->
+              </div>
+            </div>
+
+            <div class="cs-table left-right-10" *ngIf="travelType  == 'Area'">
+              <div class="sticky-head border-top">
+                <div class="table-head">
+                  <table>
+                    <tr>
+                      <th>Area Name</th>
+                      <th>Purpose Of Visit</th>
+                      <th class="w120"
+                        *ngIf="logined_user_data.edit_travel_list=='1' || logined_user_data.delete_travel_list=='1'">
+                        Action</th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="table-container">
+                <div class="table-content">
+                  <table>
+                    <tr *ngFor="let list of cus_network">
+                      <td>{{(list.area?list.area :'--') }}</td>
+                      <td>{{list.reason ? list.reason :'---'}}</td>
+                      <td class="w120"
+                        *ngIf="logined_user_data.edit_travel_list=='1' || logined_user_data.delete_travel_list=='1'">
+                        <button mat-icon-button matTooltip="Delete" *ngIf="logined_user_data.delete_travel_list=='1'"
+                          (click)="deleteAreaTravelPlan(list)">
+                          <i class="material-icons red-clr">delete</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <!-- <ng-container *ngIf="traveldistributor.length == 0">
+                  <app-not-result-found></app-not-result-found>
+                </ng-container> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m5 l5">
+        <div class="card">
+          <div class="card-head">
+            <h2>Checkin Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="col s12">
+              <div class="travel" *ngIf="checkin.length > 0">
+                <ul>
+                  <!-- <li>
+                    <span class="vistit-count">
+                      <i class="material-icons">location_on</i>
+                    </span>
+                    <p>
+                      <strong>Day Start </strong>
+                      <ng-container *ngIf="attendance_data.start_time == '00:00:00'">---</ng-container>
+                      <ng-container *ngIf="attendance_data.start_time != '00:00:00'">{{attendance_data.start_time}}</ng-container>
+                    </p>
+                  </li> -->
+
+                  <li *ngFor="let row of checkin; let i =index">
+                    <span class="vistit-count">{{i+1}}</span>
+                    <!-- <span class="km">{{row.km}} KM</span> -->
+                    <div class="counter">
+                      <div>
+                        <h2>{{row.company_name}}</h2>
+                        <div class="visit-time">
+                          <div class="visit-hours">
+                            <span class="green-clr">Check-in</span>
+                            <p *ngIf="row.visit_start != '0000-00-00 00:00:00' ">{{row.visit_start | date:'dd MMM yyyy
+                              hh:mm'}}</p>
+                            <p *ngIf="row.visit_start == '0000-00-00 00:00:00' ">---</p>
+                          </div>
+                          <div class="visit-hours">
+                            <span class="red-clr">Check-out</span>
+                            <p>{{row.visit_end!='0000-00-00 00:00:00'? (row.visit_end | date:'dd MMM yyyy hh:mm'):'--'}}
+                            </p>
+                            <!-- <p *ngIf="row.visit_end == '0000-00-00 00:00:00' ">---</p> -->
+                          </div>
+                          <div class="visit-hours">
+                            <span>Total time spend</span>
+                            <p>{{row.Total_Working_Time}}</p>
+                          </div>
+                        </div>
+                        <p *ngIf="row.party_state"><strong>Party State :</strong> {{row.party_state}}</p>
+                        <p *ngIf="row.party_district"><strong>Party District :</strong> {{row.party_district}}</p>
+                        <p *ngIf="row.dr_sub_type_name"><strong>Party Type :</strong> {{row.dr_sub_type_name}}</p>
+                        <p *ngIf="row.start_address"><strong>Start GPS Address :</strong> {{row.start_address}}</p>
+                        <p *ngIf="row.address"><strong>End GPS Address :</strong> {{row.address}}</p>
+                      </div>
+                      <div class="type-visit">
+                        <div class="types" [ngClass]="{'active': row.followup_flag > 0}">
+                          <span>&nbsp;</span>
+                          Order
+                        </div>
+                        <div class="types" [ngClass]="{'active': row.followup_flag > 0}">
+                          <span>&nbsp;</span>
+                          Followup
+                        </div>
+                        <!-- <div class="types" [ngClass]="{'active': row.followup_flag > 0}">
+                          <span>&nbsp;</span>
+                          Photo upload
+                        </div> -->
+                        <div class="types" [ngClass]="{'active': row.doc_flag!=0 }">
+                          <span>&nbsp;</span>
+                          <a style="cursor: pointer;text-decoration: underline;" *ngIf="row.doc_flag!=0"
+                            (click)="opendoc(row.Doc)">
+                            Photo upload
+                          </a>
+                          <a *ngIf="row.doc_flag==0">
+                            Photo upload
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- <li>
+                    <span class="vistit-count">
+                      <i class="material-icons">location_on</i>
+                    </span>
+                    <p ><strong>Day Stop </strong>
+                      <ng-container *ngIf="attendance_data.stop_time == '00:00:00'">---</ng-container>
+                      <ng-container *ngIf="attendance_data.stop_time != '00:00:00'">{{attendance_data.stop_time}}</ng-container>
+                    </p>
+                  </li> -->
+                </ul>
+              </div>
+              <div class="no-location" *ngIf="checkin.length == 0">
+                <img
+                  src="https://img.freepik.com/premium-vector/route-vector-icon-route-destination-with-map-pin-symbols-vector-illustration-eps-10_532800-353.jpg?w=2000">
+                <p>No Check In</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

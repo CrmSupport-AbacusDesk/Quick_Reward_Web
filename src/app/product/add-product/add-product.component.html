@@ -1,0 +1,453 @@
+<div class="main-container">
+    <app-loader *ngIf="loader"></app-loader>
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>{{product_id ? 'Edit':'Add New'}} Product</h2>
+    </div>
+
+    <div class="container pt10 pl10 pr10 pb50">
+        <form #f="ngForm" (ngSubmit)="f.valid && submit()">
+            <div class="row">
+                <div class="col s12">
+                    <div class="card pb0">
+                        <div class="card-head">
+                            <h2>Basic Information</h2>
+                        </div>
+                        <div class="card-body cs-form">
+                            <div class="row">
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline"
+                                        [ngClass]="{'has-error' : segment_id.invalid } ">
+                                        <mat-label>Category</mat-label>
+                                        <mat-select name="segment_id" #segment_id="ngModel"
+                                            [(ngModel)]="data.segment_id"
+                                            (selectionChange)="getSubCatgory(data.segment_id)" required>
+                                            <mat-option *ngFor="let row of segmentList" value="{{row.id}}"
+                                                color="accent">{{row.category ?
+                                                (row.category | titlecase) : '---'}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="segment_id.touched || f.submitted">
+                                        <p *ngIf="segment_id.errors?.required">This field is required</p>
+                                    </div>
+
+                                </div>
+
+                                <div class="col s12 m3 l3" *ngIf="SubcategoryList.length > 0">
+                                    <mat-form-field appearance="outline"
+                                        [ngClass]="{'has-error' : sub_segment_id.invalid } ">
+                                        <mat-label>Sub Category {{data.sub_segment_id}}</mat-label>
+                                        <mat-select name="sub_segment_id" #sub_segment_id="ngModel"
+                                            [(ngModel)]="data.sub_segment_id" required>
+                                            <mat-option *ngFor="let row of SubcategoryList" value="{{row.id}}"
+                                                color="accent">{{row.sub_category_name ? (row.sub_category_name |
+                                                titlecase) :
+                                                '---'}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="sub_segment_id.touched || f.submitted">
+                                        <p *ngIf="sub_segment_id.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline"
+                                        [ngClass]="{'has-error' : product_name?.invalid || product_name.touched } ">
+                                        <mat-label>Product Name</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="product_name"
+                                            #product_name="ngModel" [(ngModel)]="data.product_name"
+                                            pattern="^(?! )[^\r\n]*$" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="product_name.touched || f.submitted">
+                                        <p *ngIf="product_name.errors?.required">This field is required</p>
+                                        <p *ngIf="product_name.errors?.pattern">This field is Invalid!</p>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline"
+                                        [ngClass]="{'has-error' : product_code.invalid } ">
+                                        <mat-label>Product Code</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="product_code"
+                                            #product_code="ngModel" [(ngModel)]="data.product_code"
+                                            pattern="^(?! )[^\r\n]*$" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="product_code.touched || f.submitted">
+                                        <p *ngIf="product_code.errors?.required">This field is required</p>
+                                        <p *ngIf="product_code.errors?.pattern">This field is Invalid!</p>
+                                    </div>
+                                </div>
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>MRP</mat-label>
+                                        <input type="number" matInput placeholder="Type Here ..." name="mrp"
+                                            #mrp="ngModel" [(ngModel)]="data.mrp" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="mrp.touched || f.submitted">
+                                        <p *ngIf="mrp.errors?.required">This field is required</p>
+                                        <p *ngIf="mrp.errors?.pattern">This field is Invalid!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Brand</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="brand" #brand="ngModel"
+                                            [(ngModel)]="data.brand">
+                                    </mat-form-field>
+                                    <!-- <div class="alert alert-danger" *ngIf="brand.touched || f.submitted">
+                                    <p *ngIf="brand.errors?.required">This field is required</p>
+                                </div> -->
+                                </div>
+                                <div class="col s12 m3 l3"
+                                    *ngIf="(logined_user_data?.organisation_data?.loyalty == '1' || logined_user_data?.organisation_data?.dms == '1') && logined_user_data?.organisation_data?.qr_genration==0">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Coupon Point</mat-label>
+                                        <mat-select name="point_category_id" [(ngModel)]="data.point_category_id"
+                                            #point_category_id="ngModel">
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                    placeholderLabel="Search.."
+                                                    (keyup)="pointCategory_data($event.target.value)"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option value="">N/A</mat-option>
+                                            <mat-option *ngFor="let row of pointCategories_data" value="{{row.id}}"
+                                                (click)="data.point_category_name=row.point_category_name">{{row.point_category_name
+                                                ?
+                                                (row.point_category_name) : '---'}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Pack QTY.</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="qty" #qty="ngModel"
+                                            [(ngModel)]="data.qty">
+                                    </mat-form-field>
+                                </div>
+
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Unit of Measurement</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="uom" #uom="ngModel"
+                                            [(ngModel)]="data.uom">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col s12 m3 l3" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Master Packing Size</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="master_packing_size"
+                                            #master_packing_size="ngModel" [(ngModel)]="data.master_packing_size"
+                                            onkeypress="return event.charCode>=48 && event.charCode<=57">
+                                    </mat-form-field>
+                                </div>
+
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Packing Size</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="small_packing_size"
+                                            #small_packing_size="ngModel" [(ngModel)]="data.small_packing_size">
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Product Size</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="product_size"
+                                            #product_size="ngModel" [(ngModel)]="data.product_size">
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Product Thickness</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="product_thickness"
+                                            #product_thickness="ngModel" [(ngModel)]="data.product_thickness">
+                                    </mat-form-field>
+                                </div>
+
+
+                                <div class="col s12 m3 l3"
+                                    *ngIf="logined_user_data?.organisation_data?.net_price == '1' ">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Net Price</mat-label>
+                                        <input type="number" matInput placeholder="Type Here ..." name="net_price"
+                                            #net_price="ngModel" [(ngModel)]="data.net_price">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row mb0">
+                                <div class="col s12 m6 l6">
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <mat-form-field appearance="outline"
+                                                [ngClass]="{'has-error' : description.invalid } ">
+                                                <mat-label>Product Description</mat-label>
+                                                <textarea matInput placeholder="Type Here ..." name="description"
+                                                    #description="ngModel" class="h100"
+                                                    [(ngModel)]="data.description"></textarea>
+                                                <div class="alert alert-danger"
+                                                    *ngIf="!description.valid && description.touched">
+                                                    Product Description is required...
+                                                </div>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="col s12 m6 l6"
+                                    *ngIf="logined_user_data?.organisation_data?.sfa==1 && logined_user_data.organisation_data.home_page_sfa == 'Default'">
+
+                                    <div class="row mb0">
+                                        <div class="col s4">
+                                            <p>Feature Apply</p>
+                                        </div>
+                                        <div class="col s8">
+                                            <mat-radio-group id="feature" name="feature" [(ngModel)]="data.feature">
+                                                <mat-radio-button class="wp50" color="primary" value="No">No
+                                                </mat-radio-button>
+                                                <mat-radio-button class="wp50" color="primary" value="Yes">Yes
+                                                </mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="card mt10" *ngIf="data.feature == 'Yes'">
+                                        <div class="row">
+                                            <div class="col s6">
+                                                <mat-form-field appearance="outline">
+                                                    <mat-label>Feature*</mat-label>
+                                                    <input matInput type="text" placeholder="Type Here ..."
+                                                        name="feature_name" #feature_name="ngModel"
+                                                        [(ngModel)]="data.feature_name">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col s6">
+                                                <div class="df">
+                                                    <mat-form-field appearance="outline">
+                                                        <mat-label>MRP*</mat-label>
+                                                        <input matInput type="text" placeholder="Type Here ..."
+                                                            name="feature_mrp" #feature_mrp="ngModel"
+                                                            [(ngModel)]="data.feature_mrp">
+                                                    </mat-form-field>
+                                                    <button type="button" mat-raised-button class="add-item ml10 mt3"
+                                                        (click)="addToList()"
+                                                        [disabled]="(data.feature_name != '' && data.feature_name == 'undefined') && (data.feature_mrp != '' && data.feature_mrp == 'undefined')"><i
+                                                            class="material-icons">add</i></button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="cs-table left-right-10" *ngIf="productFeature.length">
+                                            <div class=" border-top">
+                                                <div class="table-head">
+                                                    <table>
+                                                        <tr>
+                                                            <th class="w30 text-center"></th>
+                                                            <th>Feature</th>
+                                                            <th class="w100 text-right">MRP</th>
+                                                            <th class="w50 text-center">Action</th>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="table-container  pb0">
+                                                <div class="table-content none-shadow">
+                                                    <table>
+                                                        <tr *ngFor="let row of productFeature; let i = index">
+                                                            <td class="w30 text-center">{{i+1}}</td>
+                                                            <td>{{row.feature_name ? (row.feature_name | titlecase) :
+                                                                ''}}</td>
+                                                            <td class="w100 text-right">&#x20B9; {{row.mrp}}</td>
+                                                            <td class="w50 text-center">
+                                                                <div class="action-button">
+                                                                    <a mat-icon-button matTooltip="Delete"
+                                                                        (click)="deleteProductDetail(i)">
+                                                                        <i class="material-icons del">delete</i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="uploade-image">
+                                        <ul>
+                                            <li *ngFor="let row of selected_image; let i=index">
+                                                <img src="{{row.img_id ? url+row.image : row.image}}">
+                                                <span class="cancel-icon">
+                                                    <i class="material-icons crose-icon"
+                                                        (click)="deleteProductImage(i,row.img_id, row.image)">clear</i>
+                                                </span>
+                                            </li>
+                                            <li class="add-bg-1" [ngClass]="{'error': errorMsg == true}">
+                                                <label>
+                                                    <input type="file" (change)="onUploadChange($event)"
+                                                        style="display:none;" accept=".png, .jpg, .jpeg," multiple
+                                                        required />
+                                                    <div class="other">
+                                                        <i class="material-icons">cloud_upload</i>
+                                                        <p>Upload Images</p>
+                                                    </div>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="formData.length > 0">
+                <div class="col s12">
+                    <div class="card pb0">
+                        <div class="card-head">
+                            <h2>Additional Information</h2>
+                        </div>
+                        <div class="card-body cs-form">
+                            <div class="row col-gap">
+                                <ng-container *ngIf="!fomDataloader">
+                                    <ng-container *ngFor="let row of formData; let i = index">
+                                        <div class="col s12 m3 l3"
+                                            *ngIf="row.dependent_flag == 1 ? ((row.dependent_field_name == data.field_type) && (row.dependent_field_value == data.type_name)): true">
+                                            <mat-form-field class="cs-input" appearance="outline">
+                                                <mat-label>{{ row.field_placeholder ? (row.field_placeholder |
+                                                    titlecase) : '' }}</mat-label>
+
+                                                <!-- Dropdown Field -->
+                                                <ng-container *ngIf="row.field_type === 'Dropdown'">
+                                                    <mat-select name="{{ row.field_name }}" [(ngModel)]="row.value"
+                                                        #ngModelCtrl="ngModel" [required]="row.is_mandate === 'YES'"
+                                                        (selectionChange)="row.sub_dependent_flag == 1 ? dependentFeilds(row.field_name, row.value) : '';  row.dependent_flag == 1 ? ((row.dependent_field_name != data.field_type) && (row.dependent_field_value != data.type_name) ? row.value = '' : ''): ''">
+                                                        <mat-option *ngFor="let option of row.dropdown_option"
+                                                            [value]="option">
+                                                            {{ option }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </ng-container>
+
+                                                <!-- Input Field -->
+                                                <ng-container *ngIf="row.field_type !== 'Dropdown'">
+                                                    <input matInput type="{{ row.field_text_type }}"
+                                                        name="{{ row.field_name }}" [(ngModel)]="row.value"
+                                                        #ngModelCtrl="ngModel" [pattern]="row.pattern_validation"
+                                                        [minlength]="row.field_min_length"
+                                                        [maxlength]="row.field_max_length"
+                                                        [required]="row.is_mandate === 'YES'">
+                                                </ng-container>
+
+                                                <!-- Validation Messages -->
+                                                <ng-container
+                                                    *ngIf="ngModelCtrl?.invalid && (ngModelCtrl?.touched || f.submitted)">
+                                                    <mat-hint *ngIf="ngModelCtrl?.errors?.required">This field is
+                                                        required</mat-hint>
+                                                </ng-container>
+                                            </mat-form-field>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+
+
+
+                                <ng-container *ngIf="!fomDeploader">
+                                    <div class="col s12 m3 l3" *ngFor="let row of dependentformData; let i = index">
+                                        <mat-form-field class="cs-input" appearance="outline">
+                                            <mat-label>{{ row.field_placeholder ? (row.field_placeholder | titlecase) :
+                                                '' }}</mat-label>
+
+                                            <!-- Dropdown Field -->
+                                            <ng-container *ngIf="row.field_type === 'Dropdown'">
+                                                <mat-select name="{{ row.field_name }}" [(ngModel)]="row.value"
+                                                    #ngModelCtrl="ngModel" [required]="row.is_mandate === 'YES'">
+                                                    <mat-option *ngFor="let option of row.dropdown_option"
+                                                        [value]="option">
+                                                        {{ option }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </ng-container>
+
+                                            <!-- Input Field -->
+                                            <ng-container *ngIf="row.field_type !== 'Dropdown'">
+                                                <input matInput type="{{ row.field_text_type }}"
+                                                    name="{{ row.field_name }}" [(ngModel)]="row.value"
+                                                    #ngModelCtrl="ngModel" [pattern]="row.pattern_validation"
+                                                    [minlength]="row.field_min_length"
+                                                    [maxlength]="row.field_max_length"
+                                                    [required]="row.is_mandate === 'YES'">
+                                            </ng-container>
+
+                                            <!-- Validation Messages -->
+                                            <ng-container
+                                                *ngIf="ngModelCtrl?.invalid && (ngModelCtrl?.touched || f.submitted)">
+                                                <mat-hint *ngIf="ngModelCtrl?.errors?.required">This field is
+                                                    required</mat-hint>
+                                            </ng-container>
+                                        </mat-form-field>
+                                    </div>
+                                </ng-container>
+
+                                <div class="grid-box m10" *ngIf="fomDataloader || fomDeploader">
+                                    <ng-container *ngIf="fomDataloader">
+                                        <div class="sk-box" *ngFor="let row of [].constructor(3)">
+                                            &nbsp;
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="fomDeploader">
+                                        <div class="sk-box" *ngFor="let row of [].constructor(1)">
+                                            &nbsp;
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <div class="text-right">
+                        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent"
+                            type="submit" [disabled]="savingFlag == true">
+                            {{savingFlag == true ? 'Saving' : (product_id ? 'Update':'Save')}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

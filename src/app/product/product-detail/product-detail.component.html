@@ -1,0 +1,286 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Product Details</h2>
+        
+        <div class="left-auto" *ngIf="logined_user_data.edit_products_master=='1'">
+            <button matTooltip="Edit product" *ngIf="logined_user_data.edit_products_master=='1'"
+            [routerLink]="[ 'add-product/', encrypt_id ]" mat-raised-button color="primary"><i
+            class="material-icons">edit</i> Edit product</button>
+        </div>
+    </div>
+    
+    <div class="container pt10 pl10 pr10 pb50">
+        <div class="row">
+            <div class="col s12 m12 l8">
+                <!-- product data start -->
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Basic Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <span>Date Created</span>
+                                <p>{{getData.date_created ? (getData.date_created | date) : '---'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Category</span>
+                                <p>{{getData.category ? (getData.category) : '---'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Sub Category</span>
+                                <p>{{getData.sub_category_name ? (getData.sub_category_name) : '---'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Name</span>
+                                <p>{{getData.product_name ? (getData.product_name) : '---'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Product Code</span>
+                                <p>{{getData.product_code ? getData.product_code : '---'}}</p>
+                            </div>
+                            
+                            
+                            <div class="block-feilds">
+                                <span>MRP</span>
+                                <p>&#8377; {{getData.mrp ? getData.mrp : '---'}}</p>
+                            </div>
+
+                            <div class="block-feilds" *ngIf="logined_user_data?.organisation_data?.net_price==1">
+                                <span>Net Price</span>
+                                <p>&#8377; {{getData.net_price ? getData.net_price : '---'}}</p>
+                            </div>
+
+                            <div class="block-feilds" *ngIf="logined_user_data.organisation_data.loyalty == '1' || logined_user_data.organisation_data.dms == '1'">
+                                <span>Point Category</span>
+                                <p>{{getData.point_category_name ? (getData.point_category_name | titlecase) :'---'}}
+                                </p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Brand</span>
+                                <p>{{getData.brand ? getData.brand :'---'}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Color</span>
+                                <p>{{getData.color ? getData.color :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Pack QTY.</span>
+                                <p>{{getData.qty ? getData.qty :'---'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Unit of Measurement</span>
+                                <p>{{getData.uom ? getData.uom :'---'}}</p>
+                            </div>
+                           
+                           
+                            <div class="block-feilds">
+                                <span>Small Packing Size</span>
+                                <p>{{getData.small_packing_size ? getData.small_packing_size :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Small Packing Size UOM</span>
+                                <p>{{getData.small_packing_size_uom ? getData.small_packing_size_uom :'---'}}</p>
+                            </div>
+                            <div class="block-feilds" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">
+                                <span>Master Packing Size</span>
+                                <p>{{getData.master_packing_size ? getData.master_packing_size :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Master Packing Size UOM</span>
+                                <p>{{getData.master_packing_size_uom ? getData.master_packing_size_uom :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Product Size</span>
+                                <p>{{getData.product_size ? getData.product_size :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Product Thickness</span>
+                                <p>{{getData.product_thickness ? getData.product_thickness :'---'}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Stock</span>
+                                <p>{{getData.stock ? getData.stock :'---'}}</p>
+                            </div>
+                            
+                            
+                            <!-- <ng-container *ngIf="logined_user_data.organisation_data.loyalty == '1' || logined_user_data.organisation_data.dispatch == '1'">
+                                <div class="block-feilds">
+                                    <span>QR Code Generation</span>
+                                    <p>{{getData.product_scan ? getData.product_scan :'---'}}</p>
+                                </div>
+                            </ng-container> -->
+                            
+                            <div class="block-feilds" *ngIf="logined_user_data.organisation_data.loyalty == '1' || logined_user_data.organisation_data.dispatch == '1'">
+                                <span>Box item with QR</span>
+                                <p>{{getData.boxWOItem=='1' ? 'No' :'Yes'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">
+                                <span>Feature Apply</span>
+                                <p>{{getData.feature ? getData.feature :'---'}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Status</span>
+                                <p>{{getData.status == '1' ? 'Active' : "Inactive"}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Last Updated By</span>
+                                <p>{{getData.last_updated_by_name ? (getData.last_updated_by_name | titlecase) : '--'}}
+                                </p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Last Updated On</span>
+                                <p>
+                                    {{getData.last_update_date && getData.last_update_date != '0000-00-00 00:00:00'?
+                                    (getData.last_update_date | date:'short') : '--'}}
+                                </p>
+                            </div>
+                            <!-- <div class="block-feilds">
+                                <span>Warranty In Months</span>
+                                <p>{{getData.warranty_period ? getData.warranty_period :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Installation Responsibility</span>
+                                <p>{{getData.installation_responsibility ? getData.installation_responsibility :'---'}}
+                                </p>
+                            </div> -->
+                        </div>
+                        
+                        <div class="grid-box single mt16">
+                            <div class="block-feilds">
+                                <span>Description</span>
+                                <p>{{getData.description ? getData.description:'---'}}</p>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        
+                    </div>
+                    
+                    <ng-container *ngIf="getData.feature == 'Yes'">
+                        <div class="card-head mt10">
+                            <h2>Feature</h2>
+                        </div>
+                        
+                        <div class="cs-table left-right-10" >
+                            <div class=" border-top">
+                                <div class="table-head">
+                                    <table>
+                                        <tr>
+                                            <th class="w30 text-center"></th>
+                                            <th>Feature</th>
+                                            <th class="w100 text-right">MRP</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="table-container  pb0">
+                                <div class="table-content none-shadow">
+                                    <table>
+                                        <tr *ngFor="let row of getData.feature_data; let i = index">
+                                            <td class="w30 text-center">{{i+1}}</td>
+                                            <td>{{row.feature_name ? (row.feature_name | titlecase) : ''}}</td>
+                                            <td  class="w100 text-right">&#x20B9; {{row.mrp}}</td>
+                                        </tr>  
+                                    </table>
+                                </div>
+                            </div>                     
+                        </div>
+                    </ng-container>
+                    
+                </div>
+
+                <ng-container *ngIf="!skLoading">
+                    <div class="card mt16" *ngIf="getData.form_builder.length > 0">
+                      <div class="card-head">
+                        <h2>Additional Details</h2>
+                      </div>
+                      <div class="card-body">
+                        <div class="grid-box">
+                          <ng-container *ngFor="let row of getData.form_builder">
+                            <div class="block-feilds" *ngIf="row.value">
+                              <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</span>
+                              <p>{{row.value ? row.value : ''}}</p>
+                            </div>
+                         </ng-container>
+                         <ng-container *ngFor="let row of getData.form_builder_dependent">
+                          <div class="block-feilds" *ngIf="row.value">
+                            <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</span>
+                            <p>{{row.value ? row.value : ''}}</p>
+                          </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                <!-- product data end -->
+                
+                
+                <!-- Skeleton start -->
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton end -->
+                
+            </div>
+            <div class="col s12 m12 l4">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Images</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="img-container">
+                            <div class="image-block" *ngFor="let row of productImg">
+                                <img [src]="url+row.image" (click)="imageModel(url+row.image)" style="cursor: zoom-in;">
+                            </div>
+                            <div class="image-block" *ngIf="!productImg.length">
+                                <img src="assets/img/no_image.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton start -->
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="img-container">
+                            <div class="image-block sk-loading" *ngFor="let row of [].constructor(3)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton end -->
+                
+            </div>
+        </div>
+        
+    </div>
+</div>

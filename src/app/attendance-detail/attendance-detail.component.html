@@ -1,0 +1,651 @@
+<ng-container *ngIf="data.from != 'attendence_images'">
+  <div mat-dialog-title>Attendance Details
+    <a mat-icon-button class="fix-btn" (click)="close()">
+      <i class="material-icons edit">clear</i>
+    </a>
+  </div>
+  <div mat-dialog-content>
+    <div class="dialog-content">
+      <div class="row" *ngIf="skLoading">
+        <div class="col s12">
+          <div class="card">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row" *ngIf="!skLoading">
+        <div class="col s12 m18 l8">
+          <div class="card">
+            <div class="card-head">
+              <h2>Basic Details</h2>
+              
+            </div>
+            
+            <div class="card-body">
+              
+              <div class="df afs flex-gap-10">
+                <div>
+                  <div class="img-container mw200 w200" *ngIf="attendance_data.profile_image != ''">
+                    <div (click)="goToImage(url+'attendence/'+attendance_data.profile_image)" class="image-block wp100">
+                      <img src="{{url+'attendence/'+ attendance_data.profile_image}}">
+                      <p>Start Image </p>
+                    </div>
+                  </div>
+                  <div class="img-container mw200 w200" *ngIf="attendance_data.stop_profile_image != ''">
+                    <div (click)="goToImage(url+'attendence/'+attendance_data.stop_profile_image)"
+                    class="image-block wp100">
+                    <img src="{{url+'attendence/'+ attendance_data.stop_profile_image}}">
+                    <p>Stop Image</p>
+                  </div>
+                </div>
+              </div>
+              <div class="grid-box three wp100 ">
+                <div class="block-feilds">
+                  <span>Date</span>
+                  <p>{{attendance_data.attend_date | date}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Employee Name</span>
+                  <p>{{attendance_data.name | titlecase}} </p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Employee Id</span>
+                  <p>{{attendance_data.employee_id}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Reporting Manager1</span>
+                  <p>{{attendance_data.reporting_manager_name | titlecase}}</p>
+                </div>
+                
+                <!-- <div class="block-feilds">
+                  <span>Wear Uniform</span>
+                  <p>{{attendance_data.uniform ? attendance_data.uniform : '---'}}</p>
+                </div> -->
+                <div class="block-feilds">
+                  <span>Start Time</span>
+                  <div style="display: flex; justify-content: space-between;" *ngIf="editStartTime==false">
+                    <p *ngIf="attendance_data.start_time == '00:00:00'">---</p>
+                    <p *ngIf="attendance_data.start_time != '00:00:00'">{{attendance_data.start_time | date: 'h:mm a'}}
+                    </p>
+                    <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+                    matTooltip="Edit Start Time" (click)="editStartTime=true">
+                    <i class="material-icons">edit</i>
+                  </a>
+                </div>
+                <div style="display: flex; justify-content: space-between;" *ngIf="editStartTime==true">
+                  <input type="time" required name="start_time" #start_time="ngModel"
+                  [(ngModel)]="attendance_data.start_time" class="time-input">
+                  <a class="sm-mat-icon-button"
+                  *ngIf="assign_login_data2.edit_attendence=='1'  && attendance_data.start_time" mat-icon-button
+                  matTooltip="Save Start Time" (click)="editStartTime=true">
+                  <i class="material-icons pt15" (click)="saveNewStartTime('editStartTime')">save</i>
+                </a>
+              </div>
+            </div>
+            <div class="block-feilds">
+              <span>Start Location</span>
+              <p>{{attendance_data.start_address ? attendance_data.start_address :'---'}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>Stop Time</span>
+              <!-- <p *ngIf="attendance_data.stop_time == '00:00:00'">---</p>
+              <p *ngIf="attendance_data.stop_time != '00:00:00'">{{attendance_data.stop_time | date: 'h:mm a'}}</p> -->
+              
+              <div style="display: flex; justify-content: space-between;" *ngIf="editStopTime==false">
+                <p *ngIf="attendance_data.stop_time == '00:00:00'">---</p>
+                <p *ngIf="attendance_data.stop_time != '00:00:00'">{{attendance_data.stop_time | date: 'h:mm a'}}
+                </p>
+                <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+                matTooltip="Edit Stop Time" (click)="editStopTime=true">
+                <i class="material-icons">edit</i>
+              </a>
+            </div>
+            <div style="display: flex; justify-content: space-between;" *ngIf="editStopTime==true">
+              <input type="time" required name="stop_time" #stop_time="ngModel"
+              [(ngModel)]="attendance_data.stop_time" class="time-input">
+              <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+              matTooltip="Save Stop Time" (click)="editStartTime=true">
+              <i class="material-icons pt15" (click)="saveNewStartTime('editStopTime')">save</i>
+            </a>
+          </div>
+          
+        </div>
+        <div class="block-feilds">
+          <span>Stop Location</span>
+          <p>{{attendance_data.stop_address ? attendance_data.stop_address :'--'}}</p>
+        </div>
+        <div class="block-feilds">
+          <span>Reading By Google (Km)</span>
+          <p>{{attendance_data.google_map_km_per_day ? attendance_data.google_map_km_per_day:'---'}} Km</p>
+        </div>
+        <div class="block-feilds">
+          <span>CheckIn Count</span>
+          <p>{{checkin_data.length ? checkin_data.length :'--'}}</p>
+        </div>
+        <!-- <div class="block-feilds">
+          <span>Primary Sales Count</span>
+          <p>{{attendance_data.today_primary_sales_count}}</p>
+        </div> -->
+        
+        
+        <!-- <div class="block-feilds">
+          <span>Secondary Sales Count</span>
+          <p>{{attendance_data.today_secondary_sales_count}}</p>
+        </div> -->
+        <div class="block-feilds">
+          <span>Working Type</span>
+          <p>{{attendance_data.working_type ? attendance_data.working_type :'--'}}</p>
+        </div>
+        <div class="block-feilds" *ngIf="attendance_data.working_type == 'Local'">
+          <span>Vehicle Mode</span>
+          <p>{{attendance_data.vehicle_mode ? attendance_data.vehicle_mode :'--'}}</p>
+        </div>
+        <div class="block-feilds" *ngIf="attendance_data.vehicle_mode == 'Self'">
+          <span>Vehicle Type</span>
+          <p>{{attendance_data.vehicle_type ? attendance_data.vehicle_type :'--'}}</p>
+        </div>
+        <div class="block-feilds">
+          <span>First Checkin Time</span>
+          <p>{{attendance_data.checkin_start ? (attendance_data.checkin_start | date:'h:mm a')
+            :'--'}}</p>
+          </div>
+          <div class="block-feilds">
+            <span>Travelling Time</span>
+            <p>{{attendance_data.traveling_hours ? (attendance_data.traveling_hours?.toFixed(2)+' Hrs') :'--'}}</p>
+          </div>
+          <div class="block-feilds">
+            <span>Counter Time</span>
+            <p>
+              {{attendance_data.productive_hours ? attendance_data.productive_hours:'--'}}
+              <!-- {{attendance_data.productive_hours ? (attendance_data.productive_hours > 60 ?
+              attendance_data.productive_hours/60 : (attendance_data.productive_hours + ' Min')) :'--'}} -->
+            </p>
+          </div>
+          
+          <div class="block-feilds">
+            <span>Distance Deviation From Base Location</span>
+            <p>{{attendance_data.distance_deviation_from_first_checkin ? (attendance_data.distance_deviation_from_first_checkin + ' KM') :'--'}}</p>
+          </div>
+          
+          <div class="block-feilds">
+            <span>Working Hour's</span>
+            <p>{{attendance_data.Total_Working_Time ? attendance_data.Total_Working_Time :'--'}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- <div class="direction-map">
+    <agm-map [latitude]="lat" [longitude]="lng">
+      <agm-direction [origin]="origin" [destination]="destination" [renderOptions]="renderOptions"
+      [markerOptions]="markerOptions" [waypoints]="waypoints">
+    </agm-direction>
+  </agm-map>
+</div> -->
+
+<div class="col s12 m18 l10 mt20 mb60" *ngIf="attendance_data.vehicle_mode == 'Self'">
+  <div class="card">
+    <div class="card-head">
+      <h2>Meter Details</h2>
+    </div>
+    <div class="card-body">
+      <div class="df afs flex-gap-10">
+        <div>
+          <div class="img-container mw200 w200" *ngIf="attendance_data.start_meter_image != ''">
+            <div (click)="goToImage(MeterImageUrl+attendance_data.start_meter_image)"
+            class="image-block wp100">
+            <img src="{{MeterImageUrl+ attendance_data.start_meter_image}}">
+            <p>Start Meter Image</p>
+          </div>
+        </div>
+      </div>
+      <div class="ml20 df afs flex-gap-10">
+        <div class="img-container mw200 w200" *ngIf="attendance_data.stop_meter_image != ''">
+          <div (click)="goToImage(MeterImageUrl+attendance_data.stop_meter_image)"
+          class="image-block wp100">
+          <img src="{{MeterImageUrl+ attendance_data.stop_meter_image}}">
+          <p>Stop Meter Image</p>
+        </div>
+      </div>
+    </div>
+    <div class="ml25 grid-box three wp100 ">
+
+
+     <div class="block-feilds mt40" >
+        <span style="font-size: 18px;">Start Meter Reading</span>
+        <div style="display: flex; justify-content: space-between;" *ngIf="editStartMeterreading==false">
+          <p style="font-size: 14px;">
+            {{attendance_data.start_meter_reading?attendance_data.start_meter_reading:'---'}}
+          </p>
+          
+          <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+          matTooltip="Edit Start meter reading" (click)="editStartMeterreading=true">
+          <i class="material-icons">edit</i>
+        </a>
+      </div>
+      <div style="display: flex; justify-content: space-between;" *ngIf="editStartMeterreading==true">
+        <input type="number" required name="start_meter_reading" #start_meter_reading="ngModel"
+        [(ngModel)]="attendance_data.start_meter_reading" class="time-input">
+        <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+        matTooltip="Save Start meter reading" (click)="editStartMeterreading=true">
+        <i class="material-icons pt15" (click)="saveMeterReading('editStartMeterreading')">save</i>
+      </a>
+    </div>
+      </div>
+     
+      <div class="block-feilds mt40 ml">
+        <span style="font-size: 18px;">Stop Meter Reading</span>
+        <div style="display: flex; justify-content: space-between;" *ngIf="editStopMeterreading==false">
+
+          <p style="font-size: 14px;">
+            {{attendance_data.stop_meter_reading?attendance_data.stop_meter_reading:'---'}}
+          </p>
+          <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+          matTooltip="Edit Stop meter Reading" (click)="editStopMeterreading=true">
+          <i class="material-icons">edit</i>
+        </a>
+      </div>
+
+        <div style="display: flex; justify-content: space-between;" *ngIf="editStopMeterreading==true">
+          <input type="number" required name="stop_meter_reading" #stop_meter_reading="ngModel"
+          [(ngModel)]="attendance_data.stop_meter_reading" class="time-input">
+          <a class="sm-mat-icon-button" *ngIf="assign_login_data2.edit_attendence=='1'" mat-icon-button
+          matTooltip="Save Stop Meter Reading" (click)="editStopMeterreading=true">
+          <i class="material-icons pt15" (click)="saveMeterReading('editStopMeterreading')">save</i>
+        </a>
+      </div>
+      </div>
+
+
+      <div class="block-feilds mt40 ml">
+        <span style="font-size: 18px;">Actual KM</span>
+        <p style="font-size: 14px;" *ngIf="attendance_data.start_meter_reading > 0 && attendance_data.stop_meter_reading > 0">
+          {{attendance_data.stop_meter_reading - attendance_data.start_meter_reading}}
+        </p>
+        <p style="font-size: 14px;" *ngIf="attendance_data.start_meter_reading == 0 || attendance_data.stop_meter_reading == 0">0  </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+</div>
+</div>
+</div>
+
+<div class="col s12 m18 l8 ">
+  <div class="card mt10">
+    <div class="card-head">
+      <h2>Add Remarks</h2>
+    </div>
+    <div class="card-body">
+      
+      <form #f="ngForm">
+        <div mat-dialog-content>
+     
+          <div class="cs-form">
+        <div class="row">
+          <div class="col s12 m5 l5">
+            <mat-form-field appearance="outline">
+                <mat-label>Type</mat-label>
+                <mat-select name="checkin_remark_type" #checkin_remark_type="ngModel"
+                    [(ngModel)]="Checkindata.checkin_remark_type" >
+                    <mat-option value="Punchin">Punchin</mat-option>
+                    <mat-option value="Punchout">Punchout</mat-option>
+                    <mat-option value="Check-in">Check-in</mat-option>
+                    <mat-option value="Check-out">Check-out</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- <div class="alert alert-danger" *ngIf="checkin_remark_type.touched || f.submitted">
+                <p *ngIf="checkin_remark_type.errors?.required">This field is required</p>
+            </div> -->
+        </div>
+        <div class="col s12 m5 l5">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Add Remark</mat-label>
+            <input matInput placeholder="Type here ..." name="remark" #remark="ngModel" [(ngModel)]="Checkindata.remark" [ngClass]="{'has-error' : remark.invalid }" />
+          </mat-form-field>
+          <!-- <div class="alert alert-danger" *ngIf="remark.touched || f.submitted">
+            <p *ngIf="remark.errors?.required">This field is required</p>
+        </div> -->
+        </div>
+        <div class="col s12 m2 l2 mt11">
+          <button  type="button" (click)="addtolist($event)" [disabled]="!Checkindata.checkin_remark_type||!Checkindata.remark" class="mr10" mat-stroked-button color="warn">Add to List</button>
+        </div>
+        </div>
+          
+            
+           
+            <ng-container *ngIf="Remarkarray?.length>0">
+              <table class="mt10">
+                  <thead>
+                      <tr>
+                          <th class="w60">S.No</th>
+                          <th class="w100">Type</th>
+                          <th>Remark</th>
+                          <th class="w60">Delete</th>
+                       
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let item of Remarkarray;let i = index;">
+                          <td  class="w60">{{i+1}}</td>
+                          <td class="w100">{{item.checkin_remark_type}}</td>
+                          <td>{{item.remark}}</td>
+                          <td class="w60">
+                              <div class="tag-info">
+                                  <button style="border: none;" type="button"><i class="material-icons red-clr"
+                                          (click)="DeleteItem(i,$event)">delete_sweep</i></button>
+                              </div>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </ng-container>
+          
+    
+         
+        </div>
+        <div mat-dialog-actions>
+          <div class="text-right wp100">
+            <button mat-raised-button color="accent" type="button" (click)="Submit()"  [ngClass]="{'loading': savingFlag == true}" [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+        <ng-container *ngIf="RemarkData?.length>0">
+          <div class="card-head">
+            <h2>Remarks Detail</h2>
+          </div>
+          <table class="mt10">
+              <thead>
+                
+                    <tr>
+                      <th class="w60">S.No</th>
+                      <th class="w100">Type</th>
+                      <th>Remark</th>
+                    
+                   
+                  </tr>
+                  
+              </thead>
+              <tbody>
+                  <tr *ngFor="let item of RemarkData;let i = index;">
+                    <td  class="w60">{{i+1}}</td>
+                    <td class="w100">{{item.checkin_remark_type}}</td>
+                    <td>{{item.remark}}</td>
+                    
+                
+                  </tr>
+              </tbody>
+          </table>
+      </ng-container>
+        </div>
+      </form>
+
+    </div>
+  </div>
+ 
+</div>
+
+</div>
+
+
+<div class="col s12 m4 l4">
+  <div class="travel" *ngIf="checkin_data.length > 0">
+    <ul>
+      <li>
+        <span class="vistit-count">
+          <i class="material-icons">location_on</i>
+        </span>
+        <p>
+          <strong>Day Start </strong>
+          <ng-container *ngIf="attendance_data.start_time == '0000-00-00 00:00:00'">---</ng-container>
+          <ng-container *ngIf="attendance_data.start_time != '0000-00-00 00:00:00'">{{attendance_data.start_time
+            |
+            date:' h:mm a'}}
+            <br> <br><strong>Start GPS Address :</strong> {{attendance_data.start_address}}
+            
+          </ng-container>
+        </p>
+      </li>
+      
+      <li *ngFor="let row of checkin_data; let i =index">
+        <span class="vistit-count">{{i+1}}</span>
+        <span class="km">{{row.km}} KM</span>
+        
+        <div class="counter">
+          <div>
+            <h2>{{row.company_name | titlecase}}</h2>
+            <div class="visit-time">
+              <div class="visit-hours">
+                <span class="green-clr">Check-in</span>
+                <p *ngIf="row.visit_start != '0000-00-00 00:00:00' ">{{row.visit_start | date:' h:mm a'}}</p>
+                <p *ngIf="row.visit_start == '0000-00-00 00:00:00' ">---</p>
+              </div>
+              <div class="visit-hours">
+                <span class="red-clr">Check-out</span>
+                <p *ngIf="row.visit_end != '0000-00-00 00:00:00' ">{{row.visit_end | date:'h:mm a'}}</p>
+                <p *ngIf="row.visit_end == '0000-00-00 00:00:00' ">---</p>
+              </div>
+              <div class="visit-hours">
+                <span>Total time spend</span>
+                <p>{{row.TOTAL_TIME_TAKE}}</p>
+              </div>
+            </div>
+            <ng-container *ngIf="row.network_data && row.network_data.dr_type != 'other'">
+              <p><strong>Customer Type :</strong> {{row.network_data.dr_type}} {{row.network_data.network ? ('('+row.network_data.network+')') : '---'}}</p>
+              <p><strong>State :</strong> {{row.network_data.state ? row.network_data.state : '---'}}</p>
+              <p><strong>District :</strong> {{row.network_data.district ? row.network_data.district : '---'}}</p>
+              <p><strong>City :</strong> {{row.network_data.city ? row.network_data.city :'---'}}</p>
+              <p *ngIf="row.start_address"><strong>Start GPS Address :</strong> {{row.start_address}}</p>
+              <p *ngIf="row.address"><strong>End GPS Address :</strong> {{row.address}}</p>
+              <p *ngIf="row.visit_type"><strong>Visit Type :</strong> {{row.visit_type ? row.visit_type : ''}}</p>
+              <p *ngIf="row.description"><strong>Check-in Remark :</strong> {{row.description}}</p>
+            </ng-container>
+          </div>
+          <div class="type-visit">
+            <!-- <div class="types" [ngClass]="{'active': row.order_flag > 0}">
+              <span>&nbsp;</span>
+              Order
+            </div> -->
+            <div class="types" [ngClass]="{'active': row.followup_flag > 0}">
+              <span>&nbsp;</span>
+              Followup
+            </div>
+            <div class="types" [ngClass]="{'active': row.Doc!=0 }">
+              <span>&nbsp;</span>
+              <a style="cursor: pointer;text-decoration: underline;" *ngIf="row.Doc!=0"
+              (click)="opendoc(row.Doc)">
+              Photo upload
+            </a>
+            <a *ngIf="row.Doc==0">
+              Photo upload
+            </a>
+          </div>
+          
+        </div>
+      </div>
+    </li>
+    <li>
+      <span class="km" style="top:-11px; left:-63px;"
+      *ngIf="attendance_data.distance_from_last_checkin">({{attendance_data.distance_from_last_checkin}}
+      KM)</span>
+      <span class="vistit-count">
+        <i class="material-icons">location_on</i>
+      </span>
+      
+      <p *ngIf="attendance_data.stop_address && attendance_data.stop_time != '0000-00-00 00:00:00' ">
+        <strong>Day
+          Stop </strong>
+          <ng-container *ngIf="attendance_data.stop_time == '0000-00-00 00:00:00'">---</ng-container>
+          <ng-container *ngIf="attendance_data.stop_time != '0000-00-00 00:00:00'">{{attendance_data.stop_time |
+            date:' h:mm a'}}
+            <br> <br>
+            
+            <br><strong>GPS Address :</strong> {{attendance_data.stop_address}}
+          </ng-container>
+        </p>
+        
+      </li>
+    </ul>
+  </div>
+  
+  <div class="no-location" *ngIf="checkin_data.length == 0">
+    <img
+    src="https://img.freepik.com/premium-vector/route-vector-icon-route-destination-with-map-pin-symbols-vector-illustration-eps-10_532800-353.jpg?w=2000">
+    <p>No Check In</p>
+  </div>
+</div>
+
+<div class="fab-btns" *ngIf="assign_login_data2.edit_attendence=='1'">
+  <button class="pulse excel" mat-fab color="primary" [matMenuTriggerFor]="menu">
+    <i class="material-icons">apps</i>
+    Action
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="markAbsent(attendance_data,'getAttendanceToday',1);"
+    *ngIf="(assign_login_data2.edit_attendence=='1')">
+    <mat-icon>cloud_upload</mat-icon>
+    <span>Mark Absent</span>
+  </button>
+</mat-menu>
+</div>
+
+</div>
+</div>
+</div>
+</ng-container>
+
+
+<ng-container *ngIf="data.from == 'attendence_images'">
+  <div mat-dialog-title>{{header.module}}
+    <a mat-icon-button class="fix-btn" (click)="close()">
+      <i class="material-icons edit">clear</i>
+    </a>
+  </div>
+  <div mat-dialog-content>
+    <div class="dialog-content">
+      <div class="row" *ngIf="skLoading">
+        <div class="col s12">
+          <div class="card">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <ng-container *ngFor="let item of imageData">
+          <div class="image-grid" *ngIf="dataArray.length && dataArray.length > 0">
+            <div class="box" *ngFor="let row of item.data">
+              <ng-container *ngIf="header.module=='Attendance'">
+                <div class="multi-img">
+                  <div class="img-box" *ngIf="row.profile_image != ''">
+                    <img src="{{url+ row.profile_image}}"
+                    (click)="row.profile_image != '' ? goToImage(url+ row.profile_image) : ''">
+                  </div>
+                  <div class="img-box" *ngIf="row.stop_image != ''">
+                    <img src="{{url+ row.stop_image}}"
+                    (click)="row.stop_image != '' ? goToImage(url+ row.stop_image) : ''">
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="header.module=='Checkin'">
+                
+                <div class="multi-img">
+                  <ng-container *ngFor="let checkimg of row.doc">
+                    <div class="img-box" *ngIf="checkimg.doc != ''">
+                      <img src="{{url+ checkimg.doc }}"
+                      (click)="checkimg.doc != '' ? goToImage(url+ checkimg.doc) : ''">
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="header.module=='Expesne'">
+                <div class="multi-img">
+                  
+                  <ng-container *ngFor="let expimg of row.image">
+                    <div class="img-box" *ngIf="expimg.image != ''">
+                      <img src="{{url+ expimg.image}}" (click)="expimg.image != '' ? goToImage(url+ expimg.image) : ''">
+                      
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="header.module=='Event'">
+                <div class="multi-img">
+                  <ng-container *ngFor="let evntimg of row.image">
+                    <div class="img-box" *ngIf="evntimg.img_path != ''">
+                      <img src="{{url+ evntimg.img_path}}"
+                      (click)="evntimg.img_path != '' ? goToImage(url+ evntimg.img_path) : ''">
+                    </div>
+                  </ng-container>
+                </div>
+              </ng-container>
+              <div class="cntnt">
+                <h6>{{item.name | titlecase}} {{item.employee_id}}</h6>
+                <div class="time" *ngIf="header.module=='Attendance'">
+                  
+                  <p>Date : {{row.date_created|date : 'd MMM y' }} </p>
+                  
+                  <p *ngIf="row.start_time == '00:00:00'">---</p>
+                  
+                  <p *ngIf="row.start_time != '00:00:00'">Start Time : {{row.start_time| date:'hh:mm a' }} </p>
+                  
+                  <p *ngIf="row.stop_time == '00:00:00'">---</p>
+                  <p *ngIf="row.stop_time != '00:00:00'">Stop Time : {{row.stop_time| date:'hh:mm a'}} </p>
+                </div>
+                <div class="time" *ngIf="header.module=='Checkin'">
+                  <p>Checkin Date : {{row.activity_date |date : 'd MMM y'}} </p>
+                  
+                  <p *ngIf="row.start_time == '00:00:00'">---</p>
+                  
+                  <p *ngIf="row.start_time != '00:00:00'">Checkin Time : {{row.visit_start | date:'hh:mm a' }} </p>
+                  
+                  <p *ngIf="row.stop_time == '00:00:00'">---</p>
+                  <p *ngIf="row.stop_time != '00:00:00'">Check-out Time : {{row.visit_end | date:'hh:mm a'}} </p>
+                </div>
+                <div class="time" *ngIf="header.module=='Expesne'">
+                  
+                  
+                  <p>Claim Date : {{row.claimDate |date : 'd MMM y'}} </p>
+                  <p>Expense Id : #CLM-{{row.id}} </p>
+                </div>
+                <div class="time" *ngIf="header.module=='Event'">
+                  <p>Event Date : {{row.date_of_meeting |date : 'd MMM y'}} </p>
+                  <p>Event Id : Event{{row.id}} </p>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!dataArray.length || dataArray.length <= 0">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+        
+      </div>
+    </div>
+  </div>
+</ng-container>

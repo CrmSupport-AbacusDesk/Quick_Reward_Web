@@ -1,0 +1,239 @@
+<div class="main-container">
+  <app-loader *ngIf="excelLoader"></app-loader>
+  <div class="tools-container">
+    <h2>Category</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="segmentList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="previousPage()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container table-container">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S.No</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">Created By</th>
+              <th>Category</th>
+              <th class="w70">SAP Group Code</th>
+              <ng-container  *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+                <th class="w140  text-center">Primary Customer Discount</th>
+                <th class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">Additional Discounts</th>
+                <th class="w140  text-center">Secondary Customer  Discount</th>
+                <!-- <th class="w90  text-center" *ngIf="logined_user_data.organisation_data.sfa == '1'">Site/Project Discount</th> -->
+                <th class="w60  text-center">GST</th>
+              </ng-container>
+              <th class="w90  text-right">Total No. Of Products</th>
+              <th class="w90 text-center" *ngIf="logined_user_data.edit_category_master=='1'">Status</th>
+              <th class="w100 text-center" *ngIf="catImgFlag=='1'">Images</th>
+              <th class="w110 text-center"
+                *ngIf="logined_user_data.edit_category_master=='1' || logined_user_data.delete_category_master=='1'">
+                Action</th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w50"></th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="value.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="getSegmentList('')" #created_by="ngModel"
+                      [(ngModel)]="value.created_by">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th>
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="getSegmentList('')" #segment="ngModel"
+                      [(ngModel)]="value.segment">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w70 text-center">&nbsp;</th>
+              <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+              <th class="w140 text-center">&nbsp;</th>
+              <th class="w100 text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">&nbsp;</th>
+              <th class="w140 text-center">&nbsp;</th>
+              <!-- <th class="w90  text-center"  *ngIf="logined_user_data.organisation_data.sfa == '1'">&nbsp;</th> -->
+              <th class="w60 text-center">&nbsp;</th>
+              </ng-container>
+              <th class="w90"></th>
+              <th class="w90  text-center" *ngIf="logined_user_data.edit_category_master=='1'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="status" #status="ngModel" [(ngModel)]="value.status"
+                      (selectionChange)="getSegmentList('')">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="active">Active</mat-option>
+                      <mat-option value="deactive">Deactive </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100" *ngIf="catImgFlag=='1'"></th>
+              <th class="w110 "
+                *ngIf="logined_user_data.edit_category_master=='1' || logined_user_data.delete_category_master=='1'">
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let dist of segmentList; let i = index;">
+                <td class="w50">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{dist.date_created | date}}</td>
+                <td class="w100">{{dist.created_by_name && dist.created_by_name != '' ? dist.created_by_name : '--'}}
+                </td>
+                <td>{{dist.category ? (dist.category) : '---'}}</td>
+                <td class="w70">{{dist.itmsGrpCod ? (dist.itmsGrpCod) : '---'}}</td>
+                <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+                  <td class="w140  text-center">{{dist.distributor_discount}} %</td>
+                  <td class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">
+                    <button class="link-btn" mat-button [disabled]="dist.additional_discount.length === 0" (click)="openDialog(dist.category, dist.gst, dist.distributor_discount, dist.direct_dealer_discount, dist.retailer_discount, dist.id,'view', dist.project_discount, dist.additional_discount)">View Discount</button>
+                  </td>
+                  <td class="w140  text-center">{{dist.retailer_discount}} %</td>
+                  <!-- <td class="w90  text-center"  *ngIf="logined_user_data.organisation_data.sfa == '1'">{{dist.project_discount}} %</td> -->
+                  <td class="w60  text-center">{{dist.gst}} %</td>
+                </ng-container>
+                <td class="w90  text-right">{{dist.product_count}}</td>
+                <td class="w90  text-center" *ngIf="logined_user_data.edit_category_master=='1'">
+                  <mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="dist.segment_status"
+                    (change)="updateStatus(i,dist.id,$event)">
+                  </mat-slide-toggle>
+                </td>
+                <td class="w100 text-center" *ngIf="catImgFlag=='1'">
+                  <img *ngIf="dist.image && dist.image!=''" height="40px" width="40px" style="cursor: zoom-in;"
+                    src="{{service.uploadUrl+'product_image/'+dist.image}}"
+                    (click)="imageModel(service.uploadUrl+'product_image/'+dist.image)" />
+                  <img *ngIf="!dist.image || dist.image==''" height="40px" width="40px"
+                    src="assets/img/no_image_found.png" />
+                </td>
+                <td class="w110  text-center"
+                  *ngIf="logined_user_data.edit_category_master=='1' || logined_user_data.delete_category_master=='1'">
+                  <div class="action-button">
+                    <button mat-icon-button matTooltip="Edit" *ngIf="logined_user_data.edit_category_master=='1'"
+                      (click)="openDialog(dist.category, dist.gst, dist.distributor_discount, dist.direct_dealer_discount, dist.retailer_discount, dist.id,'edit', dist.project_discount, dist.additional_discount)">
+                      <i class="material-icons edit">edit</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Delete" *ngIf="logined_user_data.delete_category_master=='1'"
+                      (click)="deleteCategory(dist.id)">
+                      <i class="material-icons red-clr">delete</i>
+                    </button>
+
+                    <button *ngIf="logined_user_data.import_category_master=='1' && catImgFlag=='1'" mat-icon-button class="mt10" matTooltip="Upload Image">
+                    
+                    <label>
+                      <input type="file" accept=".png,.jpg,.jpeg" (change)="insertImage($event,dist)"
+                        style="display: none;">
+                      <i class="material-icons blue-clr">cloud_upload</i>
+                    </label>
+                  </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                
+                <td class="w50"><div>&nbsp;</div></td>
+              <td class="w100"><div>&nbsp;</div></td>
+              <td class="w100"><div>&nbsp;</div></td>
+              <td><div>&nbsp;</div></td>
+              <td class="w70"><div>&nbsp;</div></td>
+              <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+              <td class="w14  text-center"><div>&nbsp;</div></td>
+              <td class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'"><div>&nbsp;</div></td>
+              <td class="w140  text-center"><div>&nbsp;</div></td>
+              <!-- <td class="w90  text-center"  *ngIf="logined_user_data.organisation_data.sfa == '1'"><div>&nbsp;</div></td> -->
+              <td class="w60  text-center"><div>&nbsp;</div></td>
+              </ng-container>
+              <td class="w90  text-right"><div>&nbsp;</div></td>
+              <td class="w90 text-center" *ngIf="logined_user_data.edit_category_master=='1'"><div>&nbsp;</div></td>
+              <td class="w90 text-center"
+                *ngIf="logined_user_data.edit_category_master=='1' || logined_user_data.delete_category_master=='1'">
+                <div>&nbsp;</div></td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+
+      <ng-container *ngIf="segmentList.length == 0 &&  datanotfound == true;">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+
+    </div>
+
+  </div>
+
+
+  <div class="fab-btns"
+    *ngIf="logined_user_data.export_category_master=='1' || logined_user_data.add_category_master=='1' || logined_user_data.import_category_master=='1'">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+    <mat-menu #menu="matMenu">
+      <!-- <button mat-menu-item (click)="download_excl();"
+        *ngIf="segmentList.length > 0 && (logined_user_data.export_category_master=='1')">
+        <mat-icon>download</mat-icon>
+        <span>Download excel</span>
+      </button> -->
+      <!-- <button mat-menu-item (click)="upload_excel('insert');" *ngIf="(logined_user_data.import_category_master=='1')">
+        <mat-icon>cloud_upload</mat-icon>
+        <span>Upload New Data</span>
+      </button> -->
+      <!-- <button mat-menu-item (click)="upload_excel('update');"
+        *ngIf="segmentList.length > 0 && (logined_user_data.import_category_master=='1')">
+        <mat-icon>update</mat-icon>
+        <span>Update Existing Data</span>
+      </button> -->
+      <button mat-menu-item (click)="openDialog('', '','','','','','add');"
+        *ngIf="logined_user_data.add_category_master=='1'">
+        <mat-icon>add</mat-icon>
+        <span>Add New</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>

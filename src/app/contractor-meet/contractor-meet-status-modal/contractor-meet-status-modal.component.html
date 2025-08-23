@@ -1,0 +1,145 @@
+<div class="edit-modal" *ngIf="from!='budget_per_plumber' && from!='participentUser'">
+  <div mat-dialog-content>
+    <p class="heading">Change Status</p>
+    <div class="cs-form">
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select name="status" #status="ngModel" [(ngModel)]="data.status">
+              <mat-option value="Approved">Approved</mat-option>
+              <mat-option value="Reject">Reject</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="data.status == 'Approved'">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Approve Amount</mat-label>
+            <input onkeypress="return event.charCode>=48 && event.charCode<=57" required matInput placeholder="Type Here .."
+              name="approved_amount" #approved_amount="ngModel" [(ngModel)]="data.approved_amount" required>
+          </mat-form-field>
+          <div *ngIf="(data.approved_amount &&data.approved_amount)>ApprovalAmt" class="alert alert-danger" >
+            Approved amount should be less than demanded budget
+        </div>
+        <div class="alert alert-danger" *ngIf="!data.approved_amount">
+          This field is required...
+      </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="data.status == 'Reject' ">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Reason Of Reject</mat-label>
+            <textarea class="h100" matInput name="remarks" placeholder="Reason" #remarks="ngModel"
+              [(ngModel)]="statusdata.remarks"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="accent"
+      [disabled]="!data.status || (data.status=='Approved' && (!data.approved_amount || data.approved_amount > ApprovalAmt)) || (data.status=='Reject' && !(statusdata.remarks)) || savingFlag == true"
+      type="submit" (click)="(data.status)?updateDetails():''">
+      {{savingFlag == true ? 'Saving' : 'Save'}}
+    </button>
+  </div>
+</div>
+
+
+<div class="edit-modal" *ngIf="from=='budget_per_plumber'">
+  <div mat-dialog-content>
+    <p class="heading">Set Per Plumber Budget</p>
+    <div class="cs-form">
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field class="cs-input" appearance="outline">
+            <mat-label>Enter Per Plumber Budget</mat-label>
+            <input onkeypress="return event.charCode>=48 && event.charCode<=57" matInput placeholder="Type Here .."
+              name="per_plumber_budget" #per_plumber_budget="ngModel" [(ngModel)]="data.per_plumber_budget" required>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="accent"
+      [disabled]="!data.per_plumber_budget|| savingFlag == true"
+      type="submit" (click)="updatePerBudget()">
+      {{savingFlag == true ? 'Saving' : 'Save'}}
+    </button>
+  </div>
+</div>
+
+
+<!------------------------- Enroll multiple Events Start --------------------------->
+<div class="edit-modal" *ngIf="from=='participentUser'">
+  <div class="heading mb0 df ac">Enroll multiple Events
+      
+  </div>
+  <div mat-dialog-content>
+      <div class="cs-form left-right-10">
+          <div class="cs-table">
+              <div class="sticky-head">
+                  <div class="table-head">
+                      <table>
+                          <tr>
+                              <th class="w50">S.No</th>
+                              <th>Name</th>
+                              <th class="w100">Mobile No.</th>
+                              <th class="w70">Action</th>
+                          </tr>
+                      </table>
+                  </div>
+              </div>
+              
+              <div class="table-container">
+                  <div class="table-content">
+                      <table>
+                          <ng-container *ngIf="!loader">
+                              <tr *ngFor="let row of multiEventParticipent; let i = index;">
+                                  <td class="w50">{{i + 1}}</td>
+                                  <td>{{row.participent_name ? (row.participent_name | titlecase) : '---'}}</td>
+                                  <td class="w100">{{row.participent_mobile ? (row.participent_mobile) : '---'}}</td>
+                                  <td class="w70">
+                                    <a class="link-btn" (click)="goto()" mat-button  >{{row.event_id ? (row.event_id | titlecase) :
+                                    'N/A' }}</a>
+                                  
+                                  </td>
+                              </tr>
+                          </ng-container>
+                          
+                          <ng-container *ngIf="loader">
+                              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                                  
+                                  <td class="w50"><div>&nbsp;</div></td>
+                                  <td class="w120"><div>&nbsp;</div></td>
+                                  <td><div>&nbsp;</div></td>
+                                  <td class="w130"><div>&nbsp;</div></td>
+                                  <td class="w130"><div>&nbsp;</div></td>
+                                  <td class="w80"><div>&nbsp;</div> </td>
+                              </tr>
+                          </ng-container>
+                      </table>
+                  </div>
+              </div>
+              
+              <ng-container *ngIf="multiEventParticipent.length == 0">
+                  <app-not-result-found></app-not-result-found>
+              </ng-container>
+              
+          </div>
+      </div>
+  </div>
+  <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>
+<!------------------------- Enroll Badeg Influencer End --------------------------->

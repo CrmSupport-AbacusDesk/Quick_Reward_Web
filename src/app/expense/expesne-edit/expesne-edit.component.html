@@ -1,0 +1,272 @@
+<div class="edit-modal" >
+  <form #update_FollowUp="ngForm" (ngSubmit)="update_FollowUp.valid && update_expense()">
+    
+    <div mat-dialog-content *ngIf="expense_type == 'Travelentitlement'">
+      <p class="heading">Update Travelentitlement </p>
+      <div class="cs-form">
+        <div class="row"> 
+          <div class="col s3">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Departure Date</mat-label>
+              <input matInput [matDatepicker]="picker1" name="depatureDate" #depatureDate="ngModel" [(ngModel)]="expense_detail.depatureDate" (ngModelChange)="date_format('Travelentitlement depatureDate')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s3">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Departure Station</mat-label>
+              <input  matInput placeholder="Enter Station Name ..." name="depatureStation" #depatureStation="ngModel" [(ngModel)]="expense_detail.depatureStation" required>
+            </mat-form-field>
+          </div>
+          <div class="col s2">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Time</mat-label>
+              <input matInput name="depatureTime" #depatureTime="ngModel" [(ngModel)]="expense_detail.depatureTime" readonly>
+              <input style="display: none;" matTimepicker #t="matTimepicker" (timeChange)="convert_time($event,'depatureTime')" readonly>
+              <mat-icon matSuffix (click)="t.showDialog()">access_time</mat-icon>
+            </mat-form-field>  
+          </div>
+
+          <div class="col s2">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Departure K.M.</mat-label>
+              <input  matInput placeholder="Enter K.M" name="depatureTravelDis" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #depatureTravelDis="ngModel" [(ngModel)]="expense_detail.depatureTravelDis" required>
+            </mat-form-field>
+          </div>
+          <div class="col s2">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Departure Amount</mat-label>
+              <input  matInput placeholder="Enter Amount ..." name="depatureAmount" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #depatureAmount="ngModel" [(ngModel)]="expense_detail.depatureAmount" (ngModelChange)="calc_amount('Travelentitlement')"  required>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="col s3">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Arrival Date</mat-label>
+              <input matInput [matDatepicker]="picker2" name="arrivalDate" #arrivalDate="ngModel" [(ngModel)]="expense_detail.arrivalDate" (ngModelChange)="date_format('Travelentitlement arrivalDate')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s3">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Arrival Station</mat-label>
+              <input  matInput placeholder="Enter Station Name ..." name="arrivalStation" #arrivalStation="ngModel" [(ngModel)]="expense_detail.arrivalStation" required>
+            </mat-form-field>
+          </div>
+          <div class="col s2">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Time</mat-label>
+              <input matInput name="arrivalTime" #arrivalTime="ngModel" [(ngModel)]="expense_detail.arrivalTime" readonly>
+              <input style="display: none;" matTimepicker #t2="matTimepicker" (timeChange)="convert_time($event,'arrivalTime')" readonly>
+              <mat-icon matSuffix (click)="t2.showDialog()">access_time</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="col s2">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Arrival K.M.</mat-label>
+              <input  matInput placeholder="Enter K.M" name="arrivalTravelDis" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #arrivalTravelDis="ngModel" [(ngModel)]="expense_detail.arrivalTravelDis" required>
+            </mat-form-field>
+          </div>
+          <div class="col s2">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Arrival Amount</mat-label>
+              <input  matInput placeholder="Enter Amount ..." name="arrivalAmount" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #arrivalAmount="ngModel" [(ngModel)]="expense_detail.arrivalAmount" (ngModelChange)="calc_amount('Travelentitlement')"  required>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- <div class="row">
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Class & Mode Of Travel</mat-label>
+              <mat-select  placeholder="">
+                <mat-option disabled="">Select </mat-option>
+                <mat-option  value="Train ">Train </mat-option>
+                <mat-option  value="Train (II Tier)">Train (II Tier)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    
+    <div mat-dialog-content *ngIf="expense_type == 'hotel'">
+      <p class="heading">Update Hotel Expense</p>
+      <div class="cs-form">
+        <div class="row"> 
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Checkin Date</mat-label>
+              <input matInput [matDatepicker]="picker1" name="checkInDate" #checkInDate="ngModel" [(ngModel)]="expense_detail.checkInDate" (ngModelChange)="date_format('hotel checkIn Date')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Checkout Date</mat-label>
+              <input matInput [matDatepicker]="picker2" name="checkOutDate" #checkOutDate="ngModel" [(ngModel)]="expense_detail.checkOutDate" (ngModelChange)="date_format('hotel checkOut Date')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>City</mat-label>
+              <input  matInput placeholder="Enter City ..." name="city" #city="ngModel" [(ngModel)]="expense_detail.city" required>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s8">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Hotel Name</mat-label>
+              <input  matInput placeholder="Enter Hotel Name ..." name="hotelName" #hotelName="ngModel" [(ngModel)]="expense_detail.hotelName" required>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Amount</mat-label>
+              <input  matInput placeholder="Enter Amount ..." name="amount" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #amount="ngModel" [(ngModel)]="expense_detail.amount" (ngModelChange)="calc_amount('hotel')" required>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Remark</mat-label>
+              <textarea  matInput placeholder="Type Here ..." class="h100" name="remark" #remark="ngModel" [(ngModel)]="expense_detail.remark"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div mat-dialog-content *ngIf="expense_type == 'food'">
+      <p class="heading">Update Food Expense </p>
+      <div class="cs-form">
+        <div class="row"> 
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Date</mat-label>
+              <input  matInput placeholder="Type Here ..."  [matDatepicker]="picker" name="date" #date="ngModel" [(ngModel)]="expense_detail.date" (ngModelChange)="date_format('Food')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>City</mat-label>
+              <input  matInput placeholder="Enter City ..." name="city" #city="ngModel" [(ngModel)]="expense_detail.city" required>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Amount</mat-label>
+              <input  matInput placeholder="Enter Amount ..." name="amount" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #amount="ngModel" [(ngModel)]="expense_detail.amount" (ngModelChange)="calc_amount('food')"  required>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Remark</mat-label>
+              <textarea  matInput placeholder="Type Here ..." class="h100" name="remark" #remark="ngModel" [(ngModel)]="expense_detail.remark"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div mat-dialog-content *ngIf="expense_type == 'local conveyance'">
+      <p class="heading">Update Local Conveyance Expense</p>
+      <div class="cs-form">
+        <div class="row"> 
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Date</mat-label>
+              <input  matInput placeholder="Type Here ..."  [matDatepicker]="picker" name="date" #date="ngModel" [(ngModel)]="expense_detail.date" (ngModelChange)="date_format('local')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Distance</mat-label>
+              <input matInput placeholder="Enter Distance . . ." name="distance" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #distance="ngModel" [(ngModel)]="expense_detail.distance" required>
+            </mat-form-field>
+          </div>
+          <div class="col s4">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Amount</mat-label>
+              <input  matInput placeholder="Enter Amount ..." name="amount" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #amount="ngModel" [(ngModel)]="expense_detail.amount" (ngModelChange)="calc_amount('local')"  required>
+            </mat-form-field>
+          </div>
+        </div>
+       
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Remark</mat-label>
+              <textarea  matInput placeholder="Type Here ..." class="h100" name="remark" #remark="ngModel" [(ngModel)]="expense_detail.remark"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div mat-dialog-content *ngIf="expense_type == 'misc expense information'">
+      <p class="heading">Update Misc Expense</p>
+      <div class="cs-form">
+        <div class="row"> 
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Date</mat-label>
+              <input  matInput placeholder="Type Here ..."  [matDatepicker]="picker" name="date" #date="ngModel" [(ngModel)]="expense_detail.date" (ngModelChange)="date_format('Misc')" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker  disabled="false"></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Nature Of Expense</mat-label>
+              <input  matInput placeholder="Enter Nature of Exp..." name="expName" #expName="ngModel" [(ngModel)]="expense_detail.expName" required>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Place Of Expense</mat-label>
+              <input  matInput placeholder="Enter Place ..." name="placeOfExp" #placeOfExp="ngModel" [(ngModel)]="expense_detail.placeOfExp" required>
+            </mat-form-field>
+          </div>
+          <div class="col s6">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Amount</mat-label>
+              <input  matInput placeholder="Enter Amount ..." name="amount" onkeypress="return event.charCode >= 48 && event.charCode <= 57" #amount="ngModel" [(ngModel)]="expense_detail.amount" (ngModelChange)="calc_amount('misc')"  required>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline" >
+              <mat-label>Remark</mat-label>
+              <textarea  matInput placeholder="Type Here ..." class="h100" name="remark" #remark="ngModel" [(ngModel)]="expense_detail.remark"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div mat-dialog-actions>
+      <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-button color="accent" type="submit">Update</button>
+    </div>
+  </form>
+</div>

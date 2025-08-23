@@ -1,0 +1,35 @@
+<div class="edit-modal" *ngIf="data.type!='officialdocument'">
+    <p class="heading">Uploaded Document</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s6">
+            <div class="cs-file">
+              <!-- <p>UPLOADED DOCUMENT</p> -->
+              <ul class="product-images">
+                <li class="multi-images">
+                  <label class="cs-file-img" *ngFor="let val of data.list">
+                 
+                      
+                      
+                      <img  src="{{url+val.doc}}" *ngIf="val.type == 'image'" (click)="imageModel(url+val.doc)" >                     
+                      <a class="cs-file-img pointer" *ngIf="val.type == 'pdf'"  target="_blank" href="{{url+val.doc}}">
+                        <img src="assets/img/icons/pdf.png">
+                      </a>
+                    </label>
+                  </li>
+                </ul>
+
+
+            </div>
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button color="warn"	 [mat-dialog-close]="false">Cancel</button>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="main-container" >
+  
+  <div class="tools-container">
+    <h2>Spin & Win</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button  matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'active' ? 'active' : ''" (click)="active_tab = 'active';spinBonusList()"><i class="material-icons">toggle_on</i>Active({{tabCount.active ? tabCount.active : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'inactive' ? 'active' : ''" (click)="active_tab = 'inactive';spinBonusList()"><i class="material-icons">toggle_off</i>Inactive({{tabCount.inactive ? tabCount.inactive : '0'}})</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="container container-scroll pb100" >
+    <div class="cs-table  horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">S No.</th>
+              <th class="w100">Date Created</th>
+              <th class="w150" *ngIf="subType">Influencer Type</th>
+              <th class="w100">Points Section</th>
+              <th class="w100">Eligible Days</th>
+              <th class="w200 text-center">Spin Points Slab</th>
+              <th class="w70 text-right">Enroll Influencer</th>
+              <th class="w65 text-center" >Status</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-content" >
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of spinDataList ; let i = index;" >
+                
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{row.date_created | date:'d MMM y, h:mm a'}}</td>
+                <td class="w150" *ngIf="subType">{{row.influencer_type ? row.influencer_type : '---'}}</td>
+                <td class="w100" >{{row.section ? row.section : '---'}}</td>
+                <td class="w100" >{{row.eligible_days ? row.eligible_days : '---'}}</td>
+
+                <td class="w200">
+                  {{row.spin_points}},</td>   
+                  <td class="w70 text-right">
+                    <div class="action-button text-center">
+                      <button mat-icon-button matTooltip="View" 
+                        (click)="openDialog(row.id)">
+                        <i class="material-icons edit">visibility</i>
+                      </button>
+                    </div>
+                  </td>             
+                <td class="w65 text-center">
+                  <div class="action-button">
+                    <mat-slide-toggle color="accent" checked="{{row.status == 'active' ? true : false}}" (change)="change_status(row.id,i)"></mat-slide-toggle>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+
+
+                <td class="w60 text-center"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w150" *ngIf="subType"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w100 text-right"><div>&nbsp;</div></td>
+                <td class="w200"><div>&nbsp;</div></td>
+                <td class="w65 text-center">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+        
+        <ng-container *ngIf="spinDataList .length == 0 && noResult">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="fab-btns">
+    <button class="pulse" mat-fab (click)="lastBtnValue('add')"  [ngClass]="{'pulse': fabBtnValue=='add'}"  color="primary"  routerLink="spin-add">
+      <i class="material-icons">add</i>
+      Add New
+    </button>
+  </div>
+</div>

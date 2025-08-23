@@ -1,0 +1,39 @@
+<div class="edit-modal">
+    <p class="heading">Generate QR Codes</p>
+    <form #update_basic="ngForm" name="update_basic" (ngSubmit)="submit_scheme()" validate>
+      <div mat-dialog-content style="padding: 0px 15px;">
+        <div class="cs-form">
+          <div class="row">
+            
+            <div class="col s6">
+              <mat-form-field class="cs-input"  appearance="outline">
+                <mat-label>Scheme Status</mat-label>
+                <mat-select name="scheme_status" placeholder="Select Status" #scheme_status="ngModel" [(ngModel)]="form.scheme_status" [ngClass]="{'has-error' : scheme_status.invalid } " required>
+                  <mat-option disabled="">Select Status</mat-option>
+                  <mat-option value="Active">Active</mat-option>
+                  <mat-option value="Deactive">Deactive</mat-option>
+                </mat-select>
+              </mat-form-field>               
+              <div class="alert alert-danger" *ngIf="!scheme_status.valid && update_basic.submitted">
+                Scheme Status is required....
+            </div>
+            </div>
+            
+            <div class="col s6">
+              <mat-form-field class="cs-input"  appearance="outline">
+                <mat-label>Coupon Point</mat-label>
+                <input matInput placeholder="Type Here ..." name="coupon_point" #coupon_point="ngModel" [(ngModel)]="form.coupon_point">
+              </mat-form-field>
+              <!-- <div class="alert alert-danger" *ngIf="!coupon_point.valid && update_basic.submitted">
+                  Coupon Point is required...
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div mat-dialog-actions>
+          <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+          <button mat-button color="accent" type="submit">Save</button>
+        </div>
+    </form>
+  </div>

@@ -1,0 +1,357 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" routerLink="/announcement-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add Announcement</h2>
+  </div>
+
+
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <form name="f" #f="ngForm" (ngSubmit)="f.valid && submitAnnouncement()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m6 l6">
+
+                  <div class="row">
+                    <div class="col s12 m12 l12">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Message</mat-label>
+                        <textarea matInput placeholder="Type Here ..." name="message"
+                          [(ngModel)]="announcementData.message" #message="ngModel" class="h85" required></textarea>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="message.touched || f.submitted">
+                        <p *ngIf="message.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col s12 m12 l12">
+                      <!-- <div class="cs-file">
+                        <p>UPLOAD FILE</p>
+                        <ul>
+                          <li>
+                            <label>
+                              <i class="material-icons add-file-icon">add</i>
+                              <input multiple type="file" name ="file" required (change)="fileChange($event)" placeholder="Upload file"  accept=".png,.jpg,.jpeg,.pdf,.docx" style="display: none;">
+                            </label>
+                          </li>
+                          
+                          <li class="multi-images" >
+                            <label *ngFor="let imageType of selectedFile; let i = index">
+                              <img *ngIf ="imageType.type == 'image/jpeg' || imageType.type ==  'image/png'  "  height="75" width="75" [src]="imageType.path" src="assets/imgs/jpg.svg">
+                              <img *ngIf ="imageType.type == 'application/pdf'" height="75" width="75" src="assets/img/pdf1.svg">
+                              <img *ngIf ="imageType.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" height="75" width="75" src="assets/img/doc.png">
+                              <img  *ngIf ="imageType.type == 'application/docx'" height="75" width="75" src="assets/img/doc.png">
+                              <a class="close" ><i class="material-icons dp48"  (click)="remove_image(i)">clear</i></a>
+                            </label>
+                          </li>
+                        </ul>
+                      </div> -->
+
+
+                      <div class="uploade-image">
+                        <ul>
+                          <li class="add-bg-1 wp25">
+                            <img src="{{announcementData.image}}" *ngIf="announcementData.image">
+                            <label class="fix-label">
+                              <input type="file" (change)="announcementUpolad($event)" style="display:none;"
+                                accept=".png, .jpg, .jpeg, .docx" multiple required />
+                              <div class="other"
+                                *ngIf="announcementData.image == '' || announcementData.image == null || announcementData.image == undefined">
+                                <i class="material-icons">cloud_upload</i>
+                                <p>Upload Image</p>
+                              </div>
+                            </label>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="col s12 m6 l6">
+                  <div class="row">
+                    <div class="col s12 m6 l6">
+                      <mat-form-field appearance="outline">
+                        <mat-label>State</mat-label>
+                        <mat-select name="state" #state="ngModel" [(ngModel)]="announcementData.state"
+                          (selectionChange)="announcementData.announcement_user_type=''" multiple required>
+                          <mat-option disabled="">Select State</mat-option>
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getStateList($event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <div class="pl16" *ngIf="states.length>0">
+                            <mat-checkbox [(ngModel)]="announcementData.allstate" (change)="selectAllStates('allstate')"
+                              name="allstate" value="true">Select All</mat-checkbox>
+                          </div>
+                          <mat-option *ngFor="let row of states" [value]="row.state_name">
+                            {{row.state_name}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+                        <p *ngIf="state.errors?.required">This field is required</p>
+                      </div>
+
+                    </div>
+                    <!-- <div class="col s12 m6 l6">
+                      <mat-form-field  appearance="outline">
+                        <mat-label>District</mat-label>
+                        <mat-select name="district" #district="ngModel" [(ngModel)]="announcementData.district" required>
+                          <mat-option disabled="">Select District</mat-option>
+                          <mat-option *ngFor="let row of district_list" value="{{row.district_name}}">
+                            {{row.district_name}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="district.touched || f.submitted">
+                        <p *ngIf="district.errors?.required">This field is required</p>
+                      </div>
+                    </div> -->
+                    <div class="col s12 m6 l6">
+                      <mat-form-field appearance="outline">
+                        <mat-label>User Type</mat-label>
+                        <mat-select name="announcement_user_type" #announcement_user_type="ngModel"
+                          [(ngModel)]="announcementData.announcement_user_type"
+                          (selectionChange)="blankValue(announcementData.announcement_user_type); announcementData.announcement_user_type !='Influencer' ? getUserDrList(announcementData.announcement_user_type, '') : ''"
+                          required>
+                          <mat-option disabled="">Select</mat-option>
+                          <mat-option value="primary"
+                            *ngIf="assign_login_data2.organisation_data.dms=='1'">Primary</mat-option>
+                          <mat-option value="secondary"
+                            *ngIf="assign_login_data2.organisation_data.dms=='1'">Secondary</mat-option>
+                          <mat-option value="Sales Executive"
+                            *ngIf="assign_login_data2.organisation_data.sfa=='1'">Sales Executive</mat-option>
+                          <mat-option value="Influencer"
+                            *ngIf="assign_login_data2.organisation_data.loyalty=='1'">Influencer</mat-option>
+
+                        </mat-select>
+                      </mat-form-field>
+
+                      <div class="alert alert-danger" *ngIf="announcement_user_type.touched || f.submitted">
+                        <p *ngIf="announcement_user_type.errors?.required">This field is required</p>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s12 m6 l6" *ngIf="announcementData.announcement_user_type == 'primary'">
+                      <div class="selct-all">
+                        <mat-checkbox [(ngModel)]="announcementData.all_distributors" name="all_distributors"
+                          (click)="selectAll('distributors')"
+                          [checked]="announcementData.primary.length == distributorList.length && distributorList.length !=0 && announcementData.primary.length > 0">Select
+                          All</mat-checkbox>
+                      </div>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Primary Customer</mat-label>
+                        <mat-select multiple name="distributors" #distributors="ngModel"
+                          [(ngModel)]="announcementData.primary" required>
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getUserDrList(announcementData.announcement_user_type, $event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let row of distributorList" value="{{row.id}}"
+                            color="accent">{{row.company_name}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="distributors.touched || f.submitted">
+                        <p *ngIf="distributors.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+
+                    <div class="col s12 m6 l6" *ngIf="announcementData.announcement_user_type == 'Direct Dealer'">
+                      <div class="selct-all">
+                        <mat-checkbox [(ngModel)]="announcementData.all_direct_dealer" name="all_direct_dealer"
+                          (click)="selectAll('direct_dealer')"
+                          [checked]="announcementData.direct_dealer.length == directDealerList.length && directDealerList.length !=0 && announcementData.direct_dealer.length > 0">Select
+                          All</mat-checkbox>
+                      </div>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Direct Dealer</mat-label>
+                        <mat-select multiple color="accent" name="direct_dealer" #direct_dealer="ngModel"
+                          [(ngModel)]="announcementData.direct_dealer" required>
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getUserDrList(announcementData.announcement_user_type, $event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let row of directDealerList" value="{{row.id}}"
+                            color="accent">{{row.company_name}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="direct_dealer.touched || f.submitted">
+                        <p *ngIf="direct_dealer.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+
+                    <div class="col s12 m6 l6" *ngIf="announcementData.announcement_user_type == 'secondary'">
+                      <div class="selct-all">
+                        <mat-checkbox [(ngModel)]="announcementData.all_dealers" name="all_dealers"
+                          (click)="selectAll('dealers')"
+                          [checked]="announcementData.secondary.length == dealertList.length && dealertList.length !=0 && announcementData.secondary.length > 0">Select
+                          All</mat-checkbox>
+                      </div>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Secondary</mat-label>
+                        <mat-select multiple color="accent" name="dealers" #dealers="ngModel"
+                          [(ngModel)]="announcementData.secondary" required>
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getUserDrList(announcementData.announcement_user_type,$event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let row of dealertList" value="{{row.id}}"
+                            color="accent">{{row.company_name}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="dealers.touched || f.submitted">
+                        <p *ngIf="dealers.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+
+                    <div class="col s12 m6 l6" *ngIf="announcementData.announcement_user_type == 'Sales Executive'">
+                      <div class="selct-all">
+                        <mat-checkbox [(ngModel)]="announcementData.all_users" name="all_users"
+                          (click)="selectAll('users')"
+                          [checked]="announcementData.users.length == salesUserList.length && salesUserList.length !=0 && announcementData.users.length > 0">Select
+                          All</mat-checkbox>
+                      </div>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Sales Executive</mat-label>
+                        <mat-select multiple name="users" #users="ngModel" [(ngModel)]="announcementData.users"
+                          required>
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getUserDrList(announcementData.announcement_user_type, $event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let row of salesUserList" value="{{row.id}}"
+                            color="accent">{{row.name}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="users.touched || f.submitted">
+                        <p *ngIf="users.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+
+                    <ng-container *ngIf="announcementData.announcement_user_type == 'Influencer'">
+                      <div class="col s12 m6 l6">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Influencer Type</mat-label>
+                          <mat-select multiple name="influencer_type" #influencer_type="ngModel"
+                            [(ngModel)]="announcementData.influencer_type"
+                            (selectionChange)="getInfluencer(announcementData.influencer_type, '')" required>
+                            <mat-option disabled="">Select Type</mat-option>
+                            <mat-option [value]="row.type"
+                              *ngFor="let row of networkType">{{row.module_name}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="influencer_type.touched || f.submitted">
+                          <p *ngIf="influencer_type.errors?.required">This field is required</p>
+                        </div>
+                      </div>
+
+                      <div class="col s12 m6 l6" *ngIf="announcementData.influencer_type">
+                        <div class="selct-all">
+                          <mat-checkbox [(ngModel)]="announcementData.all_influencer" name="all_influencer"
+                            (click)="selectAll('influencer')"
+                            [checked]="announcementData.influencer.length == influencerNetwork.length && influencerNetwork.length !=0 && announcementData.influencer.length > 0">Select
+                            All</mat-checkbox>
+                        </div>
+
+                        <mat-form-field appearance="outline">
+                          <mat-label>Influencer Network</mat-label>
+                          <mat-select multiple name="influencer" #influencer="ngModel"
+                            [(ngModel)]="announcementData.influencer" required>
+                            <mat-option>
+                              <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                                (keyup)="getInfluencer(announcementData.influencer_type, $event.target.value)"></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option disabled="">Select Type</mat-option>
+                            <mat-option [value]="row.id"
+                              *ngFor="let row of influencerNetwork">{{row.company_name}}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="influencer.touched || f.submitted">
+                          <p *ngIf="influencer.errors?.required">This field is required</p>
+                        </div>
+                      </div>
+                    </ng-container>
+                    <div class="col s12 m6 l6">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Annoument Type</mat-label>
+                        <mat-select name="announcement_schedule_type" #announcement_schedule_type="ngModel"
+                          [(ngModel)]="announcementData.announcement_schedule_type" required>
+                          <mat-option disabled="">Select Annoucement Type</mat-option>
+                          <mat-option value="Real Time">
+                            Real Time
+                          </mat-option>
+                          <mat-option value="Schedule Time">
+                            Schedule Time
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <div class="alert alert-danger" *ngIf="announcement_schedule_type.touched || f.submitted">
+                        <p *ngIf="announcement_schedule_type.errors?.required">This field is required</p>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="row">
+
+                    <ng-container *ngIf="announcementData.announcement_schedule_type=='Schedule Time'">
+                      <div class="col s6 m6 l6">
+                        <mat-form-field class="cs-input" appearance="outline">
+                          <mat-label>Schedule Annoucement Date</mat-label>
+                          <input matInput min="{{today_date}}" [matDatepicker]="create_date" type="text"
+                            name="announcement_date" #announcement_date="ngModel"
+                            [(ngModel)]="announcementData.announcement_date"
+                            [ngClass]="{'has-error' : announcement_date.invalid } " readonly required>
+                          <mat-datepicker-toggle matSuffix [for]="create_date"></mat-datepicker-toggle>
+                          <mat-datepicker #create_date></mat-datepicker>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!announcement_date.valid && f.submitted">
+                          Announcement Date is required...
+                        </div>
+                      </div>
+                      <div class="col s6 m6 l6">
+                        <input type="time" required name="announcement_time" #announcement_time="ngModel"
+                          [(ngModel)]="announcementData.announcement_time" class="time-input" required>
+                      </div>
+                    </ng-container>
+
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent"
+              [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>

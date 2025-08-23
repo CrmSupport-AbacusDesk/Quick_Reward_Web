@@ -1,0 +1,293 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container">
+    <h2>Leaves </h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()" *ngIf="hide !=  true">
+        <i class="material-icons">filter_alt</i>
+      </button>
+      <div class="pagination" *ngIf="total_page">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious(active_tab)" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage(active_tab)"
+            [disabled]="pagenumber == total_page">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending'; start=0; refresh();"><i class="material-icons">pending_actions</i>Pending
+          ({{status_count?status_count.Pending:0}})</button>
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+          (click)="active_tab = 'Approved'; start=0; refresh();"><i class="material-icons">task_alt</i>Approved
+          ({{status_count?status_count.Approved:0}})</button>
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+          (click)="active_tab = 'Reject'; start=0; refresh();"><i class="material-icons">unpublished</i>Reject
+          ({{status_count?status_count.Reject:0}})</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll" style="width: 100%">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S NO</th>
+              <th class="w110">Date Created</th>
+              <th class="w110">Employee Code</th>
+              <th class="w110">Created By</th>
+              <th class="w110">Created From</th>
+              <th class="w160">Leave Type</th>
+              <th class="w90">Start Date</th>
+              <th class="w90">End Date</th>
+              <th class="w80 text-center">Total Days</th>
+              <th class="w110 text-center" *ngIf="active_tab == 'Approved'">Approved Days</th>
+              <th class="w180">Remark</th>
+              <th class="w180">Reporting Manager</th>
+              <th class="w80" *ngIf="active_tab == ''">Status</th>
+              <th class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">Status Updated By</th>
+              <th class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">Status Updated On</th>
+              <th class="w180" *ngIf="active_tab == '' || active_tab == 'Reject'">Reject Reason</th>
+              <th class="w60 text-center"
+                *ngIf="(active_tab == '' || active_tab == 'Pending') && assign_login_data2.edit_leaves=='1'">Status</th>
+              <th class="w80 text-center" *ngIf="assign_login_data2.edit_leaves=='1'">HR Status </th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w50"></th>
+              <th class="w110">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" (dateChange)="onDate('date_created', $event)"
+                      name="date_from" [(ngModel)]="search.date_created" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="employee_id" [(ngModel)]="search.employee_id"
+                      (keyup.enter)="leaveList(active_tab)">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="created_by" [(ngModel)]="search.created_by"
+                      (keyup.enter)="leaveList(active_tab)">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="created_from" #created_from="ngModel" [(ngModel)]="search.created_from"
+                      (selectionChange)="leaveList(active_tab)">
+                      <mat-option value="App">App</mat-option>
+                      <mat-option value="Web">Web</mat-option>
+                      <!-- <mat-option value="Short Leave(2hrs)">Short Leave(2hrs)</mat-option> -->
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w160">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="leave_type" #leave_type="ngModel" [(ngModel)]="search.leave_type"
+                      (selectionChange)="leaveList(active_tab)">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="Full Day">Full Day</mat-option>
+                      <mat-option value="Half Day">Half Day</mat-option>
+                      <!-- <mat-option value="Short Leave(2hrs)">Short Leave(2hrs)</mat-option> -->
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker1" placeholder="Date" (dateChange)="onDate('leave_start_date', $event)"
+                      name="leave_start_date" [(ngModel)]="search.leave_start_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker2" placeholder="Date" (dateChange)="onDate('leave_end_date', $event)"
+                      name="leave_end_date" [(ngModel)]="search.leave_end_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w80"></th>
+              <th *ngIf="active_tab == 'Approved'" class="w110"></th>
+              <th class="w180"></th>
+              <th class="w180"></th>
+              <th class="w80" *ngIf="active_tab == ''"></th>
+              <th class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">&nbsp;</th>
+              <th class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">&nbsp;</th>
+              <th class="w180" *ngIf="active_tab == '' || active_tab == 'Reject'">&nbsp;</th>
+              <th class="w60"
+                *ngIf="(active_tab == '' || active_tab == 'Pending') && assign_login_data2.edit_leaves=='1'"></th>
+              <th class="w80" *ngIf="assign_login_data2.edit_leaves=='1'"></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let leave of leave_list;let i=index;">
+                <td class="w50">{{ i + 1 + sr_no }}</td>
+                <td class="w110">{{leave.date_created != '0000-00-00' ? (leave.date_created | date :' d MMM, y') :
+                  '---'}}</td>
+                <td class="w110">{{leave.employee_id}}</td>
+                <td class="w110">{{leave.created_by_name}}</td>
+                <td class="w110">{{leave.created_from || '--'}}</td>
+                <td class="w160">{{leave.leave_type}}- ({{leave.short_leave_type | uppercase}})</td>
+                <td class="w90">{{leave.leave_start_date != '0000-00-00' ? (leave.leave_start_date | date :' d MMM, y')
+                  : '---'}}</td>
+                <td class="w90">{{leave.leave_end_date != '0000-00-00' ? (leave.leave_end_date | date :' d MMM, y') :
+                  '---'}}</td>
+                <td class="w80 text-center"><strong>{{leave.total_days}}</strong></td>
+                <td *ngIf="active_tab == 'Approved'" class="w110 text-center"><strong>{{leave.leaves}}</strong></td>
+                <td class="w180" matTooltip=" {{leave.description}}" matTooltipPosition="above">
+                  <div class="one-line">
+                    {{leave.description}}
+                  </div>
+                </td>
+                <td class="w180">{{leave.reporting_manager_name}} - {{leave.reporting_manager_employee_id}}</td>
+                <td class="w80" *ngIf="active_tab == ''"
+                  [ngClass]="{'yellow-clr':leave.status=='Pending','red-clr':leave.status=='Reject','green-clr':leave.status=='Approved'}">
+                  {{leave.status | uppercase}}
+                </td>
+                <td class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">{{leave.status_changed_by_name}}
+                </td>
+                <td class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">{{leave.last_status_changed_on |
+                  date :'MMM d, y, h:mm a' }}</td>
+                <td class="w180" *ngIf="active_tab == '' || active_tab == 'Reject'">
+                  {{leave.reject_remark}}
+                </td>
+                <td class="w60 text-center"
+                  *ngIf="(active_tab == '' || active_tab == 'Pending') && assign_login_data2.edit_leaves=='1'">
+                  <div class="action-button">
+                    <button *ngIf="leave.status == 'Pending'" mat-icon-button matTooltip="Change Status"
+                      (click)="openDialog(leave.id , 'normal_status')">
+                      <i class="material-icons edit">edit</i>
+                    </button>
+                  </div>
+                </td>
+                <td class="w80 text-center" *ngIf="assign_login_data2.edit_leaves=='1'">
+                  <div class="action-button">
+                    <button mat-icon-button matTooltip="Change Status" (click)="openDialog(leave.id , 'hr_status')">
+                      <i class="material-icons edit">edit</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let lead of leave_list">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w90">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w90">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110" *ngIf="active_tab=='Approved'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80" *ngIf="active_tab == ''">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w140" *ngIf="active_tab == '' || active_tab != 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180" *ngIf="active_tab == '' || active_tab == 'Reject'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w60 text-center" *ngIf="active_tab == '' || active_tab == 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80 text-center" *ngIf="assign_login_data2.edit_leaves=='1'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <ng-container *ngIf="leave_list.length == 0 && datanotfound == true ">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+
+  </div>
+
+  <!-- <div class="fab-btns" *ngIf="assign_login_data2.export_leaves=='1'">
+    <button mat-fab class="excel pulse" *ngIf="leave_list.length > 0" (click)="exportAsXLSX(active_tab)">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div> -->
+</div>

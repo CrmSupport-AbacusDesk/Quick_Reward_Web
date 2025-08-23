@@ -1,0 +1,259 @@
+<div class="main-container">
+    
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2 *ngIf="active_tab == 'Running' || active_tab == 'Expire'">Sub Scheme List</h2>
+        <h2 *ngIf="active_tab == 'schemeGift'">Gift List</h2>
+        
+        <div class="left-auto left-auto df ac flex-gap-10">
+            <button mat-icon-button matTooltip="Refresh"  (click)="refresh()" >
+                <i class="material-icons">refresh</i>
+            </button>
+            
+            <!-- <div class="pagination" *ngIf="schemeList.length > 0">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    
+                    <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div> -->
+            
+            <div class="mat-tabbar">
+                <button mat-button [ngClass]="active_tab == 'Running' ? 'active' : ''" (click)="active_tab = 'Running';getSubSchemeListing();">
+                    <i class="material-icons">redeem</i>Running
+                </button>
+                
+                <button mat-button [ngClass]="active_tab == 'Expire' ? 'active' : ''" (click)="active_tab = 'Expire';getSubSchemeListing();">
+                    <i class="material-icons">toggle_off</i>Expire
+                </button>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="container pb100">
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w60 text-center">Sr.No</th>
+                            <th class="w100">Date Created</th>
+                            <!-- <th class="w100">Scheme Type</th> -->
+                            <!-- <th class="w100">Scheme For</th> -->
+                            <th class="w100">Criteria Type</th>
+                            <th class="w70">Gift Type</th>
+                            <th class="">Title</th>
+                            <th class="w100">Date From</th>
+                            <th class="w100">Date To</th>
+                            <th class="w70 text-center">Slabs</th>
+                            <th class="w60 text-center">Action</th>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60">&nbsp;</th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input date-column infix-bodr">
+                                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                                        [(ngModel)]="filter.date_created" (dateChange)="onDate($event)"
+                                        [max]="today_date" disabled>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker disabled="false"></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <!-- <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="scheme_type"
+                                        [(ngModel)]="filter.scheme_type" (keyup.enter)="getSubSchemeListing()">
+                                    </mat-form-field>
+                                </div>
+                            </th> -->
+                            <!-- <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="scheme_for"
+                                        [(ngModel)]="filter.scheme_for" (keyup.enter)="getSubSchemeListing()">
+                                    </mat-form-field>
+                                </div>
+                            </th> -->
+                            <th class="w100">&nbsp;</th>
+                            <th class="w70">&nbsp;</th>
+                            
+                            <th class="">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="title"
+                                        [(ngModel)]="filter.title" (keyup.enter)="getSubSchemeListing()">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">&nbsp;</th>
+                            <th class="w100">&nbsp;</th>
+                            <th class="w70">&nbsp;</th>
+                            <th class="w60">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="table-container" *ngIf="active_tab == 'Running'">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of subSchemeDetailRunning; let i = index;">
+                                <td class="w60 text-center">{{i + 1 + sr_no}}</td>
+                                <td class="w100">{{row.date_created | date: 'dd MMM yyyy'}}</td>
+                                <td class="w100">{{row.criteria_type}}</td>
+                                <td class="w70">{{row.gift_type}}</td>
+                                <td class="">
+                                    <a class="link-btn" mat-button routerLink="sub-scheme-detail/{{row.id}}" routerLinkActive="active">{{row.title}}</a>
+                                </td>
+                                <td class="w100">{{row.start_date | date: 'dd MMM yyyy'}}</td>
+                                <td class="w100">{{row.end_date | date: 'dd MMM yyyy'}}</td>
+                                <td class="w70 text-center">{{row.slabCount}}</td>
+                                <td class="w60 text-center">
+                                    <div class="action-button">
+                                        <button mat-icon-button matTooltip="Delete" (click)="deleteSubScheme(row.id)">
+                                            <i class="material-icons red-clr">delete</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>                            
+                        </ng-container>
+                        
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="table-container" *ngIf="active_tab == 'Expire'">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of subSchemeDetailExpire; let i = index;">
+                                <td class="w60 text-center">{{i + 1 + sr_no}}</td>
+                                <td class="w100">{{row.date_created | date: 'dd MMM yyyy'}}</td>
+                                <td class="w100">{{row.criteria_type}}</td>
+                                <td class="w70">{{row.gift_type}}</td>
+                                <td>
+                                    <a class="link-btn" mat-button routerLink="scheme-detail/{{row.id}}"
+                                    routerLinkActive="active">{{row.title}}</a>
+                                </td>
+                                <td class="w100">{{row.start_date | date: 'dd MMM yyyy'}}</td>
+                                <td class="w100">{{row.end_date | date: 'dd MMM yyyy'}}</td>
+                                <td class="w70 text-center">{{row.slabCount}}</td>
+                                <td class="w60 text-center">
+                                    <div class="action-button">
+                                        <button mat-icon-button matTooltip="Delete" (click)="deleteSubScheme(row.id)">
+                                            <i class="material-icons red-clr">delete</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+        <ng-container *ngIf="(active_tab == 'Running' && subSchemeDetailRunning.length == 0) || (active_tab == 'Expire' && subSchemeDetailExpire.length == 0)">
+            <app-not-result-found></app-not-result-found>
+        </ng-container>
+        
+    </div>
+    
+    <!-- <div class="fab-btns">
+        
+        <button mat-fab class="excel" (click)="lastBtnValue('excel'); downloadExcel()"  *ngIf="logined_user_data2.export_gift_gallery=='1' && (active_tab == 'Running' || active_tab == 'Expire') && (subSchemeDetailRunning.length > 0 || subSchemeDetailExpire.length > 0)" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+            <img src="assets/img/excel.svg">
+            Download Excel
+        </button>
+        
+        <button class="pulse" mat-fab (click)="lastBtnValue('add')" [ngClass]="{'pulse': fabBtnValue=='add'}" color="primary" routerLink="scheme-add" *ngIf="active_tab == 'Running' || active_tab == 'Expire'">
+            <i class="material-icons">add</i>
+            Add New Sub Scheme
+        </button>
+    </div> -->
+    
+</div>

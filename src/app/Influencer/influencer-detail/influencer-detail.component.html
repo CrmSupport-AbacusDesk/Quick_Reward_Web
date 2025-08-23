@@ -1,0 +1,1245 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Influencer Detail</h2>
+
+        <div class="left-auto df ac flex-gap-10">
+            <div class="pagination" *ngIf="(tabType== 'advanceGIft' && giftData.length > 0)">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious(tabType)" [disabled]="start == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage(tabType)"
+                        [disabled]="pagenumber == total_page ">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mat-tabbar">
+                <button mat-button [ngClass]="{'active' :tabType== 'Profile'}"
+                    (click)="tabType= 'Profile';InfluencerDetail()"><i class="material-icons">person</i>Basic
+                    Detail</button>
+                <button mat-button [ngClass]="{'active' :tabType== 'transaction'}"
+                    (click)="tabType = 'transaction'; getLedger()" *ngIf="Influencer_Detail.loyalty_base != '2'"><i
+                        class="material-icons">swap_horiz</i>Wallet
+                    Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt10 pl10 pr10 container-scroll">
+        <div class="row" *ngIf="tabType== 'Profile'">
+            <div class="col s12 m8 l8">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <div class="left-auto">
+                            <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+                                [routerLink]="[ 'add-influencer/' ]"
+                                [queryParams]="{'type':Influencer_Detail.type, 'network':Influencer_Detail.influencer_type, 'id': encrypt_id}"
+                                *ngIf="login_data5.edit_influencer=='1'">
+                                <i class="material-icons">edit</i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+
+                            <div class="block-feilds" *ngIf="Influencer_Detail.company_name!==''">
+                                <span>Company Name</span>
+                                <p>{{Influencer_Detail.company_name ? (Influencer_Detail.company_name | titlecase) :
+                                    ''}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>User ID</span>
+                                <p>{{(network | slice:0:1)||'#'}}{{Influencer_Detail.unique_id}}</p>
+                            </div>
+
+                            <div class="block-feilds user-dp">
+                                <div class="profile-pic">
+                                    <img src="{{Influencer_Detail.profile != null && Influencer_Detail.profile != ''?(profileUrl + Influencer_Detail.profile) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
+                                        (click)="Influencer_Detail.profile != null && Influencer_Detail.profile != ''? goToImage(profileUrl + Influencer_Detail.profile) : '' ">
+                                </div>
+                                <div class="wp100" *ngIf="Influencer_Detail.name!=''">
+                                    <span>Name</span>
+                                    <p>{{Influencer_Detail.name | titlecase}}</p>
+                                </div>
+                            </div>
+
+                            <div class="block-feilds" *ngIf="Influencer_Detail.instagram_id!=''">
+                                <span>Instagram Id</span>
+                                <p>{{Influencer_Detail.instagram_id}}</p>
+                            </div>
+                            <div class="block-feilds" *ngIf="Influencer_Detail.facebook_id!=''">
+                                <span>Facebook Id</span>
+                                <p>{{Influencer_Detail.facebook_id}}</p>
+                            </div>
+                            <div class="block-feilds flex-heading" *ngIf="login_data5?.organisation_data?.sfa==1">
+                                <div>
+                                    <span>Sales User Name</span>
+                                    <p>{{Influencer_Detail.sales_user_name}}
+                                    </p>
+                                </div>
+
+                                <div class="left-auto" *ngIf="login_data5.edit_influencer=='1'">
+                                    <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                                        (click)="changeStatusDialog(Influencer_Detail.id,Influencer_Detail.status,'sales_person_edit',Influencer_Detail.referred_by,Influencer_Detail.name,Influencer_Detail.influencer_type, Influencer_Detail.assigned_sales_user_name,'')">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Mobile No.</span>
+                                <p>{{Influencer_Detail.mobile_no}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Address</span>
+                                <p>{{Influencer_Detail.address}} {{Influencer_Detail.city}}
+                                    {{Influencer_Detail.district}}
+                                    {{Influencer_Detail.state}}
+                                    {{Influencer_Detail.country}} {{Influencer_Detail.pincode}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Referral Code</span>
+                                <p>{{Influencer_Detail.referral_code ? Influencer_Detail.referral_code : '---'}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Referral By</span>
+                                <p>{{Influencer_Detail.referred_by_code ? Influencer_Detail.referred_by_code : '---'}}
+                                </p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Current Wallet Balance</span>
+                                <p>{{Influencer_Detail.wallet_point ? Influencer_Detail.wallet_point : '---'}}</p>
+                            </div>
+
+
+
+                            <div class="block-feilds flex-heading">
+                                <div>
+                                    <span>Status</span>
+                                    <p>{{Influencer_Detail.status ? Influencer_Detail.status : '---'}}</p>
+                                </div>
+
+                                <div class="left-auto"
+                                    *ngIf="login_data5.edit_influencer=='1' && login_data5.organisation_data.influencer_approval != '1'">
+                                    <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                                        (click)="changeStatusDialog(Influencer_Detail.id,Influencer_Detail.status,'influencer_list',Influencer_Detail.referred_by,Influencer_Detail.name,Influencer_Detail.influencer_type, Influencer_Detail.welcome_bonus_flag,'')">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="block-feilds" *ngIf="Influencer_Detail.status=='Reject'">
+                                <span>Reject Reason</span>
+                                <p>{{Influencer_Detail.reject_reason ? Influencer_Detail.reject_reason : '---'}}</p>
+                            </div>
+
+                            <ng-container *ngIf="login_data5.organisation_data.influencer_approval == '1'">
+                                <div class="block-feilds">
+                                    <span>Sales Executive Status </span>
+                                    <p> {{Influencer_Detail.sales_user_status == '' ? 'Pending' :
+                                        Influencer_Detail.sales_user_status}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="Influencer_Detail.sales_status_reject_reason">
+                                    <span>Sales Executive {{Influencer_Detail.sales_user_status == '' ? 'Pending' :
+                                        Influencer_Detail.sales_user_status}} Reason </span>
+                                    <p> {{Influencer_Detail.sales_status_reject_reason == '' ? 'Pending' :
+                                        Influencer_Detail.sales_status_reject_reason}}</p>
+                                </div>
+                                <ng-container *ngFor="let row of approvalLevel">
+                                    <div class="block-feilds flex-heading">
+                                        <div>
+                                            <span>{{row.level_name}} Status</span>
+                                            <p>
+                                                {{row.level == 'Level1' ? (Influencer_Detail.level1 ?
+                                                Influencer_Detail.level1 : 'Pending') : row.level == 'Level2' ?
+                                                (Influencer_Detail.level2 ? Influencer_Detail.level2 : 'Pending'): ''}}
+                                            </p>
+                                        </div>
+                                        <div class="left-auto"
+                                            *ngIf="(row.level == 'Level1' && login_data5.influencer_approval_level == row.level &&  Influencer_Detail.level1 != 'Approved') || (row.level == 'Level2' && login_data5.influencer_approval_level == row.level &&  Influencer_Detail.level2 != 'Approved')">
+                                            <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                                                (click)="changeStatusDialog(Influencer_Detail.id, (row.level == 'Level1' ? Influencer_Detail.level1 : Influencer_Detail.level2),'influencer_list',Influencer_Detail.referred_by,Influencer_Detail.name,Influencer_Detail.influencer_type, Influencer_Detail.welcome_bonus_flag, row.level)">
+                                                <i class="material-icons">edit</i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="block-feilds"
+                                        *ngIf="row.level == 'Level1' && Influencer_Detail.level1_update_by_name">
+                                        <span>{{row.level_name}} Status Updated By</span>
+                                        <p>{{Influencer_Detail.level1_update_by_name ?
+                                            Influencer_Detail.level1_update_by_name : '---'}}</p>
+                                    </div>
+
+                                    <div class="block-feilds"
+                                        *ngIf="row.level == 'Level1' && Influencer_Detail.level1_update_by">
+                                        <span>{{row.level_name}} Status Updated On</span>
+                                        <p>{{Influencer_Detail.level1_update_on != '0000-00-00 00:00:00' ?
+                                            (Influencer_Detail.level1_update_on | date:'yyyy-MM-dd, h:mm a') : '---'}}
+                                        </p>
+                                    </div>
+
+
+                                    <div class="block-feilds"
+                                        *ngIf="row.level == 'Level2' && Influencer_Detail.level2_update_by_name">
+                                        <span>{{row.level_name}} Status Updated By</span>
+                                        <p>{{Influencer_Detail.level2_update_by_name ?
+                                            Influencer_Detail.level2_update_by_name : '---'}}</p>
+                                    </div>
+
+                                    <div class="block-feilds"
+                                        *ngIf="row.level == 'Level2' && Influencer_Detail.level1_update_by">
+                                        <span>{{row.level_name}} Status Updated On</span>
+                                        <p>{{Influencer_Detail.level2_update_on != '0000-00-00 00:00:00' ?
+                                            (Influencer_Detail.level2_update_on | date:'yyyy-MM-dd, h:mm a') : '---'}}
+                                        </p>
+                                    </div>
+
+                                    <div class="block-feilds"
+                                        *ngIf="row.level == 'Level1' && Influencer_Detail.level1_reject_reason">
+                                        <span>{{row.level_name}} Reject Reason</span>
+                                        <p>{{Influencer_Detail.level1_reject_reason ?
+                                            Influencer_Detail.level1_reject_reason : '---'}}</p>
+                                    </div>
+
+                                    <div class="block-feilds"
+                                        *ngIf="row.level == 'Level2' && Influencer_Detail.level2_reject_reason">
+                                        <span>{{row.level_name}} Reject Reason</span>
+                                        <p>{{Influencer_Detail.level2_reject_reason ?
+                                            Influencer_Detail.level2_reject_reason : '---'}}</p>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+
+
+
+                            <div class="block-feilds">
+                                <span>D.O.B</span>
+                                <p>{{(Influencer_Detail.dob !='0000-00-00') ? (Influencer_Detail.dob| date:'d
+                                    MMM,y'):('----')}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>D.O.A</span>
+                                <p>{{(Influencer_Detail.doa !='0000-00-00') ? (Influencer_Detail.doa| date:'d
+                                    MMM,y'):('----')}}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Date of Wedding</span>
+                                <p>{{(Influencer_Detail.date_of_wedding !='0000-00-00' &&
+                                    Influencer_Detail.date_of_wedding !='') ? (Influencer_Detail.date_of_wedding|
+                                    date:'d MMM,y'):('----')}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Dealer Name</span>
+                                <p>
+                                    {{Influencer_Detail.dealer_name? (Influencer_Detail.dealer_name | titlecase) :
+                                    '--'}}
+                                </p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Dealer Mobile</span>
+                                <p>
+                                    {{Influencer_Detail.dealer_mobile && Influencer_Detail.dealer_mobile ?
+                                    (Influencer_Detail.dealer_mobile) : '--'}}
+                                </p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Dealer Code</span>
+                                <p>
+                                    {{Influencer_Detail.dealer_code && Influencer_Detail.dealer_code ?
+                                    (Influencer_Detail.dealer_code) : '--'}}
+                                </p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Primary Customer Name</span>
+                                <p>
+                                    {{Influencer_Detail.distributor_name && Influencer_Detail.distributor_name ?
+                                    (Influencer_Detail.distributor_name) : '--'}}
+                                </p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>First Mobile App Login</span>
+                                <p>
+                                    {{Influencer_Detail.first_login && Influencer_Detail.first_login != '0000-00-00
+                                    00:00:00'?
+                                    (Influencer_Detail.first_login | date:'MMM d, y, h:mm:a') : '--'}}
+                                </p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Latest Mobile App Login</span>
+                                <p>
+                                    {{Influencer_Detail.latest_login && Influencer_Detail.latest_login != '0000-00-00
+                                    00:00:00'?
+                                    (Influencer_Detail.latest_login | date:'MMM d, y, h:mm:a') : '--'}}
+                                </p>
+                            </div>
+
+                            <div class="block-feilds"
+                                *ngIf="login_data5.organisation_data.influencer_reset_device == '1'">
+                                <span>Device Detail</span>
+                                <p>{{Influencer_Detail.device_info ? Influencer_Detail.device_info : '---'}}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid-box mt10" *ngIf="Influencer_Detail.reason">
+                            <div class="block-feilds">
+                                <span>Reason</span>
+                                <p>{{Influencer_Detail.reason}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card-head mt15">
+                        <h2>Document Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <div class="doc-img">
+                                    <img src="assets/img/no_image.png" *ngIf="Influencer_Detail.pan_img == ''">
+                                    <img *ngIf="Influencer_Detail.pan_img" src="{{url+Influencer_Detail.pan_img}}"
+                                        (click)="goToImage(url+Influencer_Detail.pan_img)" style="cursor: zoom-in;">
+                                </div>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Pan Number</span>
+                                <p class="uppercase">{{Influencer_Detail.pan_no ?Influencer_Detail.pan_no :'---'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <div class="doc-img">
+                                    <img src="assets/img/no_image.png" *ngIf="Influencer_Detail.document_image == ''">
+                                    <img *ngIf="Influencer_Detail.document_image"
+                                        src="{{url+Influencer_Detail.document_image}}"
+                                        (click)="goToImage(url+Influencer_Detail.document_image)"
+                                        style="cursor: zoom-in;">
+                                    <img src="assets/img/no_image.png"
+                                        *ngIf="Influencer_Detail.document_image_back == ''">
+                                    <img *ngIf="Influencer_Detail.document_image_back && (Influencer_Detail.document_type == 'Aadhaar Card' || Influencer_Detail.document_type == 'Aadhar Card') "
+                                        src="{{url+Influencer_Detail.document_image_back}}"
+                                        (click)="goToImage(url+Influencer_Detail.document_image_back)"
+                                        style="cursor: zoom-in;">
+                                </div>
+                            </div>
+                            <div class="block-feilds">
+                                <span>{{Influencer_Detail.document_type}} Number</span>
+                                <p>{{Influencer_Detail.document_no ? Influencer_Detail.document_no : '---'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-head mt15">
+                        <h2>Bank Details</h2>
+                        <div class=""
+                            *ngIf="Influencer_Detail.payout_kyc_status == 'Reject' && Influencer_Detail.influencer_type == 'Plumber'">
+                            <button matTooltip="Reset KYC Status" (click)="reset_status(Influencer_Detail.id)"
+                                mat-raised-button color="primary">Reset KYC Status</button>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <span>User Redeemption Preference</span>
+                                <p>{{Influencer_Detail.user_redeemption_prefrence ?
+                                    Influencer_Detail.user_redeemption_prefrence :'---'}}</p>
+                            </div>
+
+                            <ng-container *ngIf="Influencer_Detail.user_redeemption_prefrence == 'Bank'">
+
+                                <div class="block-feilds">
+                                    <span>Bank Name</span>
+                                    <p>{{Influencer_Detail.bank_name ? Influencer_Detail.bank_name :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Account Number</span>
+                                    <p>{{Influencer_Detail.account_no ? Influencer_Detail.account_no:'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>IFSC Code</span>
+                                    <p>{{Influencer_Detail.ifsc_code ? Influencer_Detail.ifsc_code :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <div class="doc-img">
+                                        <img src="assets/img/no_image.png" *ngIf="Influencer_Detail.bank_img == ''">
+                                        <img *ngIf="Influencer_Detail.bank_img" src="{{url+Influencer_Detail.bank_img}}"
+                                            (click)="goToImage(url+Influencer_Detail.bank_img)"
+                                            style="cursor: zoom-in;">
+                                    </div>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Account Holder Name</span>
+                                    <p>{{Influencer_Detail.account_holder_name ? Influencer_Detail.account_holder_name
+                                        :'---'}}</p>
+                                </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="Influencer_Detail.user_redeemption_prefrence == 'UPI'">
+                                <div class="block-feilds">
+                                    <span>UPI ID</span>
+                                    <p>{{Influencer_Detail.upi_id ? Influencer_Detail.upi_id :'---'}}</p>
+                                </div>
+                            </ng-container>
+
+                            <!-- <div class="block-feilds">
+                                <span>KYC Status</span>
+                                <p>{{Influencer_Detail.payout_kyc_status ? Influencer_Detail.payout_kyc_status :'---'}}</p>
+                            </div> -->
+
+
+
+                        </div>
+                    </div>
+                    <div class="card-head mt15">
+                        <h2 class="flex-heading">KYC Details
+                            <i class="material-icons"
+                                [ngClass]="Influencer_Detail.kyc_status == 'Verified' ? 'Approve' : Influencer_Detail.kyc_status == 'Reject' ? 'Reject' : 'Pending'">
+                                {{Influencer_Detail.kyc_status == 'Verified' ? 'verified' : Influencer_Detail.kyc_status
+                                == 'Reject' ?
+                                'cancel' : 'update'}}
+                            </i>
+                        </h2>
+                        <div class="left-auto"
+                            *ngIf="Influencer_Detail.kyc_status != 'Verified' && login_data5.edit_influencer=='1'">
+                            <button matTooltip="Update KYC Status" (click)="update(Influencer_Detail.id)"
+                                mat-raised-button color="primary">Update KYC Status</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <span>KYC Status</span>
+                                <p>{{Influencer_Detail.kyc_status}}</p>
+                            </div>
+
+                            <div class="block-feilds" *ngIf="Influencer_Detail.kyc_status != 'Pending'">
+                                <span>Last {{Influencer_Detail.kyc_status}} By</span>
+                                <p>{{Influencer_Detail.kyc_verified_by_name ? Influencer_Detail.kyc_verified_by_name
+                                    :'---'}}</p>
+                            </div>
+
+                            <div class="block-feilds" *ngIf="Influencer_Detail.kyc_status != 'Pending'">
+                                <span>Last {{Influencer_Detail.kyc_status}} On</span>
+                                <p>{{Influencer_Detail.kyc_verified_date != '0000-00-00 00:00:00' ?
+                                    (Influencer_Detail.kyc_verified_date | date : 'dd MMMyyyy, h:mm a') : '--'}}</p>
+
+                            </div>
+
+                            <div class="block-feilds" *ngIf="Influencer_Detail.kyc_remark">
+                                <span>Reason</span>
+                                <p>{{Influencer_Detail.kyc_remark}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <ng-container *ngIf="!skLoading">
+                    <div class="card mt16" *ngIf="Influencer_Detail.form_builder.length > 0">
+                        <div class="card-head">
+                            <h2>Additional Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <ng-container *ngFor="let row of Influencer_Detail.form_builder">
+                                    <div class="block-feilds" *ngIf="row.value">
+                                        <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) :
+                                            ''}}</span>
+                                        <p>{{row.value ? row.value : ''}}</p>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngFor="let row of Influencer_Detail.form_builder_dependent">
+                                    <div class="block-feilds" *ngIf="row.value">
+                                        <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) :
+                                            ''}}</span>
+                                        <p>{{row.value ? row.value : ''}}</p>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12 m4 l4" *ngIf="tabType == 'Profile'">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Logs</h2>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="logs-box" style="max-height: 390px;">
+                            <ng-container *ngFor="let row of influencer_Logs_Detail">
+                                <div class="logshead">{{row.created_by_name}} : - {{row.date_created | date : 'dd
+                                    MMMyyyy, h:mm a'}}
+                                </div>
+                                <div class="logscontent">
+                                    <span>Remark : -</span> {{row.action}}
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box single mt10" *ngFor="let row of influencer_Logs_Detail">
+                            <div class="sk-box">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+        <div *ngIf="tabType== 'transaction'" style="margin: -10px -10px 0px -10px;">
+            <div class="tools-container no-sticky">
+                <div class="mat-tabbar">
+                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'ledger'}"
+                        (click)="clearFilter(); getLedger(); wallet_history_type= 'ledger'">
+                        <i class="material-icons">receipt_long</i>
+                        Ledger
+                    </button>
+                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'scan_history'}"
+                        (click)="clearFilter(); scan_history_data(); wallet_history_type= 'scan_history'"
+                        *ngIf="Influencer_Detail.loyalty_base == '0'">
+                        <i class="material-icons">qr_code_scanner</i>
+                        Scan History
+                    </button>
+                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'purchase_history'}"
+                        (click)="clearFilter(); getList(); wallet_history_type= 'purchase_history'"
+                        *ngIf="Influencer_Detail.loyalty_base == '1'">
+                        <i class="material-icons">receipt</i>
+                        Purchase History
+                    </button>
+                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'redeem_history'}"
+                        (click)="clearFilter(); redeem_history_data(); wallet_history_type = 'redeem_history'">
+                        <i class="material-icons">redeem</i>
+                        Redeem History
+                    </button>
+                </div>
+
+
+
+
+                <div class="left-auto df flex-gap-10">
+                    <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                        <i class="material-icons">refresh</i>
+                    </a>
+
+
+                    <div class="pagination" *ngIf="(ledgerData.length > 0 && wallet_history_type== 'ledger')">
+                        <div class="pagination-content">
+                            Pages
+                            <span>{{pagenumber}}</span>
+                            of
+                            <span>{{total_page}}</span>
+                        </div>
+                        <div class="page-nav">
+                            <button mat-icon-button matTooltip="Older" (click)="pervious(tabType)"
+                                [disabled]="start == 0 || total_page == 0">
+                                <i class="material-icons">navigate_before</i>
+                            </button>
+                            <button mat-icon-button matTooltip="Newer" (click)="nextPage(tabType)"
+                                [disabled]="pagenumber == total_page || total_page == 0 ">
+                                <i class="material-icons">navigate_next</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pagination"
+                        *ngIf="(redeemHistory.length > 0 && wallet_history_type== 'redeem_history')">
+                        <div class="pagination-content">
+                            Pages
+                            <span>{{pagenumber}}</span>
+                            of
+                            <span>{{total_page}}</span>
+                        </div>
+                        <div class="page-nav">
+                            <button mat-icon-button matTooltip="Older" (click)="pervious(tabType)"
+                                [disabled]="start == 0 || total_page == 0">
+                                <i class="material-icons">navigate_before</i>
+                            </button>
+                            <button mat-icon-button matTooltip="Newer" (click)="nextPage(tabType)"
+                                [disabled]="pagenumber == total_page || total_page == 0 ">
+                                <i class="material-icons">navigate_next</i>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="pagination"
+                        *ngIf="(purchase_data.length > 0 && wallet_history_type== 'purchase_history')">
+                        <div class="pagination-content">
+                            Pages
+                            <span>{{pagenumber}}</span>
+                            of
+                            <span>{{total_page}}</span>
+                        </div>
+                        <div class="page-nav">
+                            <button mat-icon-button matTooltip="Older" (click)="pervious(tabType)"
+                                [disabled]="start == 0 || total_page == 0">
+                                <i class="material-icons">navigate_before</i>
+                            </button>
+                            <button mat-icon-button matTooltip="Newer" (click)="nextPage(tabType)"
+                                [disabled]="pagenumber == total_page || total_page == 0 ">
+                                <i class="material-icons">navigate_next</i>
+                            </button>
+                        </div>
+                        <div class="mat-tabbar">
+                            <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+                                (click)="active_tab = 'Pending';getList()"><i
+                                    class="material-icons">pending_actions</i>Pending
+                                ({{tabCount.Pending ? tabCount.Pending : '0'}})</button>
+                            <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+                                (click)="active_tab = 'Approved'; getList()"><i
+                                    class="material-icons">swap_horiz</i>Approved
+                                ({{tabCount.Approved ? tabCount.Approved : '0'}})</button>
+                            <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+                                (click)="active_tab = 'Reject';getList()"><i class="material-icons">cancel</i>Reject
+                                ({{tabCount.Reject ? tabCount.Reject : '0'}})</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="cs-table" *ngIf="wallet_history_type== 'ledger'">
+                <div class="sticky-head" style="top: -10px;">
+                    <div class="table-head">
+                        <table>
+                            <tr>
+                                <th class="w60">S.no.</th>
+                                <th class="w150">Date
+                                    <div class="sorting">
+                                        <a (click)="openBottomSheet('ledger_filter')" matTooltip="Export Excel">
+                                            <i class="material-icons">filter_alt</i>
+                                        </a>
+                                    </div>
+                                </th>
+                                <th class="w150">Transaction Type</th>
+                                <th class="text-right">Credit</th>
+                                <th class="text-right">Debit</th>
+                                <th class="w160 text-right">Balance</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table-head border-top">
+                        <table class="sno-border">
+                            <tr>
+                                <th class="w60">&nbsp;</th>
+                                <th class="w150">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input date-column infix-bodr">
+                                            <input matInput [matDatepicker]="picker1" placeholder="Date" name="date"
+                                                [(ngModel)]="filter.date_created" [max]="today_date"
+                                                (dateChange)="date_format(tabType)" disabled>
+                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w150 text-right">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field>
+                                            <input type="text" matInput placeholder="Search ..." name="transaction_type"
+                                                (keyup.enter)="getLedger()" #transaction_type="ngModel"
+                                                [(ngModel)]="filter.transaction_type">
+                                            <mat-autocomplete #search="matAutocomplete">
+                                                <mat-option>
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="text-right">&nbsp;</th>
+                                <th class="text-right">&nbsp;</th>
+                                <th class="w160">&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div class="table-content">
+                        <table>
+                            <ng-container *ngIf="!loader">
+                                <tr *ngFor="let row of ledgerData; let i =index">
+                                    <td class="w60">{{i+1+sr_no}}</td>
+                                    <td class="w150">{{row.date_created | date : 'dd MMM yyy ,h:mm a'}}</td>
+                                    <td class="w150">{{row.transaction_type}}</td>
+                                    <td class="text-right">
+                                        <strong class="green-clr" *ngIf="row.credit > 0">+ {{row.credit}} pt</strong>
+                                        <ng-container *ngIf="row.credit == 0">---</ng-container>
+                                        <br>
+                                        <ng-container *ngIf="row.credit > 0">{{row.transaction_remark}}</ng-container>
+                                    </td>
+                                    <td class="text-right">
+                                        <strong class="red-clr" *ngIf="row.debit > 0">- {{row.debit}} pt</strong>
+                                        <ng-container *ngIf="row.debit == 0">---</ng-container>
+                                        <br>
+                                        <ng-container *ngIf="row.debit > 0">{{row.transaction_remark}}</ng-container>
+                                    </td>
+                                    <td class="w160 text-right">
+                                        <strong>{{row.balance}} pt</strong>
+                                    </td>
+                                </tr>
+                            </ng-container>
+
+                            <ng-container *ngIf="loader">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                    <td class="w60">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w150">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w150">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td>
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td>
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w160">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+                <ng-container *ngIf="ledgerData.length == 0">
+                    <app-not-result-found></app-not-result-found>
+                </ng-container>
+        </div>
+        
+    </div>
+
+    <div class="cs-table  horizontal-scroll" *ngIf="wallet_history_type== 'scan_history' && tabType != 'Profile'">
+    <div class="sticky-head" style="top: -10px;">
+        <div class="table-head">
+            <table>
+                <tr>
+                    <th class="w60">Sr.No</th>
+                    <th class="w140">Coupon Code</th>
+                    <th class="w250">Product Detail</th>
+                    <!-- <th class="w100">Dispatch Date</th>
+                    <th class="w100">Dispatch Type</th>
+                    <th class="w250">Dealer Detail</th>
+                    <th class="w130">Invoice No.</th> -->
+                    <th class="w110 text-right">Coupon value</th>
+                    <th class="w100">Scan Date
+                        <div class="sorting">
+                            <a (click)="openBottomSheet('scan_history_filter')" matTooltip="Date Filter">
+                                <i class="material-icons">filter_alt</i>
+                            </a>
+                        </div>
+                    </th>
+                    <th class="w180">Bonus Name</th>
+                    <th class="w110 text-right">Bonus Point</th>
+                    
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <div class="table-content">
+            <table>
+                <ng-container *ngIf="!loader">
+                    <tr *ngFor="let row of couponData let i = index;">
+                        <td class="w60">{{i+1+sr_no}}</td>
+                        <td class="w140">{{row.coupon_code?row.coupon_code:'---'}}</td>
+                        <td class="w250">{{row.product_detail?row.product_detail:'---'}}</td>
+                        <!-- <td class="w100">
+          
+                            {{row.dispatch_date != "0000-00-00 00:00:00" ? (row.dispatch_date | date:'d MMM y') : '---'}}
+                        </td>
+                        <td class="w100">{{row.dispatch_type}}</td>
+                        <td class="w250">{{row.dr_detail}}</td>
+                        <td class="w130">{{row.invoice_number}}</td> -->
+                                    <td class="w110 text-right">
+                                        <strong>{{row.total_point?row.total_point + ' PT':'---'}}</strong>
+                                    </td>
+                                    <td class="w100">{{row.scanned_date | date:'d MMM y, h:mm a'}}</td>
+                                    <td class="w180">{{row.bonus_scheme_name}}</td>
+                                    <td class="w110 text-right"><strong>{{row.bonus_point?row.bonus_point + '
+                                            PT':'---'}}</strong></td>
+
+                                </tr>
+                            </ng-container>
+
+                            <ng-container *ngIf="loader">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                    <td class="w60">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w140">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <!-- <td class="w250">
+                            <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                            <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                            <div>&nbsp;</div>
+                        </td>
+                        <td class="w250">
+                            <div>&nbsp;</div>
+                        </td>
+                        <td class="w130">
+                            <div>&nbsp;</div>
+                        </td> -->
+                                    <td class="w110 text-right">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w180">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w110 text-right">
+                                        <div>&nbsp;</div>
+                                    </td>
+
+                                </tr>
+                            </ng-container>
+                            <ng-container *ngIf="couponData.length == 0">
+                                <app-not-result-found></app-not-result-found>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="cs-table horizontal-scroll" *ngIf="wallet_history_type== 'redeem_history' && tabType != 'Profile' ">
+                <div class="sticky-head">
+                    <div class="table-head">
+                        <table>
+                            <tr>
+                                <th class="w60">Sr.No</th>
+                                <th class="w90">Date</th>
+                                <th class="w110">Req. ID</th>
+                                <th class="w200">Gift</th>
+                                <th class="w100 text-right">Points Request</th>
+                                <th class="w100 text-right">Equivalent Cash</th>
+                                <th class="w110">Redeem Status</th>
+                                <th class="w90">Payment Mode</th>
+
+                                <th class="w150">TXN ID</th>
+                                <th class="w100  text-center">Status</th>
+                                <th class="w200">TXN Remark</th>
+                                <!-- <th class="w110">Gift Points Status</th> -->
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-content">
+                        <table>
+                            <ng-container *ngIf="!loader">
+                                <tr *ngFor="let row of redeemHistory; let i = index;">
+                                    <td class="w60">{{i + 1 + sr_no}}</td>
+                                    <td class="w90">{{row.date_created | date :'dd MMM yyyy'}}</td>
+                                    <td class="w110">{{row.req_id ? row.req_id : '---'}}</td>
+                                    <td class="w200">{{row.gift_name ? row.gift_name : '---'}}</td>
+                                    <td class="w100 text-right"><strong>{{row.point ? row.point : '---'}}</strong></td>
+                                    <td class="w100 text-right"><strong>{{row.cash_point ? row.cash_point :
+                                            '---'}}</strong></td>
+                                    <td class="w110"><strong class="{{row.status}}">{{row.status}}</strong> </td>
+                                    <td class="w90"><strong>{{row.payment_mode ? row.payment_mode : '---'}}</strong>
+                                    </td>
+
+                                    <!-- <td class="w110"><strong class="{{row.gift_status}}">{{row.gift_status ? row.gift_status :
+                            '---'}}</strong></td> -->
+
+                                    <td class="w150">
+                                        <ng-container>
+                                            {{row.razorpay_payout_id}}
+                                        </ng-container>
+                                        <ng-container>
+                                            {{row.transaction_id}}
+                                        </ng-container>
+                                    </td>
+                                    <td class="w100  text-center">
+                                        <strong class="{{row.transfer_status}}">{{row.transfer_status |
+                                            titlecase}}</strong>
+
+                                    </td>
+
+                                    <td class="w200">{{row.transfer_remark.replaceAll('_',' ') | titlecase}}
+                                </tr>
+                            </ng-container>
+
+                            <ng-container *ngIf="loader">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                    <td class="w60">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w90">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w110">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w200">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w110">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w90">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w150">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w200">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-container *ngIf="redeemHistory.length == 0">
+                                <app-not-result-found></app-not-result-found>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="cs-table horizontal-scroll" *ngIf="wallet_history_type== 'purchase_history'">
+                <div class="sticky-head">
+                    <div class="table-head">
+                        <table class="sno-border">
+                            <tr>
+                                <th class="w30">&nbsp;</th>
+                                <th class="w100">Date Created</th>
+                                <th class="w100">PO ID</th>
+                                <th class="w100">Type</th>
+                                <th class="w180">Name</th>
+                                <th class="w120">Invoice Date</th>
+                                <th class="w120">Invoice Number</th>
+                                <th class="w80  text-right">Total Item</th>
+                                <th class="w80  text-right">Total SQFT</th>
+                                <th class="w80  text-right">Claim Points</th>
+                                <th class="w90  text-right" *ngIf="active_tab == 'Approved'">Approved Points</th>
+                                <th class="w100  text-center"
+                                    *ngIf="active_tab == 'Pending' && login_data5.edit_purchase == '1'">Action</th>
+                        </table>
+                    </div>
+                    <div class="table-head border-top">
+                        <table class="sno-border">
+                            <tr>
+                                <th class="w30">&nbsp;</th>
+                                <th class="w100">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input date-column infix-bodr">
+                                            <input matInput [matDatepicker]="picker" placeholder="Date"
+                                                name="date_created" #date_created="ngModel"
+                                                [(ngModel)]="filter.date_created" (ngModelChange)="date_format(tabType)"
+                                                [max]="today_date" readonly>
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w100">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input select-input">
+                                            <input matInput placeholder="Search..." (keyup.enter)="getList()" name="id"
+                                                #id="ngModel" [(ngModel)]="filter.id">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w100">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input select-input">
+                                            <input matInput placeholder="Search..." (keyup.enter)="getList()"
+                                                name="sub_type" #sub_type="ngModel" [(ngModel)]="filter.sub_type">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w180">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input select-input">
+                                            <input matInput placeholder="Search..." (keyup.enter)="getList()"
+                                                name="created_by_name" #created_by_name="ngModel"
+                                                [(ngModel)]="filter.created_by_name">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w120">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input date-column infix-bodr">
+                                            <input matInput [matDatepicker]="picker1" placeholder="Date"
+                                                name="invoice_date" #invoice_date="ngModel"
+                                                [(ngModel)]="filter.invoice_date" (ngModelChange)="date_format(tabType)"
+                                                [max]="today_date" readonly>
+                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker1></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w120">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input select-input">
+                                            <input matInput placeholder="Search..." (keyup.enter)="getList()"
+                                                name="invoice_number" #invoice_number="ngModel"
+                                                [(ngModel)]="filter.invoice_number">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w80  text-right">&nbsp;</th>
+                                <th class="w80  text-right">&nbsp;</th>
+                                <th class="w80  text-right">&nbsp;</th>
+                                <th class="w90  text-right" *ngIf="active_tab == 'Approved'">&nbsp;</th>
+                                <th class="w100  text-center"
+                                    *ngIf="active_tab == 'Pending' && login_data5.edit_purchase == '1'">&nbsp;</th>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-container" *ngIf="purchase_data.length > 0">
+                    <div class="table-content">
+                        <table class="sno-border">
+                            <ng-container *ngIf="!skLoading">
+                                <tr *ngFor="let row of purchase_data; let i = index"
+                                    [ngClass]="{'Current': service.currentUserID == row.id}">
+                                    <td class="w30">{{i + 1 + sr_no}}</td>
+                                    <td class="w100">{{row.date_created | date : 'd MMM y'}}</td>
+                                    <td class="w100">
+                                        <button class="link-btn"
+                                            (click)="service.setData(filter); service.setTabData(active_tab)"
+                                            routerLink="purchasedetail/{{row.id}}">
+                                            {{row.id}}
+                                        </button>
+                                    </td>
+                                    <td class="w100">{{row.sub_type}}</td>
+                                    <td class="w180">
+                                        <button class="link-btn"
+                                            (click)="service.setData(filter); service.setTabData(active_tab)"
+                                            routerLink="purchasedetail/{{row.id}}">
+                                            {{row.created_by_name ? (row.created_by_name | titlecase) : '---'}}
+                                        </button>
+                                    </td>
+                                    <td class="w120">{{row.invoice_date | date : 'd MMM y'}}</td>
+                                    <td class="w120">{{row.invoice_number ? row.invoice_number : '---'}}</td>
+                                    <td class="w80  text-right">{{row.total_item ? row.total_item: '0'}}</td>
+                                    <td class="w80  text-right">{{row.total_sqft ? row.total_sqft: '0'}}</td>
+                                    <td class="w80  text-right">{{row.total_point_value ? row.total_point_value: '0'}}
+                                    </td>
+                                    <td class="w90  text-right" *ngIf="active_tab == 'Approved'">{{row.approved_point ?
+                                        row.approved_point: '0'}}</td>
+                                    <td class="w100  text-center"
+                                        *ngIf="active_tab == 'Pending' && login_data5.edit_purchase == '1'">
+                                        <button class="link-btn" (click)="openDialog2(row)">
+                                            Change Status
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-container *ngFor="let row of [].constructor(10)">
+                                <tr class="sk-loading" *ngIf="skLoading">
+                                    <td class="w30">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w180">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w120">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w120">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w80  text-right">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w80  text-right">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w80  text-right">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w90  text-right" *ngIf="active_tab == 'Approved'">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100  text-center"
+                                        *ngIf="active_tab == 'Pending' && login_data5.edit_purchase == '1'">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+             <div *ngIf="tabType== 'advanceGIft'" style="margin: -10px -10px 0px -10px;">
+            <div class="cs-table">
+                <div class="sticky-head" style="top: -10px;">
+                    <div class="table-head">
+                        <table>
+                            <tr>
+                                <th class="w50">S.No</th>
+                                <th class="w90">Date Created</th>
+                                <th class="w100">Created By</th>
+                                <th class="w200">Gift Title</th>
+                                <th class="w140">Gift Adjustment Type</th>
+                                <th class="w100 text-right">Points</th>
+                                <th>Remark</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="table-container">
+
+                    <div class="table-content">
+                        <table>
+                            <ng-container *ngIf="!checkinLoader">
+                                <tr *ngFor="let row of giftData; let i=index">
+                                    <td class="w50">{{i + 1 + sr_no}}</td>
+                                    <td class="w90">{{row.date_created | date:'dd MMM yyyy'}}</td>
+                                    <td class="w100">{{row.created_by_name}}</td>
+                                    <td class="w200">{{row.title}}</td>
+                                    <td class="w140">{{row.gift_type}}</td>
+                                    <td class="w100 text-right">{{row.gift_point > 0 ? row.gift_point : '---'}}</td>
+                                    <td>{{row.remark}}</td>
+                                </tr>
+                            </ng-container>
+                            <ng-container *ngIf="checkinLoader">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                    <td class="w50">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w90">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w200">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w140">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td>
+                                        <div>&nbsp;</div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                </div>
+                <ng-container *ngIf="giftData.length == 0">
+                    <app-not-result-found></app-not-result-found>
+                </ng-container>
+            </div>
+        </div>
+   
+</div>
+
+<div class="fab-btns"
+        *ngIf="(tabType== 'transaction' && wallet_history_type== 'ledger' && ledgerData.length > 0) || (tabType== 'transaction' && wallet_history_type== 'scan_history' && couponData.length > 0) || (tabType== 'transaction' && wallet_history_type=='redeem_history' && redeemHistory.length > 0) || (tabType== 'transaction' && wallet_history_type== 'ledger' && Influencer_Detail.status =='Approved' && login_data5.edit_influencer=='1')">
+        <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+            [matMenuTriggerFor]="menu">
+            <i class="material-icons">apps</i>
+            Action
+        </button>
+    </div>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="progressService.setCancelReq(false);downloadInChunks(wallet_history_type);"
+            *ngIf="(tabType== 'transaction' && wallet_history_type== 'ledger' && ledgerData.length > 0) || (tabType== 'transaction' && wallet_history_type== 'scan_history' && couponData.length > 0) || (tabType== 'transaction' && wallet_history_type=='redeem_history' && redeemHistory.length > 0)">
+            <mat-icon>download</mat-icon>
+            <span>Download in excel</span>
+        </button>
+
+        <button mat-menu-item (click)="openDialog('redeem_request')"
+            *ngIf="tabType== 'transaction' && wallet_history_type== 'ledger' && Influencer_Detail.status =='Approved' && login_data5.edit_influencer=='1'">
+            <mat-icon>send</mat-icon>
+            <span>Send Redeem Request</span>
+        </button>
+
+
+        <button mat-menu-item (click)="openDialog('point_transfer')"
+            *ngIf="tabType== 'transaction' && wallet_history_type== 'ledger' && Influencer_Detail.status =='Approved' && login_data5.edit_influencer=='1'">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>Point Transfer</span>
+        </button>
+    </mat-menu>
+
+</div>

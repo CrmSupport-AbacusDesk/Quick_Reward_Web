@@ -1,0 +1,247 @@
+<div class="main-container">
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" routerLink="/survey-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add New Survey</h2>
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>User Type</mat-label>
+                    <mat-select name="types" [(ngModel)]="data.types" (ngModelChange)="AllsalesExecutive('')"
+                      #types="ngModel" required>
+                      <ng-container *ngFor="let row of service.orgUerArray">
+												<mat-option  value="{{row.type}}">{{row.type ? (row.type | titlecase) : ''}}</mat-option>
+											</ng-container>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="types.touched || f.submitted">
+                    <p *ngIf="types.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3" *ngIf="data.types=='Sales Executive'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Select User</mat-label>
+                    <mat-select name="selected_user" [(ngModel)]="data.selected_user" #selected_user="ngModel" multiple
+                      required>
+
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no search found'" placeholderLabel="Search.."
+                          (keyup)="AllsalesExecutive($event.target.value)"></ngx-mat-select-search>
+                      </mat-option>
+                      <div class="pl16">
+                        <mat-checkbox [(ngModel)]="data.allsaleexecutive" (change)="selectAllOption('allsaleexecutive')"
+                          name="allsaleexecutive" value="true">Select All</mat-checkbox>
+                      </div>
+                      <mat-option *ngFor="let row of salesExecutive" [value]="row.id">{{row.name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="selected_user.touched || f.submitted">
+                    <p *ngIf="selected_user.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Title</mat-label>
+                    <input matInput placeholder="Type Here ..." name="title" #title="ngModel" [(ngModel)]="data.title"
+                      required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                    <p *ngIf="title.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Start Date</mat-label>
+                    <input name="start_date" matInput [matDatepicker]="pickers" placeholder="" [min]="minDate"
+                      #start_date="ngModel" readonly [(ngModel)]="data.start_date" required>
+                    <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                    <mat-datepicker #pickers></mat-datepicker>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="start_date.touched || f.submitted">
+                    <p *ngIf="start_date.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>End Date</mat-label>
+                    <input name="end_date" matInput [matDatepicker]="picker1" placeholder="" [min]="data.start_date"
+                      #end_date="ngModel" readonly [(ngModel)]="data.end_date" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="end_date.touched || f.submitted">
+                    <p *ngIf="end_date.errors?.required">This field is required</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12 m4 l4" *ngIf="!data.selected_user || data.selected_user.length == 0">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Area Wise Selection</h2>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col s12">
+                  <div class="check-box">
+                    <div class="check-head">
+                      <mat-checkbox [labelPosition]="labelPosition" [(ngModel)]="data.allStates" (change)="allState()"
+                        name="allStates" value="true">State</mat-checkbox>
+                    </div>
+                    <div class="check-body">
+                      <ng-container *ngFor="let val of states;let i = index">
+                        <mat-checkbox [labelPosition]="labelPosition" [(ngModel)]="val.selected" [name]="'state'+i"
+                          (change)="setState($event, val.state_name)">{{val.state_name}}</mat-checkbox>
+                      </ng-container>
+                      <!-- <mat-checkbox [labelPosition]="labelPosition" [(ngModel)]="row.selected"  (change)="addstate(row,$event,i)"   [name]="'state'+i" value="true" *ngFor="let row of State_list; let i=index;">{{row.state_name}}</mat-checkbox> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col s12 m8 l8">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Survey Question & Answer</h2>
+
+            </div>
+            <div class="row mb0">
+              <div class="col s12">
+                <div class="shuffle-heading">
+                  <h2>You Want to Shuffle Questions</h2>
+                  <mat-slide-toggle color="accent" [(ngModel)]="isChecked" (change)="shufll($event)"></mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+
+            <div class="col s12 m6 l6">
+              <p class="mb20 mt20">Select Question Type</p>
+              <mat-radio-group class="example-section" name="question_type" [(ngModel)]="surveyQue.question_type">
+                <mat-radio-button class="wp50" color="primary" value="optional_answer">
+                  Optional Answer
+                </mat-radio-button>
+                <mat-radio-button class="wp50" color="primary" value="filled_answers">
+                  Filled Answers
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+            <div class="card-body mt90">
+              <div class="row cs-form">
+                <div class="col s12 ">
+                  <div class="relative-block">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Question</mat-label>
+                      <input matInput placeholder="Type Here.." class="pr150" name="question"
+                        [(ngModel)]="surveyQue.question" #question="ngModel">
+                    </mat-form-field>
+
+                    <a mat-raised-button color="primary" class="fix-btns"
+                      (click)="surveyQue.question && surveyQue.question!='' ? checkQuestion(surveyQue.question) : ''">
+                      Add Question <i class="material-icons font18 rotate-icons">subdirectory_arrow_left</i>
+                    </a>
+                  </div>
+
+
+                  <!-- *ngIf="question?.length" -->
+                  <mat-accordion class="cs-mat-accordion">
+                    <mat-expansion-panel *ngFor="let row of questionData; let i = index">
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          {{row.ques_name | titlecase}} - ({{row.question_type.replaceAll('_',' ') | titlecase}})
+                          <a class="accordion-action default" (click)="deleteQue(i)"> <i
+                              class="material-icons">delete</i></a>
+                        </mat-panel-title>
+                      </mat-expansion-panel-header>
+                      <div class="panel-body">
+                        <div class="relative-block mt10">
+                          <mat-form-field appearance="outline">
+                            <!-- <mat-label>Question</mat-label> -->
+                            <input matInput class="pr150" value={{row.ques_name}} [readonly]="!edit_question">
+                          </mat-form-field>
+
+                          <a mat-raised-button color="accent" class="fix-btns" style="bottom: 7px;"
+                            *ngIf="!edit_question" (click)="edit_question = !edit_question">
+                            Edit Question <i class="material-icons font18">edit</i>
+                          </a>
+
+                          <a mat-raised-button color="primary" class="fix-btns" style="bottom: 7px;"
+                            *ngIf="edit_question" (click)="edit_question = !edit_question">
+                            Add Question <i class="material-icons font18">edit</i>
+                          </a>
+
+
+                        </div>
+
+                        <div class="relative-block" *ngIf="row.question_type=='optional_answer'">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Answer</mat-label>
+                            <input matInput placeholder="Type Here..." class="pr150" name="answer"
+                              [(ngModel)]="surveyAns.answer" #answer="ngModel">
+                          </mat-form-field>
+
+                          <a mat-raised-button color="primary" class="fix-btns" style="bottom: 7px;"
+                            (click)="surveyAns.answer && surveyAns.answer!='' ? addAnswer(i) : ''">
+                            Add Answer <i class="material-icons font18 rotate-icons">subdirectory_arrow_left</i>
+                          </a>
+                        </div>
+
+
+                        <div class="survey-ans" *ngIf="row.options.length">
+                          <ol type="A">
+                            <li *ngFor="let anwerRow of row.options; let k = index">{{anwerRow}} <a
+                                class="accordion-action" (click)="delAns(i,k)"> <i class="material-icons">delete</i></a>
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+              [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

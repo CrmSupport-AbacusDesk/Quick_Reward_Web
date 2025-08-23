@@ -1,0 +1,508 @@
+<div class="edit-modal" *ngIf="data.delivery_from == 'redeem_status'">
+  <form validate #update_basic="ngForm" name="update_basic"
+    (ngSubmit)="(update_basic.valid && update_basic.submitted)?redeem_status_change(data.reason,data.order_status):''">
+    <p class="heading">Redeem Status </p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="my-point two-col" *ngIf="userData.organisation_data.loyalty == 1">
+          <ul>
+            <li>
+              <div class="row">
+                <div class="col s2">
+                  <i class="material-icons" style="font-size: 18px;">share</i>
+                </div>
+                <div class="col s10">
+                  <p>Earn By Refferal</p>
+                  <span>{{pointsData.referral_points ? pointsData.referral_points : '0'}} Points</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row">
+                <div class="col s2">
+                  <i class="material-icons" style="font-size: 18px;">qr_code_scanner</i>
+                </div>
+                <div class="col s10">
+                  <p>Earn By Scan</p>
+                  <span style="color: red;">{{pointsData.Scan_point ? pointsData.Scan_point : '0'}} Points</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="row">
+                <div class="col s2">
+                  <i class="material-icons" style="font-size: 18px;">pending_actions</i>
+                </div>
+                <div class="col s10">
+                  <p>Total Pending Redeem </p>
+                  <span style="color: orange;">{{pointsData.pending_points ? pointsData.pending_points : '0'}}
+                    Points</span>
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <div class="row">
+                <div class="col s2">
+                  <i class="material-icons" style="font-size: 18px;">verified</i>
+                </div>
+                <div class="col s10">
+                  <p>Total Approved Redeem </p>
+                  <span style="color: green;">{{pointsData.approved_points ? pointsData.approved_points : '0'}}
+                    Points</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Redeem Status</mat-label>
+              <mat-select name="order_status" placeholder="Select Status" #order_status="ngModel"
+                [(ngModel)]="data.order_status"
+                (selectionChange)="(data.request_type == 'Cash' && data.order_status == 'Approved'  && (transform(data.cash_amount) > transform(userData.organisation_data.payout_otp_required_amount))) ? getOtp() : otpFlag = false"
+                required>
+                <mat-option value="Pending" [disabled]="true">Pending</mat-option>
+                <mat-option value="Approved">Approved</mat-option>
+                <mat-option value="Reject">Reject</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </div>
+        <div class="row" *ngIf="otpFlag == true">
+          <div class="col s12">
+            <div class="alert alert-danger">
+              <p class="text-left" style="color: #000000;">We have sent OTP on <strong
+                  class="green-clr">{{userData.data.contact_01}}</strong></p>
+            </div>
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>OTP</mat-label>
+              <input matInput placeholder="Enter 6 digit OTP" name="otp" #otp="ngModel" [(ngModel)]="data.otp"
+                minlength="6" maxlength="6" min="0" (input)="otpvalidation()"
+                onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="otp.touched || update_basic.submitted">
+              <p *ngIf="otp.errors?.required">This field is required</p>
+              <p *ngIf="otp.errors?.maxlength || otp.errors?.minlength">OTP should be of 6 digits..</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12" *ngIf="data.order_status=='Reject'">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Reason</mat-label>
+              <textarea class="h100" matInput name="reason" placeholder="Reason" #reason="ngModel"
+                [(ngModel)]="data.reason" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="!reason.valid && update_basic.submitted">
+              Reason is Required....
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'gift_status'">
+  <form validate #update_basic="ngForm" name="update_basic"
+    (ngSubmit)="(update_basic.valid && update_basic.submitted)?updateStatus(data.gift_status):''">
+    <p class="heading">Update {{data.redeem_type}} Status</p>
+    <div mat-dialog-content class="cs-form">
+      <ng-container *ngIf="data.redeem_type=='Gift'">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Shipping type</mat-label>
+              <mat-select name="shipping_type" placeholder="Select Status" #shipping_type="ngModel"
+                [(ngModel)]="data.shipping_type" required>
+                <mat-option value="Courrier">Courrier</mat-option>
+                <mat-option value="Hand Courrier">Hand Courrier</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="shipping_type.touched || update_basic.submitted">
+              <p *ngIf="shipping_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Estimate Date</mat-label>
+              <input name="estimate_date" matInput placeholder="" #estimate_date="ngModel"
+                [(ngModel)]="data.estimate_date" [matDatepicker]="picker" disabled required>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker disabled="false"></mat-datepicker>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="estimate_date.touched || update_basic.submitted">
+              <p *ngIf="estimate_date.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Shipping Remark</mat-label>
+              <textarea class="h100" matInput name="Shipped_remark" placeholder="Shipping Remark"
+                #Shipped_remark="ngModel" [(ngModel)]="data.Shipped_remark"></textarea>
+              <!-- pattern="^(?! )[^\r\n]*$" -->
+              <!-- [ngClass]="{'has-error' : Shipped_remark.invalid } "  -->
+            </mat-form-field>
+            <!-- <div class="alert alert-danger" *ngIf="Shipped_remark.touched || update_basic.submitted">
+              <p *ngIf="Shipped_remark.errors?.required">This field is required</p>
+              <p *ngIf="Shipped_remark.errors?.pattern">This field is Invalid!</p>
+            </div> -->
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="data.redeem_type=='Cash'">
+        <ng-container *ngIf="data.gift_status=='Transferred'">
+          <div class="row">
+            <div class="col s12">
+              <mat-form-field class="cs-input" appearance="outline">
+                <mat-label>Transfer Mode</mat-label>
+                <mat-select name="transfer_mode" #transfer_mode="ngModel" [(ngModel)]="data.transfer_mode"
+                  required="true">
+                  <mat-option value="UPI">UPI</mat-option>
+                  <mat-option value="Cash">Cash</mat-option>
+                  <mat-option value="NEFT">NEFT</mat-option>
+                  <mat-option value="RTGS">RTGS</mat-option>
+                  <mat-option value="IMPS">IMPS</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="transfer_mode.touched || update_basic.submitted">
+                <p *ngIf="transfer_mode.errors?.required">This field is required</p>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="data.transfer_mode != 'Cash'">
+            <div class="col s12">
+              <mat-form-field class="cs-input" appearance="outline">
+                <mat-label>Transaction Number</mat-label>
+                <input matInput name="transaction_number" placeholder="Transaction No." #transaction_number="ngModel"
+                  [(ngModel)]="data.transaction_number" pattern="^(?! )[^\r\n]*$" required>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="transaction_number.touched || update_basic.submitted">
+                <p *ngIf="transaction_number.errors?.required">This field is required</p>
+                <p *ngIf="transaction_number.errors?.pattern">This field is Invalid!</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <mat-form-field appearance="outline">
+                <mat-label>Transfer Date</mat-label>
+                <input name="transfer_date" matInput placeholder="" #transfer_date="ngModel"
+                  [(ngModel)]="data.transfer_date" [max]="today_date" [matDatepicker]="picker" readonly required>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker disabled="false"></mat-datepicker>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="transfer_date.touched || update_basic.submitted">
+                <p *ngIf="transfer_date.errors?.required">This field is required</p>
+              </div>
+            </div>
+          </div>
+
+        </ng-container>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Transfer Remark</mat-label>
+              <textarea class="h50" matInput name="transfer_remark" placeholder="Transaction Remark"
+                #transfer_remark="ngModel" [(ngModel)]="data.transfer_remark" pattern="^(?! )[^\r\n]*$"
+                required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="transfer_remark.touched || update_basic.submitted">
+              <p *ngIf="transfer_remark.errors?.required">This field is required</p>
+              <p *ngIf="transfer_remark.errors?.pattern">This field is Invalid!</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+
+  </form>
+</div>
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'editRemark'">
+  <form validate #update_basic="ngForm" name="update_basic"
+    (ngSubmit)="(update_basic.valid && update_basic.submitted)?updateStatus(data.gift_status):''">
+    <p class="heading">Update TXN Remark</p>
+    <div mat-dialog-content class="cs-form">
+
+
+      <ng-container>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Transfer Remark</mat-label>
+              <textarea class="h50" matInput name="transfer_remark" placeholder="Transaction Remark"
+                [(ngModel)]="data.transfer_remark" #transfer_remark="ngModel" pattern="^(?! )[^\r\n]*$"
+                required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="transfer_remark.touched || update_basic.submitted">
+              <p *ngIf="transfer_remark.errors?.required">This field is required</p>
+              <p *ngIf="transfer_remark.errors?.pattern">This field is Invalid!</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+
+  </form>
+</div>
+
+
+
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'wallet'">
+  <form #f="ngForm" (ngSubmit)="f.valid && updateNumber()  ">
+    <p class="heading">Update Paytm Number</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Paytm Number</mat-label>
+              <input matInput placeholder="Type Here ..." name="wallet_number" #wallet_number="ngModel"
+                [(ngModel)]="data.wallet_number" minlength="10" maxlength="10"
+                onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="f.submitted && wallet_number?.invalid ">
+              This field is required
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'influencer_list'">
+  <form validate #update_basic="ngForm" name="update_basic"
+    (ngSubmit)="(update_basic.valid && update_basic.submitted)?influencer_status_change(data.reason,data.influence_status):''">
+
+    <p class="heading">Change Status</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select name="influence_status" placeholder="Select Status" #influence_status="ngModel"
+                [(ngModel)]="data.influence_status">
+                <mat-option value="Pending" [disabled]="true">Pending</mat-option>
+                <mat-option value="Approved">Approved</mat-option>
+                <mat-option value="Reject">Reject</mat-option>
+                <mat-option value="Suspect">Suspect</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col s12" *ngIf="data.influence_status=='Reject' || data.influence_status=='Suspect'">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Reason</mat-label>
+              <textarea class="h100" matInput name="reason" placeholder="Reason" #reason="ngModel"
+                [(ngModel)]="data.reason" [ngClass]="{'has-error' : reason.invalid } " required="true"></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="!reason.valid && update_basic.submitted">
+              Reason is Required....
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+<div class="edit-modal" *ngIf="delivery_from=='sales_person_edit'">
+  <form validate #update_basic="ngForm" name="update_basic"
+    (ngSubmit)="(update_basic.valid && update_basic.submitted)?UpdateSalesUser():''">
+    <p class="heading">Update Sales User</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l12 m12">
+            <mat-form-field appearance="outline">
+              <mat-label>Sales User</mat-label>
+              <mat-select name="assigned_sales_user_name" [(ngModel)]="data.assigned_sales_user_name"
+                #assigned_sales_user_name="ngModel" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                    (keyup)="getSalesUser($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let row of salesUser" value="{{row.id}}" (click)="data.sales_user_name=row.name">{{row.name}}
+                  {{row.role_name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+        [disabled]="savingFlag == true">{{savingFlag == true ? 'Updating' : 'Update'}}</button>
+    </div>
+  </form>
+</div>
+
+
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'travelareawise' || data.delivery_from == 'traveldailywise'">
+  <form validate #update_basic="ngForm" name="update_basic"
+    (ngSubmit)="(update_basic.valid && update_basic.submitted)?travel_status_change(data.reason,data.status):''">
+
+    <p class="heading">Change Status</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select name="status" placeholder="Select Status" #status="ngModel" [(ngModel)]="data.status">
+                <mat-option value="Approved">Approved</mat-option>
+                <mat-option value="Reject">Reject</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col s12" *ngIf="data.status=='Reject'">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Reason</mat-label>
+              <textarea class="h100" matInput name="reason" placeholder="Reason" #reason="ngModel"
+                [(ngModel)]="data.reason" [ngClass]="{'has-error' : reason.invalid } " required="true"></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="!reason.valid && update_basic.submitted">
+              Reason is Required....
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'Influencer'">
+  <form #f="ngForm" (ngSubmit)="f.valid && updateUserType()  ">
+    <p class="heading">Update Influencer Type</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Influencer Type</mat-label>
+              <mat-select name="influencer_type" #influencer_type="ngModel" [(ngModel)]="data.influencer_type"
+                (selectionChange)="findName(data.influencer_type)" required>
+                <ng-container *ngFor="let row of service.InfluenceArray">
+                  <mat-option value="{{row.type}}">{{row.module_name ? row.module_name : '---'}}</mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="f.submitted && influencer_type?.invalid ">
+              This field is required
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+        [ngClass]="{'loading': savingFlag == true}">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+
+<div class="edit-modal" *ngIf="data.delivery_from == 'brandValLogs'">
+  <p class="heading mb0">Customer Details</p>
+  <div mat-dialog-content>
+    <div class="cs-table horizontal-scroll left-right-10">
+      <div class="sticky-head border-top" style="top: -10px;">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w40">S.no.</th>
+              <th class="w100">Date</th>
+              <th class="w100">Created By</th>
+              <th>Customer Name </th>
+              <th class="w100">Value</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngFor="let row of brandDataLogs.log;let i=index">
+              <tr>
+                <td class="w40">{{i+1}}</td>
+                <td class="w100"> {{row.date_created !='0000-00-00 00:00:00' ? (row.date_created | date:'dd MMM yyyy') :
+                  '---'}}</td>
+                <td class="w100"> {{row.created_by_name ? row.created_by_name : '----'}}</td>
+                <td> {{row.customer_name ? row.customer_name : '---'}}</td>
+                <td class="w100"> {{row.value ? row.value : '---'}}</td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+
+</div>

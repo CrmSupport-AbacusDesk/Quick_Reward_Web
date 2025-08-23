@@ -1,0 +1,102 @@
+<div class="edit-modal">
+  <form #update_basic="ngForm" (ngSubmit)="update_basic.valid && submit()">
+    <div mat-dialog-content>
+      <p class="heading">{{id ? 'Edit':'Add New'}} Spare Part</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s6">
+            <mat-form-field appearance="outline" [ngClass]="{ 'has-error': part_name.invalid }">
+              <mat-label>Part Name</mat-label>
+              <input matInput placeholder="Type Here ..." name="part_name" #part_name="ngModel" [(ngModel)]="formData.part_name" required />
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="part_name.touched || update_basic.submitted">
+              <p *ngIf="part_name.errors?.required">
+                This field is required
+              </p>
+            </div>
+            
+          </div>
+          <div class="col s6" >
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : part_no?.invalid } ">
+              <mat-label>Part No.{{id}}</mat-label>
+              <input matInput placeholder="Type Here ..." name="part_no" #part_no="ngModel" [(ngModel)]="formData.part_no" [readonly]="id!=''" />
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="part_no.touched || update_basic.submitted">
+              <p *ngIf="part_no.errors?.required">
+                This field is required
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4" >
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : mrp?.invalid } ">
+              <mat-label>MRP</mat-label>
+              <input matInput placeholder="Type Here ..." name="mrp" #mrp="ngModel"
+                [(ngModel)]="formData.mrp" onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="mrp.touched || update_basic.submitted">
+              <p *ngIf="mrp.errors?.required">
+                This field is required
+              </p>
+            </div>
+          </div>
+          <div class="col s4" >
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : min_stock?.invalid } ">
+              <mat-label>Minimum Stock Alert</mat-label>
+              <input matInput placeholder="Type Here ..." name="min_stock" #min_stock="ngModel"
+                [(ngModel)]="formData.min_stock" onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="min_stock.touched || update_basic.submitted">
+              <p *ngIf="min_stock.errors?.required">
+                This field is required
+              </p>
+            </div>
+          </div>
+          <div class="col s4" >
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : current_stock?.invalid } ">
+              <mat-label>Current Stock </mat-label>
+              <input matInput placeholder="Type Here ..." name="current_stock" #current_stock="ngModel"
+                [(ngModel)]="formData.current_stock" onkeypress="return event.charCode>=48 && event.charCode<=57" required [readonly]="id != ''">
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="current_stock.touched || update_basic.submitted">
+              <p *ngIf="current_stock.errors?.required">
+                This field is required
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4">
+            <div class="uploade-image">
+              <ul>
+                <li class="add-bg-1 wp100">
+                  <img
+                    src="{{part_img_id ? uploadurl+formData.image :formData.image}}" *ngIf="formData.image">
+                  <label class="fix-label">
+                    <input type="file" (change)="part_image_Upload($event)" style="display:none;"
+                      accept=".png, .jpg, .jpeg," required />
+                    <div class="other" *ngIf="!formData.image">
+                      <i class="material-icons">cloud_upload</i>
+                      <p>Upload Image</p>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+          [disabled]="savingFlag == true ">
+          {{savingFlag == true ? 'Saving' : (id ? 'Update':'Save')}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div>

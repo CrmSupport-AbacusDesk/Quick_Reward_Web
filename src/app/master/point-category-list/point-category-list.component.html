@@ -1,0 +1,283 @@
+<div class="main-container">
+    <div class="tools-container">
+        <h2>Point Category List</h2>
+        <div class="left-auto left-auto df ac flex-gap-10">
+            <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+                <i class="material-icons">refresh</i>
+            </button>
+            <div class="pagination" *ngIf="pointCategories_data.length > 0">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div>
+            <div class="mat-tabbar">
+                <button mat-button [ngClass]="active_tab == 'Influencer' ? 'active' : ''" (click)="active_tab = 'Influencer'; pointCategory_data(active_tab);" *ngIf="userData.organisation_data.loyalty == '1'">
+                    <i class="material-icons">hub</i>Influencer
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Secondary' ? 'active' : ''" (click)="active_tab = 'Secondary'; pointCategory_data(active_tab);" *ngIf="userData.organisation_data.dms == '1' && userData.organisation_data.secondary_network_loyalty == '1'">
+                    <i class="material-icons">people_alt</i>Secondary
+                </button>
+            </div>
+            <!-- <div class="mat-tabbar">
+                <button mat-button [ngClass]="active_tab == 'Master Box' ? 'active' : ''" (click)="active_tab = 'Master Box'; pointCategory_data(active_tab);">
+                    <i class="material-icons">all_inbox</i>Box
+                </button>
+                <button mat-button [ngClass]="active_tab == 'Item Box' ? 'active' : ''" (click)="active_tab = 'Item Box'; pointCategory_data(active_tab);">
+                    <i class="material-icons">category</i>Product
+                </button>
+            </div> -->
+        </div>
+    </div>
+    <div class="container container-scroll pb100">
+        <div class="cs-table horizontal-scroll" *ngIf="active_tab == 'Influencer'">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w60 text-center">Sr.No</th>
+                            <th class="w90">Date</th>
+                            <th>Category Name</th>
+                            <th class="w120 text-center" *ngIf="!subType">Influencer Point</th>
+                            <ng-container *ngIf="subType">
+                                <th class="w120 text-center" *ngFor="let row of headers">
+                                    {{row}}
+                                </th>
+                            </ng-container>
+                            
+                            <!-- <th class="w120 text-center" *ngIf="active_tab == 'Item Box'">Secondary Point</th> -->
+                            <th class="w100 text-center" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">Action</th>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60">&nbsp;</th>
+                            <th class="w90">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input date-column infix-bodr">
+                                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                                        [(ngModel)]="filter.date_created" (ngModelChange)="date_format()" [max]="today_date" disabled>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker disabled="false"></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="point_category_name"
+                                        [(ngModel)]="filter.point_category_name" (keyup.enter)="pointCategory_data(active_tab)">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <ng-container *ngIf="!subType">
+                                <th class="w120 text-center">&nbsp;</th>
+                            </ng-container>
+                            <ng-container *ngIf="subType">
+                                <th class="w120 text-center" *ngFor="let row of headers">
+                                    &nbsp;
+                                </th>
+                            </ng-container>
+                            <!-- <th class="w120" *ngIf="active_tab == 'Item Box'">&nbsp;</th> -->
+                            <th class="w100" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-content" *ngIf="pointCategories_data.length > 0">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of pointCategories_data; let i = index;">
+                                <td class="w60 text-center">{{i+1+sr_no}}</td>
+                                <td class="w90">{{row.date_created | date : 'd MMM y'}}</td>
+                                <td>{{row.point_category_name}}</td>
+                                <ng-container *ngIf="!subType">
+                                    <td class="w120 text-center">
+                                        <strong>{{row.influencer_point}}</strong>
+                                    </td>
+                                </ng-container>
+                                <ng-container *ngIf="subType">
+                                    <td class="w120 text-center" *ngFor="let data of headers; let i = index">
+                                        {{row?.sub_type[i]?.influencer_point||'--'}}
+                                        
+                                    </td>
+                                </ng-container>
+                                
+                                <!-- <td class="w120 text-center" *ngIf="active_tab == 'Item Box'">
+                                    <strong>{{row.influencer_transfer_point}}</strong>
+                                </td> -->
+                                <td class="w100 text-center" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">
+                                    <div class="action-button">
+                                        <button mat-icon-button *ngIf="logined_user_data.edit_point_master=='1'" matTooltip="Edit" [routerLink]="[ 'point-add/', row.id ]">
+                                            <i class="material-icons edit">edit</i>
+                                        </button>
+                                        <!-- <button mat-icon-button *ngIf="logined_user_data.edit_point_master=='1' && subType" matTooltip="Add" (click)="openDialog(row)">
+                                            <i class="material-icons edit">add</i>
+                                        </button> -->
+                                        <button mat-icon-button matTooltip="Delete" (click)="delete(row.id)" *ngIf="logined_user_data.delete_point_master=='1'">
+                                            <i class="material-icons del">delete</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w90">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <!-- <td class="w120 text-center" *ngIf="active_tab == 'Item Box'">
+                                    <div>&nbsp;</div>
+                                </td> -->
+                                <td class="w80 text-center"*ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'"><div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        
+                    </table>
+                </div>
+                
+                <div *ngIf="pointCategories_data.length == 0">
+                    <app-not-result-found></app-not-result-found>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cs-table horizontal-scroll" *ngIf="active_tab == 'Secondary'">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w60 text-center">Sr.No</th>
+                            <th class="w90">Date</th>
+                            <th>Category Name</th>                            
+                            <th class="w120 text-center">Secondary Point</th>
+                            <th class="w100 text-center" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">Action</th>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60">&nbsp;</th>
+                            <th class="w90">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input date-column infix-bodr">
+                                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                                        [(ngModel)]="filter.date_created" (ngModelChange)="date_format()" [max]="today_date" disabled>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker disabled="false"></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="point_category_name"
+                                        [(ngModel)]="filter.point_category_name" (keyup.enter)="pointCategory_data(active_tab)">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w120">&nbsp;</th>
+                            <th class="w100" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-content" *ngIf="pointCategories_data.length > 0">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of pointCategories_data; let i = index;">
+                                <td class="w60 text-center">{{i+1+sr_no}}</td>
+                                <td class="w90">{{row.date_created | date : 'd MMM y'}}</td>
+                                <td>{{row.point_category_name}}</td>
+                                <td class="w120 text-center">
+                                    <strong>{{row.secondary_point}}</strong>
+                                </td>
+                                <td class="w100 text-center" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">
+                                    <div class="action-button">
+                                        <button mat-icon-button *ngIf="logined_user_data.edit_point_master=='1'" matTooltip="Edit" [routerLink]="[ 'point-add/', row.id ]">
+                                            <i class="material-icons edit">edit</i>
+                                        </button>
+                                        <button mat-icon-button matTooltip="Delete" (click)="delete(row.id)" *ngIf="logined_user_data.delete_point_master=='1'">
+                                            <i class="material-icons del">delete</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w90">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100 text-center"*ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'"><div>&nbsp;</div></td>
+                            </tr>
+                        </ng-container>
+                        
+                    </table>
+                </div>
+                
+                <div *ngIf="pointCategories_data.length == 0">
+                    <app-not-result-found></app-not-result-found>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    <div class="fab-btns" *ngIf=" logined_user_data.export_point_master=='1' || logined_user_data.add_point_master=='1'">
+        <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}" [matMenuTriggerFor]="menu">
+            <i class="material-icons">apps</i>
+            Action
+        </button>
+    </div>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunks();"  *ngIf="pointCategories_data.length > 0 &&  logined_user_data.export_point_master=='1' ">
+            <mat-icon>download</mat-icon>
+            <span>Download excel</span>
+        </button>
+        
+        <button mat-menu-item routerLink="point-add" *ngIf="logined_user_data.add_point_master=='1'">
+            <mat-icon>add</mat-icon>
+            <span>Add New</span>
+        </button>
+    </mat-menu>
+</div>

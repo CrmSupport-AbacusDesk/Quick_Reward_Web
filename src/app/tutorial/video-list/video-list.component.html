@@ -1,0 +1,92 @@
+<div class="main-container">
+	<div class="tools-container">
+		<h2>{{active_tab | titlecase}}</h2>
+
+		<div class="left-auto left-auto df ac flex-gap-10">
+			<button mat-icon-button matTooltip="Refresh" (click)="refresh(active_tab)">
+				<i class="material-icons">refresh</i>
+			</button>
+
+			<div class="pagination" *ngIf="video_list.length > 0">
+				<div class="pagination-content">
+					Pages
+					<span>{{pagenumber}}</span>
+					of
+					<span>{{total_page}}</span>
+				</div>
+				<div class="page-nav">
+					<button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+						<i class="material-icons">navigate_before</i>
+					</button>
+					<button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+						[disabled]="pagenumber == total_page ">
+						<i class="material-icons">navigate_next</i>
+					</button>
+				</div>
+			</div>
+
+			<div class="mat-tabbar">
+				<button mat-button [ngClass]="active_tab == 'App' ? 'active' : ''"
+					(click)="active_tab = 'App'; videoList();"><i class="material-icons">collections</i>App Video
+					List</button>
+				<button mat-button [ngClass]="active_tab == 'Web' ? 'active' : ''"
+					(click)="active_tab = 'Web'; videoList();"><i class="material-icons">smart_display</i>Web Video
+					List</button>
+			</div>
+		</div>
+	</div>
+
+	<ng-container>
+		<div class="container pb100" (contextmenu)="revok($event)">
+
+			<div class="card-container" *ngIf="!videoloader">
+				<div class="card-image db" *ngFor="let row of video_list; let i = index;">
+					<div class="deleteButtonWrapper">
+						<button mat-icon-button matTooltip="Delete" class="deleteButton"
+							(click)="delete(row.id, $event)"><i class="material-icons">delete</i></button>
+					</div>
+					<!-- <iframe width="100%" height="250px" [src]="row.video | safe" frameborder="0"
+						allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+						allowfullscreen></iframe> -->
+					<video width="100%" height="160" poster="assets/img/logo.png" controls controlslist="nodownload">
+						<source src="{{row.video}}" type="video/mp4">
+						Your browser does not support HTML video.
+					</video>
+					<div class="video-content">
+						<p *ngIf="row.desc"><b>Description: </b>{{row.desc}}</p>
+						<div class="status-bar pb5">
+							User Type
+							<div>
+								<strong *ngFor="let items of row.item; let i = index">{{i>0?", ":''}}{{items.user_type |
+									titlecase}}</strong>
+							</div>
+						</div>
+						<div class="status-bar" *ngIf="logined_user_data.edit_gallery_master=='1' ">
+							Status
+							<mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="row.newStatus"
+								(change)="updateStatus(i,$event,row.id)">
+							</mat-slide-toggle>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card-container" *ngIf="videoloader">
+				<div class="card-image skeleton" *ngFor="let row of [].constructor(10)">
+					<div>&nbsp;</div>
+				</div>
+			</div>
+
+			<ng-container *ngIf="video_list== 0">
+				<app-not-result-found></app-not-result-found>
+			</ng-container>
+			<div class="fab-btns" *ngIf="logined_user_data.add_video_tutorial=='1' ">
+				<button class="pulse" mat-fab color="accent" routerLink="video-add">
+					<i class="material-icons">add</i>
+					Add New
+				</button>
+			</div>
+		</div>
+	</ng-container>
+
+</div>

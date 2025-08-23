@@ -1,0 +1,191 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Primary Sales Report (2023-24)</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div>
+    <div class="pagination" *ngIf="cpTargetReport.length > 0">
+      <div class="pagination-content">
+        Pages
+        <span>{{pagenumber}}</span>
+        of
+        <span>{{total_page}}</span>
+      </div>
+      <div class="page-nav">
+        <button mat-icon-button matTooltip="Older" (click)="start=start-page_limit; getPrimartTargetReport()"
+          [disabled]="pagenumber <= 1">
+          <i class="material-icons">navigate_before</i>
+        </button>
+        <button mat-icon-button matTooltip="Newer" (click)="start=start+page_limit; getPrimartTargetReport()"
+          [disabled]="pagenumber >= total_page ">
+          <i class="material-icons">navigate_next</i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container table-container">
+    <div class="padding10">
+      <div class="scroll-tables">
+        <table>
+          <tr>
+            <td class="w700">
+              <table>
+                <tr>
+                  <th class="w50 text-left">S No.</th>
+                  <th class="w300">Company Name</th>
+                  <th class="w300 text-center">Yearly Target 2023-2024</th>
+                </tr>
+                <tr>
+                  <th class="w50 ">&nbsp;</th>
+                  <th class="w300">
+                    <div class="th-search-acmt fix-block">
+                      <mat-form-field>
+                        <input matInput placeholder="Search..." type="text" name="company_name"
+                        [(ngModel)]="search.company_name" (keyup.enter)="getPrimartTargetReport()">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <table>
+                    <ng-container class="w300">
+                      <th class="w100 text-center">Primary</th>
+                      <th class="w100 text-center">Secondary</th>
+                      <th class="w100 text-center">AVG</th>
+                    </ng-container>
+                  </table>
+                </tr>
+                <ng-container *ngIf="!loader">
+                  <tr *ngFor="let row of cpTargetReport; let i = index">
+                    <td class="w50">{{start+i+1}}</td>
+                    <td class=" one-line copyCell" matTooltip="{{row.company_name}}">
+                      {{row.company_name ? (row.company_name | titlecase) : ''}}
+                      {{row.customer_network_type ? ('('+row.customer_network_type +')') : ''}}
+                    </td>
+                    <table>
+                      <ng-container class="w300">
+                        <td class="w100 text-center">{{row.yearlyPrimaryOrder.toLocaleString('en-IN',{style:'decimal' ,
+                          currency:'INR'})}}</td>
+                        <td class="w100 text-center">{{row.yearlySecondaryOrder.toLocaleString('en-IN',{style:'decimal'
+                          , currency:'INR'})}}</td>
+                        <td class="w100 text-center">{{row.yearlyAverage.toLocaleString('en-IN',{style:'decimal' ,
+                          currency:'INR'})}}</td>
+                      </ng-container>
+                    </table>
+                  </tr>
+                </ng-container>
+                <ng-container *ngIf="loader">
+                  <tr *ngFor="let row of [].constructor(10);">
+                    <td class="">
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                    <td class="">
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                    <td class="">
+                      <div class="skeleton-loader">&nbsp;</div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </table>
+            </td>
+            <td style="overflow-x: auto;overflow-y: hidden;">
+              <table>
+                <tr>
+                  <!-- <th class="text-center w300" *ngFor="let x of get12MonthArray;">{{x}}</th> -->
+                  <th class="w300 text-center">April</th>
+                  <th class="w300 text-center">May</th>
+                  <th class="w300 text-center">June</th>
+                  <th class="w300 text-center">July</th>
+                  <th class="w300 text-center">August</th>
+                  <th class="w300 text-center">September</th>
+                  <th class="w300 text-center">October</th>
+                  <th class="w300 text-center">November</th>
+                  <th class="w300 text-center">December</th>
+                  <th class="w300 text-center">January</th>
+                  <th class="w300 text-center">February</th>
+                  <th class="w300 text-center">March</th>
+                </tr>
+                <tr class="w300">
+                  <table>
+                    <ng-container *ngFor="let x of get12MonthArray;">
+                      <th class="w100 text-center">Primary</th>
+                      <th class="w100 text-center">Secondary</th>
+                      <th class="w100 text-center">AVG</th>
+                    </ng-container>
+                  </table>
+                </tr>
+                <tr class="w300" *ngFor="let row of cpTargetReport; let i = index">
+                  <table *ngIf="!loader">
+                    <ng-container *ngFor="let x of row.orderData; let i= index">
+                      <!-- <td>{{i+1}}</td> -->
+                      <td class="w100 text-center">{{x.Primary.toLocaleString('en-IN',{style:'decimal' ,currency:'INR'})}}</td>
+                      <td class="w100 text-center">{{x.Secondary.toLocaleString('en-IN',{style:'decimal' ,currency:'INR'})}}</td>
+                      <td class="w100 text-center">{{x.Average.toLocaleString('en-IN',{style:'decimal' ,currency:'INR'})}}</td>
+                    </ng-container>
+                  </table>
+                </tr>
+
+                <ng-container *ngIf="loader">
+                  <tr *ngFor="let row of [].constructor(10)">
+                    <ng-container>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                      <td class="w300">
+                        <div class="skeleton-loader">&nbsp;</div>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+              </table>
+            </td>
+
+          </tr>
+        </table>
+
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="fab-btns">
+    <button mat-fab class="excel" *ngIf="cpTargetReport.length > 0"
+      (click)="progressService.setCancelReq(false); downloadInChunks();" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div>
+</div>

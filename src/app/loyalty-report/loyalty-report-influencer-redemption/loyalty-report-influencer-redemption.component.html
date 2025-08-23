@@ -1,0 +1,144 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <h2>INFLUENCER REDEMPTION REPORT</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button>
+
+      <div class="pagination" *ngIf="reportData.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0 || total_page == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S.No</th>
+              <th class="w150">Name / Mobile No.</th>
+              <th class="w200">State</th>
+              <th class="w150">District</th>
+              <th class="w100">City</th>
+              <th class="w100">Redeem Count</th>
+              <th class="w100">Redeem Point</th>
+              <th class="w100">Redeem Last Date</th>
+
+
+
+
+            </tr>
+          </table>
+        </div>
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w50">&nbsp;</th>
+              <th class="w150"></th>
+              <th class="w200"></th>
+              <th class="w150"></th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+
+
+
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let report of reportData; let i=index">
+                <td class="w50">{{i+1+sr_no}}</td>
+
+                <td class="w150">{{report.name | titlecase}}/{{report.mobile_no}}</td>
+                <td class="w200">{{report.state}}</td>
+                <td class="w150">{{report.district}}</td>
+                <td class="w100">{{report.city}}</td>
+                <td class="w100">{{report.redeem_count}}</td>
+                <td class="w100">{{report.redeem_point}}</td>
+                <td class="w100">{{report.redeem_last_date | date : 'dd MMM yyy'}}</td>
+
+
+
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+      <ng-container *ngIf="reportData.length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+  <!-- <div class="fab-btns">
+    <button  mat-fab class="excel"  *ngIf="reportData.length > 0 && login_data.export_influencer=='1'" (click)="lastBtnValue('excel'); getproductWiseSecondaryReportExcel();"  [ngClass]="{'pulse': fabBtnValue=='excel'}" >
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div> -->
+
+  <div class="fab-btns">
+    <button mat-fab class="excel"  *ngIf="reportData.length > 0"
+      (click)="progressService.setCancelReq(false); downloadInChunks();" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div>
+</div>

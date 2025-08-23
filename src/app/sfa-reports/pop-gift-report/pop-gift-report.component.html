@@ -1,0 +1,117 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <h2>POP & Gift</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <!-- <ng-container *ngIf="filter.date_from">
+        <div class="filteDate">
+          <span>Selected sales user</span>
+          <h3>{{filter?.userName}}</h3>
+        </div>
+        <div class="filteDate">
+          <span>Date From</span>
+          <h3>{{filter?.date_from | date:'dd MMM, yyyy'}}</h3>
+        </div>
+        <div>
+          <span>Date To</span>
+          <h3>{{filter?.date_to | date:'dd MMM, yyyy'}}</h3>
+        </div>
+      </ng-container>-->
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <!--<button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button> -->
+
+      <!-- <div class="pagination" *ngIf="reportData.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0 || total_page == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div> -->
+
+
+    </div>
+  </div>
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w150">Gift Name</th>
+              <th class="w150">Genrated Qty</th>
+              <th class="w150">Stock at sales user</th>
+              <th class="w150">Stock at party</th>
+              <th class="w150">Percentage Ratio</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let report of reportData; let i=index">
+                <td class="w150">{{report?.item_name}}</td>
+                <td class="w150">{{report?.generated_qty}}</td>
+                <td class="w150">{{report?.stock_at_sales_user}}</td>
+                <td class="w150">{{report?.stock_at_party}}</td>
+                <td class="w150">{{report?.percent_ratio}}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+      <ng-container *ngIf="reportData.length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+  <div class="fab-btns">
+    <!-- <button mat-menu-item
+          *ngIf="reportData?.length > 0">
+          <mat-icon>download</mat-icon>
+          <span>Download in excel</span>
+        </button> -->
+    <button mat-fab class="excel" *ngIf="reportData.length > 0"
+      (click)="progressService.setCancelReq(false); downloadInChunks();" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div>
+</div>

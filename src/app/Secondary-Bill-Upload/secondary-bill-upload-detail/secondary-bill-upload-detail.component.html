@@ -1,0 +1,232 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Secondary Bill Upload Details :- {{secBillUploadData.bill_no}}</h2>
+        <div class="left-auto left-auto df ac flex-gap-10">
+            
+            <div class="group-btn" *ngIf="(secBillUploadData.final_status =='Pending') && (secBillUploadData.bill_amount > 0 )">
+                <button mat-button class="ouline-btns status" (click)="openDialog(secBillUploadData.distributor_status , secBillUploadData.bill_amount)">
+                    <img src="assets/img/icons/update.png">Change Status
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container pt10 pl10 pr10 pb50">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Customer Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr;">
+                            <div class="block-feilds">
+                                <span>Date Created</span>
+                                <p>{{secBillUploadData.date_created | date: 'dd MMM yyyy , h:mm a'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Bill Date</span>
+                                <p>{{secBillUploadData.bill_date | date: 'dd MMM yyyy'}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Bill No.</span>
+                                <p>{{secBillUploadData.bill_no}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Bill Amount</span>
+                                <p>₹ {{secBillUploadData.bill_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="grid-box mt16">
+                            <div class="block-feilds w350" *ngIf="secBillUploadData.created_by_name == 'Admin'">
+                                <span>Created By Information</span>
+                                <p>{{secBillUploadData.created_by_name}}</p>
+                            </div>
+                            
+                            <div class="block-feilds w350" *ngIf="secBillUploadData.created_by_name != 'Admin'">
+                                <span>Created By Information</span>
+                                <p>{{secBillUploadData.created_by_company_name}} ({{secBillUploadData.created_by_name}} | {{secBillUploadData.created_by_mobile}})</p>
+                            </div>
+                            <div class="block-feilds w350" *ngIf="secBillUploadData.created_by_company_name">
+                                <span>Dealer Information</span>
+                                <p>{{secBillUploadData.dealer_details}}</p>
+                            </div>
+                            <div class="block-feilds w350" *ngIf="secBillUploadData.distributor_details">
+                                <span>Primary Customer Information</span>
+                                <p>{{secBillUploadData.distributor_details}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="grid-box mt16">
+                            <!-- ----------Distributor Status & Remark------------ -->
+                            <div class="block-feilds" [ngClass]="{'pending' : secBillUploadData.distributor_status == 'Pending' , 'approved' : secBillUploadData.distributor_status == 'Verified' , 'reject' : secBillUploadData.distributor_status == 'Reject'}">
+                                <span>Primary Customer Status</span>
+                                <p>{{secBillUploadData.distributor_status}}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Primary Customer Remark</span>
+                                <p>{{secBillUploadData.distributor_remark ? secBillUploadData.distributor_remark : 'N/A'}}</p>
+                            </div>
+                            <!-- ----------Distributor Status & Remark------------ -->
+                            
+                            <!-- ----------Final Status & Remark------------ -->
+                            <div class="block-feilds" [ngClass]="{'pending' : secBillUploadData.final_status == 'Pending' , 'approved' : secBillUploadData.final_status == 'Verified' , 'reject' : secBillUploadData.final_status == 'Reject'}">
+                                <span>Final Status</span>
+                                <p>{{secBillUploadData.final_status}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Final Remark</span>
+                                <p>{{secBillUploadData.final_remark ? secBillUploadData.final_remark : 'N/A'}}</p>
+                            </div>
+                            <!-- ----------Final Status & Remark------------ -->
+                            
+                            <div class="block-feilds" *ngIf="secBillUploadData.status == 'Verified' || secBillUploadData.status == 'Reject'">
+                                <span>Status Changed On</span>
+                                <p>{{secBillUploadData.action_by_time}}</p>
+                            </div>
+                            <div class="block-feilds" *ngIf="secBillUploadData.status == 'Verified' || secBillUploadData.status == 'Reject'">
+                                <span>{{secBillUploadData.status == 'Verified' ? 'Verified By' : 'Rejected By'}}</span>
+                                <p>{{secBillUploadData.action_by_name}}</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <div class="row" *ngIf="!skLoading">
+            <div class="tools-container no-sticky">
+                <div class="mat-tabbar">
+                    <button mat-button [ngClass]="{'active' :orderType== 'order'}" (click)="orderType= 'order'">
+                        <i class="material-icons">pending_actions</i>Item Details
+                    </button>
+                </div>
+            </div>
+            <ng-container *ngIf="orderType== 'order'">
+                <div class="cs-table">
+                    <div class="sticky-head" style="top: -10px;">
+                        <div class="table-head">
+                            <table>
+                                <tr>
+                                    <th class="w60 text-center">S.no.</th>
+                                    <th class="w180">Category</th>
+                                    <!-- <th class="w180">Sub Category</th> -->
+                                    <th class="">Item Details</th>
+                                    <th class="w120 text-center">QTY.</th>
+                                    <th class="w120 text-center">Price</th>
+                                    <th class="w120 text-center">Amount</th>
+                                    <th class="w120 text-center" *ngIf="secBillUploadData.status == 'Verified'">Approved Amount</th>
+                                    
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <div class="table-content">
+                            <table>
+                                <ng-container *ngFor="let row of secBillUploadItems; let i =index">
+                                    <tr [ngClass]="{'dispatched': row.sale_dispatch_qty == row.qty && secBillUploadData.order_status == 'partialDispatched'}">
+                                        <td class="w60 text-center">{{i+1}}</td>
+                                        <td class="w180">{{row.category_name | titlecase}}</td>
+                                        <!-- <td class="w180">{{row.sub_category_name | titlecase }}</td> -->
+                                        <td class="">{{row.product_details | titlecase}}</td>
+                                        <td class="w120 text-center">{{row.product_qty}}</td>
+                                        <td class="w120 text-center">{{row.item_price}}</td>
+                                        <td class="w120 text-center">{{row.item_amount}}</td>
+                                        <td class="w120 text-center" *ngIf="secBillUploadData.status == 'Verified'">{{row.approved_amount}}</td>
+                                    </tr>
+                                </ng-container>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col s5 offset-s8">
+                        <div class="invoice-table">
+                            <table>
+                                <tr>
+                                    <td>Total Item</td>
+                                    <th>{{secBillUploadData?.total_items}}</th>
+                                    
+                                </tr>
+                                <tr>
+                                    <td>Total Item Qty.</td>
+                                    <th>{{secBillUploadData.total_items_qty||'N/A'}}</th>
+                                </tr>
+                                <tr>
+                                    <td>Total Claimed Amount</td>
+                                    <th>₹ {{secBillUploadData.bill_amount}}</th>
+                                </tr>
+                                <tr *ngIf="secBillUploadData.distributor_approved_amount && secBillUploadData.distributor_status == 'Verified'">
+                                    <td>Total Primary Customer Verified Amount</td>
+                                    <th>₹ {{secBillUploadData.distributor_approved_amount ? secBillUploadData.distributor_approved_amount : '--'}}</th>
+                                </tr>
+                                <tr *ngIf="secBillUploadData.final_approved_amount && secBillUploadData.final_status == 'Verified'">
+                                    <td>Total Verified Amount</td>
+                                    <th>₹ {{secBillUploadData.final_approved_amount||'N/A'}}</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        
+        <div class="col s12 m12 l4" *ngIf="secBillUploadBillDocs.length">
+            <div class="card" *ngIf="!skLoading">
+                <div class="card-head">
+                    <h2>Images</h2>
+                </div>
+                <div class="card-body">
+                    <div class="img-container">
+                        <div class="image-block" *ngFor="let row of secBillUploadBillDocs">
+                            <img [src]="url+row.bill_doc" (click)="imageModel(url+row.bill_doc)" style="cursor: zoom-in;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Skeleton start -->
+            <div class="card" *ngIf="skLoading">
+                <div class="sk-head">
+                    <h2>&nbsp;</h2>
+                </div>
+                <div class="card-body">
+                    <div class="img-container">
+                        <div class="image-block sk-loading" *ngFor="let row of [].constructor(3)">
+                            &nbsp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Skeleton end -->
+        </div>
+        
+    </div>
+</div>

@@ -1,0 +1,106 @@
+<div class="main-container" >
+  
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add New Territory Code</h2>
+   
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+    <form #f="ngForm" (ngSubmit)="f.valid && submit()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Add New</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>State</mat-label>
+                    <mat-select name="state" #state="ngModel" [(ngModel)]="data.state"  (selectionChange)="getDistrict(1)" required>
+                      <mat-option *ngFor="let row of states"value="{{row.state_name}}">
+                        {{row.state_name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+                    <p *ngIf="state.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+                
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>District</mat-label>
+                    <mat-select name="district" #district="ngModel" [(ngModel)]="data.district" (selectionChange)="getPincode('',1)" required>
+                      <mat-option *ngFor="let row of district_list" value="{{row.district_name}}">
+                        {{row.district_name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="district.touched || f.submitted">
+                    <p *ngIf="district.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Pincode</mat-label>
+                    <mat-select name="pincode" #pincode="ngModel" [(ngModel)]="data.pincode" multiple  required>
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getPincode($event.target.value, 1)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let row of pincode_list" value="{{row.pincode}}" >
+                        {{row.pincode}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="pincode.touched || f.submitted">
+                    <p *ngIf="pincode.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline" [ngClass]="{'has-error' : beat_code == true } ">
+                    <mat-label>Territory Code</mat-label>
+                    <input matInput placeholder="Type Here ..."  name="beat_code" #beat_code="ngModel" [(ngModel)]="data.beat_code"  required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="beat_code.touched || f.submitted">
+                    <p *ngIf="beat_code.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+                
+              </div>
+              
+              <div class="row">
+                <div  class="col s12 m6 l6">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Area Name</mat-label>
+                    <textarea matInput placeholder="Type Here ..." name="area_name" #area_name="ngModel"  class="h50" [(ngModel)]="data.area_name" required></textarea>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="area_name.touched || f.submitted">
+                    <p *ngIf="area_name.errors?.required">This field is required</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
+    

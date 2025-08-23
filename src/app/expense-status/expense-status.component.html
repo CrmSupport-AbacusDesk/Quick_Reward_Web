@@ -1,0 +1,106 @@
+<div class="container">
+
+
+
+  <div class="feedback-form">
+
+    <div class="container pt10 pl10 pr10 pb50">
+      <form #f="ngForm" (ngSubmit)="f.submitted && f.valid && Submit()" *ngIf="OrderStatus==false">
+        <div class="row">
+          <div class="col s12">
+            <div class="card pb0">
+              <div class="card-head" >
+                <h2> Please Fill Expense {{formData.seniorStatus}} Reason</h2>
+              </div>
+              <div class="card-body ml10">
+                <div class="grid-box">
+                  <div class="block-feilds" *ngIf="expenseDetail.claimDate!='0000-00-00'">
+                    <span>Claim Date</span>
+                    <p>{{detail.claimDate | date : 'd MMM y'}}</p>
+                  </div>
+                  <div class="block-feilds">
+                    <span>Employee Name</span>
+                    <p>{{detail.userName != '' ? detail.userName : '--'}}</p>
+                  </div>
+                  <div class="block-feilds">
+                    <span>Claim Amount</span>
+                    <p><strong>{{detail.totalAmt ? ('₹ ' +detail.totalAmt) : '0'}}</strong></p>
+                  </div>
+
+                </div>
+              </div>
+              <div class="card-body cs-form">
+
+                <div class="row mt10">
+                  <div class="col s6">
+                    <!-- <h2 class="questionHead">1.Status</h2> -->
+                    <mat-form-field appearance="outline" >
+                      <mat-label>Select Status</mat-label>
+                      <mat-select name="seniorStatus" #seniorStatus="ngModel" [(ngModel)]="formData.seniorStatus" required [disabled]="formData.seniorStatus" >
+                        <mat-option value="Approved">Approved</mat-option>
+                        <mat-option value="Reject">Reject</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="seniorStatus.touched || f.submitted">
+                      <p *ngIf="seniorStatus.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col s6" *ngIf="formData.seniorStatus == 'Approved'">
+                    <mat-form-field class="cs-input" appearance="outline">
+                      <mat-label>Enter Amount</mat-label>
+                      <input onkeypress="return event.charCode>=48 && event.charCode<=57" matInput placeholder="Type Here .." (keyup)="checkAmount(formData.seniorApprovedAmount)"
+                      name="seniorApprovedAmount" #seniorApprovedAmount="ngModel" [(ngModel)]="formData.seniorApprovedAmount" required>
+                    </mat-form-field>
+                  </div>
+
+
+                </div>
+
+
+
+
+
+                <div class="row">
+                  <div class="col s12">
+                    <mat-form-field class="cs-input" appearance="outline" [ngClass]="{'has-error' : remark.invalid } ">
+                      <mat-label>Remark</mat-label>
+                      <textarea matInput placeholder="Type here ..." name="remark" #remark="ngModel"
+                      [(ngModel)]="formData.remark"></textarea>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="remark.invalid && f.submitted">
+                      Remark is required...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="text-right">
+              <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+              [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Submit'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form *ngIf="OrderStatus==true">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Expense Status Changed -: {{formData.seniorStatus}}</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+</div>

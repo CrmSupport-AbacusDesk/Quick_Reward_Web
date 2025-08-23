@@ -1,0 +1,234 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" routerLink="/company-dispatch">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Gatepass Scannning</h2>
+    <div class="left-auto" *ngIf="enable">
+      <button class="mr16" matTooltip="Print" (click)="scanningSave(gatepassdetaildata.id)" mat-raised-button
+        color="primary" [ngClass]="{'loading': savingFlag == true}" [disabled]="savingFlag == true">
+        <i class="material-icons">print</i>
+        Print Gate Pass</button>
+    </div>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m6 l12">
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date Created</span>
+                <p>{{gatepassdetaildata.date_created | date:'d MMM y'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Gatepass Number</span>
+                <p>{{gatepassdetaildata.gate_pass_no}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Invoice Number</span>
+                <p>{{gatepassdetaildata.invoice_number }}</p>
+              </div>
+
+
+              <div class="block-feilds">
+                <span>Driver Name</span>
+                <p>{{gatepassdetaildata.delivery_boy_name | titlecase }}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Mobile No.</span>
+                <p>{{gatepassdetaildata.mobile_number}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Vehicle No.</span>
+                <p>{{gatepassdetaildata.vehicle_number}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Transportation Mode</span>
+                <p>{{gatepassdetaildata.transportation_mode}}</p>
+              </div>
+
+            </div>
+
+
+          </div>
+        </div>
+
+
+
+
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <ng-container>
+      <div class="row">
+        <div class="col s6">
+          <div class="card pb0">
+            <div class="card-body cs-form">
+
+              <div class="row" *ngIf="enable==false">
+                <div class="col s12 m4 l4">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Coupon Type</mat-label>
+                    <mat-select name="scanning_type" [(ngModel)]="couponNumber.scanning_type" #scanning_type="ngModel">
+                      <mat-option value="Scanning">Scanning</mat-option>
+                      <mat-option value="Manually">Manually</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+
+                <div class="col s12 m4 l4" *ngIf="couponNumber.scanning_type == 'Scanning'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Coupon Number</mat-label>
+                    <input matInput placeholder="Type Here ..." name="coupon_number" #coupon_number="ngModel"
+                      [(ngModel)]="couponNumber.coupon_number" maxlength="9" #focusInput min="9"
+                      (ngModelChange)="couponNumber.coupon_number ? checkCoupon(couponNumber.coupon_number) : ''">
+                  </mat-form-field>
+                </div>
+
+                <ng-container *ngIf="couponNumber.scanning_type == 'Manually'">
+                  <div class="col s12 m4 l4">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Coupon Number</mat-label>
+                      <input matInput placeholder="Type Here ..." name="coupon_number" #coupon_number="ngModel"
+                        [(ngModel)]="couponNumber.coupon_number" maxlength="16" #focusInput min="0">
+                    </mat-form-field>
+                  </div>
+                  <div class="col s12 m2 l2 ">
+                    <div class="mt8">
+                      <button mat-raised-button color="accent" (click)="checkCoupon(couponNumber.coupon_number)">
+                        Go
+                      </button>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <h1 style="text-align: center;font-size: 20px;padding-bottom: 5px;" *ngIf="enable==false">Scan All Master
+              Boxes To Print Gatepass</h1>
+            <h1 style="text-align: center;font-size: 20px;padding-bottom: 5px;" *ngIf="enable==true"> Scanning
+              Completed..</h1>
+
+          </div>
+        </div>
+        <div class="col s6" *ngIf="mastercartendata.length>0">
+          <div class="card  pb0">
+            <div class="card-head">
+              <h2 style="margin-bottom: 0px;">Master Box Detail</h2>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="cs-table font-lg border-top">
+                  <div class="table-head border-bottom">
+                    <table>
+                      <tr>
+                        <th class="w50">S.no.</th>
+                        <th>Order No.</th>
+                        <th class="w100">Master Box</th>
+                        <th class="w150 text-center">Status</th>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="table-container">
+                    <div class="table-content">
+                      <table>
+                        <ng-container *ngIf="!loader">
+                          <tr *ngFor="let row of mastercartendata; let i =index"
+                            [ngClass]="row.scanned == 0 ? 'dispatchWait' : row.scanned == 1 ? 'dispatchCom' : 'dispatchPending'">
+                            <td class="w50">{{i+1}}</td>
+                            <td>{{row.bill_number}}</td>
+                            <td class="w100">{{row.coupon_code}}</td>
+                            <td class="w150 text-center">
+                              {{row.scanned == 1 ? 'Scanned' : 'Not scanned'}}
+                            </td>
+                          </tr>
+                        </ng-container>
+
+                        <ng-container *ngIf="loader">
+                          <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                            <td class="w50">
+                              <div>&nbsp;</div>
+                            </td>
+                            <td>
+                              <div>&nbsp;</div>
+                            </td>
+                            <td class="w100">
+                              <div>&nbsp;</div>
+                            </td>
+                            <td class="w150">
+                              <div>&nbsp;</div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </table>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>
+
+<div id="print_card" hidden>
+  <h2 style="font-size: 20px;  text-align: center; margin: 16px 0px;">{{company_name}}</h2>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Invoice No.</strong>
+    : {{gatepassdetaildata.invoice_number ? gatepassdetaildata.invoice_number :'---'}}</p>
+  <p style="font-size: 12px; text-align: center; margin: 10px 0px;" *ngIf="logined_user_data.address">
+    {{logined_user_data.address}}</p>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Generate
+      Date</strong> : {{gatepassdetaildata.date_created | date: 'd MMM y'}}</p>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Gatepass
+      Number</strong> : {{gatepassdetaildata.gate_pass_no}}</p>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Delivery
+      Person</strong> : {{gatepassdetaildata.delivery_boy_name}}</p>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Mobile No.</strong> :
+    {{gatepassdetaildata.mobile_number}}</p>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Vehicle
+      Number</strong> : {{gatepassdetaildata.vehicle_number}}</p>
+  <p style="font-size: 13px; margin: 7px 0px; padding-left:16px;"><strong style="font-size: 13px;">Transportation
+      Mode</strong> : {{gatepassdetaildata.transportation_mode}}</p>
+  <table style=" width: 100%; table-layout: fixed; border-collapse: collapse;">
+    <tr>
+      <td style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000; width: 120px;">
+        Date Created</td>
+      <td style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000;">Company Name
+      </td>
+      <td style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000; width: 120px;">
+        Order Number</td>
+      <td
+        style="font-size: 13px; padding: 10px 16px; font-weight: 600; border-bottom: 1px solid #000; width: 120px; text-align:center">
+        Total Qty.</td>
+    </tr>
+    <tr *ngFor="let row of printData;">
+      <td style="font-size: 13px; padding: 10px 16px;">{{row.date_created | date:'d MMM y'}}</td>
+      <td style="font-size: 13px; padding: 10px 16px;">{{row.company_name}}</td>
+      <td style="font-size: 13px; padding: 10px 16px;">{{row.order_no}}</td>
+      <td style="font-size: 13px; padding: 10px 16px; text-align:center">{{row.total_order_qty}}</td>
+    </tr>
+  </table>
+</div>

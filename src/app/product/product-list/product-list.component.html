@@ -1,0 +1,280 @@
+<div class="main-container">
+  <app-loader *ngIf="excelLoader"></app-loader>
+  <div class="tools-container">
+    <h2>Products</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </a>
+      <div class="pagination" *ngIf="productlist.length > 0 ">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <input type="number" [(ngModel)]="gotoPageNumber" (keyup.enter)="goToPage()" 
+          [min]="1" [max]="total_page" placeholder="Enter page" class="page-input">
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll mb50">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">S. No</th>
+              <th class="w100">Date Created</th>
+              <th class="w150">Category</th>
+              <th class="w150">Sub Category</th>
+              <th class="w250">Product Name</th>
+              <th class="w100">Product Code</th>
+              <th class="w100">Brand</th>
+              <th class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'">Coupon Point</th>
+              <th class="w120 text-right">Mrp</th>
+              <th class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">Status</th>
+              <th class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">View Product</th>
+              <th class="w100 text-center" *ngIf="logined_user_data.delete_products_master=='1'">Action</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w60"></th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter_data.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select (selectionChange)="getProductList(''); getSubCatgory()" name="segment"
+                      #segment="ngModel" [(ngModel)]="filter_data.segment">
+                      <mat-option value="" disabled style="padding: 10px 20px;">Select</mat-option>
+                      <mat-option *ngFor="let row of segmentList" value="{{row.id}}">{{row.category}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select (selectionChange)="getProductList('')" name="sub_category_name"
+                      #sub_category_name="ngModel" [(ngModel)]="filter_data.sub_category_name">
+                      <mat-option value="" disabled style="padding: 10px 20px;">Select</mat-option>
+                      <mat-option *ngFor="let row of SubcategoryList" value="{{row.id}}"
+                        color="accent">{{row.sub_category_name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w250">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="product_name"
+                      (keyup.enter)="getProductList('')" #product_name="ngModel" [(ngModel)]="filter_data.product_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="prod_code"
+                      (keyup.enter)="getProductList('')" #prod_code="ngModel" [(ngModel)]="filter_data.prod_code">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="brand" (keyup.enter)="getProductList('')"
+                      #brand="ngModel" [(ngModel)]="filter_data.brand">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="point_category_name"
+                      (keyup.enter)="getProductList('')" #point_category_name="ngModel"
+                      [(ngModel)]="filter_data.point_category_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120"></th>
+              <th class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="status" #status="ngModel" [(ngModel)]="filter_data.status"
+                      (selectionChange)="getProductList('')">
+                      <mat-option value="">All</mat-option>
+                      <mat-option value="active">Active</mat-option>
+                      <mat-option value="deactive">Deactive </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100"></th>
+              <th class="w100 text-center" *ngIf="logined_user_data.delete_products_master=='1'">
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of productlist; let i = index "
+                [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{row.date_created ? (row.date_created | date) : '---'}}</td>
+                <td class="w150">{{row.category ? (row.category) : '---'}}</td>
+                <td class="w150">{{row.sub_category_name ? (row.sub_category_name) : '---'}}</td>
+                <td class="w250"><a class="link-btn" mat-button (click)="service.setData(filter_data)"
+                    routerLink="product-detail/{{row.encrypt_id}}" routerLinkActive="active"> {{row.product_name ?
+                    (row.product_name) : '---'}}</a></td>
+                <td class="w100">{{row.product_code && row.product_code!=''? row.product_code:'--'}}</td>
+                <td class="w100">{{row.brand && row.brand!=''? row.brand:'--'}}</td>
+                <td class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'"> {{row.point_category_name ?
+                  (row.point_category_name | titlecase) : '---'}}</td>
+                <td class="w120 text-right"> {{row.mrp && row.mrp!=''? ( '₹ ' + row.mrp):'--'}}</td>
+
+                <td class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">
+                  <div class="action-button">
+                    <mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="row.newStatus"
+                      (change)="updateStatus(i,row.id,$event)">
+                    </mat-slide-toggle>
+                  </div>
+                </td>
+                <td class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">
+                  <div class="action-button">
+                    <mat-slide-toggle color="accent" [name]="'view'+i" [(ngModel)]="row.ViewStatus"
+                      (change)="updateViewStatus(i,row.id,$event)">
+                    </mat-slide-toggle>
+                  </div>
+                </td>
+                <td class="w100 text-center" *ngIf="logined_user_data.delete_products_master=='1'">
+                  <div class="action-button">
+                    <button mat-icon-button matTooltip="Delete" (click)="deleteProduct(row.id)">
+                      <i class="material-icons red-clr">delete</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(15)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w250">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="datanotofound==true && productlist.length == 0;">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+
+  <div class="fab-btns"
+    *ngIf="logined_user_data.export_products_master=='1' || logined_user_data.add_products_master=='1' || logined_user_data.import_products_master=='1' ">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+  </div>
+  <mat-menu #menu="matMenu">
+    <!-- <button mat-menu-item (click)="downloadExcel('excel');"
+      *ngIf="productlist.length > 0 &&  ( logined_user_data.export_products_master=='1')">
+      <mat-icon>download</mat-icon>
+      <span>Download excel</span>
+    </button> -->
+    <!-- <button mat-menu-item (click)="upload_excel('insert');" *ngIf="logined_user_data.import_products_master=='1'">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload New Data</span>
+    </button>
+    <button mat-menu-item (click)="upload_excel('update');"
+      *ngIf="productlist.length > 0 && logined_user_data.import_products_master=='1'">
+      <mat-icon>update</mat-icon>
+      <span>Update Basic Data</span>
+    </button> -->
+    <!-- <button mat-menu-item (click)="upload_excel('update_mrp');"
+      *ngIf="productlist.length > 0 && logined_user_data.import_master=='1'">
+      <mat-icon>update</mat-icon>
+      <span>Update Price Data</span>
+    </button> -->
+    <!-- <button mat-menu-item (click)="openDialog()" *ngIf="logined_user_data.add_products_master=='1'">
+      <mat-icon>add</mat-icon>
+      <span>Add New Coor</span>
+    </button> -->
+    <button mat-menu-item (click)="progressService.setCancelReq(false); downloadInChunks();" *ngIf="logined_user_data.import_products_master=='1'">
+      <mat-icon>download</mat-icon>
+      <span>Download in excel</span>
+    </button>
+    <button mat-menu-item (click)="upload_excel('Product Master');"
+      *ngIf="logined_user_data.import_products_master=='1'">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload New Data</span>
+    </button>
+    <button mat-menu-item (click)="lastBtnValue('add')" routerLink="add-product" routerLinkActive="router-link-active"
+      *ngIf="logined_user_data.add_products_master=='1'">
+      <mat-icon>add</mat-icon>
+      <span>Add New</span>
+    </button>
+    
+  </mat-menu>

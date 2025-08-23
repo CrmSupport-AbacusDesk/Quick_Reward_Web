@@ -1,0 +1,20 @@
+diff --git a/node_modules/@agm/core/fesm5/agm-core.js b/node_modules/@agm/core/fesm5/agm-core.js
+index a0a578b..3bf26cd 100644
+--- a/node_modules/@agm/core/fesm5/agm-core.js
++++ b/node_modules/@agm/core/fesm5/agm-core.js
+@@ -1,5 +1,5 @@
+ import { __decorate, __metadata, __param, __awaiter, __generator, __spread, __read, __extends } from 'tslib';
+-import { Injectable, NgZone, Input, Directive, EventEmitter, Output, Self, ElementRef, Component, Inject, PLATFORM_ID, QueryList, ContentChildren, forwardRef, ɵɵdefineInjectable, ɵɵinject, InjectionToken, Optional, LOCALE_ID, NgModule } from '@angular/core';
++import { Injectable, NgZone, Input, Directive, EventEmitter, Output, Self, ElementRef, Component, Inject, PLATFORM_ID, QueryList, ContentChildren, forwardRef, defineInjectable, inject, InjectionToken, Optional, LOCALE_ID, NgModule } from '@angular/core';
+ import { Observable, BehaviorSubject, from, timer, Subject, fromEventPattern, merge, ReplaySubject, bindCallback, of, throwError } from 'rxjs';
+ import { flatMap, sample, switchMap, map, shareReplay, distinctUntilChanged, takeUntil, startWith, skip, multicast } from 'rxjs/operators';
+ import { isPlatformServer } from '@angular/common';
+@@ -4535,7 +4535,7 @@ var AgmGeocoder = /** @class */ (function () {
+     AgmGeocoder.ctorParameters = function () { return [
+         { type: MapsAPILoader }
+     ]; };
+-    AgmGeocoder.ngInjectableDef = ɵɵdefineInjectable({ factory: function AgmGeocoder_Factory() { return new AgmGeocoder(ɵɵinject(MapsAPILoader)); }, token: AgmGeocoder, providedIn: "root" });
++    AgmGeocoder.ngInjectableDef = defineInjectable({ factory: function AgmGeocoder_Factory() { return new AgmGeocoder(inject(MapsAPILoader)); }, token: AgmGeocoder, providedIn: "root" });
+     AgmGeocoder = __decorate([
+         Injectable({ providedIn: 'root' }),
+         __metadata("design:paramtypes", [MapsAPILoader])

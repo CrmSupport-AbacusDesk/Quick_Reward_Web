@@ -1,0 +1,60 @@
+<div class="edit-modal" *ngIf="Edit_type == 'basic'">
+  <form validate #update_basic="ngForm" name="update_basic"
+  (ngSubmit)="(update_basic.valid && update_basic.submitted)?Edit_survey():''">
+  
+  <p class="heading">Edit Basic Details</p>
+  <div mat-dialog-content>
+    <div class="cs-form">
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field  appearance="outline">
+            <mat-label>Title</mat-label>
+            <input matInput placeholder="Type Here ..." name="title" #title="ngModel" [(ngModel)]="Data.title" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field appearance="outline">
+            <mat-label>User Type</mat-label>
+            <mat-select  name="types" [(ngModel)]="Data.types" #types="ngModel" multiple >
+              <mat-option *ngFor="let row of Users"  value="{{row.module_name}}">{{row.module_name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col s12 l6 m6">
+          <mat-form-field  appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input name="start_date" matInput [matDatepicker]="pickers" placeholder="" [min]="minDate" #start_date="ngModel" readonly [(ngModel)]="Data.start_date" required>
+            <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+            <mat-datepicker #pickers></mat-datepicker>
+          </mat-form-field>
+          <!-- <div class="alert alert-danger" *ngIf="start_date.touched || f.submitted">
+            <p *ngIf="start_date.errors?.required">This field is required</p>
+          </div> -->
+        </div>
+        
+        <div class="col s12 l6 m6">
+          <mat-form-field  appearance="outline">
+            <mat-label>End Date</mat-label>
+            <input name="end_date" matInput [matDatepicker]="picker1" placeholder="" [min]="Data.start_date" #end_date="ngModel" readonly [(ngModel)]="Data.end_date" required>
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+          <!-- <div class="alert alert-danger" *ngIf="end_date.touched || f.submitted">
+            <p *ngIf="end_date.errors?.required">This field is required</p>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+    [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Update'}}</button>
+  </div>
+</form>
+</div>

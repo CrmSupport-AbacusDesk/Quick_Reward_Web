@@ -1,0 +1,31 @@
+<div mat-dialog-content>
+    <div class="image-dialog">
+        <a  mat-icon-button class="fix-btn" (click)="close()">
+            <i class="material-icons edit" >clear</i>
+        </a>
+        <img src="{{data.image}}" [ngStyle]="{transform: 'scale(' + scale + ') rotate(' + rotation + 'deg) translate(' + posX + 'px, ' + posY + 'px)'}"
+        (mousedown)="startDragging($event)"
+        (mousemove)="onDrag($event)"
+        (mouseup)="stopDragging()"
+        (mouseleave)="stopDragging()"
+        (touchstart)="startDragging($event)"
+        (touchmove)="onDrag($event)"
+        (touchend)="stopDragging()">
+        
+        
+        <div class="images-action">
+            <a mat-icon-button href="{{data.image}}" target="_blank" matTooltip="Open In Tab" matTooltipPosition="left">
+                <i class="material-icons">open_in_new</i>
+            </a>
+            <a mat-icon-button (click)="zoomIn()" matTooltip="Zoom In" matTooltipPosition="left">
+                <i class="material-icons">zoom_in</i>
+            </a>
+            <a mat-icon-button (click)="zoomOut()" matTooltip="Zoom Out" matTooltipPosition="left">
+                <i class="material-icons">zoom_out</i>
+            </a>
+            <a mat-icon-button (click)="rotate()" matTooltip="Rotate" matTooltipPosition="left">
+                <i class="material-icons">rotate_right</i>
+            </a>
+        </div>
+    </div>
+</div>

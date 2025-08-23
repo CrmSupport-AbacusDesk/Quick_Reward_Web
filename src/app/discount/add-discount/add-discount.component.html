@@ -1,0 +1,128 @@
+
+
+<div class="main-container" > 
+  <div class="tools-container">
+    <div class="page-heading">
+      <div class="heading-text">
+        <h2>Discount</h2>
+        <!-- <p>Add New Discount Master</p> -->
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-outer">
+    <!-- <app-master-tab></app-master-tab> -->
+    <div class="container tab-container" >
+      <form #f="ngForm" (ngSubmit)="f.valid">
+        <div class="row">
+          <div class="col s12">
+            <div class="sprate-box pb0">
+              <div class="cs-heading">
+                <h2>Add Discount</h2>
+                <span class="required">Indicates required fields ( <sup>*</sup> )</span>
+              </div>
+              <mat-divider class="left-right-15 mt10"></mat-divider>
+              <!-- <div class="cs-form pt10 pb10">
+                <div class="row mb0">
+                  <div class="col s6">
+                    <mat-form-field class="cs-input" appearance="outline" >
+                      <mat-label>Category code</mat-label>
+                      <input matInput type="text" placeholder="Type Here ..." name="category_code" #category_code="ngModel" [(ngModel)]="detail.category_code" [ngClass]="{'has-error' : category_code.invalid } " required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="!category_code.valid && category_code.touched">
+                      category Code required....
+                    </div>
+                  </div>
+                  <div class="col s6">
+                    <mat-form-field class="cs-input" appearance="outline" >
+                      <mat-label>Discount</mat-label>
+                      <input type="text" matInput placeholder="Type Here ..." name="discount" #discount="ngModel" [(ngModel)]="detail.discount" [ngClass]="{'has-error' : discount.invalid } " (keypress)="MobileNumber($event)" required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="!discount.valid && discount.touched">Discount required....</div>
+                  </div>
+                </div>
+              </div> -->
+              <div class="row mb0">
+                <div class="col s12 padding0">
+                  <div class="cs-table left-right-10">
+                    <div class="table-head">
+                      <table>
+                        <tr>
+                          <th>Category</th>
+                          <th class="w100 text-right">Basic Discount</th>
+                          <th class="w100 text-right">Sr Discount</th>
+                          <th class="w100 text-right">Dd Discount</th>
+                          <th class="w100 text-right">Family Discount</th>
+                          <th class="w100 text-right">Ss Discount</th>
+                          <th class="w100 text-right">Cd Discount</th>
+                          <th class="w100 text-right">Total Discount</th>
+                          
+                        </tr>
+                      </table>
+                    </div>
+                    
+                    <div class="table-container">
+                      <div class="table-content">
+                      <table >
+                        <tr >
+                          <td>{{detail.category}}</td>
+
+                          <td class="w100">
+                            <div class="input-box">
+                              <input  type="text" placeholder="Basic discount" name="basic_discount" #basic_discount="ngModel" [(ngModel)]="detail.basic_discount" (ngModelChange)="total_discount()" required>
+                            </div>
+                          </td>
+                          
+                          <td class="w100">
+                            <div class="input-box">
+                            <input type="text"  placeholder="Sr discount" name="sr_discount" #sr_discount="ngModel" [(ngModel)]="detail.sr_discount" (ngModelChange)="total_discount()" required>
+                         </div>
+                          </td>
+                          
+                          <td class="w100">
+                            <div class="input-box">
+                            <input type="text"   placeholder="Dd discount" name="dd_discount" #dd_discount="ngModel" [(ngModel)]="detail.dd_discount" (ngModelChange)="total_discount()" required> 
+                            </div>
+                          </td>
+
+                          <td class="w100">
+                            <div class="input-box">
+                            <input type="text"   placeholder="Family discount" name="family_discount" #family_discount="ngModel" [(ngModel)]="detail.family_discount" (ngModelChange)="total_discount()" required>
+                               </div>
+                            </td>
+                          
+                          <td class="w100">
+                            <div class="input-box">
+                            <input type="text"   placeholder="SS discount" name="ss_discount" #ss_discount="ngModel" [(ngModel)]="detail.ss_discount" (ngModelChange)="total_discount()" required>
+                            </div>
+                          </td>
+                          <td class="w100"> 
+                            <div class="input-box">
+                            <input type="text"   placeholder="Cd discount" name="cd_discount" #cd_discount="ngModel" [(ngModel)]="detail.cd_discount" (ngModelChange)="total_discount()" required>
+                            </div>
+                          </td>
+                          <td class="w100">{{detail.discount}}</td>
+                        </tr>
+                      </table>      
+                    </div>
+                  </div>
+                   
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="cs-btn fixedd mt16 text-right">
+              <div class="in-btn">
+                <button mat-raised-button (click)="addDiscount()" color="accent">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

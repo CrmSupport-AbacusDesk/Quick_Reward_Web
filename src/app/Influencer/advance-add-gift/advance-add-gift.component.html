@@ -1,0 +1,240 @@
+<div class="edit-modal" *ngIf="modelData.type == 'advance_gift'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('gift_add')">
+    <p class="heading">Add Advance Gift</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field  appearance="outline">
+              <mat-label>Gift Title</mat-label>
+              <input matInput placeholder="Type Here ..." name="title" #title="ngModel" [(ngModel)]="data.title"  required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+              <p *ngIf="title.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 l6 m6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Gift Adjustment Type</mat-label>
+              <mat-select name="gift_type" #gift_type="ngModel" [(ngModel)]="data.gift_type" required>
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="gift_type.touched || f.submitted">
+              <p *ngIf="gift_type.errors?.required">This field is required</p>
+            </div>
+            
+          </div>
+          
+        </div>
+        
+        <div class="row"  *ngIf="data.gift_type == 'Yes'">
+          <div class="col s12">
+            <mat-form-field  appearance="outline">
+              <mat-label>Total Points</mat-label>
+              <input matInput placeholder="Type Here ..." onkeypress="return event.charCode>=48 && event.charCode<=57" name="gift_point" #gift_point="ngModel" [(ngModel)]="data.gift_point" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="gift_point.touched || f.submitted">
+              <p *ngIf="gift_point.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Remark</mat-label>
+              <textarea class="h100" matInput name="remark" #remark="ngModel"  [(ngModel)]="data.remark" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="remark.touched || f.submitted">
+              <p *ngIf="remark.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button  color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+    </div>
+  </form>
+</div>
+
+
+
+<div class="edit-modal" *ngIf="modelData.type == 'point_transfer'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('point_transfer')">
+    <p class="heading">Point Transfer</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Point Type</mat-label>
+              <mat-select name="point_type" #point_type="ngModel" [(ngModel)]="data.point_type" required>
+                <mat-option value="Increment">Increment</mat-option>
+                <mat-option value="Decrement">Decrement</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="point_type.touched || f.submitted">
+              <p *ngIf="point_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 l6 m6">
+            <mat-form-field  appearance="outline">
+              <mat-label>Transfer Points</mat-label>
+              <input matInput placeholder="Type Here ..." onkeypress="return event.charCode>=48 && event.charCode<=57" name="point_value" #point_value="ngModel" [(ngModel)]="data.point_value" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="point_value.touched || f.submitted">
+              <p *ngIf="point_value.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Remark</mat-label>
+              <textarea class="h100" matInput name="remark" #remark="ngModel"  [(ngModel)]="data.remark" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="remark.touched || f.submitted">
+              <p *ngIf="remark.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button  color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+    </div>
+  </form>
+</div>
+
+
+
+
+
+<!-- Redeem Request modal start -->
+<div class="edit-modal" *ngIf="modelData.type == 'redeem_request'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && sendRequest()">
+    <p class="heading">Send Redeem Request</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>User ID</span>
+                  <p>{{(network | slice:0:1)||'#'}}{{data.unique_id}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Name</span>
+                  <p>{{data.name | titlecase}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Mobile No.</span>
+                  <p>{{data.mobile_no}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Status</span>
+                  <p>{{data.status ? data.status : '---'}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Wallet Points</span>
+                  <p>{{data.wallet_point ? (data.wallet_point + ' Pts') : '---'}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Gift Type</mat-label>
+              <mat-select name="redeem_type" #redeem_type="ngModel" [(ngModel)]="data.redeem_type" (selectionChange)="giftGalleryList(); data.cash_value = ''; data.cash_point = '';" required>
+                <mat-option value="Cash">Cash</mat-option>
+                <mat-option value="Gift">Gift</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="redeem_type.touched || f.submitted">
+              <p *ngIf="redeem_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>{{data.redeem_type ? data.redeem_type : 'Select Gift First'}}</mat-label>
+              <mat-select name="gift_id" #gift_id="ngModel" [(ngModel)]="data.gift_id"  (selectionChange)="findValue(data.gift_id)" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="giftGalleryList($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <ng-container *ngFor="let list of giftList;let index=index">
+                  <mat-option  value="{{list.id}}" [disabled]="list.gift_type == 'Gift' ? (list.gift_point > transform(data.wallet_point)) :  (list.range_start > transform(data.wallet_point))">
+                    {{list.title ? (list.title | titlecase) : '---'}}
+                    {{list.gift_type == 'Gift' ? (list.gift_point + ' Pts') : (list.range_start + ' Pts' + ' - ' + list.range_end + ' Pts')}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="alert alert-danger" *ngIf="gift_id.touched || f.submitted">
+              <p *ngIf="gift_id.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="data.redeem_type == 'Cash'">
+          <div class="col s12 l6 m6">
+            <mat-form-field  appearance="outline">
+              <mat-label>Enter Point</mat-label>
+              <input matInput placeholder="Type Here ..." onkeypress="return event.charCode>=48 && event.charCode<=57" name="cash_point" #cash_point="ngModel" [(ngModel)]="data.cash_point"  (ngModelChange)="getValue(data.cash_point)" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="cash_point.touched || f.submitted">
+              <p *ngIf="cash_point.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12 l6 m6">
+            <mat-form-field  appearance="outline">
+              <mat-label>Redeem Point Value</mat-label>
+              <input matInput placeholder="Type Here ..." onkeypress="return event.charCode>=48 && event.charCode<=57" name="cash_value" #cash_value="ngModel" [(ngModel)]="data.cash_value" readonly required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="cash_value.touched || f.submitted">
+              <p *ngIf="cash_value.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="data.redeem_type == 'Gift'">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Shipping Address</mat-label>
+              <textarea class="h100" matInput name="shipping_address" #shipping_address="ngModel"  [(ngModel)]="data.shipping_address" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="shipping_address.touched || f.submitted">
+              <p *ngIf="shipping_address.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button  color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+        {{savingFlag == true ? 'Please Wait' : 'Send'}}
+      </button>
+    </div>
+  </form>
+</div>
+<!-- Redeem Request modal end -->

@@ -1,0 +1,143 @@
+	<div class="container pt10 pl10 pr10 pb50" >
+    <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Contact Number 1</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="contact_number"  #contact_number="ngModel" (keypress)="MobileNumber($event)"  [(ngModel)]="data.contact_number" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="contact_number.touched || f.submitted">
+                    <p *ngIf="contact_number.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Contact Number 2</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="contact_number_2" #contact_number_2="ngModel" (keypress)="MobileNumber($event)"  [(ngModel)]="data.contact_number_2">
+                  </mat-form-field>
+                  
+                </div>
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Email ID</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." type="email" name="email" #email="ngModel"
+                    [(ngModel)]="data.email"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="email.touched || f.submitted">
+                    <p *ngIf="email.errors?.required">This field is required</p>
+                    <p *ngIf="email.errors?.pattern">This is not a valid Email ID !</p>
+                  </div>
+                </div>
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Website URl</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="url" #url="ngModel" [(ngModel)]="data.url" pattern="^(?! )[^\r\n]*$"  required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="url.touched || f.submitted">
+                    <p *ngIf="url.errors?.required">This field is required</p>
+                    <p *ngIf="url.errors?.pattern">This is not a valid!</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s12">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Address</mat-label>
+                    <textarea [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="address" #address="ngModel"
+                    [(ngModel)]="data.address" class="h80" pattern="^(?! )[^\r\n]*$" required></textarea>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="address.touched || f.submitted">
+                    <p *ngIf="address.errors?.required">This field is required</p>
+                    <p *ngIf="address.errors?.pattern">This is not a valid!</p>
+                  </div>
+                </div>
+              </div>
+              
+              
+              <div class="row">
+                <div class="col s12 m12 l12">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Google Map (Iframe Url)</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="iframe_url" #iframe_url="ngModel" [(ngModel)]="data.iframe_url" pattern="^(?! )[^\r\n]*$" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="url.touched || f.submitted">
+                    <p *ngIf="iframe_url.errors?.required">This field is required</p>
+                    <p *ngIf="iframe_url.errors?.pattern">This is not a valid!</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Instagram</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="instagram_url" #instagram_url="ngModel" [(ngModel)]="data.instagram_url" pattern="^(?! )[^\r\n]*$">
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="instagram_url.touched || f.submitted">
+                    <p *ngIf="instagram_url.errors?.required">This field is required</p>
+                    <p *ngIf="instagram_url.errors?.pattern">This is not a valid!</p>
+                  </div> -->
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Facebook</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="facebook_url" #facebook_url="ngModel" [(ngModel)]="data.facebook_url" pattern="^(?! )[^\r\n]*$">
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="facebook_url.touched || f.submitted">
+                    <p *ngIf="facebook_url.errors?.required">This field is required</p>
+                    <p *ngIf="facebook_url.errors?.pattern">This is not a valid!</p>
+                  </div> -->
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Linkedin</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="linkedin_url" #linkedin_url="ngModel" [(ngModel)]="data.linkedin_url" pattern="^(?! )[^\r\n]*$">
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="linkedin_url.touched || f.submitted">
+                    <p *ngIf="linkedin_url.errors?.required">This field is required</p>
+                    <p *ngIf="linkedin_url.errors?.pattern">This is not a valid!</p>
+                  </div> -->
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>X (Twitter)</mat-label>
+                    <input [disabled]="logined_user_data.edit_gallery_master!='1'" matInput placeholder="Type Here ..." name="twitter_url" #twitter_url="ngModel" [(ngModel)]="data.twitter_url" pattern="^(?! )[^\r\n]*$">
+                  </mat-form-field>
+                  <!-- <div class="alert alert-danger" *ngIf="twitter_url.touched || f.submitted">
+                    <p *ngIf="twitter_url.errors?.required">This field is required</p>
+                    <p *ngIf="twitter_url.errors?.pattern">This is not a valid!</p>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row" *ngIf="logined_user_data.edit_gallery_master=='1' || logined_user_data.add_gallery_master=='1'">
+        <div class="col s12">
+          <div class="text-right">
+            <button  *ngIf="logined_user_data.edit_gallery_master=='1' || logined_user_data.add_gallery_master=='1'" [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : (data.id ? 'Update' : 'Save')}}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+    </form>
+  </div>
+  
+  
+  

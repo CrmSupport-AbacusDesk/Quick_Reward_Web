@@ -1,0 +1,266 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()" *ngIf="routesValue.routes == 'checkin'">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    
+    <h2>Ticket</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10" *ngIf="routesValue.routes != 'checkin'">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Sorting" (click)="sortData()">
+        <i class="material-icons">swap_vert</i>
+      </button>
+      <div class="pagination" *ngIf="supportList_data.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+        (click)="active_tab = 'Pending';supportList()"><i class="material-icons">pending_actions</i>Pending
+        ({{tabCount.Pending}})</button>
+        <button mat-button [ngClass]="active_tab == 'Close' ? 'active' : ''"
+        (click)="active_tab = 'Close'; supportList()"><i class="material-icons">check_circle</i>Close
+        ({{tabCount.Close}})</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No.</th>
+              <th class="w100">Ticket ID</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">Created By</th>
+              <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                <th class="w100">Customer Type</th>
+                <th class="w200">Customer Details</th>
+              </ng-container>
+              <th class="w100">Ticket Type</th>
+              <th class="w200">Remark</th>
+              <th class="w150">Images</th>
+              <ng-container *ngIf="active_tab == 'Close'">
+                <th class="w100">Close Status</th>
+                <th class="w200">Closing Remark</th>
+                <!-- <th class="w145">Rating</th> -->
+              </ng-container>
+              <th *ngIf="active_tab != 'Close' && assign_login_data2.edit_support=='1'" class="w100 text-center">Status
+              </th>
+            </tr>
+          </table>
+        </div>
+        
+        <div class="table-head border-top" *ngIf="routesValue.routes != 'checkin'">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="id" (keyup.enter)="supportList()"
+                    #id="ngModel" [(ngModel)]="filter.id">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="" name="date_created"
+                    [(ngModel)]="filter.date_created" [max]="today_date" (dateChange)="supportList()" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="created_by_name"
+                    (keyup.enter)="supportList()" #created_by_name="ngModel" [(ngModel)]="filter.created_by_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field>
+                      <input type="text" matInput placeholder="Search ..." name="customer_name"
+                      (keyup.enter)="supportList()" #customer_name="ngModel" [(ngModel)]="filter.customer_type">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w200">
+                  <div class="th-search-acmt">
+                    <mat-form-field>
+                      <input type="text" matInput placeholder="Search ..." name="customer_name"
+                      (keyup.enter)="supportList()" #customer_name="ngModel" [(ngModel)]="filter.customer_name">
+                    </mat-form-field>
+                  </div>
+                </th>
+              </ng-container>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="type_name" #type_name="ngModel" [(ngModel)]="filter.type_name"
+                    (selectionChange)="supportList();">
+                    <mat-option value="">All</mat-option>
+                    <mat-option *ngFor="let row of tickets"
+                    value="{{row.category_name}}">{{row.category_name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </th>
+            <th class="w200">&nbsp;</th>
+            <th class="w150">&nbsp;</th>
+            <ng-container *ngIf="active_tab == 'Close'">
+              <th class="w100">&nbsp;</th>
+              <th class="w200">&nbsp;</th>
+              <!-- <th class="w145">&nbsp;</th> -->
+            </ng-container>
+            <th *ngIf="active_tab != 'Close' && assign_login_data2.edit_support=='1'" class="w100 text-center">&nbsp;
+            </th>
+          </tr>
+        </table>
+      </div>
+    </div>
+    
+    <div class="table-container mb50">
+      <div class="table-content">
+        <table>
+          <ng-container *ngIf="!loader">
+            <tr *ngFor="let row of supportList_data; let i = index;">
+              <td class="w60">{{i + 1 + sr_no}}</td>
+              <td class="w100 link-clr"><strong>{{row.id ? ('#' + row.id) : '---'}}</strong></td>
+              <td class="w100">{{row.date_created | date:'d MMM y'}}</td>
+              <td class="w100">{{row.created_by_name ? (row.created_by_name | titlecase) : ''}}</td>
+              <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                <td class="w100">{{row.customer_type ? row.customer_type : '---'}}</td>
+                <td class="w200">{{row.customer_name ? row.customer_name : '---'}}</td>
+              </ng-container>
+              <td class="w100">{{row.type_name ? row.type_name : '---'}}</td>
+              <td class="w200">{{row.message}}</td>
+              <td class="w150">
+                <div class="circel-img">
+                  <ng-container *ngFor="let row of row.image">
+                    <img src="{{url + row.document_name}}" (click)="goToImage(url+row.document_name)"
+                    *ngIf="row.document_name != ''">
+                  </ng-container>
+                </div>
+              </td>
+              <ng-container *ngIf="active_tab == 'Close'">
+                <td class="w100">{{row.substatus?row.substatus:''}}</td>
+                <td class="w200">{{row.closing_remark}}</td>
+                <!-- <td class="w145">
+                  <div class="rating">
+                    <i class="material-icons" [ngClass]="{'active':row.feedback_star>=1}">{{row.feedback_star>=1 ?
+                      'star' : 'star_outline' }}</i>
+                      <i class="material-icons" [ngClass]="{'active':row.feedback_star>=2}">{{row.feedback_star>=2 ?
+                        'star' : 'star_outline' }}</i>
+                        <i class="material-icons" [ngClass]="{'active':row.feedback_star>=3}">{{row.feedback_star>=3 ?
+                          'star' : 'star_outline' }}</i>
+                          <i class="material-icons" [ngClass]="{'active':row.feedback_star>=4}">{{row.feedback_star>=4 ?
+                            'star' : 'star_outline' }}</i>
+                            <i class="material-icons" [ngClass]="{'active':row.feedback_star>=5}">{{row.feedback_star>=5 ?
+                              'star' : 'star_outline' }}</i>
+                            </div>
+                          </td> -->
+                        </ng-container>
+                        <td *ngIf="active_tab != 'Close' && assign_login_data2.edit_support=='1'" class="w100 text-center">
+                          <a class="link-btn" (click)="openDialog(row.id, 'status')">Change Status</a>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="loader">
+                      <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                        <td class="w60">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                          <td class="w100">
+                            <div>&nbsp;</div>
+                          </td>
+                          
+                          <td class="w200">
+                            <div>&nbsp;</div>
+                          </td>
+                        </ng-container>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w200">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w150">
+                          <div>&nbsp;</div>
+                        </td>
+                        <ng-container *ngIf="active_tab == 'Close'">
+                          <td class="w200">
+                            <div>&nbsp;</div>
+                          </td>
+                          <!-- <td class="w145">
+                            <div>&nbsp;</div>
+                          </td> -->
+                        </ng-container>
+                        <td *ngIf="active_tab != 'Close' && assign_login_data2.edit_support=='1'" class="w100 text-center">
+                          <div>&nbsp;</div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </table>
+                </div>
+                <ng-container *ngIf="supportList_data.length == 0 && noResult == true">
+                  <app-not-result-found></app-not-result-found>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          
+          <!-- -----Not Active----- -->
+          <!-- <div class="fab-btns pulse" *ngIf="assign_login_data2.export_support=='1'">
+            <button class="excel pulse " mat-fab color="primary" [matMenuTriggerFor]="menu">
+              <i class="material-icons">apps</i>
+              Action
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngIf="supportList_data.length > 0" (click)="exportAsXLSX();">
+                <mat-icon>download</mat-icon>
+                <span>Download in excel</span>
+              </button>
+              <button mat-menu-item (click)="openDialog('', 'add')">
+                <mat-icon>add</mat-icon>
+                <span>Add Ticket</span>
+              </button>
+            </mat-menu>
+          </div> -->
+        </div>

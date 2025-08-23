@@ -1,0 +1,37 @@
+.dataList{
+    max-height: 200px;
+    overflow: auto;
+    li, tr{
+        th{
+            font-weight: bold;
+            background-color: #f6f6f6;
+            &:first-child{
+             width: 50%;
+            }    
+        }
+        &:nth-child(even){
+            background: #eff6fc;
+        }
+        td, th{
+            padding: 4px 8px;
+            border: 1px solid #dadada;
+        }
+    }
+    
+    .flex-1{
+        flex: 1;
+    }
+
+    .pointValue{
+        font-weight: bold;
+        font-size: 18px;
+        color: #0097ff;
+    }
+}
+
+.wide-itemName{
+            width: 70% !important;
+}
+.ptColor{
+    color: #0097ff;
+}

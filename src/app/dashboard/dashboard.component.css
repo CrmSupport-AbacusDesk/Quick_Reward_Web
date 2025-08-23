@@ -1,0 +1,38 @@
+@-webkit-keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.Skeleton {
+  width: 20%;
+  height: 15px;
+  color: transparent;
+  background-image: -webkit-gradient(linear, right top, left top, from(rgba(0, 0, 0, 0.1)), color-stop(rgba(0, 0, 0, 0.05)), color-stop(rgba(0, 0, 0, 0.05)), to(rgba(0, 0, 0, 0.1)));
+  background-image: linear-gradient(270deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.1));
+  background-size: 400% 100%;
+  -webkit-animation: skeleton-loading 8s ease-in-out infinite;
+          animation: skeleton-loading 8s ease-in-out infinite;
+}
+
+.Skeleton * {
+  visibility: hidden;
+}
+
+.Skeleton--text {
+  -webkit-clip-path: inset(4px 0 4px 0 round 3px 3px 3px 3px);
+  clip-path: inset(4px 0 4px 0 round 3px 3px 3px 3px);
+}
+/*# sourceMappingURL=dashboard.component.css.map */

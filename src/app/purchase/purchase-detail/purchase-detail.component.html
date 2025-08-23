@@ -1,0 +1,212 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Purchase Details</h2>
+    
+  </div>
+  
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m8 l8">
+        <!-- product data start -->
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Basic Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date Created</span>
+                <p>{{getData.date_created ? (getData.date_created | date) : '---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Influencer Type</span>
+                <p>{{getData.sub_type ? (getData.sub_type) : '---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Influencer Name</span>
+                <p>{{getData.created_by_name ? (getData.created_by_name | titlecase) : '---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Influencer Mobile No.</span>
+                <p>{{getData.mobile_no ? (getData.mobile_no) : '---'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Invoice Date</span>
+                <p>{{getData.invoice_date ? (getData.invoice_date | date) : '---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>PO ID	</span>
+                <p>{{getData.id ? ('PO-'+getData.id) : '---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Invoice Number</span>
+                <p>{{getData.invoice_number ? (getData.invoice_number) : '---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Total Item</span>
+                <p>{{getData.total_item ? getData.total_item : '---'}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Total SQFT</span>
+                <p>{{getData.total_sqft ? getData.total_sqft : '---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Claim Points</span>
+                <p>{{getData.total_point_value ? getData.total_point_value :'---'}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="getData.status == 'Approved'">
+                <span>Approved Points</span>
+                <p>{{getData.approved_point ? getData.approved_point :'---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Material Purchase From</span>
+                <p>{{getData.purchase_from ? getData.purchase_from :'---'}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="getData.purchase_from != 'Factory'">
+                <span>{{getData.purchase_from ? getData.purchase_from :'---'}} Name</span>
+                <p>{{getData.purchase_from_name ? (getData.purchase_from_name |  titlecase) :'---'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Value (Without GST)</span>
+                <p>{{getData.amount ? ( '₹ '  +getData.amount) :'---'}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Specification</span>
+                <p>{{getData.specification ? getData.specification :'---'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Status</span>
+                <p>{{getData.status ? getData.status :'---'}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="getData.reason">
+                <span>Reason</span>
+                <p>{{getData.reason ? getData.reason :'---'}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Last Updated By</span>
+                <p>{{getData.last_updated_by_name ? (getData.last_updated_by_name | titlecase) : '--'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Last Updated On</span>
+                <p>
+                  {{getData.last_updated_on && getData.last_updated_on != '0000-00-00 00:00:00'?
+                  (getData.last_updated_on | date:'short') : '--'}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- product data end -->
+        
+        
+        <!-- Skeleton start -->
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Skeleton end -->
+      </div>
+      
+      <div class="col s12 m4 l4">
+
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+              <h2>Uploaded Bills</h2>
+          </div>
+          <div class="card-body">
+            <div class="cs-file" *ngIf="getData.img && getData.img.length > 0 || getData.pdf && getData.pdf.length > 0">
+              <ul class="product-images">
+                <li class="multi-images">
+                  <ng-container *ngIf="getData.img && getData.img.length > 0">
+                    <label class="cs-file-img" *ngFor="let val of getData.img">
+                      <img *ngIf="val.image!=null &&val.image!='' && !val.image.endsWith('.pdf')" src="{{service.uploadUrl+'purchase/'+val.image}}"
+                      (click)="imageModel(service.uploadUrl+'purchase/'+val.image)">
+
+                      <a class="cs-file-img pointer" *ngIf="val.image!=null &&val.image!='' && val.image.endsWith('.pdf')" target="_blank" href="{{service.uploadUrl+'purchase/'+val.image}}">
+                        <img src="assets/img/icons/pdf.png">
+                      </a>
+                    </label>
+                  </ng-container>
+                  
+                  <ng-container *ngIf="getData.pdf && getData.pdf.length > 0">
+                    <a class="cs-file-img pointer" *ngFor="let val of getData.pdf" target="_blank" href="{{service.uploadUrl+'PurchasePdf/'+val.pdf}}">
+                      <img src="assets/img/icons/pdf.png">
+                    </a>
+                  </ng-container>
+                </li>
+              </ul>
+            </div>
+            <div class="cs-file" *ngIf="(getData.img && getData.img.length === 0) && (getData.pdf && getData.pdf.length === 0)">
+              <p>Bill not exist</p>
+            </div>
+          </div>
+      </div>
+
+       
+      </div>
+    </div>
+    
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table class="sno-border">
+            <tr>
+              <th class="w30">&nbsp;</th>
+              <th>Product Name</th>
+              <th class="w120">Product Code</th>
+              <th class="w120 text-right">SQFT</th>
+              <th class="w120 text-right">Point Per SQFT</th>
+              <th class="w120 text-right">Total Point</th>
+            </table>
+          </div>
+        </div>
+        
+        <div class="table-container" *ngIf="items.length > 0">
+          <div class="table-content">
+            <table class="sno-border">
+              <ng-container *ngIf="!skLoading">
+                <tr *ngFor="let row of items; let i = index">
+                  <td class="w30">{{i+1}}</td>
+                  <td>{{row.product_name ? (row.product_name | titlecase) : '---'}}</td>
+                  <td class="w120">{{row.product_code ? row.product_code : ''}}</td>
+                  <td class="w120 text-right">{{row.sqft ? row.sqft : '---'}}</td>
+                  <td class="w120 text-right">{{row.per_sqft ? row.per_sqft : '---'}}</td>
+                  <td class="w120 text-right">{{row.total_points ? row.total_points : '---'}}</td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>

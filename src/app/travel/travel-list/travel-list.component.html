@@ -1,0 +1,305 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container" *ngIf="hide !=  true">
+    <h2>Area Wise Journey Plan</h2>
+
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh();">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button>
+
+      <div class="pagination" *ngIf="travel_list.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending';getTravelList();"><i class="material-icons">pending_actions</i>Pending
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+          (click)="active_tab = 'Approved';getTravelList();"><i class="material-icons">done_all</i>Approved
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+          (click)="active_tab = 'Reject';getTravelList();"><i class="material-icons">cancel</i>Reject
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+
+  <div class="container container-scroll  pb100">
+
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.no</th>
+              <th class="w120">Date Created</th>
+              <th class="w150">Created By</th>
+              <th class="w100">Plan ID</th>
+              <th class="w100">Employee Code</th>
+              <th class="w150">Employee Name </th>
+              <th class="w150">Reporting Manager</th>
+              <th class="w100">Date From</th>
+              <th class="w100 text-center">Date To</th>
+              <th class="w200">State</th>
+              <th class="w200">District</th>
+              <th class="w100 text-center">Working Days</th>
+              <th class="w70 text-center">Plan Submit</th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker1" placeholder="" name="search.date_created"
+                      [(ngModel)]="search.date_created" [max]="today_date" (dateChange)="getTravelList()" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="created_by_name" [(ngModel)]="search.created_by_name"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="id" [(ngModel)]="search.id"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="employee_id" [(ngModel)]="search.employee_id"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt" *ngIf="hide !=  true">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="sales_user" [(ngModel)]="search.sales_user"
+                      (keyup.enter)="getTravelList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="reporting_manager_id" #reporting_manager_id="ngModel"
+                      [(ngModel)]="search.reporting_manager_id" (selectionChange)="getTravelList();">
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getReportManager($event.target.value, 'rsm1')"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let list of report_manager;let index=index" value="{{list.id}}">
+                        {{list.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w100 text-center">&nbsp;</th>
+
+              <th class="w100 text-center">&nbsp;</th>
+
+              <!-- <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="month" #month="ngModel" [(ngModel)]="search.month"
+                      (selectionChange)="getTravelList()">
+                      <mat-option value="1">January</mat-option>
+                      <mat-option value="2">February</mat-option>
+                      <mat-option value="3">March</mat-option>
+                      <mat-option value="4">April</mat-option>
+                      <mat-option value="5">May</mat-option>
+                      <mat-option value="6">June</mat-option>
+                      <mat-option value="7">July</mat-option>
+                      <mat-option value="8">August</mat-option>
+                      <mat-option value="9">September</mat-option>
+                      <mat-option value="10">October</mat-option>
+                      <mat-option value="11">November</mat-option>
+                      <mat-option value="12">December</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w60 text-center">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input select-input">
+                    <mat-select name="year" #year="ngModel" [(ngModel)]="search.year"
+                      (selectionChange)="getTravelList()">
+                      <mat-option value="2022">2022</mat-option>
+                      <mat-option value="2023">2023</mat-option>
+                      <mat-option value="2024">2024</mat-option>
+                      <mat-option value="2025">2025</mat-option>
+                      <mat-option value="2026">2026</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </th> -->
+              <th class="w200 text-center"></th>
+              <th class="w200 text-center"></th>
+              <th class="w100 text-center"></th>
+              <th class="w70 text-center">&nbsp;</th>
+            </tr>
+
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let list of travel_list; let i = index;"
+                [ngClass]="{'Current': service.currentUserID == list.id}">
+                <td class="w60">{{ i + 1 + sr_no }}</td>
+                <td class="w120">{{list.date_created!='0000-00-00 00:00:00'? (list.date_created | date:'d MMM y, hh:mm a'):'--'}}</td>
+                <td class="w150">{{list.created_by_name ? (list.created_by_name | titlecase) : '---'}}</td>
+
+                <td class="w100">
+                  <a class="link-btn" (click)="service.setData(search); service.setTabData(active_tab)" [routerLink]="[ 'travel-sub-detail/', list.encrypt_id ]"
+                    [queryParams]="{'id':list.id, 'working_days':list.working_days, 'year':list.year}">#{{list.id}}</a>
+                </td>
+                <td class="w100">{{list.employee_id}}</td>
+                <td class="w150">{{list.name ? (list.name | titlecase) : ''}}</td>
+                <td class="w150">{{list.r_name ? (list.r_name | titlecase) : ''}}</td>
+                <!-- <td class="w100">
+                  <ng-container *ngIf="list.month == '1' ">January</ng-container>
+                  <ng-container *ngIf="list.month == '2' ">February</ng-container>
+                  <ng-container *ngIf="list.month == '3' ">March</ng-container>
+                  <ng-container *ngIf="list.month == '4' ">April</ng-container>
+                  <ng-container *ngIf="list.month == '5' ">May</ng-container>
+                  <ng-container *ngIf="list.month == '6' ">June</ng-container>
+                  <ng-container *ngIf="list.month == '7' ">July</ng-container>
+                  <ng-container *ngIf="list.month == '8' ">August</ng-container>
+                  <ng-container *ngIf="list.month == '9' ">September</ng-container>
+                  <ng-container *ngIf="list.month == '10' ">October</ng-container>
+                  <ng-container *ngIf="list.month == '11' ">November</ng-container>
+                  <ng-container *ngIf="list.month == '12' ">December</ng-container>
+                </td> -->
+                <td class="w100">{{list.date_from!='0000-00-00 00:00:00'? (list.date_from | date:'d MMM y'):'--'}}</td>
+                <td class="w100">{{list.date_to!='0000-00-00 00:00:00'? (list.date_to | date:'d MMM y'):'--'}}</td>
+               
+                <td class="w200">
+                  <ng-container *ngFor="let row of list.state">
+                    {{row}}
+                  </ng-container>
+                </td>
+                <td class="w200">
+                  <ng-container *ngFor="let row of list.district">
+                    {{row}}
+                  </ng-container>
+                </td>
+                <td class="w100 text-center light-blue"><strong>{{list.working_days}}</strong></td>
+                <td class="w70 text-center yellow-bgclr"><strong>{{list.plan_updated}}</strong></td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let lead of skelton">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w70 text-center">
+                  <div>&nbsp;</div>
+                </td>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <ng-container *ngIf="travel_list.length == 0 && datanotfound == true">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+
+</div>
+<div class="fab-btns" *ngIf="assign_login_data2.import_travel_list=='1' || (travel_list.length > 0 && assign_login_data2.export_travel_list=='1') ">
+  <button class="pulse excel" mat-fab color="primary" [matMenuTriggerFor]="menu">
+    <i class="material-icons">apps</i>
+    Action
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item *ngIf="assign_login_data2.import_travel_list=='1'"
+      (click)="openTravelListModal('Travel Plan Monthly')">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Upload Monthly Travel Plan</span>
+    </button>
+    <button mat-menu-item *ngIf="travel_list.length > 0 && assign_login_data2.export_travel_list=='1'"
+      (click)="progressService.setCancelReq(false); downloadInChunks(active_tab);">
+      <mat-icon>download</mat-icon>
+      <span>Download Excel</span>
+    </button>
+  </mat-menu>
+</div>

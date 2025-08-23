@@ -1,0 +1,71 @@
+
+
+<div mat-dialog-title>Invoice List
+  
+  <a   mat-icon-button class="fix-btn" (click)="close()">
+    <i class="material-icons edit" >clear</i>
+  </a>
+</div>
+<div mat-dialog-content>
+  <div class="dialog-content">
+    <div class="cs-table" style="margin: -10px">
+      <div class="sticky-head" style="top: -10px;">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w30">S.no.</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">Document Date</th>
+              <th class="w100">Invoice Number</th>
+              <th class="w100">Account Code</th>
+              <th class="w80 text-center">Total Item</th>
+              <th class="w80 text-center">Total QTY.</th>
+              <th class="w100 text-right">Invoice Amount</th>
+              <th class="w100 text-right">Payment</th>
+              <th class="w100 text-right">Balance Amount</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of invoice_listing; let i =index">
+                <td class="w30">{{i+1}}</td>
+                <td class="w100">{{row.date_created | date:'dd MMM yyyy , h:mm a'}}</td>
+                <td class="w100">{{row.billing_date | date:'dd MMM yyyy'}}</td>
+                <td class="w100"><a class="link-btn" (click)="goTODetail(row.id)">{{row.bill_number}}</a></td>
+                <td class="w100">{{row.customer_code}}</td>
+                <td class="w80 text-center">{{row.total_billing_item}}</td>
+                <td class="w80 text-center">{{row.total_billing_item_qty}}</td>
+                <td class="w100 text-right"><strong>&#x20B9; {{row.total_billing_amount}}</strong></td>
+                <td class="w100 text-right"><strong>&#x20B9; {{row.billing_receive_amount}}</strong></td>
+                <td class="w100 text-right"><strong>&#x20B9; {{row.pending_balance}}</strong></td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w30"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w80"><div>&nbsp;</div></td>
+                <td class="w80"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="W100 text-right"><div>&nbsp;</div></td>
+                <td class="W100 text-right"><div>&nbsp;</div></td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+      <ng-container *ngIf="invoice_listing.length == 0 && noResult">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+</div>

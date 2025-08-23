@@ -1,0 +1,62 @@
+<div class="edit-modal">
+  <form #f="ngForm" name="f" (ngSubmit)="f.valid && addPayment()">
+    <div mat-dialog-content>
+      <p class="heading">Add Payment</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s6">
+            <mat-form-field appearance="outline" class="cs-input" [ngClass]="{'has-error' : payment_mode.invalid } ">
+              <mat-label>Select Payment Mode</mat-label>
+              <mat-select name="payment_mode" [(ngModel)]="formData.payment_mode" #payment_mode="ngModel" required>
+                <mat-option value="Cash">Cash</mat-option>
+                <mat-option value="Paytm">Paytm</mat-option>
+                <mat-option value="Phone-Pe">Phone-Pe</mat-option>
+                <mat-option value="Google-Pay">Google-Pay</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="payment_mode.touched || f.submitted">
+              <p *ngIf="payment_mode.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s6">
+            <mat-form-field appearance="outline" class="cs-input" [ngClass]="{'has-error' : invoice_final_amount.invalid } ">
+              <mat-label>Amount</mat-label>
+              <input matInput placeholder="Type Here ..." name="invoice_final_amount" #invoice_final_amount="ngModel" [(ngModel)]="formData.invoice_final_amount" onkeypress="return event.charCode>=48 && event.charCode<=57" readonly>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6" *ngIf="formData.payment_mode!='Cash'">
+            <mat-form-field appearance="outline" class="cs-input" [ngClass]="{'has-error' : transaction_no?.invalid } ">
+              <mat-label>Transaction No</mat-label>
+              <input matInput placeholder="Type Here ..." name="transaction_no" #transaction_no="ngModel" [(ngModel)]="formData.transaction_no" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="transaction_no.touched || f.submitted">
+              <p *ngIf="transaction_no.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s6">
+            <mat-form-field appearance="outline" class="cs-input" [ngClass]="{'has-error' : payment_remark.invalid } ">
+              <mat-label>Remark</mat-label>
+              <textarea matInput placeholder="Type here ..." name="payment_remark" #payment_remark="ngModel"
+              [(ngModel)]="formData.payment_remark" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="payment_remark.touched || f.submitted">
+              <p *ngIf="payment_remark.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+        [disabled]="savingFlag == true">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+    </div>
+  </div>
+</form>
+
+</div>
