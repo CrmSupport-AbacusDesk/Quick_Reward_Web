@@ -1,0 +1,261 @@
+<div class="main-container" >
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" routerLink="/bonus-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Bonus Detail</h2>
+
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50" >
+    <div class="row"  >
+      <div class="col s12 m12 l12" >
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Basic Details</h2>
+            <div class="left-auto" *ngIf="logined_user_data.edit_bonus_points=='1'  && bonusdetail_data.status == 'Active'">
+              <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+              (click)="update(bonusdetail_data, 'basic')">
+              <i class="material-icons">edit</i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body">
+
+          <div class="grid-box three mb16">
+            <div class="block-feilds">
+              <span>Title</span>
+              <p>{{bonusdetail_data.tittle?bonusdetail_data.tittle:'N/A'}}</p>
+            </div>
+            <div class="block-feilds">
+              <span>User Type</span>
+              <p ><span style="margin: 3px;">{{bonusdetail_data.types}}</span></p>
+            </div>
+            <div class="block-feilds">
+              <span>Influencer Type</span>
+              <p ><span style="margin: 3px;">{{bonusdetail_data.influencer_type_name}}</span></p>
+            </div>
+          </div>
+          <div class="grid-box five">
+            <div class="block-feilds">
+              <span>Date Created</span>
+              <p>{{bonusdetail_data.date_created | date:'d MMM y'}}</p>
+            </div>
+
+
+            <div class="block-feilds">
+              <span>Created By</span>
+              <p>{{bonusdetail_data.created_by_name?bonusdetail_data.created_by_name:'N/A'}}</p>
+            </div>
+
+            <div class="block-feilds">
+              <span>Start Date</span>
+              <p>{{bonusdetail_data.start_date | date:'d MMM y'}}</p>
+            </div>
+
+
+            <div class="block-feilds">
+              <span>End Date</span>
+              <p>{{bonusdetail_data.end_date | date:'d MMM y'}}</p>
+            </div>
+
+            <div class="block-feilds">
+              <span>Status</span>
+              <p class="Approved"><strong>{{bonusdetail_data.status?bonusdetail_data.status:'N/A'}}</strong></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Skeleton start -->
+      <div class="card" *ngIf="skLoading">
+        <div class="sk-head">
+          <h2>&nbsp;</h2>
+        </div>
+        <div class="card-body">
+          <div class="grid-box">
+            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+              &nbsp;
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Skeleton end -->
+    </div>
+
+  </div>
+
+
+  <div class="row" *ngIf="!skLoading">
+    <div class="col s12 m8 l6">
+      <div class="card pb0">
+        <div class="card-head">
+          <h2>Area Wise Selection</h2>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div [ngClass]="'col s12 m6 l6'">
+              <div class="check-box">
+                <div class="check-head">
+                  <!-- <h3>STATE</h3> -->
+                  <mat-checkbox [labelPosition]="labelPosition" color="primary" (change)="sel_all_state($event)">STATE</mat-checkbox>
+
+                </div>
+                <div class="check-body">
+                  <mat-checkbox [disabled]="logined_user_data.edit_bonus_points!='1'"  [labelPosition]="labelPosition" color="primary" *ngFor="let val of states | filterBy : {state_name : search_st}; let g=index" [name]="'state'+val.state_name+g"   [checked]="all_state_check"    [value]=""  [ngModel]="val.state_value" (ngModelChange)="getDistrictList(val.state_name,$event)" >{{val.state_name}}</mat-checkbox>
+                </div>
+              </div>
+            </div>
+            <div [ngClass]="'col s12 m6 l6'">
+              <div class="check-box">
+                <div class="check-head">
+                  <!-- <h2>District</h2> -->
+                  <mat-checkbox [labelPosition]="labelPosition" color="primary" (change)="sel_all_dis($event)">DISTRICT</mat-checkbox>
+
+                </div>
+                <div class="check-body">
+                  <ng-container *ngFor="let val of districts;let h=index">
+                    <mat-checkbox [labelPosition]="labelPosition" class="fill-check"  disabled="true"  checked="true" [value]="val.state_name" name="'state_name'+h" >{{val.state_name}}</mat-checkbox>
+                    <ng-container *ngFor="let dist of val.district | filterBy: {district_name : search_dis};let d=index">
+                      <mat-checkbox [labelPosition]="labelPosition" color="primary" [disabled]="logined_user_data.edit_bonus_points!='1'" [checked]="all_dis_check"  [value]="dist.district_name" [name]="'district_name'+val.state_name+d" [ngModel]="dist.district_value" (ngModelChange)="getSelDistrict(val.state_name,dist.district_name,$event);">{{dist.district_name}}</mat-checkbox>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- <div class="col s12 m4 l4" *ngIf="bonusdetail_data.types!='Retailer'">
+              <div class="check-box">
+                <div class="check-head">
+                  <mat-checkbox color="primary" [labelPosition]="labelPosition" [(ngModel)]="data.Influencer" (change)="allInfluncer()"  name="Influencer"  value="true">Select All</mat-checkbox>
+                </div>
+                <div class="check-body">
+                  <ng-container *ngFor="let row of areaInfluencer;let d=index">
+                    <mat-checkbox color="primary" [labelPosition]="labelPosition"  [checked]="row.selected" [(ngModel)]="row.selected" [name]="'name'+i"  (change)="setInfluencer($event, row.id)">{{row.name | titlecase}} {{row.mobile_no}}</mat-checkbox>
+                  </ng-container>
+
+                  <ng-container *ngFor="let row of areaInfluencer;let d=index">
+                    <mat-checkbox color="primary" [labelPosition]="labelPosition"  [(ngModel)]="row.selected" [name]="'name'+i"  (change)="setInfluencer($event, row.id)">{{row.name | titlecase}} {{row.mobile_no}}</mat-checkbox>
+                  </ng-container>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+
+    <div class="col s12 m6 l6" *ngIf="editTrue==false">
+      <div class="card pb0">
+        <div class="card-head">
+          <h2>Point Category Details</h2>
+          <div class="left-auto" *ngIf="logined_user_data.edit_bonus_points=='1'  && bonusdetail_data.status == 'Active'">
+            <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+            (click)="editPointCategory()">
+            <i class="material-icons">edit</i>
+          </a>
+        </div>
+        </div>
+        <div class="card-body">
+          <div class="cs-table left-right-10 scroll310">
+            <div class="sticky-head border-top">
+              <div class="table-head">
+                <table>
+                  <tr>
+                    <th class="w50">S.No</th>
+                    <th>Product Name</th>
+                    <th class="w200  text-center">Points</th>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="table-container">
+              <div class="table-content">
+                <table>
+                  <ng-container>
+                    <tr *ngFor="let row of bonusdetail_data.product_data let i = index">
+                      <td class="w50">{{i+1}}</td>
+                      <td>{{row.product_name}}</td>
+                      <td class="w200  text-center">
+                        <strong>{{row.point}}</strong>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m6 l6" *ngIf="editTrue==true">
+      <div class="card pb0">
+        <div class="card-head">
+          <h2>Update Point Category</h2>
+
+        </div>
+        <div class="card-body">
+          <div class="cs-table left-right-10 scroll310">
+            <div class="sticky-head border-top">
+              <div class="table-head">
+                <table>
+                  <tr>
+                    <th class="w50">S.No</th>
+                    <th>Product Name</th>
+                    <th class="w200  text-center">Points</th>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="table-container">
+              <div class="table-content">
+                <table>
+                  <ng-container>
+                    <tr *ngFor="let row of newProdcut[0]; let i = index">
+                      <td class="w50">{{i+1}}</td>
+                      <td>{{row.point_category_name}}</td>
+                      <td class="w200  text-center">
+                        <div class="th-search-acmt">
+                          <mat-form-field>
+                            <input type="text" matInput class="cs-text-input text-center" placeholder="Enter Points" [name]="'scheme_influencer_point'+i"  [(ngModel)] = "row.scheme_influencer_point"  onkeypress="return event.charCode>=48 && event.charCode<=57">
+                            </mat-form-field>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button *ngIf="logined_user_data.edit_bonus_points=='1'  && bonusdetail_data.status == 'Active'" [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" (click)="areaUpdate()" [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Update'}}
+            </button>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- <div class="fab-btns">
+      <button  mat-fab class="excel" *ngIf="bonusdetail_data.types=='Influencer'  && logined_user_data.export_bonus_points=='1'" (click)="upload_excel('insert', bonusdetail_data.id, bonusdetail_data.district, bonusdetail_data.types, bonusdetail_data.influencer_type);">
+      <img src="assets/img/excel.svg">
+      Upload Excel
+    </button>
+  </div> -->
+</div>
+</div>

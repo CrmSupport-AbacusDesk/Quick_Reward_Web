@@ -1,0 +1,487 @@
+<div class="main-container {{padding0}}">
+    
+    <div class="tools-container" *ngIf="hide !=  true">
+        <h2>Attendance</h2>
+        <div class="left-auto df ac flex-gap-10">
+            <!-- (click)="tabType== 'Today' ? openBottomSheet('getAttendanceToday',1) : openBottomSheet('getAttendance',2)" *ngIf="tabType== 'Month'" -->
+            <button mat-icon-button matTooltip="Filter"  (click)="openBottomSheet()">
+                <i class="material-icons">filter_alt</i>
+            </button>
+            
+            
+            
+            <button mat-icon-button matTooltip="Refresh"
+            (click)=" tabType== 'Today' ? refresh('getAttendanceToday',1) : refresh('getAttendance',2)">
+            <i class="material-icons">refresh</i>
+        </button>
+        <!-- && tabType != 'Today' -->
+        <div class="pagination" *ngIf="attendancelist?.length > 0">
+            <div class="pagination-content">
+                Pages
+                <span>{{pagenumber}}</span>
+                of
+                <span>{{total_page}}</span>
+            </div>
+            <div class="page-nav">
+                <button mat-icon-button matTooltip="Older"
+                (click)="tabType== 'Today' ? pervious('getAttendanceToday',1) : pervious('getAttendance',2)"
+                [disabled]="start == 0">
+                <i class="material-icons">navigate_before</i>
+            </button>
+            <button mat-icon-button matTooltip="Newer"
+            (click)="tabType== 'Today' ? nextPage('getAttendanceToday',1) : nextPage('getAttendance',2)"
+            [disabled]="pagenumber == total_page || total_page==0 ">
+            <i class="material-icons">navigate_next</i>
+        </button>
+    </div>
+</div>
+<div class="mat-tabbar">
+    <button mat-button [ngClass]="{'active' :tabType== 'Today'}"
+    (click)="tabType= 'Today'; change_tab('getAttendanceToday',1); start=0"><i
+    class="material-icons">today</i>Today</button>
+    <button mat-button [ngClass]="{'active' :tabType== 'Month'}"
+    (click)="tabType= 'Month'; change_tab('getAttendance',2); start=0"><i
+    class="material-icons">calendar_month</i>Month</button>
+    <!-- <button mat-button [ngClass]="{'active' :tabType== 'Image'}"
+    (click)="tabType= 'Image'; change_tab('getAttendance',2); start=0"><i
+    class="material-icons">calendar_month</i>Image</button> -->
+</div>
+</div>
+</div>
+<div class="container table-container">
+    <div class="tools-container no-sticky" *ngIf="tabType=='Today'">
+        <div class="mat-tabbar">
+            <button mat-button [ngClass]="{'active' :tabType1== 'Present'}"
+            (click)="tabType1= 'Present'; start=0; change_attendence_type_tab('getAttendanceToday',1, tabType1);">Present
+            ({{tabCount.present ? tabCount.present : '0'}})</button>
+            <button mat-button [ngClass]="{'active' :tabType1== 'Absent'}"
+            (click)="tabType1= 'Absent';  start=0; change_attendence_type_tab('getAttendanceToday',1, tabType1);">Absent
+            ({{tabCount.absent ? tabCount.absent : '0'}})</button>
+            <button mat-button [ngClass]="{'active' :tabType1== 'Leave'}"
+            (click)="tabType1 = 'Leave'; start=0; change_attendence_type_tab('getAttendanceToday',1, tabType1);">Leave
+            ({{tabCount.leave ? tabCount.leave : '0'}})</button>
+            <button mat-button [ngClass]="{'active' :tabType1== 'Holiday'}"
+            (click)="tabType1 = 'Holiday'; start=0; change_attendence_type_tab('getAttendanceToday',1, tabType1);">Holiday
+        </button>
+    </div>
+</div>
+
+<div class="padding10">
+    <div class="scroll-tables">
+        <table>
+            <tr>
+                <td class="w400">
+                    <table>
+                        <tr>
+                            <th class="w50">S.no</th>
+                            <th class="w110">Employee Code</th>
+                            <th>Employee Name</th>
+                        </tr>
+                        <tr>
+                            <th class="w50">&nbsp;</th>
+                            <th class="w100">
+                                <div class="th-search-acmt" [ngClass]="{'h26': hide ==  true}">
+                                    <mat-form-field *ngIf="hide !=  true">
+                                        <input type="text" matInput placeholder="Search ..." name="employee_id"
+                                        (keyup.enter)="show_today? attendance_list('getAttendanceToday',1) : attendance_list('getAttendance',2)"
+                                        #employee_id="ngModel" [(ngModel)]="data.employee_id">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="th-search-acmt" [ngClass]="{'h26': hide ==  true}">
+                                    <mat-form-field *ngIf="hide !=  true">
+                                        <input type="text" matInput placeholder="Search ..." name="name"
+                                        (keyup.enter)="show_today? attendance_list('getAttendanceToday',1) : attendance_list('getAttendance',2)"
+                                        #name="ngModel" [(ngModel)]="data.name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                        </tr>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of attendancelist; let i = index"
+                            [ngClass]="{'Current': service.currentUserID == row.employee_id}">
+                            <td class="w50">{{i+1+start}}</td>
+                            <td>{{row.employee_id}}</td>
+                            <td *ngIf="tabType== 'Today'">                                
+                                <a class="link-btn" (click)="service.setData(data); service.setTabData('Sales User')" routerLink="sale-user-detail/{{row.encrypt_id}}" routerLinkActive="active"  [queryParams]="{'page':'attendence'}" *ngIf="tabType1 == 'Present'">
+                                    <!-- [routerLink]="[ 'tracker/']" [queryParams]="{'user_id':(row.user_id ? row.user_id : row.id), 'start_date': today_date | date:'yyyy-MM-dd'}" -->
+                                    {{row.name | titlecase}}
+                                </a>
+                                <span *ngIf="tabType1 != 'Present'">{{row.name | titlecase}}</span>
+                            </td>
+                            <td *ngIf="tabType== 'Month'"> {{row.name | titlecase}} </td>
+                        </tr>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="loader">
+                        <tr *ngFor="let row of [].constructor(10);">
+                            <td class="">
+                                <div class="skeleton-loader">&nbsp;</div>
+                            </td>
+                            <td class="">
+                                <div class="skeleton-loader">&nbsp;</div>
+                            </td>
+                            <td class="">
+                                <div class="skeleton-loader">&nbsp;</div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </td>
+            
+            
+            
+            
+            <td style="overflow-x: auto;overflow-y: hidden;">
+                <table>
+                    <tr>
+                        <th class="w200">Reporting Manager</th>
+                        <ng-container *ngIf="tabType== 'Today'">
+                            <th class="w90" *ngIf="tabType1 == 'Present'">Start Time</th>
+                            <th class="w300" *ngIf="tabType1 == 'Present'">Start Location</th>
+                            <th class="w90" *ngIf="tabType1 == 'Present'">Stop Time</th>
+                            <th class="w300" *ngIf="tabType1 == 'Present'">Stop Location</th>
+                            <th class="w100 text-center" *ngIf="tabType1 == 'Present'">Working Hour's</th>
+                            <!-- <th class="w100 text-center" *ngIf="tabType1 == 'Present'">First Checkin</th>
+                            <th class="w130 text-center" *ngIf="tabType1 == 'Present'">Travelling Time</th>
+                            <th class="w100 text-center" *ngIf="tabType1 == 'Present'">Counter Time</th>
+                            <th class="w180 text-center" *ngIf="tabType1 == 'Present'">Distance From Base
+                                Location</th> -->
+                                <th class="w150" *ngIf="tabType1 == 'Leave'">Type</th>
+                                <th class="w250" *ngIf="tabType1 == 'Leave'">Remark</th>
+                                <th class="w150" *ngIf="tabType1 == 'Holiday'">Title</th>
+                                <th class="w250" *ngIf="tabType1 == 'Holiday'">State</th>
+                                
+                                <th class="w270 text-center" *ngIf="tabType1 == 'Present'">Action</th>
+                            </ng-container>
+                            <ng-container *ngIf="tabType== 'Month'">
+                                <th class="w100">Month</th>
+                                <th class="w80 text-center">Year</th>
+                                <th class="w140 text-center">Total Working Days</th>
+                                <th class="w70 text-center">Present</th>
+                                <th class="w70 text-center">Absent</th>
+                                <th class="w70 text-center">Leave</th>
+                                <th class="w110 text-center" *ngFor="let row of attendanceDate; let i = index;">
+                                    {{row | date : 'd MMM y'}}</th>
+                                </ng-container>
+                            </tr>
+                            <tr>
+                                <th class="w150">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input select-input">
+                                            <mat-select name="reporting_manager_id" #reporting_manager_id="ngModel"
+                                            [(ngModel)]="data.reporting_manager_id"
+                                            (selectionChange)="show_today? attendance_list('getAttendanceToday',1) : attendance_list('getAttendance',2)">
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                                placeholderLabel="Search.."
+                                                (keyup)="getReportManager($event.target.value, 'rsm1')"></ngx-mat-select-search>
+                                            </mat-option>
+                                            <mat-option *ngFor="let list of report_manager;let index=index"
+                                            value="{{list.id}}">
+                                            {{list.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </th>
+                        <ng-container *ngIf="tabType== 'Today'">
+                            <th class="w90" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w150" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w90" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w150" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w150" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <!-- <th class="w100 text-center" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w100 text-center" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w100 text-center" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                            <th class="w150 text-center" *ngIf="tabType1 == 'Present'">&nbsp;</th> -->
+                            <th class="w150" *ngIf="tabType1 == 'Leave'">&nbsp;</th>
+                            <th class="w250" *ngIf="tabType1 == 'Leave'">&nbsp;</th>
+                            <th class="w100" *ngIf="tabType1 == 'Holiday'">&nbsp;</th>
+                            <th class="w250" *ngIf="tabType1 == 'Holiday'">&nbsp;</th>
+                            <th class="w100" *ngIf="tabType1 == 'Present'">&nbsp;</th>
+                        </ng-container>
+                        <ng-container *ngIf="tabType== 'Month'">
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input select-input">
+                                        <mat-select name="month" #month="ngModel" [(ngModel)]="data.month"
+                                        (selectionChange)="show_today? attendance_list('getAttendanceToday',1) : attendance_list('getAttendance',2)">
+                                        <mat-option value="">All</mat-option>
+                                        <mat-option value="01">January</mat-option>
+                                        <mat-option value="02">February</mat-option>
+                                        <mat-option value="03">March</mat-option>
+                                        <mat-option value="04">April</mat-option>
+                                        <mat-option value="05">May</mat-option>
+                                        <mat-option value="06">June</mat-option>
+                                        <mat-option value="07">July</mat-option>
+                                        <mat-option value="08">August</mat-option>
+                                        <mat-option value="09">September</mat-option>
+                                        <mat-option value="10">October</mat-option>
+                                        <mat-option value="11">November</mat-option>
+                                        <mat-option value="12">December</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </th>
+                        <th class="w80">
+                            <div class="th-search-acmt">
+                                <mat-form-field class="cs-input select-input">
+                                    <input matInput placeholder="Search ..." name="year" #year="ngModel"
+                                    minlength="4" maxlength="4"
+                                    (keyup.enter)="show_today? attendance_list('getAttendanceToday',1) : attendance_list('getAttendance',2)"
+                                    [(ngModel)]="data.year">
+                                </mat-form-field>
+                            </div>
+                        </th>
+                        <th class="w100 text-center">&nbsp;</th>
+                        <th class="w70 text-center">&nbsp;</th>
+                        <th class="w70 text-center">&nbsp;</th>
+                        <th class="w70 text-center">&nbsp;</th>
+                        <ng-container *ngIf="!loader">
+                            <th class="w110  text-center"
+                            *ngFor="let row of attendanceDate; let i = index;">&nbsp;</th>
+                        </ng-container>
+                    </ng-container>
+                    
+                </tr>
+                <ng-container *ngIf="!loader">
+                    <tr *ngFor="let row of attendancelist;let i=index"
+                    [ngClass]="{'Current': service.currentUserID == row.id}">
+                    <td class="w150 one-line" matTooltip="{{row.reporting_manager_name}}">
+                        {{row.reporting_manager_name ? (row.reporting_manager_name | titlecase) :
+                            '--'}}</td>
+                            <ng-container *ngIf="tabType== 'Today'">
+                                <td class="w90" *ngIf="tabType1 == 'Present'">
+                                    <ng-container
+                                    *ngIf="row.start_time != '0000-00-00 00:00:00'">{{row.start_time |
+                                        date: 'h:mm a'}}</ng-container>
+                                        <ng-container
+                                        *ngIf="row.start_time == '0000-00-00 00:00:00'">---</ng-container>
+                                    </td>
+                                    <td class="w150 one-line copyCell" *ngIf="tabType1 == 'Present'"
+                                    matTooltip="{{row.start_address}}">
+                                    {{row.start_address && row.start_address!=''?row.start_address:'--'}}
+                                    <div class="action-copy-btn"
+                                    *ngIf="row.start_address && row.start_address != ''">
+                                    <button mat-button class="view"
+                                    (click)="copyAddress(row.start_address)">
+                                    <i class="material-icons">content_copy</i>Copy</button>
+                                </div>
+                            </td>
+                            <td class="w90" *ngIf="tabType1 == 'Present'">
+                                <ng-container
+                                *ngIf="row.stop_time != '0000-00-00 00:00:00'">{{row.stop_time |
+                                    date: 'h:mm a'}}</ng-container>
+                                    <ng-container *ngIf="row.stop_time == ' '">---</ng-container>
+                                </td>
+                                <td class="w150 one-line copyCell" *ngIf="tabType1 == 'Present'"
+                                matTooltip="{{row.stop_address}}">
+                                {{row.stop_address && row.stop_address != ''?row.stop_address:'--'}}
+                                <div class="action-copy-btn"
+                                *ngIf="row.stop_address && row.stop_address != ''">
+                                <button mat-button class="view"
+                                (click)="copyAddress(row.stop_address)"><i
+                                class="material-icons">content_copy</i>Copy</button>
+                            </div>
+                        </td>
+                        
+                        <td class="w150 text-center" *ngIf="tabType1 == 'Present'">
+                            {{row.Total_Working_Time ? row.Total_Working_Time :''}}
+                        </td>
+                        <!-- <td class="w100 text-center" *ngIf="tabType1 == 'Present'">
+                            {{row.first_checkin_time ? (row.first_checkin_time | date:'h:mm a')
+                            :'--'}}
+                        </td>
+                        <td class="w100 text-center" *ngIf="tabType1 == 'Present'">
+                            {{row.travelling_time ? row.travelling_time :'--'}}
+                        </td>
+                        <td class="w100 text-center" *ngIf="tabType1 == 'Present'">
+                            {{row.counter_time ? (row.counter_time > 60 ?
+                            row.counter_time/60 : (row.counter_time + ' Min')) :'--'}}
+                        </td>
+                        <td class="w150 text-center" *ngIf="tabType1 == 'Present'">
+                            {{row.deviation_distance ? (row.deviation_distance + ' KM') :'--'}}
+                        </td> -->
+                        <td class="w150" *ngIf="tabType1 == 'Holiday'">{{row.holiday_title ?
+                            (row.holiday_title | titlecase) : '---'}}</td>
+                            <td class="w150" *ngIf="tabType1 == 'Holiday'">{{row.working_state_name ?
+                                (row.working_state_name | titlecase) : '---'}}
+                            </td>
+                            
+                            <td class="w150" *ngIf="tabType1 == 'Leave'">{{row.leave_type}}</td>
+                            <td class="w250 one-line" *ngIf="tabType1 == 'Leave'"
+                            matTooltip="{{row.description}}">{{row.description}}</td>
+                            <td class="w270" *ngIf="tabType1 == 'Present'">
+                                <div class="flex-anchor">
+                                    <a class="link-btn flat"
+                                    (click)="attendancDetail(row.id,row.user_id, row.attend_date)">View
+                                    Details</a>
+                                    <a *ngIf="row.stop_address != '' && assign_login_data2.edit_attendence=='1'"
+                                    class="link-btn flat"
+                                    (click)="resetAttendance(row.id,'getAttendanceToday',1);service.setData(data)">Reset
+                                    Stop</a>
+                                    <a *ngIf="row.manual_absent=='0' && assign_login_data2.edit_attendence=='1'"
+                                    class="link-btn flat"
+                                    (click)="markAbsent(row,'getAttendanceToday',1);">Mark
+                                    Absent</a>
+                                    <a *ngIf="row.manual_absent=='1' && assign_login_data2.edit_attendence=='1'"
+                                    class="link-btn flat"
+                                    (click)="markAbsent(row,'getAttendanceToday',1);">Reset</a>
+                                </div>
+                            </td>
+                        </ng-container>
+                        <ng-container *ngIf="tabType== 'Month'">
+                            <td class="w100">
+                                <ng-container *ngIf="row.month == '01' ">January</ng-container>
+                                <ng-container *ngIf="row.month == '02' ">February</ng-container>
+                                <ng-container *ngIf="row.month == '03' ">March</ng-container>
+                                <ng-container *ngIf="row.month == '04' ">April</ng-container>
+                                <ng-container *ngIf="row.month == '05' ">May</ng-container>
+                                <ng-container *ngIf="row.month == '06' ">June</ng-container>
+                                <ng-container *ngIf="row.month == '07' ">July</ng-container>
+                                <ng-container *ngIf="row.month == '08' ">August</ng-container>
+                                <ng-container *ngIf="row.month == '09' ">September</ng-container>
+                                <ng-container *ngIf="row.month == '10' ">October</ng-container>
+                                <ng-container *ngIf="row.month == '11' ">November</ng-container>
+                                <ng-container *ngIf="row.month == '12' ">December</ng-container>
+                            </td>
+                            <td class="w80 text-center">{{row.year}}</td>
+                            <td class="w100 text-center"><strong>{{row.total_working_days}}</strong>
+                            </td>
+                            <td class="w70 text-center"><strong>{{row.total_present_days}}</strong></td>
+                            <td class="w70 text-center"><strong>{{row.total_absent_days}}</strong></td>
+                            <td class="w70 text-center"><strong>{{row.total_leave_days}}</strong></td>
+                            <ng-container *ngFor="let item of row.all_date; let i = index;">
+                                <td class="w110  text-center"
+                                [ngClass]="{'light-green': item.attend == 'Present', 'red-bgclr': item.attend == 'Absent', 'holiday': item.attend == 'Holiday', 'week-off': item.attend == 'Weekly Off', 'leave': item.attend == 'Leave'}">
+                                {{(item.attend != 'Present' && item.attend != 'Absent' &&
+                                item.attend != 'Weekly Off' && item.attend != 'Leave') ? item.attend
+                                : ''}}
+                                <ng-container *ngIf="item.Total_Working_Time">
+                                    <!-- link-btn flat-white -->
+                                    <a style="cursor: pointer;text-decoration: underline;"
+                                    (click)="attendancDetail(item.attend_id,row.id, item.date)">
+                                    {{item.Total_Working_Time}}
+                                </a>
+                                <!-- <a *ngIf="assign_login_data2.edit_attendence!='1'">
+                                    {{item.Total_Working_Time}}
+                                </a> -->
+                                
+                                <!-- <a style="cursor: pointer;text-decoration: underline;"
+                                *ngIf="assign_login_data2.edit_attendence=='1'"
+                                [routerLink]="[ 'tracker/']"
+                                [queryParams]="{'user_id':row.id, 'start_date': item.date}">
+                                Test
+                            </a> -->
+                        </ng-container>
+                        
+                        <ng-container
+                        *ngIf="item.attend == 'Absent' ||  item.attend == 'Weekly Off' || item.attend == 'Leave'">
+                        <!-- link-btn flat-white -->
+                        <a style="cursor: pointer;text-decoration: underline;"
+                        *ngIf="assign_login_data2.edit_attendence=='1'"
+                        (click)="attendancAbsent(row.id,item.attend_id, item.date,item)">
+                        {{item.attend}} {{(item.leave_type| titlecase)}}
+                    </a>
+                    <a *ngIf="assign_login_data2.edit_attendence!='1'">
+                        {{item.attend}} {{(item.leave_type| titlecase)}}
+                    </a>
+                </ng-container>
+                <!-- {{item.Total_Working_Time}} -->
+            </td>
+        </ng-container>
+    </ng-container>
+</tr>
+</ng-container>
+<ng-container *ngIf="loader">
+    <tr *ngFor="let row of [].constructor(10)">
+        <td>
+            <div class="skeleton-loader">&nbsp;</div>
+        </td>
+        <td>
+            <div class="skeleton-loader">&nbsp;</div>
+        </td>
+        <td>
+            <div class="skeleton-loader">&nbsp;</div>
+        </td>
+        <ng-container *ngIf="tabType== 'Today'">
+            <td>
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Present'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Present'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Present'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Present'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Present'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Holiday'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Holiday'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Leave'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Leave'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td *ngIf="tabType1 == 'Present'">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+        </ng-container>
+        <ng-container *ngIf="tabType== 'Month'">
+            <td class="w100">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td class="w80 text-center">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td class="w100 text-center">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+            <td class="w70 text-center">
+                <div class="skeleton-loader">&nbsp;</div>
+            </td>
+        </ng-container>
+    </tr>
+</ng-container>
+</table>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<ng-container *ngIf="attendancelist?.length == 0 && datanotfound == true ">
+    <app-not-result-found></app-not-result-found>
+</ng-container>
+</div>
+
+
+<div class="fab-btns">
+    <!-- <button mat-fab class="excel pulse"
+    *ngIf="tabType== 'Today' && attendancelist?.length > 0 && assign_login_data2.export_attendence=='1'"
+    (click)="downloadExcel('getAttendanceToday',1);">
+    <img src="assets/img/excel.svg">
+    Download Excel
+</button> -->
+
+<button mat-fab class="excel pulse"
+*ngIf="tabType== 'Month' && attendancelist?.length > 0 && assign_login_data2.export_attendence=='1'"
+(click)="progressService.setCancelReq(false);downloadInChunks('getAttendance',2);">
+<img src="assets/img/excel.svg">
+Download Excel
+</button>
+</div>
+</div>

@@ -1,0 +1,213 @@
+<div class="edit-modal">
+  <form #update_basic="ngForm" (ngSubmit)="update_basic.valid && update()">
+    <div mat-dialog-content>
+      <p class="heading">Change Complaint Status</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline"
+              [ngClass]="{'has-error' : complaint_status?.invalid } ">
+              <mat-label>Status</mat-label>
+              <mat-select name="complaint_status" #complaint_status="ngModel" [(ngModel)]="formData.complaint_status"
+                required>
+                <mat-option value="Closed">Closed</mat-option>
+                <mat-option value="Cancel">Cancel</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="complaint_status.touched || update_basic.submitted">
+              <p *ngIf="complaint_status.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+
+          <div class="col s12" *ngIf="formData.complaint_status=='Closed'">
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : new_serial_no?.invalid } ">
+              <mat-label>Serial No.</mat-label>
+              <input matInput placeholder="Type Here ..." name="new_serial_no" #new_serial_no="ngModel"
+                [(ngModel)]="formData.new_serial_no">
+            </mat-form-field>
+          </div>
+
+          <div class="col s12" *ngIf="formData.complaint_status=='Closed'">
+            <mat-form-field class="cs-input" appearance="outline"
+              [ngClass]="{'has-error' : replacement_type?.invalid } ">
+              <mat-label>Replacement Type</mat-label>
+              <mat-select name="replacement_type" #replacement_type="ngModel" [(ngModel)]="formData.replacement_type"
+                required>
+                <mat-option value="Dealer">Dealer</mat-option>
+                <mat-option value="Company">Company</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="replacement_type.touched || update_basic.submitted">
+              <p *ngIf="replacement_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12" *ngIf="formData.replacement_type=='Dealer' && formData.complaint_status=='Closed'">
+            <mat-form-field appearance="outline" [ngClass]="{'has-error' : dealer_id.invalid } ">
+              <mat-label>Select Dealer</mat-label>
+              <mat-select name="dealer_id" #dealer_id="ngModel" [(ngModel)]="formData.dealer_id"
+                (selectionChange)="get_dealer_detail(formData.dealer_id)" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                    (keyup)="getDealerList($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let row of dealerList" value="{{row.id}}" color="accent">{{row.company_name |
+                  titlecase}}-{{row.mobile}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="update_basic.submitted && dealer_id?.invalid ">
+              This field is required
+            </div>
+          </div>
+
+
+          <div class="col s12" *ngIf="formData.complaint_status=='Closed'">
+            <mat-form-field class="cs-input" appearance="outline" [ngClass]="{'has-error' : product_type?.invalid } ">
+              <mat-label>Product Type</mat-label>
+              <mat-select name="product_type" #product_type="ngModel" [(ngModel)]="formData.product_type" required>
+                <mat-option value="New">New</mat-option>
+                <mat-option value="Reuse">Reuse</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="product_type.touched && update_basic.submitted">
+              <p *ngIf="product_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+
+          <div class="col s12" *ngIf="formData.complaint_status=='Closed'">
+            <mat-form-field class="cs-input" appearance="outline" [ngClass]="{'has-error' : remarks.invalid } ">
+              <mat-label>Closing Remark</mat-label>
+              <textarea matInput placeholder="Type here ..." name="remarks" #remarks="ngModel"
+                [(ngModel)]="formData.remarks" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="remarks.invalid && update_basic.submitted">
+              Closing Remark is required...
+            </div>
+          </div>
+
+          <div class="col s12" *ngIf="formData.complaint_status=='Cancel'">
+            <mat-form-field class="cs-input" appearance="outline" [ngClass]="{'has-error' : status_reason.invalid } ">
+              <mat-label>Cancel Reason</mat-label>
+              <textarea matInput placeholder="Type here ..." name="status_reason" #status_reason="ngModel"
+                [(ngModel)]="formData.status_reason" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="status_reason.invalid && update_basic.submitted">
+              Cancel Reason is required...
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="uploade-image">
+              <ul>
+                <li *ngFor="let row of selected_image; let i=index">
+                  <img src="{{row.img_id ? url+row.image : row.image}}">
+                  <span class="cancel-icon">
+                    <i class="material-icons crose-icon" (click)="deleteProductImage(i,row.img_id, row.image)">clear</i>
+                  </span>
+                </li>
+                <li class="add-bg-1" [ngClass]="{'error': errorMsg == true}" *ngIf="selected_image.length < 5">
+                  <label>
+                    <input type="file" (change)="onUploadChange($event)" style="display:none;"
+                      accept=".png, .jpg, .jpeg," multiple required />
+                    <div class="other">
+                      <i class="material-icons">cloud_upload</i>
+                      <p>Upload Images</p>
+                    </div>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+          [disabled]="savingFlag == true ">
+          {{savingFlag == true ? 'Saving' : 'Save'}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<!-- *ngIf="model_type=='Update Status'" -->
+
+<!-- <div class="edit-modal" *ngIf="model_type=='Add Remark'">
+  <form #formData="ngForm" (ngSubmit)="formData.valid && submit()">
+    <div mat-dialog-content>
+      <p class="heading">Remark</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Add Remark</mat-label>
+              <textarea matInput placeholder="Type here ..." name="msg" #msg="ngModel" [(ngModel)]="form_data.msg"
+                [ngClass]="{'has-error' : msg.invalid }" required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="!msg.valid && formData.submitted">
+              Remark is required...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+          [disabled]="savingFlag == true">
+          {{savingFlag == true ? 'Saving' : 'Save'}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<div class="edit-modal" *ngIf="model_type=='Assign Technician'">
+  <form #formData="ngForm" (ngSubmit)="formData.valid && assign_engineer()">
+    <div mat-dialog-content>
+      <p class="heading">Assign Technician</p>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Assign Technician</mat-label>
+              <mat-select name="id" [(ngModel)]="formData.id" #id="ngModel"
+                (selectionChange)="getCarpenterInfo(formData.id)" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                    (keyup)="assign_engineerget($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let row of engineerList" [value]="row.id">{{row.name |
+                  titlecase}}-{{row.mobile_no}}-({{row.district | titlecase}},{{row.state | titlecase}})</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="id.touched">
+              <p *ngIf="id.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <div class="text-right wp100">
+        <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [ngClass]="{'loading': savingFlag == true}"
+          [disabled]="savingFlag == true">
+          {{savingFlag == true ? 'Saving' : 'Save'}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div> -->

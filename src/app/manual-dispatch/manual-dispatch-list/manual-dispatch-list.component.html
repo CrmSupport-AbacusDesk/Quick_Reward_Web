@@ -1,0 +1,308 @@
+<div class="main-container" >
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="active_tab = 'Manual List'" *ngIf="active_tab == 'Manual Add'">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>{{active_tab == 'Manual List' ? 'Manual' :'Add Manual'}}  Dispatch</h2>
+    <div class="left-auto left-auto df ac flex-gap-10" *ngIf="active_tab == 'Manual List'">
+      <button mat-icon-button  matTooltip="Refresh" (click)="refresh('refresh',active_tab)">
+        <i class="material-icons">refresh</i>
+      </button>
+      <!-- <div class="pagination" *ngIf="returnData.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button  matTooltip="Older" (click)="pervious(active_tab)"  [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button  matTooltip="Newer" (click)="nextPage(active_tab)" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+          
+        </div>
+      </div> -->
+    </div>
+    
+  </div>
+  
+  <div class="container pl10 pr10 pb50" [ngClass]="{'pt10': active_tab== 'Manual Add'}">
+    
+    <div class="cs-table left-right-10" *ngIf="active_tab== 'Manual List'">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w100">Date Created</th>
+              <th class="w120">Created By</th>
+              <th class="w100">Coupon Code</th>
+              <th class="w120">Coupon Type</th>
+              <th class="w200">Product Detail</th>
+              <th class="w100">Invoice Number</th>
+              <th class="w200">Primary Customer/Dealer Detail</th>
+            </tr>
+          </table>
+        </div>
+        
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input"  >
+                    <input matInput [matDatepicker]="picker3" placeholder="Date" name="date_created" [(ngModel)]="filter.date_created" (ngModelChange)="getManualList()" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                    <mat-datepicker #picker3></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="created_by_name" [(ngModel)]="filter.created_by_name" (keyup.enter)="getManualList()" >
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="coupon_code" [(ngModel)]="filter.coupon_code" (keyup.enter)="getManualList()" >
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="coupon_type" [(ngModel)]="filter.coupon_type" (keyup.enter)="getManualList()" >
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="product_detail" [(ngModel)]="filter.product_detail" (keyup.enter)="getManualList()" >
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="invoice_number" [(ngModel)]="filter.invoice_number" (keyup.enter)="getManualList()" >
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input">
+                    <input matInput placeholder="Search" name="dr_detail" [(ngModel)]="filter.dr_detail" (keyup.enter)="getManualList()" >
+                  </mat-form-field>
+                </div>
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of returnData; let i = index;">
+                <td class="w60">{{ i + 1 + sr_no }}</td>
+                <td class="w100">{{row.date_created | date:'dd MMM yyyy'}}</td>
+                <td class="w120">{{row.created_by_name}}</td>
+                <td class="w100">{{row.coupon_code}}</td>
+                <td class="w120">{{row.coupon_type}}</td>
+                <td class="w200">{{row.product_detail}}</td>
+                <td class="w100">{{row.invoice_number}}</td>
+                <td class="w200">{{row.dr_detail ? row.dr_detail : '---'}}</td>
+              </tr>
+            </ng-container>
+            
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w120"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w120"><div>&nbsp;</div></td>
+                <td class="w200"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w200"><div>&nbsp;</div></td>
+              </tr>
+            </ng-container>
+           
+          </table>
+        </div>
+      </div>
+      <ng-container *ngIf="returnData.length == 0">
+        <app-not-result-found></app-not-result-found>
+    </ng-container>
+    </div>
+    
+    
+    
+    
+    <ng-container *ngIf="active_tab== 'Manual Add'">
+      <div class="row ">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m6 l6">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Coupon Number</mat-label>
+                    <input matInput placeholder="Type Here ..."  name="coupon_number" #coupon_number="ngModel" [(ngModel)]="couponNumber.coupon_number"   minlength="16" maxlength="16" min="0" #focusInput  (ngModelChange)="checkCoupon(couponNumber.coupon_number)">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+      <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+        <ng-container  *ngIf="couponList.length > 0;">
+          <div class="row">
+            <div class="col s12">
+              <div class="card pb0">
+                <div class="card-head">
+                  <h2>Basic Information</h2>
+                </div>
+                <div class="card-body cs-form">
+                  <div class="row">
+                    <div class="col s12 m4 l4">
+                      <mat-form-field  appearance="outline">
+                        <mat-label>Distributor/Dealer</mat-label>
+                        <mat-select  name="dr_id" [(ngModel)]="data.dr_id" #dr_id="ngModel" required  (ngModelChange)="findDr(data.dr_id)">
+                          <mat-option >
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getDistributor($event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let row of distributorData" value="{{row.id}}">{{row.company_name | titlecase}} -{{row.dr_code}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="dr_id.touched || f.submitted">
+                        <p *ngIf="dr_id.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+                    
+                    <div class="col s12 m4 l4">
+                      <mat-form-field  appearance="outline">
+                        <mat-label>Dispatch Type</mat-label>
+                        <mat-select  name="bill_dispatch_type" [(ngModel)]="data.bill_dispatch_type" #bill_dispatch_type="ngModel" required>
+                          <mat-option value="Warehouse">Warehouse</mat-option>
+                          <mat-option value="Customer">Customer</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="bill_dispatch_type.touched || f.submitted">
+                        <p *ngIf="bill_dispatch_type.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+                    
+                    <div class="col s12 m2 l2">
+                      <mat-form-field  appearance="outline">
+                        <mat-label>Invoice Number</mat-label>
+                        <input matInput placeholder="Type Here ..."  name="invoice_no" #invoice_no="ngModel"
+                        [(ngModel)]="data.invoice_no" required>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="invoice_no.touched || f.submitted">
+                        <p *ngIf="invoice_no.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="cs-table">
+            <div class="sticky-head">
+              <div class="table-head">
+                <table>
+                  <tr>
+                    <th class="w60">Sr.No</th>
+                    <th>Coupon Code</th>
+                    <th class="w150">Coupon Type</th>
+                    <th class="w150">Packing Size</th>
+                    <th class="w70 text-center">Action</th>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <div class="table-content">
+                <table>
+                  <tr *ngFor="let row of couponList; let i = index;">
+                    <td class="w60">{{i+1}}</td>
+                    <td>{{row.coupon_code}}</td>
+                    <td class="w150">{{row.coupon_type == 'Master Box' ? 'Box' :'Product'}}</td>
+                    <td class="w150">{{row.master_packing_size}}</td>
+                    <td class="w70 text-center">
+                      <div class="action-button">
+                        <ng-container *ngIf="row.coupon_type == 'Master Box'"> 
+                          <button  mat-icon-button  matTooltip="View"  (click)="openDialog(row.id)">
+                            <i class="material-icons edit">visibility</i>
+                          </button>
+                        </ng-container>
+                        
+                        <button  mat-icon-button  matTooltip="Delete"  (click)="deleteCoupon(i)">
+                          <i class="material-icons del">delete</i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <ng-container *ngIf="returnData.length == 0 && datanotfound == true ">
+              <app-not-result-found></app-not-result-found>
+            </ng-container>
+          </div>
+           
+          
+          <div class="row">
+            <div class="col s12">
+              <div class="text-right">
+                <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+                  {{savingFlag == true ? 'Please Wait' : 'Save'}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </form>
+    </ng-container>
+    
+    
+    
+    <div class="fab-btns" *ngIf="active_tab == 'Manual List'">
+      <button class="pulse excel" mat-fab color="primary" [matMenuTriggerFor]="menu" *ngIf="loginData.add_manual_dispatch == 1 || loginData.download_manual_dispatch == 1">
+        <i class="material-icons">apps</i>
+        Action
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="active_tab = 'Manual Add'" *ngIf="loginData.add_manual_dispatch == 1">
+          <mat-icon>update</mat-icon>
+          <span>Add Manual</span>
+        </button>
+        
+        
+        <!-- <button mat-menu-item (click)="downloadExcel();" *ngIf="(returnData.length > 0 && active_tab == 'Manual List')  && loginData.download_manual_dispatch == 1">
+          <mat-icon>download</mat-icon>
+          <span>Download excel</span>
+        </button> -->
+      </mat-menu>
+    </div>
+    
+    
+    
+  </div>
+</div>
+

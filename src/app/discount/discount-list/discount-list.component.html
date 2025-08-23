@@ -1,0 +1,213 @@
+<div class="main-container" >
+  <div class="tools-container mb0">
+    <div class="page-heading">
+      <div class="heading-text">
+        <h2>Discount</h2>
+        <p>Total Discount {{discountList.length}}</p>
+      </div>
+    </div>
+    
+    
+    <div class="left-auto">
+      <div class="top-pagination">
+        <div class="top-search">
+          <!-- <input type="text" placeholder="SEARCH. . ." (input)="getItemsList()" #search="ngModel" [(ngModel)]="value.search"> -->
+          <!-- <i class="material-icons">search</i> -->
+        </div>
+        <!-- <ul>
+          <li class="refresh-area">
+            <a class="refresh-btn" mat-raised-button  matTooltip="Refresh" (click)="refresh()"><i class="material-icons"> refresh</i></a>
+          </li>
+          <li><p>Pages {{pagenumber}} Of {{total_page}}</p></li>
+          
+          <li>
+            <button mat-button class="left-btn" (click)="mydiscountList()" [disabled]="pagenumber==1">
+              <i class="material-icons">keyboard_arrow_left</i></button>
+            </li>
+            
+            <li>
+              <input type="text" placeholder="GO TO" name="pagenumber" (keyup.enter)="mydiscountList()" [(ngModel)]="pagenumber"  min="1" max={{total_page}}>
+            </li>
+            
+            <li>
+              <button mat-button class="right-btn"  (click)="mydiscountList()" [disabled]="pagenumber == total_page">
+                <i class="material-icons">keyboard_arrow_right</i>
+              </button>
+            </li>
+          </ul> -->
+        </div>
+      </div>
+    </div>
+     
+    <!-- <div class="container-outer padding0">
+      <app-master-tab-list></app-master-tab-list>
+      <div *ngIf="loader">
+        <mat-spinner class="loader">
+          <div><p>Loading....</p></div>
+        </mat-spinner>
+      </div>
+      <div class="container tab-container" >
+        <div class="cs-table">
+          <div class="sticky-head">
+            <div class="table-head">
+              <table>
+                <tr>
+                  <th class="w30">&nbsp;</th>
+                  <th>Category</th>
+                  <th class="w150 text-center">Distributor (%)</th>
+                  <th class="w150 text-center">Direct Dealer(%)</th>
+                  <th class="w150 text-center">Dealer(%)</th>
+                  <th class="w80 text-center">GST (%)</th>
+                </tr>
+              </table>
+            </div>
+            <div class="table-head border-top" >
+              <table>
+                <tr>
+                  <th >
+                    <div class="th-search-acmt">
+                      <mat-form-field class="example-full-width cs-input select-input">
+                        <input matInput placeholder="Category. . ." (keyup.enter)="getItemsList()" #search="ngModel" [(ngModel)]="value.search">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w150" ></th>   
+                  <th class="w150" ></th>               
+                  <th class="w150" ></th>               
+                  <th class="w80" ></th>               
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <div class="table-content">
+              <table>
+                <tr *ngFor="let dicount of discountList;let i = index">
+                  <td>{{dicount.category}}</td>
+                  <td class="w150 text-center purple-shade-1">{{dicount.distributor}}</td>
+                  <td class="w150 text-center purple-shade-2">{{dicount.direct_retailer}}</td>
+                  <td class="w150 text-center purple-shade-3">{{dicount.dealer}}</td>
+                  <td class="w80 text-center purple-shade-4">{{dicount.gst}}
+                    <div class="action-btns">
+                      <a mat-button class="view" (click)="discountDetail(dicount.id)"><i class="material-icons">remove_red_eye</i>Edit</a>
+                      <button mat-button class="delete" (click)="deletediscount(dicount.id)"><i class="material-icons">delete_sweep</i> Delete</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <ng-container *ngFor="let lead of skelton">
+                    <tr class="sk-loading"  *ngIf="loader">
+                      <td><div>&nbsp;</div></td>
+                      <td class="w150"><div>&nbsp;</div></td>
+                      <td class="w150"><div>&nbsp;</div></td>
+                      <td class="w150"><div>&nbsp;</div></td>
+                      <td class="w80"><div>&nbsp;</div></td>
+                    </tr>
+                  </ng-container>
+              </table>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div> -->
+
+    <div class="container-outer padding0">
+      <!-- <div *ngIf="loader">
+        <mat-spinner class="loader">
+          <div><p>Loading....</p></div>
+        </mat-spinner>
+      </div> -->
+      <div class="container mb60" >
+        <div class="cs-table">
+          <div class="sticky-head">
+            <div class="table-head">
+              <table>
+                <tr>
+                  <th class="w50">S.No</th>
+                  <th>Category</th>
+                  <th class="w150 text-right">Basic Discount</th>
+                  <th class="w150 text-right">Sr Discount</th>
+                  <th class="w150 text-right">Dd Discount</th>
+                  <th class="w150 text-right">Family Discount</th>
+                  <th class="w150 text-right">Ss Discount</th>
+                  <th class="w150 text-right">Cd Discount</th>
+                  <th class="w100 text-right">Total Discount</th>
+                  
+                </tr>
+              </table>
+            </div>
+            <div class="table-head border-top" >
+              <table>
+                <tr>
+                  <th class="w50"></th>
+                  <th>
+                    <div class="th-search-acmt w250">
+                      <mat-form-field class="example-full-width cs-input select-input">
+                        <input matInput placeholder="Category. . ." (keyup)="mydiscountList()" #search="ngModel" [(ngModel)]="value.search">
+                      </mat-form-field>
+                    </div>
+                  </th>
+                  <th class="w150"></th>
+                  <th class="w150"></th>
+                  <th class="w150"></th>
+                  <th class="w150"></th>
+                  <th class="w150"></th>
+                  <th class="w150"></th>
+                  <th class="w100"></th>
+                  
+                </tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <div class="table-content">
+              <table>
+                <tr *ngFor="let dist of discountList;let i = index">
+                  <td class="w50">{{i+1}}</td>
+                  <td >{{dist.category}}</td>
+                  <td class="w150 text-center purple-shade-1">{{dist.basic_discount}}</td>
+                  <td class="w150 text-center purple-shade-1">{{dist.sr_discount}}</td>
+                  <td class="w150 text-center purple-shade-2">{{dist.dd_discount}}</td>
+                  <td class="w150 text-center purple-shade-2">{{dist.family_discount}}</td>
+                  <td class="w150 text-center purple-shade-3">{{dist.ss_discount}}</td>
+                  <td class="w150 text-center purple-shade-3">{{dist.cd_discount}}</td>
+                   <td class="w100">{{dist.discount}}
+                    <div class="action-btns">
+                      <a mat-button class="view" routerLink="/add-discount/{{dist.id}}" routerLinkActive="active"><i class="material-icons">remove_red_eye</i>Edit</a>
+                      <button mat-button class="delete" (click)="deletediscount(dist.id)"><i class="material-icons">delete_sweep</i> Delete</button>
+                   </div>
+                  </td>
+                 
+                <!--</tr>
+
+                <ng-container *ngFor="let lead of skelton">
+                    <tr class="sk-loading"  *ngIf="loader">
+                      <td class="w50"><div>&nbsp;</div></td>
+                      <td><div>&nbsp;</div></td>
+                      <td class="w200"><div>&nbsp;</div></td>
+                       <td class="w150"><div>&nbsp;</div></td>
+                      <td class="w150"><div>&nbsp;</div></td>
+                      <td class="w80"><div>&nbsp;</div></td> -->
+                    </tr>
+                  <!-- </ng-container> -->
+              </table>
+            </div>
+          </div>
+          
+        </div>
+        <div class="no-data" *ngIf="data_not_found==true">
+          <img src="assets/img/no-data.gif" alt="">
+          <p>Data not <span>available !</span></p>
+        </div>
+      </div>
+ 
+    </div>
+    <div class="fix-btn">
+      <a class="bottom-btn" mat-raised-button routerLink="/add-discount/0"><i class="material-icons">add</i></a>
+    </div>
+  </div>
+  
+  

@@ -1,0 +1,99 @@
+<div  class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" routerLink="/customer-category">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>{{customer_category_id ? 'Edit' : 'Add'}} Customer Category</h2>
+  </div>
+  
+  <div class="container pt10 pl10 pr10 pb50" >
+    <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Basic Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Customer Type</mat-label>
+                    <mat-select name="customer_type" [(ngModel)]="data.customer_type" #customer_type="ngModel" [ngClass]="{'has-error' : customer_type.invalid } " required>
+                      <mat-option value="" disabled>Select</mat-option>
+                      <ng-container *ngFor="let row of service.drArray">
+                      <mat-option value="{{row.type}}" >{{row.module_name ? (row.module_name | titlecase) : ''}}</mat-option>
+                    </ng-container>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="customer_type.touched || f.submitted">
+                    <p *ngIf="customer_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Category Title</mat-label>
+                    <input matInput placeholder="Type Here ..."  name="title" #title="ngModel" [(ngModel)]="data.title"  required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                    <p *ngIf="title.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline" >
+                    <mat-label>Range Start</mat-label>
+                    <input matInput  placeholder="Type Here ..." name="range_start" #range_start="ngModel" onkeypress="return event.charCode>=48 && event.charCode<=57" [(ngModel)]="data.range_start" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="range_start.touched || f.submitted">
+                    <p *ngIf="range_start.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline" >
+                    <mat-label>Range End</mat-label>
+                    <input matInput placeholder="Type Here ..." name="range_end" #range_end="ngModel" onkeypress="return event.charCode>=48 && event.charCode<=57" [(ngModel)]="data.range_end" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" >
+                    <ng-container *ngIf="range_end.touched || f.submitted">
+                      <p *ngIf="range_end.errors?.required">This field is required</p>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline" >
+                    <mat-label>Branding Budget</mat-label>
+                    <input matInput placeholder="Type Here ..." name="branding_budget" #branding_budget="ngModel" [(ngModel)]="data.branding_budget" onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="branding_budget.touched || f.submitted">
+                    <p *ngIf="branding_budget.errors?.required">This field is required</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+              {{(savingFlag == true || customer_category_id) ? (customer_category_id ? 'Update' : 'Saving') : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div>
+  </div>
+</div>
+
+
+

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Basiq 360</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="styles.8ed76448e4db8d2170ff.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="./assets/css/MarkerCluster.css" />
+  <link rel="stylesheet" href="./assets/css/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="./assets/css/leaflet-routing-machine.css" />
+  <link rel="stylesheet" href="./assets/css/bootstrap.css" />
+  <link rel="stylesheet" href="./assets/css/jquery-ui.min.css" />
+  <link rel="stylesheet" href="./assets/css/font-awesome.min.css" />
+  <link href="./assets/css/example_2.css" rel="stylesheet" type="text/css" />
+
+
+<!-- <script src="./assets/js/leaflet.js" crossorigin=""></script> -->
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+      <script src="./assets/js/leaflet.markercluster.js"></script>
+      <script src="./assets/js/leaflet-routing-machine.js"></script>
+      <script src="./assets/js/jquery-3.7.1.js" crossorigin="anonymous"></script>
+      <script src="./assets/js/jquery-ui.js" crossorigin="anonymous"></script>
+      <script src="./assets/js/bootstrap.min.js"></script>
+      <script src="./assets/js/bootstrap-timepicker.js"></script>
+      <script src="./assets/js/LeafletPlayback.js"></script>
+      <script src="./assets/js/example_2_control.js"></script>
+      <script src="./assets/js/leaflet-trackplayer.umd.cjs"></script>
+<!----------------------- Background Location Map End ------------------------------->
+
+
+<link rel="stylesheet" href="styles.cb37969e079f7c1a95fe.css">
+
+</head>
+
+<style>
+  @keyframes progress-animation {
+    0% {
+      width: 0%;
+    }
+
+    20% {
+      width: 10%;
+    }
+
+    40% {
+      width: 30%;
+    }
+
+    50% {
+      width: 60%;
+    }
+
+    100% {
+      width: 90%;
+    }
+  }
+
+  .loading-bar {
+    display: flex;
+    height: 4px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 50px;
+    overflow: hidden;
+    margin-top: 16px;
+    background: #eaeaea;
+    border: 0px;
+  }
+
+  .progress-bar {
+    display: flex;
+    height: 100%;
+    width: 90%;
+    background: #004eac;
+    animation: progress-animation 3s ease-in-out;
+  }
+</style>
+
+<body class="swal2-height" style="background: var(--grey)">
+  <app-root></app-root>
+  <div id="splashScreen"
+    style=" position: fixed; z-index: 999; width: 100%;  height: 100%;  background: var(--grey);  top: 0;  display: flex;  align-items: center;  flex-direction: column;  justify-content: center;">
+    <img src="./assets/img/logo.png" style="height:45px">
+    <div class="loading-bar">
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="runtime.0d056e473e42c7c40d38.js"></script>
+  <script type="text/javascript" src="polyfills.db3c02517858625f4143.js"></script>
+  <script type="text/javascript" src="main.918045e9288c5f1a57a8.js"></script>
+</body>
+
+<style>
+  .splashScreenFadeHide {
+    opacity: 0;
+    display: none !important;
+  }
+</style>
+
+
+
+
+
+</html>

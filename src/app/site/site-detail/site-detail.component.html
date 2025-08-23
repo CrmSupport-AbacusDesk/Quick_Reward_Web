@@ -1,0 +1,468 @@
+<div class="main-container">
+  <div class="tools-container">
+    <!-- <a mat-icon-button matTooltip="Back" routerLink="/site-list">
+      <i class="material-icons">arrow_back</i>
+    </a> -->
+    <a mat-icon-button matTooltip="Back" (click)="backToList()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Site/Project Detail</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="{'active' :tabType== 'Profile'}" (click)="tabType= 'Profile'; leadDetail()"><i
+            class="material-icons">person</i>Basic Detail</button>
+        <button mat-button [ngClass]="{'active' :tabType== 'Quotation'}" (click)="tabType = 'Quotation';"><i
+            class="material-icons">receipt_long</i>Quotation</button>
+        <button mat-button [ngClass]="{'active' :tabType== 'Order'}" (click)="tabType = 'Order';"><i
+            class="material-icons">shopping_cart</i>Order</button>
+        <button mat-button [ngClass]="{'active' :tabType== 'Checkin'}" (click)="tabType = 'Checkin'; getCheckin()"><i
+            class="material-icons">shopping_cart</i>Checkin</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <ng-container *ngIf="tabType== 'Profile'">
+      <div class="row">
+        <div class="col s12 m8 l8">
+          <div class="card mb50" *ngIf="!loader">
+            <div class="card-head">
+              <h2>Basic Details</h2>
+              <div class="left-auto">
+                <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail" [routerLink]="[ 'add-site/' ]"
+                  [queryParams]="{'id':encrypt_id}">
+                  <!-- *ngIf="login_data5.edit_influencer=='1'" -->
+                  <i class="material-icons">edit</i>
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Date Created</span>
+                  <p>{{site_detail.date_created | date:'dd MMM yyyy'}}</p>
+                </div>
+
+
+                <div class="block-feilds">
+                  <span>Created By</span>
+                  <p>{{site_detail.created_by_name}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Site/Project ID</span>
+                  <p>{{site_detail.id ? site_detail.id : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Type</span>
+                  <p>{{site_detail.type ? site_detail.type : '---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Souce</span>
+                  <p>{{site_detail.lead_source ? site_detail.lead_source : '---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Priority</span>
+                  <p>{{site_detail.priority ? site_detail.priority : '---'}}</p>
+                </div>
+
+
+                <div class="block-feilds">
+                  <span>Site/Project Name</span>
+                  <p>{{site_detail.ownerName ? (site_detail.ownerName | titlecase) :'---'}}</p>
+                </div>
+
+
+                <div class="block-feilds">
+                  <span>Mobile Number</span>
+                  <p>{{site_detail.ownerMobile ? site_detail.ownerMobile :'---'}}</p>
+                </div>
+
+
+
+                <div class="block-feilds">
+                  <span>Assigned Primary</span>
+                  <p>{{site_detail.assigned_to_distributor_name ? site_detail.assigned_to_distributor_name:'---'}}</p>
+                </div>
+
+
+                <div class="block-feilds">
+                  <span>Assigned Secondary</span>
+                  <p>{{site_detail.assigned_to_dealer_name ? site_detail.assigned_to_dealer_name:'---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Assigned User</span>
+                  <p>{{site_detail.assigned_to_user_name ? site_detail.assigned_to_user_name:'---'}}
+                    {{site_detail.user_employee_code ? ( '(' + site_detail.user_employee_code + ')') :'---'}}</p>
+                </div>
+
+
+                <div class="block-feilds">
+                  <span>Status</span>
+                  <p>{{site_detail.stage_level?site_detail.stage_level:'---'}}</p>
+                </div>
+
+                <div class="block-feilds">
+                  <span>Last Checkin</span>
+                  <p>{{site_detail.last_checkin!='0000-00-00 00:00:00'?site_detail.last_checkin:'---'}}</p>
+                </div>
+
+                <div class="block-feilds" *ngIf="site_detail.created_for">
+                  <span>Site For</span>
+                  <p>{{site_detail.created_for?site_detail.created_for:'---'}}</p>
+                </div>
+
+              </div>
+
+
+              <div class="grid-box single mt16">
+                <div class="block-feilds">
+                  <span>Address</span>
+                  <p>
+                    {{site_detail.address}}{{site_detail.city ? (', '+ site_detail.city) : ''}} {{site_detail.district ?
+                    (', '+ site_detail.district) : ''}}
+                    {{site_detail.state ? (', '+ site_detail.state) : ''}} {{site_detail.pincode ? (', '+
+                    site_detail.pincode) : ''}}
+                  </p>
+                </div>
+              </div>
+
+              <ng-container *ngIf="site_detail.contact_info.length">
+                <div class="card-head mt15">
+                  <h2>Contact Person</h2>
+                </div>
+                <div class="cs-table left-right-10">
+                  <div class="table-head border-top border-bottom">
+                    <table>
+                      <tr>
+                        <th class="w50">S.No</th>
+                        <th class="w200">Name</th>
+                        <th class="w100">Mobile No.</th>
+                        <th>Contact Type</th>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="table-container">
+                    <div class="table-content">
+                      <table>
+                        <tr *ngFor="let row of site_detail.contact_info; let i = index;">
+                          <td class="w50">{{i + 1}}</td>
+                          <td class="w200">{{row.contactName ? row.contactName : '---'}}</td>
+                          <td class="w100">{{row.contactMobile ? row.contactMobile : '---'}}</td>
+                          <td>{{row.contactType ? row.contactType : '---'}}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="site_detail.images.length > 0">
+                <div class="card-head mt15">
+                  <h2>Site Images</h2>
+                </div>
+                <div class="grid-box single">
+                  <div class="block-feilds">
+                    <div class="doc-img" *ngFor="let row of site_detail?.images">
+                      <img src="assets/img/no_image.png" *ngIf="row.image == ''">
+                      <img *ngIf="row.image" src="{{url+row.image}}" (click)="goToImage(url+row.image)"
+                        style="cursor: zoom-in;">
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div class="card" *ngIf="loader">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m4 l4">
+          <div class="card" *ngIf="!loader">
+            <div class="card-head">
+              <h2>Logs</h2>
+            </div>
+
+            <div class="logs-box">
+              <ng-container *ngFor="let row of site_logs">
+                <div class="logshead ">{{row.changes_by_name}} :- {{row.date_created | date:'dd MMM yyyy'}}</div>
+                <div class="logscontent ">
+                  <span>Remark : </span> {{row.msg ? row.msg : row.remark}}
+                </div>
+              </ng-container>
+            </div>
+
+          </div>
+          <div class="card" *ngIf="loader">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                <div class="sk-box">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- </div> -->
+
+    </ng-container>
+
+
+    <ng-container *ngIf="tabType == 'Quotation'">
+      <app-site-order-list
+        [dataToReceive]="{'site_id':site_detail.id,  'padding0':'padding0', 'hide':false, 'pageType': 'quotation'}"></app-site-order-list>
+    </ng-container>
+
+    <ng-container *ngIf="tabType == 'Order'">
+      <app-site-order-list
+        [dataToReceive]="{'site_id':site_detail.id,  'padding0':'padding0', 'hide':false, 'pageType': 'order'}"></app-site-order-list>
+    </ng-container>
+
+
+    <div *ngIf="tabType== 'Checkin'" style="margin: -10px -10px 0px -10px;">
+      <div class="cs-table  horizontal-scroll">
+        <div class="left-auto jfe df flex-gap-10 mt10">
+
+          <ng-container *ngIf="filter.date_from">
+            <div class="filteDate">
+              <span>Date From</span>
+              <h3>{{filter?.date_from | date:'dd MMM, yyyy'}}</h3>
+            </div>
+            <div class="filteDate">
+              <span>Date To</span>
+              <h3>{{filter?.date_to | date:'dd MMM, yyyy'}}</h3>
+            </div>
+          </ng-container>
+
+
+          <a mat-icon-button matTooltip="Refresh" (click)="refresh(tabType)">
+            <i class="material-icons">refresh</i>
+          </a>
+
+          <div class="pagination" *ngIf="checkinData.length > 0">
+            <div class="pagination-content">
+              Pages
+              <span>{{pagenumber}}</span>
+              of
+              <span>{{total_page}}</span>
+            </div>
+            <div class="page-nav">
+              <button mat-icon-button matTooltip="Older" (click)="pervious('checkin')"
+                [disabled]="start == 0 || total_page == 0">
+                <i class="material-icons">navigate_before</i>
+              </button>
+              <button mat-icon-button matTooltip="Newer" (click)="nextPage('checkin')"
+                [disabled]="pagenumber == total_page || total_page == 0 ">
+                <i class="material-icons">navigate_next</i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="sticky-head" style="top: -10px;">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w60">S.no.</th>
+                <th class="w130">Date Created
+                  <div class="sorting" *ngIf="login_data.user_type!='DMS'">
+                    <a (click)="openBottomSheet()" matTooltip="Date Filter">
+                      <i class="material-icons">filter_alt</i>
+                    </a>
+                  </div>
+                </th>
+                <th class="w130" *ngIf="login_data.user_type!='DMS'">
+                  {{login_data.user_type!='DMS'?'Employee Code':'Code'}}</th>
+                <th class="w180">Employee Name</th>
+                <th class="w180" *ngIf="login_data.user_type=='DMS'">Dealer Name</th>
+
+                <th class="w150" *ngIf="login_data.user_type!='DMS'">Reporting Manager </th>
+                <!-- <th class="w180">Company Name</th> -->
+                <!-- <th>Address</th> -->
+                <th class="w100">Check in</th>
+                <th class="w100">Check out</th>
+                <th class="w100">Total Time Spend</th>
+                <th>Remark</th>
+              </tr>
+            </table>
+          </div>
+
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w60">&nbsp;</th>
+                <th class="w130">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                        [(ngModel)]="filter.date_created" (dateChange)="date_format(tabType)" [max]="today_date"
+                        disabled>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w130" *ngIf="login_data.user_type!='DMS'">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="emp_code" [(ngModel)]="filter.emp_code"
+                        (keyup.enter)="!filter.emp_code ? refresh(tabType) : getCheckin()">
+                    </mat-form-field>
+                  </div>
+                </th>
+
+                <th class="w180">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="emp_name" [(ngModel)]="filter.emp_name"
+                        (keyup.enter)="!filter.emp_name ? refresh(tabType) : getCheckin()">
+                    </mat-form-field>
+                  </div>
+                </th>
+
+                <th class="w180" *ngIf="login_data.user_type=='DMS'">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="company_name"
+                        [(ngModel)]="filter.company_name"
+                        (keyup.enter)="!filter.company_name ? refresh(tabType) : getCheckin()">
+                    </mat-form-field>
+                  </div>
+                </th>
+
+                <th class="w150" *ngIf="login_data.user_type!='DMS'">
+                  <!-- <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="reporting_manager"
+                    [(ngModel)]="filter.reporting_manager"
+                    (keyup.enter)="!filter.reporting_manager ? refresh(tabType) : getCheckin()">
+                  </mat-form-field>
+                </div> -->
+                </th>
+                <th class="w100">&nbsp;</th>
+                <th class="w100">&nbsp;</th>
+                <th class="w100">{{totalCheckinTime ? totalCheckinTime : ''}}</th>
+                <th>&nbsp;</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+
+        <div class="table-container" *ngIf="checkinData.length > 0">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!checkinLoader">
+                <tr *ngFor="let row of checkinData; let i =index">
+                  <td class="w60">{{i+1+sr_no}}</td>
+                  <td class="w130">{{row.date_created | date : 'd MMM y'}}</td>
+                  <td class="w130" *ngIf="login_data.user_type!='DMS'">{{row.employee_id}}</td>
+                  <td class="w180">{{row.created_by_name | titlecase}}</td>
+                  <td class="w180" *ngIf="login_data.user_type=='DMS'">{{row?.company_name |
+                    titlecase}}</td>
+                  <td class="w150" *ngIf="login_data.user_type!='DMS'">{{row.reporting_manager_name |
+                    titlecase}}</td>
+                  <td class="w100">
+                    <ng-container *ngIf="row.visit_start == '0000-00-00 00:00:00'">---</ng-container>
+                    <ng-container *ngIf="row.visit_start != '0000-00-00 00:00:00'">{{row.visit_start|
+                      date:'h:mm a'}}</ng-container>
+                  </td>
+                  <td class="w100">
+                    <ng-container *ngIf="row.visit_end == '0000-00-00 00:00:00'">---</ng-container>
+                    <ng-container *ngIf="row.visit_end != '0000-00-00 00:00:00'">{{row.visit_end |
+                      date:'h:mm a'}}</ng-container>
+                  </td>
+                  <td class="w100">{{row.total_time_spend}}</td>
+                  <td>{{row.remark}}</td>
+                </tr>
+              </ng-container>
+
+              <ng-container *ngIf="checkinLoader">
+                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                  <td class="w60">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w130">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w130">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w150">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w150">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="W100 text-right">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="W100 text-right">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="W100 text-right">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td>&nbsp;</td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+        <ng-container *ngIf="checkinData.length == 0">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <div class="fab-btns"
+    *ngIf="(site_detail.stage_level!='Success' && site_detail.stage_level!='rejected')&& site_detail.stage_level!='Pending' && tabType == 'Profile'">
+
+    <button
+      (click)="lastBtnValue('activity'); openDialog('remark',site_detail.type, site_detail.id, site_detail.ownerName, site_detail.created_by_name)"
+      mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='activity'}">
+      <i class="material-icons">add</i>
+      Add Remark
+    </button>
+
+    <!-- <ng-container>
+      <button
+        (click)="lastBtnValue('follow_up'); openDialog('followup',site_detail.type, site_detail.id, site_detail.ownerName, site_detail.created_by_name)"
+        mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='follow_up'}">
+        <i class="material-icons">add</i>
+        Add Followup
+      </button>
+    </ng-container> -->
+
+    <!-- <button (click)="lastBtnValue('status'); changeStatus();" mat-fab *ngIf="lead_detail.stage_level=='Pending'"
+      color="primary" [ngClass]="{'pulse': fabBtnValue=='status'}">
+      <i class="material-icons">update</i>
+      Change Status
+    </button>  -->
+  </div>
+
+
+</div>

@@ -1,0 +1,58 @@
+<div class="edit-modal">
+    <form validate #update_basic="ngForm" name="update_basic" (ngSubmit)="update_order()">
+        
+        <p class="heading">Dispatch Item</p>
+        <div mat-dialog-content>
+            <div class="row">
+                <div class="col s12">
+                    <div class="cs-table left-right-20">
+                        <div class="table-head">
+                            <table class="sno-border">
+                                <tr>
+                                    <th class="w40 text-center"></th>
+                                    <th>Product Description</th>
+                                    <!-- <th class="w80">Size</th> -->
+                                    <th class="w100">QTY</th>
+                                    <th class="w100">Rate</th>
+                                    <th class="w100">Amount</th>
+                                    <th class="w100">Pending QTY</th>
+
+                                    <th class="w100">Dispatch QTY</th>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="table-container">
+                            <div class="table-content">
+                                <table class="sno-border">
+                                    <tr *ngFor="let list of order_item; let i=index">
+                                        <td class="w40 text-center">{{i+1}}</td>
+                                        <td>{{list.product_name}} {{list.cat_no}} - {{list.brand}} - {{list.color}}</td>
+
+                                        <!-- <td class="w80">{{list.product_size}}</td>                             -->
+                                        <td class="w100">{{list.qty}}</td>
+                                        <td class="w100">{{list.price}}</td>
+
+                                        <td class="w100">{{list.amount}}</td>
+                                    <td class="w100">{{list.pending_qty}}</td>
+
+                                        <td class="w100">
+                                            <div class="td-input active">
+                                                <!-- <input type="text" class="input-bdr"  name="dispatchQty{{i}}" #dispatchQty="ngModel" [(ngModel)]="list.dispatchQty" (keyup)="check_qty(i)"> -->
+                                                <input type="text" onkeypress="return event.charCode >= 48 && event.charCode <= 57"  name="dispatchQty{{i}}" [(ngModel)]="list.dispatchQty"(keyup)="check_qty(i)" >
+                                            </div>
+                                        </td>                     
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-raised-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button mat-raised-button color="accent" type="submit" >Save</button>
+        </div>
+    </form>
+</div>

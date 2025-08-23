@@ -1,0 +1,68 @@
+<div  class="main-container">
+  <div class="tools-container">
+    <h2>PDF Catalogue</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <div class="pagination" *ngIf="document.length > 0 ">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">    
+          <button mat-icon-button  matTooltip="Older" (click)="pervious()"  [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button  matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container pb100" >
+    <div class="padding16">
+      <div class="pdf-container">
+        <ng-container *ngIf="!loader">
+          <div class="pdf-block" *ngFor="let row of document; let i = index;">
+            <img src="assets/img/icons/pdf.png">
+            <a target="_blank" href="{{url+row.doc}}">{{row.title| titlecase }}- ({{row.type ? (row.type.replaceAll('_', ' ')) : ''}})</a>
+            <div class="action-button right-action-btn">
+              <button  mat-icon-button  matTooltip="Delete" (click)="delete(row.id)">
+                <i class="material-icons del">delete</i>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      
+        <ng-container *ngIf="loader">
+          <div class="pdf-block skeleton" *ngFor="let row of [].constructor(8);">
+            <div></div>
+          </div>
+        </ng-container>
+        
+      
+      </div>
+    </div>
+    <ng-container class="left-auto" *ngIf="document.length == 0">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+  <div class="fab-btns">
+    <button mat-fab  color="accent" *ngIf="logined_user_data.add_pdf_master=='1' || logined_user_data.edit_pdf_master=='1' " routerLink="pdf-catalogue-add" (click)="lastBtnValue('add');" [ngClass]="{'pulse': fabBtnValue=='add'}">
+      <i class="material-icons mr10">cloud_upload</i>
+      Upload PDF
+    </button>
+  </div>
+</div>
+
+
+

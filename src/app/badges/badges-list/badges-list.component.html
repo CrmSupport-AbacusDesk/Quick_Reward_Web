@@ -1,0 +1,177 @@
+<div class="main-container" >
+  
+  <div class="tools-container">
+    <h2>Badges</h2>
+    
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button  matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+      
+      <div class="pagination" *ngIf="bonusList_data.length > 0">
+        
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          
+          <button mat-icon-button  matTooltip="Older" (click)="pervious()"  [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button  matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'active' ? 'active' : ''" (click)="active_tab = 'active';badgeList()"><i class="material-icons">toggle_on</i>Active ({{tabCount.active ? tabCount.active : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'inactive' ? 'active' : ''" (click)="active_tab = 'inactive';badgeList()"><i class="material-icons">toggle_off</i>Inactive ({{tabCount.inactive ? tabCount.inactive : '0'}})</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="container container-scroll pb100" >
+    <div class="cs-table  horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w70">Image</th>
+              <th class="w100">Date Created</th>
+              <th class="w200">Title</th>
+              <th class="w150" *ngIf="subType">Influencer Type</th>
+              <th class="w160">Slab</th>
+              <th class="w110 text-right">Scanning Points</th>
+              <th class="w100">Badge Type</th>
+              <th class="w130">Point Incentive Type</th>
+              <th class="w70 text-right">Points</th>
+              <th class="w70 text-right">Enroll Influencer</th>
+              <th class="w65 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">Status</th>
+            </tr>
+          </table>
+        </div>
+        
+        <!-- <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="" name="date_created" [(ngModel)]="filter.date_created" [max]="today_date" (dateChange)="badgeList()"  disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"  ></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th>
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="eligible_days" [(ngModel)]="filter.eligible_days" (keyup.enter)="badgeList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w130">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="eligible_days" [(ngModel)]="filter.eligible_days" (keyup.enter)="badgeList()">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w110">&nbsp;</th>
+              <th class="w150">&nbsp;</th>
+              <th class="w70">&nbsp;</th>
+              <th class="w100 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">&nbsp;</th>
+            </tr>
+          </table>
+        </div> -->
+      </div>
+      
+      <div class="table-container">
+        <div class="table-content" >
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of bonusList_data; let i = index;"  [ngClass]="{'Current': service.currentUserID == row.id}" >
+                <td class="w70 text-center">
+                  <a class="img-avtar" (click)="goToImage(url+row.image)">
+                    <img src="{{url+row.image}}">
+                  </a>
+                </td>
+                <td class="w100">{{row.date_created | date:'d MMM y'}}</td>
+                <td class="w200">{{row.title ? (row.title | titlecase) : '---'}}</td>
+                <td class="w150" *ngIf="subType">{{row.influencer_name ? row.influencer_name : '---'}}</td>
+                <td class="w160">
+                  <ng-container *ngIf="row.slab_type != 'Custom'">
+                  {{row.eligible_days ? ( row.eligible_days != 'Custom' ? ('Last '+ row.eligible_days +' Days') : '') : '---'}}
+                  </ng-container>
+                  <ng-container *ngIf="row.slab_type == 'Custom'">
+                    <strong>{{row.start_date != '0000-00-00'  ? (row.start_date | date:'d MMM y') : '---'}}</strong> To
+                    <strong>{{row.end_date != '0000-00-00'  ? (row.end_date | date:'d MMM y') : '---'}}</strong>
+                  </ng-container>
+                </td>
+                <td class="w110 text-right"><strong>{{row.eligible_value ? (row.eligible_value + ' PTS') : '---'}}</strong></td>
+                <td class="w100">{{row.badge_type ? row.badge_type : '---'}}</td>
+                <td class="w130">{{row.type ? row.type : '---'}}</td>
+                <td class="w70 text-right"><strong>{{row.value ? (row.value + (row.type =='Percent wise'  ? '%' : ' PTS')) : '---'}}</strong></td>
+                <td class="w70 text-right">
+                  <div class="action-button text-center">
+                    <button mat-icon-button matTooltip="View" 
+                      (click)="openDialog(row.id)">
+                      <i class="material-icons edit">visibility</i>
+                    </button>
+                  </div>
+                </td>
+                <td class="w65 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">
+                  <div class="action-button">
+                    <mat-slide-toggle color="accent" checked="{{row.status == 'active' ? true : false}}" (change)="change_status(row.id,i)"></mat-slide-toggle>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+
+
+                <td class="w70 text-center"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w200"><div>&nbsp;</div></td>
+                <td class="w150" *ngIf="subType"><div>&nbsp;</div></td>
+                <td class="w160"><div>&nbsp;</div></td>
+                <td class="w110 text-right"><div>&nbsp;</div></td>
+                <td class="w100"><div>&nbsp;</div></td>
+                <td class="w130"><div>&nbsp;</div></td>
+                <td class="w70 text-right"><div>&nbsp;</div></td>
+                <td class="w70 text-right"><div>&nbsp;</div></td>
+                <td class="w65 text-center" *ngIf="assign_login_data2.edit_bonus_points=='1'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+        
+        <ng-container *ngIf="bonusList_data.length == 0 && noResult">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+    
+    
+  </div>
+  
+  
+  
+  <div class="fab-btns">
+    <button class="pulse" mat-fab (click)="lastBtnValue('add')" *ngIf="assign_login_data2.add_bonus_points=='1'" [ngClass]="{'pulse': fabBtnValue=='add'}"  color="primary"  routerLink="badges-add">
+      <i class="material-icons">add</i>
+      Add New
+    </button>
+  </div>
+</div>

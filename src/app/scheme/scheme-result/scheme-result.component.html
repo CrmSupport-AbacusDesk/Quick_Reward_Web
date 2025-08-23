@@ -1,0 +1,249 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Result Count : {{dataListCount}}<br />
+            <!-- <small *ngIf="slabData">{{slabData?.slab_start}} to {{slabData?.slab_end}}</small> -->
+        </h2>
+        <div class="left-auto df ac  flex-gap-10">
+            <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                <i class="material-icons">refresh</i>
+            </a>
+
+        </div>
+
+        <div class="mat-tabbar">
+            <button mat-button [ngClass]="active_tab == 'Inprocess' ? 'active' : ''" (click)="active_tab = 'Inprocess'; refresh()">
+                <!-- <span [ngClass]="active_tab == 'Inprocess'? 'material-icons': 'material-icons-outlined'">toggle_on</span> -->
+                In Process
+            </button>
+
+            <button mat-button [ngClass]="active_tab == 'Win' ? 'active' : ''" (click)="active_tab = 'Win'; refresh()">
+                <!-- <span [ngClass]="active_tab == 'Win'? 'material-icons': 'material-icons-outlined'">toggle_off</span> -->
+                Win
+            </button>
+        </div>
+    </div>
+    <div class="container container-scroll">
+
+
+
+        <!-- ----------------ALL OVER SLAB WISE VIEW START----------------------------- -->
+        <div class="cs-table" *ngIf="resultType == 'AllSlabResult'">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table class="sno-border">
+                        <tr>
+                            <th class="w60 text-center">S.No</th>
+                            <th class="w100 text-center">Slab ID</th>
+                            <th class="">Company Name</th>
+                            <th class="w130 text-center">Account Code</th>
+                            <th class="w130 text-center">Achieved</th>
+                            <th class="w200">Achievement Percentage</th>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60">&nbsp;</th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="slab_id"
+                                            [(ngModel)]="filter.slab_id" (keyup.enter)="fetchAllSlabResultData()">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="dr_name"
+                                            [(ngModel)]="filter.dr_name" (keyup.enter)="fetchAllSlabResultData()">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w130">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="dr_code"
+                                            [(ngModel)]="filter.dr_code" (keyup.enter)="fetchAllSlabResultData()">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w130">&nbsp;</th>
+                            <th class="w200">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table class="sno-border">
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of allSlabDataList; let i = index">
+                                <td class="w60 text-center">{{i+1}}</td>
+                                <td class="w100 text-center">{{row.slab_id}}</td>
+                                <td class="">
+                                    {{row?.dr_name}}
+                                </td>
+                                <td class="w130 text-center">
+                                    {{row?.dr_code}}
+                                </td>
+                                <td class="w130">
+                                    <span class="flex align-center justify-center">
+                                        <a class="link-btn"
+                                            (click)="openDialog('Per Item Point', row?.item_data, row)"><b>{{row.slab_type
+                                                == 'Value' ? 'Rs.' :''}} {{row?.achieve||0}}</b></a>
+                                        <i class="material-icons arrow">north_east</i>
+                                    </span>
+                                </td>
+                                <td class="w200">
+                                    <div class="progressBar">
+                                        <div class="level"
+                                            [ngClass]="{'green_progress_bar':row?.achieve_percent>=50, 'yellow':row?.achieve_percent<50}"
+                                            [ngStyle]="{'width':row?.achieve_percent+'%'}">{{row?.achieve_percent+'%'}}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(100)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w130">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w130">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            <ng-container *ngIf="allSlabDataList?.length <= 0">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+        <!-- ----------------ALL OVER SLAB WISE VIEW START----------------------------- -->
+
+        <!-- ----------------SLAB WISE VIEW START----------------------------- -->
+        <div class="cs-table" *ngIf="resultType != 'AllSlabResult'">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table class="sno-border">
+                        <tr>
+                            <th class="w60 text-center">S.No</th>
+                            <th class="">Company Name</th>
+                            <th class="w150 text-center">Account Code</th>
+                            <th class="w150 text-center">Achievement</th>
+                            <th class="w200">Achievement %</th>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w60">&nbsp;</th>
+                            <th class="">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="dr_name"
+                                            [(ngModel)]="filter.dr_name" (keyup.enter)="fetchData()">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w150">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="dr_code"
+                                            [(ngModel)]="filter.dr_code" (keyup.enter)="fetchData()">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w150">&nbsp;</th>
+                            <th class="w200">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table class="sno-border">
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let row of dataList; let i = index">
+                                <td class="w60 text-center">{{i+1}}</td>
+                                <td class="">
+                                    {{row?.dr_name}}
+                                </td>
+                                <td class="w150 text-center">
+                                    {{row?.dr_code}}
+                                </td>
+                                <td class="w150 text-center">
+                                    <span class="flex align-center justify-center">
+                                        <a class="link-btn" (click)="openDialog('Per Item Point', row?.item_data, row)">
+                                            <b>{{row.slab_type == 'Value' ? 'Rs.' :''}} {{row?.achieve||0}}</b>
+                                        </a>
+                                        <i class="material-icons arrow">north_east</i>
+                                    </span>
+                                </td>
+                                <td class="w200">
+                                    <div class="progressBar">
+                                        <div class="level"
+                                            [ngClass]="{'green_progress_bar':row?.achieve_percent>=50, 'yellow':row?.achieve_percent<50}"
+                                            [ngStyle]="{'width':row?.achieve_percent+'%'}">{{row?.achieve_percent+'%'}}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(100)">
+                                <td class="w60">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            <ng-container *ngIf="dataList?.length <= 0">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+        <!-- ----------------SLAB WISE VIEW END----------------------------- -->
+
+    </div>
+</div>

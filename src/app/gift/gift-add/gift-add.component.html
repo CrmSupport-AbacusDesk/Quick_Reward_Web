@@ -1,0 +1,202 @@
+<div class="main-container" >
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" routerLink="/gift-list" >
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <!-- <h2>Add New Gift</h2> -->
+    <h2>{{gift_id?'Edit':'Add'}} New Gift</h2>
+
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50" >
+    <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Gift Information</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m6 l6"  *ngIf="!gift_id">
+                  <mat-radio-group class="example-section" id="gift_type" name="gift_type" [(ngModel)]="data.gift_type">
+                    <mat-radio-button class="wp50" color="primary" value="Gift">
+                      Gift
+                    </mat-radio-button>
+                    <mat-radio-button class="wp50" color="primary" value="Cash">
+                      Cash
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+
+                <div class="col s12 m6 l6" *ngIf="gift_id">
+                  <mat-radio-group class="example-section" id="gift_type" name="gift_type" [(ngModel)]="data.gift_type">
+                    <mat-radio-button class="wp50" color="primary" value="Gift" *ngIf="data.gift_type=='Gift'">
+                      Gift
+                    </mat-radio-button>
+                    <mat-radio-button class="wp50" color="primary" value="Cash" *ngIf="data.gift_type=='Cash'">
+                      Cash
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3" >
+                  <mat-form-field appearance="outline">
+                    <mat-label>User Type</mat-label>
+                    <mat-select  name="user_type" [(ngModel)]="data.user_type" #user_type="ngModel" required>
+                      <mat-option  value="Secondary"  *ngIf="logined_user_data.organisation_data.dms == '1'">Secondary</mat-option>
+                      <mat-option  value="Influencer" *ngIf="logined_user_data.organisation_data.loyalty == '1'">Influencer</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="user_type.touched || f.submitted">
+                    <p *ngIf="user_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3" *ngIf="data.user_type == 'Influencer' &&  (subType || point_earning_type == 0) ">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Influencer Type</mat-label>
+                    <mat-select   name="influencer_type" [(ngModel)]="data.influencer_type" #influencer_type="ngModel" multiple required>
+                      <mat-option *ngFor="let row of influencerUser"  value="{{row.module_name}}" >{{row.module_name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="influencer_type.touched || f.submitted">
+                    <p *ngIf="influencer_type.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Title</mat-label>
+                    <input matInput placeholder="Type Here ..." name="title" #title="ngModel" [(ngModel)]="data.title" pattern="^(?! )[^\r\n]*$" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                    <p *ngIf="title.errors?.required">This field is required</p>
+                    <p *ngIf="title.errors?.pattern">This field is Invalid!</p>
+                </div>
+                </div>
+             
+                <div class="col s12 m3 l3" *ngIf="data.gift_type == 'Gift'">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Point</mat-label>
+                    <input matInput placeholder="Type Here ..."  name="gift_point" #gift_point="ngModel"
+                    [(ngModel)]="data.gift_point"  onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="gift_point.touched || f.submitted">
+                    <p *ngIf="gift_point.errors?.required">This field is required</p>
+                  </div>
+                  <div class="alert alert-danger" *ngIf="transparseInt(data.gift_point) > transparseInt(userData.organisation_data.payout_per_transaction_limit)">
+                   <p>Maximum {{userData.organisation_data.payout_per_transaction_limit}} points allow </p>
+                  </div>
+                </div>
+
+                <div class="col s12 m3 l3" *ngIf="data.gift_type == 'Cash'">
+                  <mat-form-field  appearance="outline" >
+                    <mat-label>Range Start</mat-label>
+                    <input matInput  placeholder="Type Here ..." name="range_start" #range_start="ngModel" onkeypress="return event.charCode>=48 && event.charCode<=57" [(ngModel)]="data.range_start"   (ngModelChange)="resetValue()" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="range_start.touched || f.submitted">
+                    <p *ngIf="range_start.errors?.required">This field is required</p>
+                  </div>
+                  <div class="alert alert-danger" *ngIf="transparseInt(data.range_start) > transparseInt(userData.organisation_data.payout_per_transaction_limit)">
+                    <p>Maximum {{userData.organisation_data.payout_per_transaction_limit}} points allow </p>
+                   </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="data.gift_type == 'Cash'">
+                  <div class="col s12 m3 l3">
+                    <mat-form-field  appearance="outline" >
+                      <mat-label>Range End</mat-label>
+                      <input matInput placeholder="Type Here ..." name="range_end" #range_end="ngModel" onkeypress="return event.charCode>=48 && event.charCode<=57" [(ngModel)]="data.range_end" required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" >
+                      <ng-container *ngIf="range_end.touched || f.submitted">
+                        <p *ngIf="range_end.errors?.required">This field is required</p>
+                      </ng-container>
+                    </div>
+                    <div class="alert alert-danger" *ngIf="transparseInt(data.range_end) > transparseInt(userData.organisation_data.payout_per_transaction_limit)">
+                      <p>Maximum {{userData.organisation_data.payout_per_transaction_limit}} points allow </p>
+                     </div>
+                  </div>
+                <div class="col s12 m3 l3" >
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Per Point Value</mat-label>
+                    <input matInput placeholder="Type Here ..."  name="point_range_value" #point_range_value="ngModel" [(ngModel)]="data.point_range_value"  required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="point_range_value.touched || f.submitted">
+                    <p *ngIf="point_range_value.errors?.required">This field is required</p>
+                  </div>
+                </div>
+              </div>
+
+
+              <ng-container >
+                <div class="row" *ngIf="data.gift_type == 'Gift'">
+                  <div class="col s12">
+
+                    <app-ngx-editor height="100px" minHeight="50px"  [placeholder]="'Type Here'" [spellcheck]="true" name="termsNcondition" [(ngModel)]="data.termsNcondition"></app-ngx-editor>
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col s12">
+                    <div class="uploade-image">
+                      <ul>
+
+                        <!-- <li *ngFor="let row of selected_image; let i=index">
+                          <img src="{{row.img_id ? url+row.image : row.image}}">
+                          <span class="cancel-icon">
+                            <i class="material-icons crose-icon" (click)="deleteProductImage(i,row.img_id, row.image)">clear</i>
+                          </span>
+                        </li> -->
+                        <!-- <li class="add-bg-1" [ngClass]="{'error': errorMsg == true}">
+                          <label>
+                            <input type="file" (change)="onUploadChange($event)" style="display:none;" accept=".png, .jpg, .jpeg," multiple required />
+                            <div class="other">
+                              <i class="material-icons">cloud_upload</i>
+                              <p>Upload Images</p>
+                            </div>
+                          </label>
+                        </li> -->
+
+                        <li class="add-bg-1" [ngClass]="{'error': errorMsg == true}">
+                          <img src="{{selected_image}}" *ngIf="selected_image != null">
+                          <label class="fix-label">
+                            <input type="file" (change)="onUploadChange($event)" style="display:none;" accept=".png, .jpg, .jpeg," multiple required />
+                            <div class="other" *ngIf="selected_image == null ">
+                              <i class="material-icons">cloud_upload</i>
+                              <p>Upload Images</p>
+                            </div>
+                          </label>
+                        </li>
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+              {{(!gift_id)?(savingFlag == true ? 'Saving' : 'Save'):(gift_id)?(savingFlag == true ? 'Updating' : 'Update'):'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+

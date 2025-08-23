@@ -1,0 +1,646 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="backToList()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Enquiry Detail</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+      
+      <div class="group-btn">
+        <button mat-button class="ouline-btns whatsapp" (click)="openDialog2('whatsapp')"><img src="assets/img/icons/whatsapp.png" />Whatsapp</button>
+        <button mat-button class="ouline-btns email" *ngIf="lead_detail.email" (click)="openDialog2('email')"><img src="assets/img/icons/email.png" />Send Email</button>
+        
+      </div>
+      
+      <ng-container *ngIf="tabType == 'Followup' ">
+        <button mat-icon-button matTooltip="Refresh" (click)="refresh(tabType) ">
+          <i class="material-icons">refresh</i>
+        </button>
+        <div class="pagination" *ngIf="followup_list.length > 0">
+          <div class="pagination-content">
+            Pages
+            <span>{{pagenumber}}</span>
+            of
+            <span>{{total_page}}</span>
+          </div>
+          <div class="page-nav">
+            <button mat-icon-button matTooltip="Older" (click)="pervious('Followup')" [disabled]="start == 0">
+              <i class="material-icons">navigate_before</i>
+            </button>
+            <button mat-icon-button matTooltip="Newer" (click)="nextPage('Followup')" [disabled]="pagenumber == total_page ">
+              <i class="material-icons">navigate_next</i>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="{'active' :tabType== 'Profile'}" (click)="tabType= 'Profile'; leadDetail()"><i
+          class="material-icons">person</i>Basic Detail</button>
+          <button mat-button [ngClass]="{'active' :tabType== 'Followup'}"
+          (click)="tabType = 'Followup'; followupList()"><i class="material-icons">calendar_month</i>Followup</button>
+          <button mat-button [ngClass]="{'active' :tabType== 'Checkin'}"
+          (click)="tabType = 'Checkin'; getCheckin()"><i class="material-icons">location_pin</i>Checkin</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container pt10 pl10 pr10 pb50">
+      <div class="row m10 l10 mt25 mb25" *ngIf="!loader">
+        <div class="col s10 mt16">
+          <div class="stepper">
+            <ul>
+              <li  *ngFor="let row of stageListData; let i=index;" [ngClass]="{'active': row.last_updated_date != '0000-00-00 00:00:00'}">
+                <h5>{{row.stage_name}}</h5>
+                <p>{{row.last_updated_date != '0000-00-00 00:00:00' ? (row.last_updated_date |date : 'dd MMM yyy ,h:mm a') :''}}</p>
+                <i class="material-icons" (click)="updateStage(row.stage_id, row.last_updated_date)" matTooltip="Update Stage">{{row.last_updated_date != '0000-00-00 00:00:00' ? 'check_circle' : 'radio_button_checked'}}</i>
+              </li>
+            </ul>              
+          </div>
+        </div>
+        <div class="col s2">
+          <div class="ring-circle {{'pct' +  (stageCompletionPercentage > 0  ? transform(stageCompletionPercentage) : '0')}}">
+            <div class="text">
+              <span> {{stageCompletionPercentage > 0 ? transform(stageCompletionPercentage) : '0'}}%</span>
+              <ng-container *ngIf="transform(stageCompletionPercentage) > 0">{{stageCompletionCount}} Of {{stageListData.length}} </ng-container>Complete
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <ng-container *ngIf="tabType== 'Profile'">
+        <div class="row">
+          <div class="col s12 m8 l8">
+            <div class="card" *ngIf="!loader">
+              <div class="card-head">
+                <h2>Basic Details</h2>
+                <div class="left-auto">
+                  <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+                  routerLink="edit-lead/{{encrypt_id}}" *ngIf="login_data.edit_enquiry=='1'">
+                  <i class="material-icons">edit</i>
+                </a>
+              </div>
+            </div>
+            
+            
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Enquiry ID</span>
+                  <p>{{lead_detail.id?("ENQ"+lead_detail.id):"--"}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Date</span>
+                  <p>{{lead_detail.date_created | date:'dd MMM yyyy'}}</p>
+                </div>
+                
+                
+                <div class="block-feilds">
+                  <span>Created By</span>
+                  <p>{{lead_detail.created_by_name}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Enquiry Type</span>
+                  <p>{{lead_detail.enquiry_type ? lead_detail.enquiry_type : '---'}}</p>
+                </div>
+                
+                <!-- <ng-container *ngIf="lead_detail.lead_convert == 1"> -->
+                  <div class="block-feilds">
+                    <span> Network Type</span>
+                    <p>{{lead_detail.sub_type ? lead_detail.sub_type : '---'}}</p>
+                  </div>
+                  
+                  <div class="block-feilds">
+                    <span>Conversion Customer Type</span>
+                    <p>{{lead_detail.influencer_type ? lead_detail.influencer_type : ''}}</p>
+                  </div>
+                  
+                <!-- </ng-container> -->
+                
+                
+                <div class="block-feilds">
+                  <span>Source</span>
+                  <p>{{lead_detail.source ? lead_detail.source : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Name</span>
+                  <p>{{lead_detail.name ? lead_detail.name :'---'}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Mobile Number</span>
+                  <p>{{lead_detail.mobile ? lead_detail.mobile :'---'}}</p>
+                </div>
+                
+                <div class="block-feilds">
+                  <span>Alternative Number</span>
+                  <p>{{lead_detail.altNumber ? lead_detail.altNumber :'---'}}</p>
+                </div>
+                
+                
+                <div class="block-feilds">
+                  <span>Email Id</span>
+                  <p>{{lead_detail.email ? lead_detail.email :'---'}}</p>
+                </div>
+                
+                <div class="block-feilds flex-heading">
+                  <div>
+                    <span>Status</span>
+                    <p>{{lead_detail.stage_level ? (lead_detail.stage_level == 'Disqualified' ? 'Junk & CLose' : lead_detail.stage_level) :'---'}}</p>
+                  </div>
+                  <div class="left-auto" *ngIf="login_data.edit_enquiry=='1' && lead_detail.stage_level == 'Inprocess'">
+                    <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                    (click)="changeStatus('updateStatus')">
+                    <i class="material-icons">edit</i>
+                  </a>
+                </div>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>{{lead_detail.assign_to_user_type != 'Dealer' ? 'Assign Sales User' : 'Assign Customer Network'}} </span>
+                <p *ngIf="lead_detail.assign_to_user_type != 'Dealer' && lead_detail.user_name">{{lead_detail.user_name}} {{lead_detail.user_employee_code?(lead_detail.user_employee_code):''}}
+                  <p *ngIf="lead_detail.assign_to_user_type == 'Dealer' && lead_detail.assigned_to_user_name">{{lead_detail.assigned_to_user_name}} {{lead_detail.dr_code?(lead_detail.dr_code):''}}
+                  </p>
+                </div>
+                
+                
+                <div class="block-feilds">
+                  <span>Lead Category</span>
+                  <p>{{stageCompletionPercentage > 0 ? ((transform(stageCompletionPercentage) > 50 && transform(stageCompletionPercentage) < 75 ) ? 'Warm' : (transform(stageCompletionPercentage) > 75 ) ? 'Hot' :'Cold') : 'Cold'}}</p>
+                </div>
+              </div>
+              
+              <div class="grid-box single mt16" *ngIf="lead_detail.description">
+                <div class="block-feilds">
+                  <span>Remark</span>
+                  <p>{{lead_detail.description}}</p>
+                </div>
+              </div>
+              
+              
+              <div class="grid-box single mt16">
+                <div class="block-feilds">
+                  <span>Address</span>
+                  <p>{{lead_detail.address?lead_detail.address+',':''}}
+                    {{lead_detail.city?lead_detail.city+',':''}}
+                    {{lead_detail.district?lead_detail.district+',':''}}
+                    {{lead_detail.state?lead_detail.state+',':''}}
+                    {{lead_detail.pincode?lead_detail.pincode+',':''}}
+                    {{lead_detail.country?lead_detail.country+',':''}}
+                  </p>
+                </div>
+              </div>
+              
+              <div class="grid-box single mt16" *ngIf="lead_detail.lead_reason">
+                <div class="block-feilds">
+                  <span>Reason</span>
+                  <p>{{lead_detail.lead_reason}}</p>
+                </div>
+              </div>
+              
+              
+              
+              <div class="row col-gap mt10" *ngIf="lead_detail.image.length > 0">
+                <div class="col s3" *ngFor="let row of lead_detail.image; let i=index">
+                  <div class="card-image db">
+                    <a (click)="goToImage(enquiryUrl+row.image)">
+                      <img src="{{enquiryUrl+row.image}}">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <ng-container *ngIf="!loader">
+            <div class="card mt16" *ngIf="lead_detail.form_builder.length > 0">
+              <div class="card-head">
+                <h2>Additional Details</h2>
+              </div>
+              <div class="card-body">
+                <div class="grid-box">
+                  <ng-container *ngFor="let row of lead_detail.form_builder">
+                    <div class="block-feilds" *ngIf="row.value && row.field_type != 'File'">
+                      <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</span>
+                      <p>{{row.value ? row.value : ''}}</p>
+                    </div>
+                    
+                  </ng-container>
+                  <ng-container *ngFor="let row of lead_detail.form_builder_dependent">
+                    <div class="block-feilds" *ngIf="row.value">
+                      <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</span>
+                      <p>{{row.value ? row.value : ''}}</p>
+                    </div>
+                  </ng-container>
+                </div>
+                
+                <div class="img-container">
+                  <ng-container  *ngFor="let row of lead_detail.form_builder">
+                    <div class="image-block mt10" *ngIf="row.value && row.field_type == 'File'">
+                      <img [src]="service.attachmentUrl+row.value" (click)="goToImage(service.attachmentUrl+row.value)" style="cursor: zoom-in;">
+                      <p>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</p>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <div class="card" *ngIf="loader">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col s12 m4 l4">
+          
+          <div class="card" *ngIf="!loader">
+            <div class="card-head">
+              <h2>Logs</h2>
+            </div>
+            
+            <div class="logs-box">
+              <ng-container *ngFor="let row of lead_logs">
+                <div class="logshead ">{{row.changes_by_name}} :- {{row.date_created | date:'dd MMM yyyy'}}</div>
+                <div class="logscontent ">
+                  <span>Remark : </span> {{row.msg ? row.msg : row.remark}}
+                </div>
+              </ng-container>
+            </div>
+            
+          </div>
+          
+          <div class="card" *ngIf="loader">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                <div class="sk-box">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+    </ng-container>
+    
+    <div *ngIf="tabType== 'Followup'" style="margin: -10px -10px 0px -10px;">
+      <div class="cs-table">
+        <div class="sticky-head" style="top: -10px;">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w50">S.No</th>
+                <th class="w90">Date Created</th>
+                <th class="w100">Created By</th>
+                <th class="w100">Followup Date</th>
+                <th class="w100">Followup Time</th>
+                <th class="w200">Assign To</th>
+                <th>Remark</th>
+              </tr>
+            </table>
+          </div>
+          
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w50">&nbsp;</th>
+                <th class="w90">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input">
+                      <input matInput [matDatepicker]="picker2" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" [max]="minDate" (dateChange)="followupList()" readonly>
+                      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                      <mat-datepicker #picker2></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." name="created_by_name"
+                      [(ngModel)]="filter.created_by_name" (keyup.enter)="followupList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input">
+                      <input matInput [matDatepicker]="next_follow_date" placeholder="Date" name="next_follow_date"
+                      [(ngModel)]="filter.next_follow_date" (dateChange)="followupList()" readonly>
+                      <mat-datepicker-toggle matSuffix [for]="next_follow_date"></mat-datepicker-toggle>
+                      <mat-datepicker #next_follow_date></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">&nbsp;</th>
+                <th class="w200">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." name="assign_to_name" [(ngModel)]="filter.assign_to_name"
+                      (keyup.enter)="followupList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th>&nbsp;</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of followup_list; let i=index">
+                  <td class="w50">{{ i + 1 + sr_no }}</td>
+                  <td class="w90">{{row.date_created | date:'dd MMM yyyy'}}</td>
+                  <td class="w100">{{row.created_by_name}}</td>
+                  <td class="w100">{{row.next_follow_date | date:'dd MMM yyyy'}}</td>
+                  <td class="w100">
+                    <ng-container *ngIf="row.next_follwup_time != '00:00:00'">{{row.next_follwup_time}}</ng-container>
+                  </td>
+                  <td class="w200">{{row.assign_to_name}} ({{row.emp_code}})</td>
+                  <td>{{row.description}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="loader">
+                
+                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                  <td class="w50">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w90">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w200">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td>
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+              
+            </table>
+          </div>
+        </div>
+        
+        <div *ngIf="data_not_found">
+          <app-not-result-found></app-not-result-found>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="tabType== 'Checkin'" style="margin: -10px -10px 0px -10px;">
+      <div class="cs-table">
+        <div class="left-auto jfe df flex-gap-10">
+
+          <ng-container *ngIf="filter.date_from">
+            <div class="filteDate">
+              <span>Date From</span>
+              <h3>{{filter?.date_from | date:'dd MMM, yyyy'}}</h3>
+            </div>
+            <div class="filteDate">
+              <span>Date To</span>
+              <h3>{{filter?.date_to | date:'dd MMM, yyyy'}}</h3>
+            </div>
+          </ng-container>
+
+          
+          <a mat-icon-button matTooltip="Refresh" (click)="refresh(tabType)">
+            <i class="material-icons">refresh</i>
+          </a>
+          
+          <div class="pagination" *ngIf="checkinData.length > 0">
+            <div class="pagination-content">
+              Pages
+              <span>{{pagenumber}}</span>
+              of
+              <span>{{total_page}}</span>
+            </div>
+            <div class="page-nav">
+              <button mat-icon-button matTooltip="Older" (click)="pervious('checkin')"
+              [disabled]="start == 0 || total_page == 0">
+              <i class="material-icons">navigate_before</i>
+            </button>
+            <button mat-icon-button matTooltip="Newer" (click)="nextPage('checkin')"
+            [disabled]="pagenumber == total_page || total_page == 0 ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="sticky-head" style="top: -10px;">
+      <div class="table-head">
+        <table>
+          <tr>
+            <th class="w60">S.no.</th>
+            <th class="w130">Date Created  
+            <div class="sorting" *ngIf="login_data.user_type!='DMS'">
+              <a (click)="openBottomSheet()" matTooltip="Date Filter">
+                <i class="material-icons">filter_alt</i>
+              </a>
+            </div></th>
+            <th class="w130" *ngIf="login_data.user_type!='DMS'">
+              {{login_data.user_type!='DMS'?'Employee Code':'Code'}}</th>
+              <th class="w180">Employee Name</th>
+              <th class="w180" *ngIf="login_data.user_type=='DMS'">Dealer Name</th>
+              
+              <th class="w150" *ngIf="login_data.user_type!='DMS'">Reporting Manager </th>
+              <!-- <th class="w180">Company Name</th> -->
+              <!-- <th>Address</th> -->
+              <th class="w100">Check in</th>
+              <th class="w100">Check out</th>
+              <th class="w100">Total Time Spend</th>
+              <th>Remark</th>
+            </tr>
+          </table>
+        </div>
+        
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w130">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date"
+                    name="date_created" [(ngModel)]="filter.date_created"
+                    (dateChange)="date_format(tabType)" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w130" *ngIf="login_data.user_type!='DMS'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="emp_code"
+                    [(ngModel)]="filter.emp_code"
+                    (keyup.enter)="!filter.emp_code ? refresh(tabType) : getCheckin()">
+                  </mat-form-field>
+                </div>
+              </th>
+              
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="emp_name"
+                    [(ngModel)]="filter.emp_name"
+                    (keyup.enter)="!filter.emp_name ? refresh(tabType) : getCheckin()">
+                  </mat-form-field>
+                </div>
+              </th>
+              
+              <th class="w180" *ngIf="login_data.user_type=='DMS'">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="company_name"
+                    [(ngModel)]="filter.company_name"
+                    (keyup.enter)="!filter.company_name ? refresh(tabType) : getCheckin()">
+                  </mat-form-field>
+                </div>
+              </th>
+              
+              <th class="w150" *ngIf="login_data.user_type!='DMS'">
+                <!-- <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." type="text" name="reporting_manager"
+                    [(ngModel)]="filter.reporting_manager"
+                    (keyup.enter)="!filter.reporting_manager ? refresh(tabType) : getCheckin()">
+                  </mat-form-field>
+                </div> -->
+              </th>
+              <th class="w100">&nbsp;</th>
+              <th class="w100">&nbsp;</th>
+              <th class="w100">{{totalCheckinTime ? totalCheckinTime : ''}}</th>
+              <th>&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      
+      
+      <div class="table-container" *ngIf="checkinData.length > 0">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!checkinLoader">
+              <tr *ngFor="let row of checkinData; let i =index">
+                <td class="w60">{{i+1+sr_no}}</td>
+                <td class="w130">{{row.date_created | date : 'd MMM y'}}</td>
+                <td class="w130" *ngIf="login_data.user_type!='DMS'">{{row.employee_id}}</td>
+                <td class="w180">{{row.created_by_name | titlecase}}</td>
+                <td class="w180" *ngIf="login_data.user_type=='DMS'">{{row?.company_name |
+                  titlecase}}</td>
+                  <td class="w150" *ngIf="login_data.user_type!='DMS'">{{row.reporting_manager_name |
+                    titlecase}}</td>
+                    <td class="w100">
+                      <ng-container
+                      *ngIf="row.visit_start == '0000-00-00 00:00:00'">---</ng-container>
+                      <ng-container
+                      *ngIf="row.visit_start != '0000-00-00 00:00:00'">{{row.visit_start|
+                        date:'h:mm a'}}</ng-container>
+                      </td>
+                      <td class="w100">
+                        <ng-container *ngIf="row.visit_end == '0000-00-00 00:00:00'">---</ng-container>
+                        <ng-container *ngIf="row.visit_end != '0000-00-00 00:00:00'">{{row.visit_end |
+                          date:'h:mm a'}}</ng-container>
+                        </td>
+                        <td class="w100">{{row.total_time_spend}}</td>
+                        <td>{{row.remark}}</td>
+                      </tr>
+                    </ng-container>
+                    
+                    <ng-container *ngIf="checkinLoader">
+                      <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                        <td class="w60">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w130">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w130">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w150">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w150">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="W100 text-right">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="W100 text-right">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="W100 text-right">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td>&nbsp;</td>
+                      </tr>
+                    </ng-container>
+                  </table>
+                </div>
+              </div>
+              <ng-container *ngIf="checkinData.length == 0">
+                <app-not-result-found></app-not-result-found>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        
+        
+        
+        
+        
+        <div class="fab-btns">
+          
+          <button (click)="lastBtnValue('activity'); openDialog(lead_detail.type, lead_detail.id,lead_detail.company_name, lead_detail.name,'remark')" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='activity'}">
+            <i class="material-icons">add</i>
+            Add Remark
+          </button>
+          
+          <ng-container *ngIf="lead_detail.stage_level == 'Qualified'">
+            <button (click)="lastBtnValue('follow_up'); openDialog(lead_detail.type, lead_detail.state,lead_detail.company_name, lead_detail.name,'followup')" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='follow_up'}">
+              <i class="material-icons">add</i>
+              Add Followup
+            </button>
+          </ng-container>
+          <!--  -->
+          
+          <button (click)="lastBtnValue('status'); changeStatus('assign');" *ngIf="lead_detail.stage_level=='Pending' || lead_detail.stage_level=='Lost'" mat-fab  color="primary" [ngClass]="{'pulse': fabBtnValue=='status'}">
+            <i class="material-icons">update</i>
+            Change Status
+          </button>
+          
+          
+          <button (click)="lastBtnValue('status'); changeStatus('reassign');" *ngIf="lead_detail.stage_level=='Assigned' || lead_detail.stage_level=='Inprocess' " mat-fab  color="primary" [ngClass]="{'pulse': fabBtnValue=='status'}">
+            <i class="material-icons">update</i>
+            Reassign User
+          </button>
+        </div>
+      </div>

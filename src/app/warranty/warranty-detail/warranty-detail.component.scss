@@ -1,0 +1,8 @@
+.card-body .img-container{
+    display: flex;
+    justify-content: space-between;
+}
+.card-body .img-container .image-block{
+    width: 100% !important;
+}
+.card-body .img-container .image-block img{width: 100% !important; height: 100% !important;}

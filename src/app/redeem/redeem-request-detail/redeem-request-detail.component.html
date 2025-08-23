@@ -1,0 +1,276 @@
+
+<div class="main-container" >
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Redeem Detail</h2>
+    
+  </div>
+  
+  <div class="container pt10 pl10 pr10 pb50" >
+    <div class="row"  >
+      <div class="col s12" >
+        <div class="card">
+          <div class="card-head">
+            <h2>Redeem Status</h2>
+          </div>
+          <div class="card-body">
+            
+            <div class="tracking">
+              <div class="tracking-header">
+                <ul>
+                  
+                  <li class="check">
+                    <span>1</span>
+                    <div class="tracking-con">
+                      <p>Redeem Request</p>
+                      <p>{{redeem_detail.date_created | date:'dd MMM yyyy'}}</p>
+                    </div>
+                  </li>
+                  
+                  <li  [ngClass]="redeem_detail.status == 'Approved' ?'check' :'reject'">
+                    <span>2</span>
+                    <div class="tracking-con">
+                      <p>{{redeem_detail.status}}</p>
+                      <p *ngIf="redeem_detail.status == 'Approved'">{{redeem_detail.redeem_status_date | date : 'dd MMM yyyy'}}</p>
+                    </div>
+                  </li>
+                  
+                  <li *ngIf="redeem_detail.redeem_type == 'Gift'" [ngClass]="redeem_detail.gift_status == 'Shipped' ?'check' :redeem_detail.status == 'Reject' ?'reject':''">
+                    <div class="tracking-list">
+                      <span>
+                        <span>3</span>
+                      </span>
+                    </div>
+                    
+                    <div class="tracking-con">
+                      <p>{{redeem_detail.gift_status}}</p>
+                      <p *ngIf="redeem_detail.shipped_date != '0000-00-00 00:00:00'">{{redeem_detail.shipped_date | date:'dd MMM yyyy'}}</p>
+                    </div>
+                  </li>
+                  <li *ngIf="redeem_detail.redeem_type == 'Cash'" [ngClass]="redeem_detail.gift_status == 'Transferred' ?'check' : redeem_detail.status == 'Reject' ?'reject':''" >
+                    <div class="tracking-list">
+                      <span>
+                        <span>3</span>
+                      </span>
+                    </div>
+                    
+                    <div  class="tracking-con">
+                      <p>{{redeem_detail.gift_status}}</p>
+                      <p *ngIf="redeem_detail.transfer_date != '0000-00-00'">{{redeem_detail.transfer_date | date:'dd MMM yyyy'}}</p>
+                    </div>
+                  </li>
+                  
+                  <li  [ngClass]="redeem_detail.gift_status == 'Received' ?'check' : redeem_detail.status == 'Reject' ?'reject':''">
+                    <div class="tracking-list">
+                      <span>4</span>
+                    </div>
+                    <div class="tracking-con">
+                      <p>Received</p>
+                      <p *ngIf="redeem_detail.recieved_date != '0000-00-00 00:00:00'">{{redeem_detail.recieved_date | date:'d MMM y'}}</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      
+    </div>
+    <div class="row"  >
+      <div class="col s12 m8 l8" >
+        <div class="card">
+          <div class="card-head">
+            <h2>User Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Name</span>
+                <p>{{redeem_detail.user_name | titlecase}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Mobile No.</span>
+                <p>{{redeem_detail.mobile_no}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Date of Birth</span>
+                <p>{{redeem_detail.dob == '0000-00-00' ?  '---' : (redeem_detail.dob  | date:'dd MMM yyyy')}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Email Id</span>
+                <p>{{redeem_detail.email ? redeem_detail.email : '--'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Status</span>
+                <p>{{redeem_detail.status}}</p>
+              </div>
+            </div>
+            
+            <div class="grid-box single mt16" *ngIf="redeem_detail.address">
+              <div class="block-feilds">
+                <span>Address</span>
+                <p>{{redeem_detail.address}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card mt10">
+          <div class="card-head">
+            <h2>Redeem Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date</span>
+                <p>{{redeem_detail.redeem_status_date | date:'dd MMM yyyy'}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Redeem ID</span>
+                <p>{{redeem_detail.req_id}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Redeem Type</span>
+                <p>{{redeem_detail.redeem_type}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Points Request</span>
+                <p>{{redeem_detail.point}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="redeem_detail.redeem_type == 'Cash'">
+                <span>Equivalent Cash</span>
+                <p>{{redeem_detail.cash_point}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Redeem Status</span>
+                <p>{{redeem_detail.status}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="redeem_detail.status != 'Reject'">
+                <span>Gift Points Status</span>
+                <p>{{redeem_detail.gift_status}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="redeem_detail.gift_status == 'Transferred'" >
+                <span>Payment Mode</span>
+                <p>{{redeem_detail.payment_mode}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="redeem_detail.gift_status == 'Shipped'" >
+                <span>Shipping Type</span>
+                <p>{{redeem_detail.shipping_type}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="redeem_detail.payment_mode != 'Cash' && redeem_detail.gift_status == 'Transferred' " >
+                <span>Transaction No.</span>
+                <p>{{redeem_detail.transaction_no}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="redeem_detail.gift_status == 'Transferred'">
+                <span>Transaction Date</span>
+                <p>{{redeem_detail.transfer_date != '0000-00-00 00:00:00' ? (redeem_detail.transfer_date | date:'dd MMM yyyy'):'---'}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="redeem_detail.gift_status == 'Shipped'">
+                <span>Shipped Date</span>
+                <p>{{redeem_detail.shipped_date != '0000-00-00 00:00:00' ? (redeem_detail.shipped_date | date:'dd MMM yyyy'):'---'}}</p>
+              </div>
+            </div>
+            
+            <div class="grid-box single mt16">
+              
+              <div class="block-feilds" *ngIf="redeem_detail.gift_status == 'Shipped'">
+                <span>Shipping Remark</span>
+                <p>{{redeem_detail.shipping_remark}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="redeem_detail.gift_status == 'Transferred'">
+                <span>Transferred Remark</span>
+                <p>{{redeem_detail.transfer_remark}}</p>
+              </div>
+              <div class="block-feilds"*ngIf="redeem_detail.gift_status == 'Shipped'" >
+                <span>Shipping Address</span>
+                <p>{{redeem_detail.shipping_address}}</p>
+              </div>
+
+              <div class="block-feilds" *ngIf="redeem_detail.reject_reason" >
+                <span>Reason</span>
+                <p>{{redeem_detail.reject_reason}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col s12 m4 l4" >
+        <div class="card">
+          <div class="card-head">
+            <h2>Gift Details</h2>
+          </div>
+          <div class="card-body">
+            
+            <div class="grid-box single mb10">
+              <div class="block-feilds">
+                <span>Title</span>
+                <p>{{redeem_detail.gift_name}}</p>
+              </div>
+            </div>
+            <div class="grid-box three">
+              <div class="block-feilds">
+                <span>Date Created</span>
+                <p>{{redeem_detail.gift_date_created | date :'dd MMM yyyy'}}</p>
+              </div>
+              
+              
+              <div class="block-feilds">
+                <span>Created By</span>
+                <p>{{redeem_detail.gift_created_by_name}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="redeem_detail.redeem_type == 'Gift'">
+                <span>Points</span>
+                <p><strong>{{redeem_detail.gift_point_value}}</strong></p>
+              </div>
+              <ng-container *ngIf="redeem_detail.redeem_type == 'Cash'">
+                <div class="block-feilds" >
+                  <span>Range Start</span>
+                  <p><strong>{{redeem_detail.range_start}}</strong></p>
+                </div>
+                <div class="block-feilds" >
+                  <span>Range End</span>
+                  <p><strong>{{redeem_detail.range_end}}</strong></p>
+                </div>
+                <div class="block-feilds" >
+                  <span>1 Point Value</span>
+                  <p><strong>{{redeem_detail.point_range_value}}</strong></p>
+                </div>
+              </ng-container>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+
+
+
+
+
+
+

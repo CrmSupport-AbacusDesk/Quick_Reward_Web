@@ -1,0 +1,128 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2> {{id == 0 ? 'Add New' : 'Edit'}} Pop & Gift</h2>
+    </div>
+
+    <div class="container pt10 pl10 pr10 pb50">
+
+        <form #f="ngForm" (ngSubmit)="((data.qty_stock>0) &&(f.valid && add_gift()))">
+            <div class="row">
+                <div class="col s12">
+                    <div class="card pb0">
+                        <div class="card-head">
+                            <h2>Basic Information</h2>
+                        </div>
+                        <div class="card-body cs-form">
+                            <div class="row">
+
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Gift Name</mat-label>
+                                        <input matInput placeholder="Type Here ..." type="text" name="item_name"
+                                            #item_name="ngModel" [(ngModel)]="data.item_name" required>
+                                    </mat-form-field>
+
+                                    <div class="alert alert-danger" *ngIf="item_name.touched || f.submitted">
+                                        <p *ngIf="item_name.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+
+                                
+                                <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Qty</mat-label>
+                                        <input matInput type="text" placeholder="Type Here ..."
+                                            onkeypress="return event.charCode>=48 && event.charCode<=57"
+                                            name="qty_stock" #qty_stock="ngModel" [(ngModel)]="data.qty_stock"
+                                            (ngModelChange)="clearValue()" [disabled]="id != 0" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="(data.qty_stock<=0)">
+                                        Quantity should be greater than 0
+                                    </div>
+                                    <div class="alert alert-danger" *ngIf="qty_stock.touched || f.submitted">
+                                        <p *ngIf="qty_stock.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                                <!-- <div class="col s12 m2 l2">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Rate</mat-label>
+                                        <input matInput type="text" placeholder="Type Here ..."
+                                            onkeypress="return event.charCode>=48 && event.charCode<=57" name="rate"
+                                            #rate="ngModel" [(ngModel)]="data.rate"
+                                            (ngModelChange)="totalAmount(data.rate)" [disabled]="id != 0" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="rate.touched || f.submitted">
+                                        <p *ngIf="rate.errors?.required">This field is required</p>
+                                    </div>
+                                </div>
+                                <div class="col s12 m2 l2">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Total Amount</mat-label>
+                                        <input matInput type="text" placeholder="Type Here ..."
+                                            onkeypress="return event.charCode>=48 && event.charCode<=57"
+                                            name="total_amount" #total_amount="ngModel" [(ngModel)]="data.total_amount"
+                                            required readonly>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="total_amount.touched || f.submitted">
+                                        <p *ngIf="total_amount.errors?.required">This field is required</p>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <div class="row">
+                                <div class="col s12 m12 l12">
+                                    <mat-form-field class="cs-input" appearance="outline">
+                                        <mat-label>Description</mat-label>
+                                        <textarea matInput placeholder="Type Here ..." class="h80" name="description"
+                                            #description="ngModel" [(ngModel)]="data.description"></textarea>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="cs-file">
+                                        <p>Upload Image</p>
+                                        <ul class="product-images">
+                                            <li class="multi-images">
+                                                <label class="cs-file-img" *ngFor="let val of urls; let i = index">
+                                                    <img [src]="img_id ? url+val  : val" alt="your image">
+                                                    <span class="cancel-icon">
+                                                        <a class="close">
+                                                            <i class="material-icons dp48"
+                                                                (click)="delete_img(i)">clear</i>
+                                                        </a>
+                                                    </span>
+                                                </label>
+
+                                                <label class="cs-file-img default" *ngIf="urls.length != 1">
+                                                    <i class="material-icons">cloud_upload</i>
+                                                    <input type="file" name="image" placeholder="Upload file"
+                                                        accept=".png,.jpg,.jpeg"  style="display: none;"
+                                                        (change)="insertImage($event)">
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <div class="text-right">
+                        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent"
+                            type="submit" [disabled]="savingFlag == true">
+                            {{savingFlag == true ? 'Saving' : (id == 0 ? 'Save' : 'Update')}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

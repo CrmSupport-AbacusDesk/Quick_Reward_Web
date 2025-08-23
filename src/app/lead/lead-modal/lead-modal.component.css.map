@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "change-status.component.scss"
+    ],
+    "names": [],
+    "file": "change-status.component.css"
+}

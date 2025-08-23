@@ -1,0 +1,105 @@
+<div class="edit-modal" *ngIf="data?.type=='eachPoints'||data?.type=='levelPoints'">
+    <p class="heading">Item Point</p>
+    <div mat-dialog-content>
+        <div class="table-container">
+            <div class="table-content">
+                <table class="dataList">
+                    <tr>
+                        <th class="text-left wide-itemName">{{data.otherData.scheme_type}}</th>
+                        <th class="text-right" *ngIf="data?.type=='eachPoints'">Target</th>
+                        <th class="text-left" *ngIf="data?.type=='levelPoints'">Product Level Point</th>
+                    </tr>
+                    <tr *ngFor="let row of data?.formData let i = index">
+                        <td>{{row?.item_name}}</td>
+                        <td *ngIf="data?.type=='eachPoints'" class="w100 text-right">
+                            <div class="flex align-center justify-left">
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="number" matInput class="text-right " name="each_point{{i}}"
+                                        #each_point="ngModel" [(ngModel)]="row.each_point">
+                                    </mat-form-field>
+                                </div>
+                                <!-- <span>{{row?.uom ? row?.uom : '--'}}</span> -->
+                            </div>
+                        </td>
+                        <td *ngIf="data?.type=='levelPoints'" class="w100 text-right">
+                            <ng-container>
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="number" matInput class="text-right" [disabled]="data?.isViewOnly" name="product_level_point{{i}}"
+                                        #product_level_point="ngModel" [(ngModel)]="row.product_level_point">
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
+                        </td>
+                    </tr>
+                    <!-- <tr *ngFor="let row of pointList; let i = index">
+                        <td>second category</td>
+                        <td *ngIf="data?.type=='eachPoints'" class="w100 text-center">
+                            <ng-container>
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="number" matInput class="text-right" name="point{{i}}"
+                                        #point="ngModel" [(ngModel)]="row.point">
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
+                        </td>
+                        <td *ngIf="data?.type=='levelPoints'" class="w100 text-center">
+                            <ng-container>
+                                <div class="th-search-acmt">
+                                    <mat-form-field>
+                                        <input type="number" matInput class="text-right" name="product_level_point{{i}}"
+                                        #product_level_point="ngModel" [(ngModel)]="row.product_level_point">
+                                    </mat-form-field>
+                                </div>
+                            </ng-container>
+                        </td>
+                    </tr> -->
+                </table>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <div class="text-right wp100">
+            <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button mat-raised-button color="accent" *ngIf="!data?.isViewOnly" (click)="submitData()" type="submit">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="edit-modal" *ngIf="data?.type=='Category'||data?.type=='category_wise'||data?.type=='Product'||data?.type=='Per Item Point'||data?.type=='product_wise'||data?.type=='Area'">
+    <p class="heading">{{data?.formData[0].type}} Wise List</p>
+    <div mat-dialog-content>
+        <table class="dataList">
+            <tr *ngIf="data?.type=='Per Item Point'||data?.type=='eachPoints'||data?.type=='levelPoints'||data?.otherData?.scheme_standard=='Each'||data?.otherData?.scheme_standard=='Over All Each'">
+                <th [ngClass]="{'wide-itemName':data?.type=='Per Item Point'}" class="text-left">{{data?.formData[0].type}}</th>
+                <th class="text-right w80" *ngIf="data?.type=='eachPoints'||data?.otherData?.scheme_standard=='Each'||data?.otherData?.scheme_standard=='Over All Each'">Target</th>
+                <th class="text-right" *ngIf="data?.type=='levelPoints'||data?.otherData?.point_type=='Product Wise Points'">{{data?.otherData?.slab_type == 'Volume' ? 'Qty' : '--'}}</th>
+                <th class="text-right w120" *ngIf="data?.type=='Per Item Point' && data?.otherData?.slab_type=='Value' && (data?.otherData?.reward_type == 'Gift' || data?.otherData?.reward_type == 'Point' || data?.otherData?.reward_type == 'Both')">Amount (in Rs.)</th>
+                <th class="text-right" *ngIf="data?.type=='Per Item Point' && data?.otherData?.slab_type=='Volume' && (data?.otherData?.reward_type == 'Gift' || data?.otherData?.reward_type == 'Both')">Qty</th>
+                <th class="text-right" *ngIf="data?.type=='Per Item Point' && data?.otherData?.scheme_standard == 'Flat'">Points</th>
+            </tr>
+            <tr *ngFor="let row of data?.formData">
+                <td [ngClass]="{'wide-itemName':data?.type=='Per Item Point'}">
+                    {{data?.type=='Area'?row:null}}
+                    {{(data?.type=='Product'||data?.type=='Per Item Point'||data?.type=='Category')?row?.item_name:null}}
+                </td>
+                <td class="text-right ptColor" *ngIf="data?.type=='eachPoints'||data?.otherData?.scheme_standard=='Each'||data?.otherData?.scheme_standard=='Over All Each'">{{row?.each_point}}</td>
+                <td class="text-right ptColor" *ngIf="data?.type=='levelPoints'||data?.otherData?.point_type=='Product Wise Points'">{{row?.product_level_point}}</td>
+                <td class="text-right" *ngIf="data?.type=='Per Item Point'">{{row?.points||0}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="edit-modal" *ngIf="data?.type=='imageViewer'">
+    <p class="heading">Banner</p>
+    <div mat-dialog-content>
+        <div *ngFor="let url of data?.formData">
+            <img src="{{url}}" />
+        </div>
+    </div>
+</div>

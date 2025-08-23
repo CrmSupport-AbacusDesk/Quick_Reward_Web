@@ -1,0 +1,500 @@
+
+.new-table 
+{
+    
+    overflow: auto;
+    margin: -14px -15px;
+    
+    table
+    {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        box-sizing: border-box;
+        
+        tr
+        {
+            th
+            {
+                .table-head
+                {
+                    padding: 0px 15px;
+                    border: solid 1px #d8d6d6;
+                    border-left: 0;
+                    border-right: 0;
+                    background: #f7f7f7;
+                    
+                    table
+                    {
+                        tr
+                        {
+                            th
+                            {
+                                border-right: 1px solid #dcdbdb;
+                                padding: 10px;
+                                font-size: 11px;
+                                font-weight: 500;
+                                color: #000000;
+                                position: relative;
+                                text-align: left;
+                                
+                                &:last-child
+                                {
+                                    border-right: 0px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            td
+            {
+                padding: 15px;
+                
+                .table-body 
+                {
+                    width: 100%;
+                    border-radius: 8px;
+                    border: 1px solid #ccc;
+                    
+                    table
+                    {
+                        tr
+                        {
+                            td
+                            {
+                                border: 1px solid #dcdbdb;
+                                padding: 10px;
+                                background: #ffffff;
+                                font-size: 11px;
+                                font-weight: normal !important;
+                                color: #383737;
+                                position: relative;
+                                
+                                &.point
+                                {
+                                    background: #00aa0b;
+                                    text-align: center;
+                                    color: #ffffff;
+                                }
+                                
+                                &.eligible
+                                {
+                                    background: #f1f1f1;
+                                    text-align: center;
+                                    font-weight: 500;
+                                }
+                                
+                                &.day
+                                {
+                                    background: #ed3237;
+                                    text-align: center;
+                                    color: #ffffff;
+                                }
+                                
+                                &:first-child
+                                {
+                                    border-left: 0px;
+                                }
+                                
+                                &:last-child
+                                {
+                                    border-right: 0px;
+                                }
+                                
+                                p
+                                {
+                                    font-size: 15px;
+                                    font-weight: bold;
+                                }
+                                
+                                span
+                                {
+                                    padding-right: 17px;
+                                    font-weight: normal;
+                                    font-size: 14px;
+                                    color: #000;
+                                }
+                            }
+                            
+                            
+                            &:first-child
+                            {
+                                
+                                td
+                                {
+                                    border-top: 0px;
+                                    
+                                    &:first-child
+                                    {
+                                        border-radius: 8px;
+                                    }
+                                    
+                                    &:last-child
+                                    {
+                                        border-radius: 0px 8px 0px 0px;
+                                    }
+                                }
+                            }
+                            
+                            &:last-child
+                            {
+                                td
+                                {
+                                    border-bottom: 0px;
+                                    
+                                    &:first-child
+                                    {
+                                        border-radius: 0px 0px 0px 8px;
+                                    }
+                                    
+                                    &:last-child
+                                    {
+                                        border-radius: 0px 0px 8px 0px;
+                                    }
+                                }
+                            }
+                            
+                            &:hover
+                            {
+                                td
+                                {
+                                    background: #f7f7f7;
+                                    transition: 0.5s;
+                                    
+                                    &.point
+                                    {
+                                        background: #00aa0b;
+                                        color: #ffffff;
+                                    }
+                                    
+                                    &.eligible
+                                    {
+                                        background: #f1f1f1;
+                                    }
+                                    
+                                    &.day
+                                    {
+                                        background: #ed3237;
+                                        color: #ffffff;
+                                    }
+                                }
+                            }
+                            
+                            &.remove-border
+                            {
+                                td
+                                {
+                                    border-top: solid 1px #ccc !important;
+                                    border: none;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+.enter-form
+{
+    display: flex;
+    align-items: center;
+    border: solid 1px #bdb8b8;
+    width: 130px;
+    
+    .t-head
+    {
+        padding: 5px;
+        background: #ccc;
+        height: 24px;
+
+        p
+        {
+           font-size: 11px !important;
+        }
+    }
+    
+    input
+    {
+        width: 102px;
+        border: none;
+        height: 24px;
+        outline: none;
+        padding-left: 5px;
+        font-size: 13px;
+        padding: 1px;
+    }
+    
+    .t-save
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #12af12;
+        display: none;
+        color: #fff;
+        cursor: pointer;
+        width: 27px;
+
+
+        i
+        {
+            font-size: 20px;
+        }
+    }
+    
+    .t-edit
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: skyblue;
+        cursor: pointer;
+        padding: 1px;
+        width: 27px;
+
+        i
+        {
+            font-size: 20px;
+        }
+    }
+    
+    
+    &.active
+    {
+        
+        .t-save
+        {
+            display: inherit;
+        }
+        
+        .t-edit
+        {
+            display: none;
+        }
+    }
+}
+
+.marge
+{
+    background: #711e9c !important;
+    color: #fff !important;
+    border-radius: 6px 0px 0px 4px !important;
+    
+    h4
+    {
+        transform: rotate(-90deg);
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: normal;
+    }
+}
+
+
+.size-10
+{
+    h4
+    {
+        font-size: 20px;
+    }
+}
+
+
+
+.fixed-table
+{
+    background: #ffffff;
+    height: 30%;
+    bottom: 0;
+    width: 100%;
+    right: 0;
+    padding: 50px 0px;
+    z-index: 2;
+    
+    
+    
+    table
+    {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        box-sizing: border-box;
+        
+        tr
+        {
+            th
+            {
+                .table-head
+                {
+                    padding: 0px 15px;
+                    border: solid 1px #d8d6d6;
+                    border-left: 0;
+                    border-right: 0;
+                    background: #f7f7f7;
+                    
+                    table
+                    {
+                        tr
+                        {
+                            th
+                            {
+                                border-right: 1px solid #dcdbdb;
+                                padding: 10px;
+                                font-size: 14px;
+                                text-transform: capitalize;
+                                font-weight: 500;
+                                color: #000000;
+                                position: relative;
+                                text-align: left;
+                                
+                                &:last-child
+                                {
+                                    border-right: 0px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            td
+            {
+                
+                
+                .table-body 
+                {
+                    width: 100%;
+                    
+                    
+                    table
+                    {
+                        tr
+                        {
+                            
+                            border-bottom: solid 1px #ccc;
+                            td
+                            {
+                                // border: 1px solid #dcdbdb;
+                                padding: 10px;
+                                background: #ffffff;
+                                font-size: 12px;
+                                font-weight: normal;
+                                color: #383737;
+                                position: relative;
+                                
+                                &.point
+                                {
+                                    background: #00aa0b;
+                                    text-align: center;
+                                    color: #ffffff;
+                                }
+                                
+                                &.eligible
+                                {
+                                    background: #f1f1f1;
+                                    text-align: center;
+                                    font-weight: 500;
+                                }
+                                
+                                &.day
+                                {
+                                    background: #ed3237;
+                                    text-align: center;
+                                    color: #ffffff;
+                                }
+                                
+                                &:first-child
+                                {
+                                    border-left: 0px;
+                                }
+                                
+                                &:last-child
+                                {
+                                    border-right: 0px;
+                                }
+                                
+                                p
+                                {
+                                    font-size: 14px;
+                                    font-weight: 700;
+                                }
+                            }
+                            
+                            
+                            &:first-child
+                            {
+                                
+                                td
+                                {
+                                    border-top: 0px;
+                                    
+                                    &:first-child
+                                    {
+                                        border-radius: 8px;
+                                    }
+                                    
+                                    &:last-child
+                                    {
+                                        border-radius: 0px 8px 0px 0px;
+                                    }
+                                }
+                            }
+                            
+                            &:last-child
+                            {
+                                td
+                                {
+                                    border-bottom: 0px;
+                                    
+                                    &:first-child
+                                    {
+                                        border-radius: 0px 0px 0px 8px;
+                                    }
+                                    
+                                    &:last-child
+                                    {
+                                        border-radius: 0px 0px 8px 0px;
+                                    }
+                                }
+                            }
+                            
+                            &:hover
+                            {
+                                td
+                                {
+                                    background: #f7f7f7;
+                                    transition: 0.5s;
+                                    
+                                    &.point
+                                    {
+                                        background: #00aa0b;
+                                        color: #ffffff;
+                                    }
+                                    
+                                    &.eligible
+                                    {
+                                        background: #f1f1f1;
+                                    }
+                                    
+                                    &.day
+                                    {
+                                        background: #ed3237;
+                                        color: #ffffff;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}

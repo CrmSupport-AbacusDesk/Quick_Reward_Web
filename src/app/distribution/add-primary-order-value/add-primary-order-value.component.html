@@ -1,0 +1,32 @@
+<div class="edit-modal">
+  <form #update_basic="ngForm" name="update_basic" (ngSubmit)="submit()" validate>
+    <p class="heading">Add Primary Order</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s6">
+            <mat-form-field class="cs-input"  appearance="outline">
+              <mat-label>Select User </mat-label>
+              <mat-select name="user" placeholder="Select User" #user="ngModel" [(ngModel)]="val.user" [ngClass]="{'has-error' : user.invalid } " required>
+                <mat-option disabled="">Select User</mat-option>
+                <mat-option *ngFor="let data of sales_user" value="{{data.id}}">{{data.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>               
+          </div>
+          
+          <div class="col s6">
+            <mat-form-field class="cs-input"  appearance="outline">
+              <mat-label>Order Value</mat-label>
+              <input matInput placeholder="Type Here ..." name="ord_value" #ord_value="ngModel" [(ngModel)]="val.ord_value"  [ngClass]="{'has-error' : ord_value.invalid } " required>
+            </mat-form-field>           
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-button color="accent" type="submit">Save</button>
+    </div>
+  </form>
+  
+</div>

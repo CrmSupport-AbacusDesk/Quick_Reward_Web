@@ -1,0 +1,220 @@
+<div class="main-container">
+    <div class="tools-container">
+        <h2>Pending Bills</h2>
+
+        <div class="left-auto left-auto df ac flex-gap-10">
+            <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                <i class="material-icons">refresh</i>
+            </button>
+            <div class="pagination" *ngIf="Bills.length > 0">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+                        [disabled]="pagenumber == total_page ">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container container-scroll">
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w40">S.no.</th>
+                            <th class="w100">Date Created </th>
+                            <th class="w100">Invoice Date</th>
+                            <th class="w100">Invoice Number</th>
+                            <th class="w100">Account Code</th>
+                            <th class="w200">Company Name</th>
+                            <th class="w120">State</th>
+                            <th class="w120">District</th>
+                            <th class="w100 text-right">Invoice Amount</th>
+                            <th class="w100 text-right">Received Amount</th>
+                            <th class="w100 text-right">Balance Amount</th>
+
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w40">&nbsp;</th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput [matDatepicker]="picker2" placeholder="Date" name="date_created"
+                                            [(ngModel)]="filter.date_created"
+                                            (ngModelChange)="date_created_format($event)" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker2></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput [matDatepicker]="picker3" placeholder="Date" name="invoice_date"
+                                            [(ngModel)]="filter.invoice_date"
+                                            (ngModelChange)="invoice_date_format($event)" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker3></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput placeholder="Search" name="invoice_number"
+                                            [(ngModel)]="filter.invoice_number" (keyup.enter)="pendingBillsData('')">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput placeholder="Search" name="account_code"
+                                            [(ngModel)]="filter.account_code" (keyup.enter)="pendingBillsData('')">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w200 text-center">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput placeholder="Search" name="company_name"
+                                            [(ngModel)]="filter.company_name" (keyup.enter)="pendingBillsData('')">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w120 text-center">
+                                 <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput placeholder="Search" name="state"
+                                            [(ngModel)]="filter.state" (keyup.enter)="pendingBillsData('')">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w120 text-center">
+                                 <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input">
+                                        <input matInput placeholder="Search" name="district"
+                                            [(ngModel)]="filter.district" (keyup.enter)="pendingBillsData('')">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100 text-center">&nbsp;</th>
+                            <th class="w100 text-right">&nbsp;</th>
+                            <th class="w100 text-right">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="table-container mb50">
+                <div class="table-content" *ngIf="Bills.length > 0">
+                    <table>
+                        <ng-container *ngIf="loader == false">
+                            <tr *ngFor="let row of Bills;let i=index"
+                                [ngClass]="{'Current': service.currentUserID == row.id}">
+                                <td class="w40">{{ i+1}}</td>
+                                <td class="w100">{{row.date_created | date:'dd MMM yyyy'}}</td>
+                                <td class="w100">{{row.invoice_date | date:'dd MMM yyyy'}}</td>
+                                <td class="w100"> {{row.invoice_number}} </td>
+                                <td class="w100">{{row.account_code}}</td>
+                                <td class="w200">{{row.company_name ? (row.company_name | titlecase) : ''}}</td>
+                                <td class="w120">{{row.state ? (row.state | titlecase) : ''}}</td>
+                                <td class="w120">{{row.district ? (row.district | titlecase) : ''}}</td>
+                                <td class="w100 text-right"><strong>&#x20B9; {{row.invoice_amount}}</strong></td>
+                                <td class="w100 text-right"><strong>&#x20B9; {{row.invoice_payment_recieved}}</strong>
+                                </td>
+                                <td class="w100 text-right"><strong>&#x20B9; {{row.invoice_balance_payment |
+                                        number:'1.2-2'}}</strong></td>
+
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader == true">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w40">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <ng-container *ngIf="Bills.length == 0 && datanotfound == true">
+            <app-not-result-found></app-not-result-found>
+        </ng-container>
+
+    </div>
+
+    <div class="fab-btns" >
+        <button class="excel pulse " mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+            [matMenuTriggerFor]="menu">
+            <i class="material-icons">apps</i>
+            Action
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="upload_excel();" *ngIf="login_data.import_bill=='1'">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Upload Pending Bills</span>
+          </button>
+            <!-- <button mat-menu-item (click)="upload_excel('ledger');"
+          *ngIf="login_data.import_accounts=='1' || login_data.import_invoice=='1' ">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Upload Ledger</span>
+        </button> -->
+
+            <button mat-menu-item (click)="exportAsXLSX()" *ngIf="Bills.length > 0">
+                <mat-icon>download</mat-icon>
+                <span>Download in excel</span>
+            </button>
+        </mat-menu>
+    </div>
+</div>

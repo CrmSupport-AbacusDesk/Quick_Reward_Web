@@ -1,0 +1,39 @@
+<div class="edit-modal">
+  <p class="heading">Product List</p>
+  <div mat-dialog-content>
+    <div class="cs-table left-right-10">
+      <div class=" border-top">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w30 text-center ">Sr.No</th>
+              <th class="w100">Category</th>
+              <th class="w100">Sub Category</th>
+              <th class="w180">Product Details</th>
+              <th class="w30 text-center ">Qty</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container pb0">
+        <div class="table-content none-shadow">
+          <table>
+            <ng-container *ngFor="let row of add_list; let i = index">
+              <tr>
+                <td class="w30 text-center ">{{ i + 1 }}</td>
+                <td class="w100">{{ row.category_name |titlecase }}</td>
+                <td class="w100">{{ row.subcat_name |titlecase }}</td>
+                <td class="w180">{{ row.product_name |titlecase }}-{{row.product_code |titlecase}}</td>
+                <td class="w30 text-center ">{{ row.qty }}</td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>

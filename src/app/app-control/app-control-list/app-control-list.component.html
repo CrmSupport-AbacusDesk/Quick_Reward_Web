@@ -1,0 +1,391 @@
+<div class="main-container">
+  <div class="tools-container" >
+      <h2>App Control</h2>
+      <div class="left-auto df">
+        <div class="mat-tabbar">
+          <button mat-button [ngClass]="{'active' :tabType== 'Auto Logout'}"
+              (click)="tabType= 'Auto Logout'; getLogoutList();"><i
+                  class="material-icons">touch_app</i>Auto Logout</button>
+          <!-- <button mat-button [ngClass]="{'active' :tabType== 'Deny Permissions'}"
+              (click)=" tabType = 'Deny Permissions'"><i
+                  class="material-icons">highlight_off</i>Deny Permissions</button> -->
+          <!-- <button mat-button [ngClass]="{'active' :tabType== 'Module Access'}"
+              (click)="tabType = 'Module Access'"><i
+                  class="material-icons">visibility_off</i>Module Access</button> -->
+          <button mat-button [ngClass]="{'active' :tabType== 'System Alerts'}"
+              (click)="tabType = 'System Alerts'; getAlertList();"><i
+                  class="material-icons">settings</i>System Alerts</button>
+        </div>
+        <div class="left-auto jfe df flex-gap-10">
+          <button mat-icon-button matTooltip="Refresh" (click)="refresh()" >
+            <i class="material-icons">refresh</i>
+          </button>
+        </div>
+      </div>
+  </div>
+
+    <div class="container container-scroll" *ngIf="tabType == 'System Alerts'">
+      <div class="cs-table horizontal-scroll">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w50">S.No.</th>
+                <th class="w100">Date</th>
+                <th class="w100">Created By</th>
+                <th class="w110">Alert For</th>
+                <th class="w100">Alert Type</th>
+                <th class="w110">Title</th>
+                <th class="w200">Description</th>
+                <th class="w100">Visibility</th>
+                <th class="w100 text-center">Call Button</th>
+                <th class="w110 text-center">Contact Number</th>
+                <th class="w120 text-center">Page URL</th>
+                <th class="w150">Link URL</th>
+                <th class="w100 text-center">Assigned</th>
+                <th class="w100 text-center">Seen</th>
+                <th class="w100 text-center">Unseen</th>
+                <th class="w80 text-center">Status</th> 
+                <th class="w80 text-center">Action</th>
+              </tr>
+            </table>
+          </div>
+  
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w50" ></th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.dateCreated" [max]="today_date" (dateChange)="onDate($event)" disabled>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100 text-right">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"  matInput placeholder="Search..."  name="created_by" [(ngModel)]="filter.createdByName"
+                      (keyup.enter)="getAlertList()">
+                    </mat-form-field>
+                  </div>
+  
+                </th>
+                <th class="w110">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"   matInput placeholder="Search..." type="text" name="typeName" [(ngModel)]="filter.typeName"
+                      (keyup.enter)="getAlertList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="alertType" [(ngModel)]="filter.alertType"
+                      (keyup.enter)="getAlertList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w110">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"  matInput placeholder="Search..." type="text" name="title" [(ngModel)]="filter.title"
+                      (keyup.enter)="getAlertList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w200"></th>
+  
+                <th class="w100"></th>
+                <th class="w100">&nbsp;</th>
+                <th class="w110">&nbsp;</th>
+                <th class="w120">&nbsp;</th>
+                <th class="w150">&nbsp;</th>
+                <th class="w100">&nbsp;</th>
+                <th class="w100">&nbsp;</th>
+                <th class="w100">&nbsp;</th>
+                <th class="w80">&nbsp;</th>
+                <th class="w80">&nbsp;</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div class="table-container">
+    <div class="table-content">
+      <table>
+        <ng-container *ngIf="!loader">
+          <tr *ngFor="let row of alertList; let i = index;">
+            <td class="w50">{{i+1}} </td>
+            <td class="w100">{{row.dateCreated | date :'dd MMM yyyy'}}</td>
+            <td class="w100">{{row.createdByName ? row.createdByName : '---'}}</td>
+            <td class="w110">{{(row.typeName ? row.typeName : '---')}}</td>
+            <td class="w100">{{row.alertType ? (row.alertType | titlecase) : '---'}}</td>
+            <td class="w110">{{row.title ? row.title : '---'}}</td>
+            <td class="w200">{{row.content}} </td>
+            <td class="w100">{{row.visible}} </td>
+            <td class="w100 text-center ">{{row.callButton ? 'Yes' : 'No'}} </td>
+            <td class="w110 text-center">{{row.number ? row.number : 'N/A'}} </td>
+            <td class="w120 text-center">{{row.pageUrl ? row.pageUrl : '--'}} </td>
+            <td class="w150 ellipsis" title="{{row.linkUrl ? row.linkUrl : '--'}}">{{row.linkUrl ? row.linkUrl : '--'}} </td>
+            <td class="w100 text-center">
+              <a *ngIf="row.total" class="link-btn" mat-button (click)="openDialog(row.totalIds, row.typeId, row.typeName)">
+                {{row.total}} 
+              </a>
+              <p *ngIf="!row.total">0</p> 
+            </td>
+            <td class="w100 text-center">
+              <a *ngIf="row.complete" class="link-btn" mat-button (click)="openDialog(row.completeIds, row.typeId, row.typeName)">
+                {{row.complete}} 
+              </a>
+              <p *ngIf="!row.complete">0</p>
+            </td>
+            <td class="w100 text-center">
+              <a *ngIf="row.pending" class="link-btn" mat-button (click)="openDialog(row.pendingIds, row.typeId, row.typeName)">
+                {{row.pending}} 
+              </a>
+              <p *ngIf="!row.pending">0</p>
+            </td>
+            <td class="w80 text-center">
+              <div class="action-button ">
+                <mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="row.status"
+                  (change)="changeAlertStatus(row.id,$event)">
+                </mat-slide-toggle>
+              </div>
+            </td>
+            <td class="w80 text-center">
+              <button mat-icon-button matTooltip="Delete" color="warn" (click)="deleteAlert(row.id)">
+                <i class="material-icons del">delete</i>
+              </button>
+            </td>
+          </tr>  
+        </ng-container>
+  
+        <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+  
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+  
+  
+      </div>
+  
+      <ng-container *ngIf="alertList.length == 0 && datanotfound == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  
+  
+    </div>
+    <div class="container container-scroll" *ngIf="tabType == 'Auto Logout'">
+      <div class="cs-table horizontal-scroll">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w50">S.No.</th>
+                <th class="w100">Date</th>
+                <th class="w100">Created By</th>
+                <th class="w110">Logout For</th>
+                <th class="w100">Logout Type</th>
+                <th class="w100 text-center">Total</th>
+                <th class="w100 text-center">Remaining</th>
+                <th class="w100 text-center">Completed</th>
+                <th class="w80 text-center">Action</th>
+              </tr>
+            </table>
+          </div>
+  
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w50" ></th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.dateCreated" [max]="today_date" (dateChange)="onDate($event)" disabled>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100 text-right">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"  matInput placeholder="Search..."  name="created_by" [(ngModel)]="filter.createdByName"
+                      (keyup.enter)="getLogoutList()">
+                    </mat-form-field>
+                  </div>
+  
+                </th>
+                <th class="w110">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"   matInput placeholder="Search..." type="text" name="typeName" [(ngModel)]="filter.typeName"
+                      (keyup.enter)="getLogoutList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Search..." type="text" name="alertType" [(ngModel)]="filter.logoutType"
+                      (keyup.enter)="getLogoutList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100"></th>
+                <th class="w100"></th>
+                <th class="w100"></th>
+                <th class="w80">&nbsp;</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div class="table-container">
+    <div class="table-content">
+      <table>
+        <ng-container *ngIf="!loader">
+          <tr *ngFor="let row of logoutList; let i = index;">
+            <td class="w50">{{i+1}} </td>
+            <td class="w100">{{row.dateCreated | date :'dd MMM yyyy'}}</td>
+            <td class="w100">{{row.createdByName ? row.createdByName : '---'}}</td>
+            <td class="w110">{{(row.typeName ? row.typeName : '---')}}</td>
+            <td class="w100">{{row.logoutType ? (row.logoutType | titlecase) : '---'}}</td>
+            <td class="w100 text-center">
+              <a *ngIf="row.total" class="link-btn" mat-button (click)="openDialog(row.totalIds, row.typeId, row.typeName)">
+                {{row.total}} 
+              </a>
+              <p *ngIf="!row.total">0</p> 
+            </td>
+            <td class="w100 text-center">
+              <a *ngIf="row.pending" class="link-btn" mat-button (click)="openDialog(row.pendingIds, row.typeId, row.typeName)">
+                {{row.pending}} 
+              </a>
+              <p *ngIf="!row.pending">0</p>
+            </td>
+            <td class="w100 text-center">
+              <a *ngIf="row.complete" class="link-btn" mat-button (click)="openDialog(row.completeIds, row.typeId, row.typeName)">
+                {{row.complete}} 
+              </a>
+              <p *ngIf="!row.complete">0</p>
+            </td>
+            <td class="w80 text-center">
+              <button mat-icon-button matTooltip="Delete" color="warn" (click)="deleteLogout(row.id)">
+                <i class="material-icons del">delete</i>
+              </button>
+            </td>
+        </ng-container>
+  
+        <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+  
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+  
+  
+      </div>
+  
+      <ng-container *ngIf="logoutList.length == 0 && datanotfound == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  
+  
+    </div>
+</div>  
+
+<div class="fab-btns">
+  <button color="primary" mat-fab [ngClass]="{'pulse': fabBtnValue=='add'}" routerLink="add-alert/{{tabType}}">
+      <i class="material-icons mr10">add</i>
+      Add {{tabType}}
+  </button>
+</div>

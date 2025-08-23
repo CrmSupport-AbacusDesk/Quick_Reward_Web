@@ -1,0 +1,99 @@
+<div class="edit-modal">
+  <p class="heading">
+    {{typeName}} Details
+  </p>
+   
+  <div mat-dialog-content>
+    <div class="container container-scroll">
+      <div class="cs-table horizontal-scroll">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w30 text-center">S.No.</th>
+                <th class="w100" *ngIf="typeId == '1' || typeId == '3' || typeId == '7'">Company Name</th>
+                <th class="w100">Name</th>
+                <th class="w100">Mobile</th>
+              </tr>
+            </table>
+          </div>
+  
+          <div class="table-head border-top">
+            <table>
+              <tr>
+                <th class="w30 text-center" ></th>
+                <th class="w100" *ngIf="typeId == '1' || typeId == '3' || typeId == '7'">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"   matInput placeholder="Search..." type="text" name="company_name" [(ngModel)]="filter.company_name"
+                      (keyup.enter)="getUsersList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100 text-right">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"  matInput placeholder="Search..."  name="created_by" [(ngModel)]="filter.name"
+                      (keyup.enter)="getUsersList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input type="text"   matInput placeholder="Search..." type="number" name="typeName" [(ngModel)]="filter.mobile"
+                      (keyup.enter)="getUsersList()">
+                    </mat-form-field>
+                  </div>
+                </th>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div class="table-container">
+    <div class="table-content">
+      <table>
+        <ng-container *ngIf="!loader">
+          <tr *ngFor="let row of userList; let i = index;">
+            <td class="w30 text-center">{{i+1}} </td>
+            <td class="w100" *ngIf="typeId == '1' || typeId == '3' || typeId == '7'">{{row.company_name ? row.company_name : '---'}}</td>
+            <td class="w100">{{row.name ? row.name : '---'}}</td>
+            <td class="w100">{{(row.mobile ? row.mobile : '---')}}</td>
+          </tr>  
+        </ng-container>
+  
+        <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w30 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100" *ngIf="typeId == '1' || typeId == '3' || typeId == '7'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+  
+  
+      </div>
+  
+      <ng-container *ngIf="userList.length == 0 && datanotfound == true">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  
+  
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+  </div> 
+</div>

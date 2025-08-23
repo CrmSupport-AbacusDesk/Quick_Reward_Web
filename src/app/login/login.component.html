@@ -1,0 +1,123 @@
+<!-- <div class="login-container">
+  
+      <img src="assets/img/logo.png" />
+    </div>
+    <div class="right-block">
+      <div class="login-form">
+        <h2>Welcome Back</h2>
+        <h6>Login your account</h6>
+    
+        <div class="form">
+          <form name="submit" #f="ngForm" (ngSubmit)="f.form.valid  && login()" *ngIf="channel_partner == false">
+            <div class="form-field">
+              <label>Username</label>
+              <mat-form-field appearance="outline">
+                <input matInput name="username" [(ngModel)]="data.username" placeholder="Your username" required>
+              
+              </mat-form-field>
+            </div>
+            <div class="form-field mt16">
+              <label>Password</label>
+              <mat-form-field appearance="outline">
+                <input matInput [type]="edit_view == true ? 'text':'password' " name="password"
+                  [(ngModel)]="data.password" placeholder="Your password" required>
+                <button mat-icon-button matSuffix (click)="edit_view = !edit_view" [attr.aria-label]="'Hide password'" type="button"
+                  [attr.aria-pressed]="edit_view">
+                  <mat-icon>{{edit_view ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+
+      
+
+            <div class="cs-btn text-left mt30">
+              <div class="in-btn ">
+                <button mat-raised-button color="accent"  [disabled]="savingFlag == true" matTooltipPosition="below" matTooltip="Login" 
+                  class="login-btn"> {{savingFlag == true ? 'Please Wait...' : 'Login'}}</button>
+              </div>
+            </div>
+          </form>
+
+      
+        </div>
+      </div>
+      <p class="bootom-text">Powered by Abacusdesk</p>
+    </div>
+  </div>
+</div> -->
+
+<div class="auth-wrapper">
+  <div class="auth-container">
+    <!-- Left Side - Branding -->
+    <div class="auth-brand-section">
+      <div class="brand-overlay"></div>
+      <div class="brand-content">
+        <div class="brand-logo">
+          <img src="assets/img/homelogo.png" alt="Logo" class="logo-image">
+        </div>
+
+      </div>
+      <div class="brand-decoration">
+        <div class="decoration-circle circle-1"></div>
+        <div class="decoration-circle circle-2"></div>
+        <div class="decoration-circle circle-3"></div>
+      </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="auth-form-section">
+      <div class="form-wrapper">
+        <div class="form-header">
+          <h2 class="form-title">Welcome </h2>
+          <p class="form-subtitle">Please sign in to your account</p>
+        </div>
+
+        <form class="auth-form" name="loginForm" #f="ngForm" (ngSubmit)="f.form.valid && login()"
+          *ngIf="channel_partner == false">
+          <div class="input-group">
+            <!-- <label class="input-label">Username</label> -->
+            <div class="input-wrapper">
+              <div class="input-icon">
+
+                <i class="material-icons">person</i>
+              </div>
+              <input type="text" class="form-input" name="username" [(ngModel)]="data.username"
+                placeholder="Enter your username" required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <!-- <label class="input-label">Password</label> -->
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <i class="material-icons">lock</i>
+              </div>
+              <input [type]="showPassword ? 'text' : 'password'" class="form-input" name="password"
+                [(ngModel)]="data.password" placeholder="Enter your password" required autocomplete="current-password">
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+
+                <mat-icon>{{showPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+            </div>
+          </div>
+
+
+
+          <button type="submit" class="submit-btn" [disabled]="savingFlag" [class.loading]="savingFlag">
+            <span class="btn-text">{{ savingFlag ? 'Signing in...' : 'Sign In' }}</span>
+            <div class="btn-loader" *ngIf="savingFlag">
+              <div class="loader-spinner"></div>
+            </div>
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <p class="powered-by">Powered by <span class="brand-name"><a
+                href="https://basiq360.com/">Abacusdesk</a></span></p>
+          <p class="version-info">Version {{ version }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

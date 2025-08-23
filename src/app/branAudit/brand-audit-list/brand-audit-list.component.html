@@ -1,0 +1,230 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()" *ngIf="routesValue.routes == 'checkin'">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Brand Audit</h2>
+    <div class="left-auto left-auto df ac flex-gap-10" *ngIf="routesValue.routes != 'checkin'">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Sorting" (click)="sortData()">
+        <i class="material-icons">swap_vert</i>
+      </button>
+      <div class="pagination" *ngIf="auditList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending';supportList();"><i class="material-icons">pending_actions</i>Pending
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+          (click)="active_tab = 'Approved';supportList();"><i class="material-icons">done_all</i>Approved
+        </button>
+
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+          (click)="active_tab = 'Reject';supportList();"><i class="material-icons">cancel</i>Reject
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No.</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">Created By</th>
+              <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                <th class="w100">Customer Type</th>
+                <th class="w200">Customer Details</th>
+              </ng-container>
+              <th class="w120">Branding Required</th>
+              <th class="w150">Competition Brands</th>
+              <th class="w200">Remark</th>
+              <th class="w150">Images</th>
+              <th class="w100">Senior Status</th>
+              <th class="w120">Admin Status</th>
+              <th class="w100 text-center">Value</th>
+              <th class="w200 text-center">Reason</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top" *ngIf="routesValue.routes != 'checkin'">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+        
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="" name="date_created"
+                      [(ngModel)]="filter.date_created" (dateChange)="supportList()" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="created_by_name"
+                      (keyup.enter)="supportList()" #created_by_name="ngModel" [(ngModel)]="filter.created_by_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input select-input">
+                      <mat-select name="customer_type" #customer_type="ngModel" [(ngModel)]="filter.customer_type"
+                        (selectionChange)="supportList();">
+                        <mat-option value="">All</mat-option>
+                        <mat-option *ngFor="let row of service.drArray"
+                          value="{{row.module_name}}">{{row.module_name}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                </th>
+
+                <th class="w200">
+                  <div class="th-search-acmt">
+                    <mat-form-field>
+                      <input type="text" matInput placeholder="Search ..." name="customer_name"
+                        (keyup.enter)="supportList()" #customer_name="ngModel" [(ngModel)]="filter.customer_name">
+                    </mat-form-field>
+                  </div>
+                </th>
+              </ng-container>
+
+              <th class="w120">&nbsp;</th>
+              <th class="w150">&nbsp;</th>
+              <th class="w200">&nbsp;</th>
+              <th class="w150">&nbsp;</th>
+              <th class="w100">&nbsp;</th>
+              <th class="w120">&nbsp;</th>
+              <th class="w100">&nbsp;</th>
+              <th class="w200">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container mb50">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of auditList; let i = index;">
+                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{row.date_created | date:'d MMM y'}}</td>
+                <td class="w100">{{row.created_by_name ? (row.created_by_name | titlecase) : ''}}</td>
+                <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                  <td class="w100">{{row.customer_type ? row.customer_type : '---'}}</td>
+                  <!-- <td class="w200">{{row.customer_name ? row.customer_name : '---'}}</td> -->
+                  <td  class="w200">
+                    <a class="link-btn" (click)="openDialog(row.id, 'brandValLogs')"> {{row.customer_name ? row.customer_name : '---'}}</a>
+                  </td> 
+                </ng-container>
+                <td class="w120">{{row.branding_required ? row.branding_required : '---'}}</td>
+                <td class="w150">{{row.brand_detail ? row.brand_detail : '---'}}</td>
+                <td class="w200">{{row.message}}</td>
+                <td class="w150">
+                  <div class="circel-img">
+                    <ng-container *ngFor="let row of row.image">
+                      <img src="{{url + row.document_name}}" (click)="goToImage(url+row.document_name)"
+                        *ngIf="row.document_name != ''">
+                    </ng-container>
+                  </div>
+                </td>
+
+                <td class="w100 {{row.senior_status}}">{{row.senior_status == '' ? 'Pending' : row.senior_status}}</td>
+                <td *ngIf="row.status != 'Approved'" class="w120 text-center">
+                  <a class="link-btn" (click)="openDialog(row.id, 'brandStatus')"> Change Status</a>
+                </td> 
+                <td *ngIf="row.status == 'Approved' || row.status == 'Reject' " class="w120 text-center">
+                   {{row.status}}
+                </td> 
+                <td class="w100 text-center">
+                  {{row.value ? row.value : '----'}}
+               </td>
+                <td class="w200 text-center">
+                  {{row.reason ? row.reason : '----'}}
+               </td>
+
+
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <ng-container *ngIf="routesValue.routes != 'dr_Detail'">
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w200">
+                    <div>&nbsp;</div>
+                  </td>
+                </ng-container>
+
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+        <ng-container *ngIf="auditList.length == 0 && noResult == true">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="fab-btns pulse" *ngIf="auditList.length > 0">
+    <button class="excel pulse " mat-fab color="primary" (click)="exportAsXLSX();">
+      <i class="material-icons">download</i>
+      Download in excel
+    </button>
+  </div> -->
+</div>

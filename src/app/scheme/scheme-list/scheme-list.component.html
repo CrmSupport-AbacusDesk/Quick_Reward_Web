@@ -1,0 +1,102 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Scheme List</h2>
+    <div class="left-auto df ac  flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </a>
+    </div>
+  </div>
+  <div class="container container-scroll">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table class="sno-border">
+            <tr>
+
+              <th class="w50 text-center">S.No</th>
+              <th class="">Scheme Title</th>
+              <th class="w200">Date</th>
+              <th class="w100 text-center">Slabs</th>
+              <th class="w150">Scheme Applicability</th>
+              <th class="w120">Type of Customer</th>
+              <th class="w80 text-center">Action</th>
+
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table class="sno-border">
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of dataList; let i = index">
+                <td class="w50 text-center">{{i+1}}</td>
+                <td class="">
+                  <a class="link-btn" mat-button routerLink="scheme-detail/{{row.encrypt_id}}">
+                    {{row?.title}}
+                  </a>
+                </td>
+                <td class="w200">
+                  {{row?.start_date | date:'dd MMM yyyy'}} to {{row?.end_date | date:'dd MMM yyyy'}}
+                </td>
+                <td class="w100 text-center">
+                  {{row?.slabCount}}
+                </td>
+                <td class="w150">
+                  {{row?.genric}}
+                </td>
+                <td class="w120">
+                  {{row?.customer_type}}
+                </td>
+                <td class="w80 text-center">
+                  <div class="action-button">
+                    <!-- <button mat-icon-button matTooltip="View">
+                      <i class="material-icons edit">visibility</i>
+                    </button> -->
+                    <button mat-icon-button matTooltip="Delete" (click)="deleteHandler(row?.id)">
+                      <i class="material-icons del">delete</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(100)">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+        <ng-container *ngIf="dataList?.length <= 0">
+          <app-not-result-found></app-not-result-found>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+    <div class="fab-btns">
+      <button mat-fab [routerLink]="[ 'scheme-add/']">
+        Add New
+      </button>
+    </div>
+</div>

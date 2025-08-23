@@ -1,0 +1,65 @@
+
+
+<div class="main-container" >
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" routerLink="/beat-code">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Territory Code</h2>
+  </div>
+  
+  <!-- <div class="container pt10 pl10 pr10 pb50" > -->
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <!-- <div class="search-box">
+        <input type="text" id="pincode" [(ngModel)]="pincode" placeholder="Enter Pincode" />
+        <button (click)="searchPincode()">Search</button>
+      </div> -->
+      <div id="map" style="height: 600px;
+  width: 100%;"></div>
+    </div>
+  </div>
+  <!-- <div class="row">
+    <div class="col s12 m9 l9">
+      <div class="map-block">
+        <div class="row map-filters">
+          <div class="col s12 m3 l3">
+            <mat-form-field  appearance="outline">
+              <mat-label>State</mat-label>
+              <mat-select name="state" #state="ngModel" [(ngModel)]="data.state"  (selectionChange)="getDistrict(1)" >
+                <mat-option *ngFor="let row of states"value="{{row.state_name}}">
+                  {{row.state_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+          
+          
+          <div class="col s12 m3 l3">
+            <mat-form-field  appearance="outline">
+              <mat-label>District</mat-label>
+              <mat-select name="district" #district="ngModel" [(ngModel)]="data.district" (selectionChange)="getPincode('',1)" >
+                <mat-option *ngFor="let row of district_list" value="{{row.district_name}}">
+                  {{row.district_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+         
+          </div>
+          
+          <div class="col s12 m3 l3">
+            <mat-form-field  appearance="outline">
+              <mat-label>Pincode</mat-label>
+              <input matInput placeholder="Type here..." minlength="6" maxlength="6" name="pincode" #pincode="ngModel"  [(ngModel)]="data.pincode">
+            </mat-form-field>
+          </div>
+        </div>
+      <div id="map" class="mapview"></div>
+    </div>
+    </div>
+  </div> -->
+</div>
+
+

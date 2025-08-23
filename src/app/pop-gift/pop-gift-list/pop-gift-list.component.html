@@ -1,0 +1,380 @@
+<div class="main-container">
+
+    <div class="tools-container">
+        <h2>Pop & Gift</h2>
+        <div class="left-auto df ac flex-gap-10">
+            <button mat-icon-button matTooltip="Refresh" (click)="refresh(transactionType)">
+                <i class="material-icons">refresh</i>
+            </button>
+            <div class="pagination"
+                *ngIf="(transactionType== 'Pop Gift' && PopData.length > 0) || (transactionType != 'Pop Gift' && transaction_list.length > 0)">
+                <div class="pagination-content">
+                    Pages
+                    <span>{{pagenumber}}</span>
+                    of
+                    <span>{{total_page}}</span>
+                </div>
+                <div class="page-nav">
+                    <button mat-icon-button matTooltip="Older" (click)="pervious(transactionType)"
+                        [disabled]="start == 0">
+                        <i class="material-icons">navigate_before</i>
+                    </button>
+                    <button mat-icon-button matTooltip="Newer" (click)="nextPage(transactionType)"
+                        [disabled]="pagenumber == total_page">
+                        <i class="material-icons">navigate_next</i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mat-tabbar">
+                <button mat-button [ngClass]="{'active' :transactionType== 'Pop Gift'}"
+                    (click)="transactionType= 'Pop Gift'; gift_list(transactionType);"><i
+                        class="material-icons">card_giftcard</i>Pop &
+                    Gift</button>
+                <button mat-button [ngClass]="{'active' :transactionType== 'Company Transaction'}"
+                    (click)="transactionType= 'Company Transaction'; transactionData(transactionType)"><i
+                        class="material-icons">swap_horiz</i>Company Transaction</button>
+                <button mat-button [ngClass]="{'active' :transactionType== 'Employee Transaction'}"
+                    (click)="transactionType = 'Employee Transaction'; transactionData(transactionType)"><i
+                        class="material-icons">swap_horiz</i>Employee Transaction</button>
+                <!-- <button mat-button [ngClass]="{'active' :transactionType== 'Distributor Transaction'}"
+                    (click)="transactionType = 'Distributor Transaction';  transactionData(transactionType)"><i
+                        class="material-icons">swap_horiz</i>Cp Transaction</button> -->
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <div class="container pb100" [ngClass]="{'container-scroll' :transactionType != 'Pop Gift'}">
+        <div class="cs-table" *ngIf="transactionType == 'Pop Gift'">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table class="sno-border">
+                        <tr>
+                            <th class="w55">Sr No.</th>
+                            <th>GIft Name</th>
+                            <th class="w70 text-center">Image</th>
+                            <!-- <th class="w100 text-right">Points</th> -->
+                            <th class="w80 text-right">Stock QTY.</th>
+                            <!-- <th class="w100 text-right">Rate</th>
+                            <th class="w100 text-right">Total Amount</th> -->
+                            <th class="w80 text-right">Employee Stock</th>
+                            <th class="w80 text-right">CP Stock</th>
+                            <th class="w100 text-center"
+                                *ngIf="assign_login_data2.edit_pop_gift=='1' || assign_login_data2.delete_pop_gift=='1'">
+                                Action
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="table-head  border-top">
+                    <table class="sno-border">
+                        <tr>
+                            <th class="w55">&nbsp;</th>
+                            <th>
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..."
+                                            (keyup.enter)="gift_list(transactionType)" #created_by="ngModel"
+                                            [(ngModel)]="filter.item_name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w70">&nbsp;</th>
+                            <!-- <th class="w100">&nbsp;</th> -->
+                            <th class="w80">&nbsp;</th>
+                            <!-- <th class="w100">&nbsp;</th>
+                            <th class="w100">&nbsp;</th> -->
+                            <th class="w80">&nbsp;</th>
+                            <th class="w80">&nbsp;</th>
+                            <th class="w100"
+                                *ngIf="assign_login_data2.edit_pop_gift=='1' || assign_login_data2.delete_pop_gift=='1'">
+                                &nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content" *ngIf="PopData.length > 0">
+                    <table class="sno-border">
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor=" let row of PopData, let i = index;"
+                                [ngClass]="{'Current': service.currentUserID == row.id}">
+                                <td class="w55">{{i + 1 + sr_no}}</td>
+                                <td><a class="link-btn" mat-button (click)="service.setData(filter)"
+                                        routerLink="pop-gift-detail/{{(row.encrypt_id)}}"
+                                        routerLinkActive="active">{{row.item_name | titlecase}}</a></td>
+                                <td class="w70 text-center">
+                                    <a class="img-avtar" (click)="goToImage(url+row.pop_image)">
+                                        <img src="{{url+row.pop_image}}">
+                                    </a>
+                                </td>
+                                <!-- <td class="w100 text-right"><strong>{{row.eligible_point ? row.eligible_point
+                                        :'0'}}</strong></td> -->
+                                <td class="w80 text-right"><strong>{{row.qty_stock ? row.qty_stock : '0'}}</strong></td>
+                                <!-- <td class="w100 text-right"><strong>&#x20B9; {{row.rate ? row.rate : '0'}}</strong></td>
+                                <td class="w100 text-right"><strong>&#x20B9; {{row.amount ? row.amount : '0'}}</strong>
+                                </td> -->
+                                <td class="w80 text-right"><strong>{{row.executive_qty ? row.executive_qty :
+                                        '0'}}</strong></td>
+                                <td class="w80 text-right"><strong>{{row.distributor_qty ? row.distributor_qty
+                                        :'0'}}</strong></td>
+                                <td class="w100 text-center"
+                                    *ngIf="assign_login_data2.edit_pop_gift=='1' || assign_login_data2.delete_pop_gift=='1'">
+                                    <div class="action-button">
+                                        <button
+                                            *ngIf="assign_login_data2.edit_pop_gift=='1' && transactionType == 'Pop Gift'"
+                                            mat-icon-button matTooltip="Add Stock"
+                                            (click)="popModal('Update_stock',row,'')">
+                                            <i class="material-icons add">add_circle</i>
+                                        </button>
+
+                                        <button
+                                            *ngIf="assign_login_data2.edit_pop_gift=='1' && transactionType == 'Pop Gift'"
+                                            mat-icon-button matTooltip="Edit"
+                                            [routerLink]="[ 'pop-gift-add/', row.id ]">
+                                            <i class="material-icons edit">edit</i>
+                                        </button>
+                                        <button *ngIf="assign_login_data2.delete_pop_gift=='1'" mat-icon-button
+                                            matTooltip="Delete" (click)="deleteGift(row.id)">
+                                            <i class="material-icons del">delete</i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w55">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <!-- <td class="w100 text-right">
+                                    <div>&nbsp;</div>
+                                </td> -->
+                                <td class="w80 text-right">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <!-- <td class="w100 text-right">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100 text-right">
+                                    <div>&nbsp;</div>
+                                </td> -->
+                                <td class="w80 text-right">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w80 text-right">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100 text-center"
+                                    *ngIf="assign_login_data2.edit_pop_gift=='1' || assign_login_data2.delete_pop_gift=='1'">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+
+            <ng-container *ngIf="PopData.length == 0">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+        <div class="cs-table  horizontal-scroll" *ngIf="transactionType != 'Pop Gift'">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table class="sno-border">
+                        <tr>
+                            <th class="w55">Sr No.</th>
+                            <th class="w70 text-center">Image</th>
+                            <th class="w200">Item Name</th>
+                            <th class="w80">Transfer Stock</th>
+                            <th class="w120">Transfered By</th>
+                            <th class="w120">Date of Execution</th>
+                            <th class="w100" *ngIf="transactionType == 'Company Transaction'">User Type</th>
+                            <th class="w200">{{transactionType== 'Company Transaction' ? 'User' :'Company'}} Details
+                            </th>
+                            <th class="w200">Remark</th>
+                            <!-- <th class="w100 text-center" *ngIf="transactionType == 'Company Transaction'">Action</th> -->
+                        </tr>
+                    </table>
+                </div>
+                <div class="table-head  border-top">
+                    <table class="sno-border">
+                        <tr>
+                            <th class="w55">&nbsp;</th>
+                            
+                            <th class="w70 text-center">&nbsp;</th>
+                            <th class="w200">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..."
+                                            (keyup.enter)="transactionData(transactionType)" #pop_item_name="ngModel"
+                                            [(ngModel)]="filter.pop_item_name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w80">&nbsp;</th>
+                            <th class="w120">&nbsp;</th>
+                            <th class="w120">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input date-column infix-bodr">
+                                        <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                                            #date_created="ngModel" [(ngModel)]="filter.date_created"
+                                            (ngModelChange)="date_format()" readonly>
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w100" *ngIf="transactionType == 'Company Transaction'">
+
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="cs-input select-input">
+                                        <mat-select name="transfer_to_type" #transfer_to_type="ngModel"
+                                            [(ngModel)]="filter.transfer_to_type"
+                                            (selectionChange)="transactionData(transactionType)">
+                                            <mat-option value="">All</mat-option>
+                                            <mat-option value="Sales User">Sales User</mat-option>
+                                            <mat-option value="Distributor">Channel Partner </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w200">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..."
+                                            (keyup.enter)="transactionData(transactionType)" #transfer_to_name="ngModel"
+                                            [(ngModel)]="filter.transfer_to_name">
+                                    </mat-form-field>
+                                </div>
+                            </th>
+                            <th class="w200">&nbsp;</th>
+                            <!-- <th class="w100 text-center" *ngIf="transactionType == 'Company Transaction'">&nbsp;</th> -->
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container" *ngIf="datanotfound==false">
+                <div class="table-content" *ngIf="PopData.length > 0">
+                    <table class="sno-border">
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor=" let pop of transaction_list, let i = index;"
+                                [ngClass]="{'Current': service.currentUserID == pop.id}">
+                                <td class="w55">{{i + 1 + sr_no}}</td>
+                                <td class="w70 text-center">
+                                    <a class="img-avtar" (click)="goToImage(url+pop.pop_image)">
+                                        <img src="{{url+pop.pop_image}}">
+                                    </a>
+                                </td>
+                                <td class="w200">{{pop.pop_item_name | titlecase}}</td>
+                                <td class="w80 text-center"><strong>{{pop.stock_qty}}</strong></td>
+                                <td class="w120"><strong>{{pop.created_by_name ? pop.created_by_name : '---'}}</strong>
+                                </td>
+
+                                <!-- <td class="w80 text-center"><strong>{{pop.remaining_stock}}</strong></td> -->
+                                <td class="w120">{{pop.date_created ? (pop.date_created | date : 'dd MMM yyy') : ''}}
+                                </td>
+                                <td class="w100" *ngIf="transactionType == 'Company Transaction'">
+                                    {{pop.transfer_to_type == 'Distributor' ? 'Channel Partner' : pop.transfer_to_type}}
+                                </td>
+                                <td class="w200">{{pop.transfer_to_name | titlecase}}
+                                </td>
+                                <td class="w200">{{pop.remarks}}</td>
+                                <!-- <td class="w100 text-center" *ngIf="transactionType == 'Company Transaction'">
+                                    <div class="action-button">
+                                        <button mat-icon-button matTooltip="Delete" (click)="deleteGift(pop.id)">
+                                            <i class="material-icons del">delete</i>
+                                        </button>
+                                    </div>
+                                </td> -->
+                            </tr>
+                        </ng-container>
+
+
+
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                <td class="w55">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w70 text-center">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w80">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w120">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100" *ngIf="transactionType == 'Company Transaction'">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w100 text-center" *ngIf="transactionType == 'Company Transaction'">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            <ng-container *ngIf="transaction_list.length == 0 && datanotfound == true ">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="fab-btns" *ngIf="view_add">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+        [matMenuTriggerFor]="menu">
+        <i class="material-icons">apps</i>
+        Action
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngIf="assign_login_data2.add_pop_gift=='1'" color="primary" (click)="lastBtnValue('add')"
+            routerLink="pop-gift-add/0">
+            <mat-icon>add</mat-icon>
+            <span>Add New</span>
+        </button>
+        <button mat-menu-item *ngIf="assign_login_data2.edit_pop_gift=='1'"
+            (click)="lastBtnValue('gift'); popModal('issue_pop','','user_id')">
+            <mat-icon>card_giftcard</mat-icon>
+            <span>Pop Issue</span>
+        </button>
+
+        <button mat-menu-item *ngIf="assign_login_data2.export_pop_gift=='1'"
+            (click)="lastBtnValue('excel');  transactionType== 'Pop Gift' ?  downloadExcel() : downloadExcel1()">
+            <mat-icon>download</mat-icon>
+            <span>Download in excel</span>
+        </button>
+    </mat-menu>
+
+</div>

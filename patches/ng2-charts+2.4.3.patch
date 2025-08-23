@@ -1,0 +1,19 @@
+diff --git a/node_modules/ng2-charts/fesm2015/ng2-charts.js b/node_modules/ng2-charts/fesm2015/ng2-charts.js
+index 07468cc..7910eb8 100644
+--- a/node_modules/ng2-charts/fesm2015/ng2-charts.js
++++ b/node_modules/ng2-charts/fesm2015/ng2-charts.js
+@@ -1,4 +1,4 @@
+-import { Injectable, ɵɵdefineInjectable, EventEmitter, Directive, ElementRef, Input, Output, NgModule } from '@angular/core';
++import { Injectable, defineInjectable, EventEmitter, Directive, ElementRef, Input, Output, NgModule } from '@angular/core';
+ import { BehaviorSubject } from 'rxjs';
+ import { cloneDeep } from 'lodash-es';
+ import { pluginService, Chart as Chart$1 } from 'chart.js';
+@@ -223,7 +223,7 @@ ThemeService.decorators = [
+ ];
+ /** @nocollapse */
+ ThemeService.ctorParameters = () => [];
+-/** @nocollapse */ ThemeService.ɵprov = ɵɵdefineInjectable({ factory: function ThemeService_Factory() { return new ThemeService(); }, token: ThemeService, providedIn: "root" });
++/** @nocollapse */ ThemeService.ɵprov = defineInjectable({ factory: function ThemeService_Factory() { return new ThemeService(); }, token: ThemeService, providedIn: "root" });
+ if (false) {
+     /**
+      * @type {?}

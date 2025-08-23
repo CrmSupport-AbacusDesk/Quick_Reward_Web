@@ -1,0 +1,169 @@
+<div class="main-container">
+  
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Scheme/Incentive Target Detail</h2>
+    <!-- <div class="left-auto">
+      <button matTooltip="excel" mat-raised-button color="accent" (click)="exportAsXLSX()" *ngIf="userData && userData.length > 0">
+        <mat-icon>download</mat-icon>
+        Download Excel
+      </button>
+    </div> -->
+    
+    <!-- <div class="left-auto left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div> -->
+  </div>
+  
+  <div class="container pl10 pr10 pb100">
+    <div class="row">
+      <div class="col s12">
+        <div class="card pb0 mt10" *ngIf="!skLoading">
+          <!-- <div class="card-head">
+            <h2>Scheme/Incentive Information</h2>
+          </div> -->
+          <div class="card-body cs-form">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Scheme Title</span>
+                <p>{{subSchemeDetails.title}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Start Date</span>
+                <p>{{subSchemeDetails.start_date | date: 'dd MMM yyyy'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>End Date</span>
+                <p>{{subSchemeDetails.end_date | date: 'dd MMM yyyy'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Scheme Type</span>
+                <p>{{subSchemeDetails.scheme_type}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Genric</span>
+                <p> {{subSchemeDetails.genric}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Criteria Type</span>
+                <p>{{subSchemeDetails.criteria_type}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="subSchemeDetails.gift_type">
+                <span>Gift Type</span>
+                <p> {{subSchemeDetails.gift_type}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="subSchemeDetails.point_type">
+                <span>Point Type</span>
+                <p> {{subSchemeDetails.point_type}}</p>
+              </div>
+              
+              
+              <div class="block-feilds" *ngIf="subSchemeDetails.slabData && subSchemeDetails.slabData.slab_start">
+                <span>Slab Start</span>
+                <p>{{subSchemeDetails.criteria_type == 'Value' ? '₹' : ''}} {{subSchemeDetails.slabData.slab_start}}</p>
+              </div>
+              
+              <div class="block-feilds" *ngIf="subSchemeDetails.slabData && subSchemeDetails.slabData.slab_end">
+                <span>Slab End</span>
+                <p>{{subSchemeDetails.criteria_type == 'Value' ? '₹' : ''}} {{subSchemeDetails.slabData.slab_end}}</p>
+              </div>
+              
+              
+              <div class="block-feilds" *ngIf="subSchemeDetails.slabData && subSchemeDetails.slabData.point_value">
+                <span>Point Value</span>
+                <p>{{subSchemeDetails.slabData.point_value}}</p>
+              </div>
+            </div>
+            
+            <div class="cs-table left-right-10">
+              <div class="sticky-head">
+                <div class="table-head">
+                  <table>
+                    <tr *ngIf="!skLoading">
+                      <th class="w60 text-center">Sr.No</th>
+                      <th *ngIf="subSchemeDetails.scheme_for!='Sales user'">Company Name</th>
+                      <th class="w200">{{subSchemeDetails.scheme_for!='Sales user'?'Contact Person':'Name'}}</th>
+                      <th class="w100">Mobile No.</th>
+                      <th class="w100 text-center">Total Sale</th>
+                      <th class="w100 text-center" *ngIf="subSchemeDetails.gift_type == 'Point' && subSchemeDetails.point_type == 'Product Qty'">Total Points</th>
+                      <th class="w100 text-center">Action</th>
+                    </tr>
+                  </table>
+                </div>
+                
+                
+              </div>
+              
+              <div class="table-container">
+                <div class="table-content">
+                  <table>
+                    <ng-container *ngIf="!skLoading">
+                      <tr *ngFor="let row of userData; let i = index;">
+                        <td class="w60 text-center">{{i+1}}</td>
+                        <td *ngIf="subSchemeDetails.scheme_for!='Sales user'">{{row.company_name}}</td>
+                        <td class="w200">{{row.name}}</td>
+                        <td class="w100">{{subSchemeDetails.scheme_for == 'Sales user' ? row.contact_01 : row.mobile}}</td>
+                        <td class="w100 text-center">{{subSchemeDetails.criteria_type == 'Value' ? '₹' : ''}} {{row.total_sale}} {{subSchemeDetails.criteria_type == 'Volume' ? 'Qty' : ''}}</td>
+                        <td class="w100 text-center" *ngIf="subSchemeDetails.gift_type == 'Point' && subSchemeDetails.point_type == 'Product Qty'">{{row.points}} PT</td>
+                        <td class="w100 text-center">
+                          <a class="link-btn" mat-button (click)="openDialog(i)" *ngIf="subSchemeDetails.point_type != 'Product Qty'">View Detail</a>
+                          <a class="link-btn" mat-button (click)="openDialogWithoutSlab(i)" *ngIf="subSchemeDetails.gift_type == 'Point' && subSchemeDetails.point_type == 'Product Qty'">View Detail</a>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="skLoading">
+                      <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                        <td class="w60">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w200">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <ng-container *ngIf="!userData.length">
+              <app-not-result-found></app-not-result-found>
+            </ng-container>
+          </div>
+        </div>
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+  </div>
+</div>

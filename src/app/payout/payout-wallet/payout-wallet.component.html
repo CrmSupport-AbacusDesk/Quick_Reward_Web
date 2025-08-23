@@ -1,0 +1,153 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Payout Wallet</h2>
+    <div class="bal-column-container">
+      <div class="bal-column">
+        <i class="material-icons primary">currency_rupee</i>
+          <p>Total Recharge Amount</p>
+          <span>₹ {{bal.total_credit ? bal.total_credit : '0'}}</span>
+      </div>
+      <div class="bal-column">
+        <i class="material-icons danger">redeem</i>
+          <p>Total Redeem Amount</p>
+          <span>₹ {{bal.total_debit ? bal.total_debit : '0'}}</span>
+      </div>
+      <div class="bal-column">
+        <i class="material-icons success">account_balance_wallet</i>
+          <p>Current Balance</p>
+          <span>₹ {{bal.total_balance ? bal.total_balance : '0'}}</span>
+      </div>
+    </div>
+  </div>
+
+
+<ng-container *ngIf="logined_user_data.organisation_data.payout == '1'">
+  <div class="tools-container">
+    <div class="mat-tabbar">
+      <button mat-button [ngClass]="active_tab == 'Ledger' ? 'active' : ''"
+        (click)="active_tab = 'Ledger'; getPayoutList(active_tab);">
+        <i class="material-icons">receipt_long</i>Ledger
+      </button>
+      <button mat-button [ngClass]="active_tab == 'Recharge' ? 'active' : ''"
+        (click)="active_tab = 'Recharge'; getPayoutList(active_tab);">
+        <i class="material-icons">account_balance_wallet</i>Recharge
+      </button>
+      <button mat-button [ngClass]="active_tab == 'Redeem' ? 'active' : ''"
+        (click)="active_tab = 'Redeem'; getPayoutList(active_tab);">
+        <i class="material-icons">swap_horiz</i>Transaction History
+      </button>
+    </div>
+
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh() ">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="payOutList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+  <div class="container pb100 no-tab">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w90">Date</th>
+              <th class="w130" *ngIf="active_tab =='Ledger'">Transaction Type</th>
+              <th class="w100 text-right" *ngIf="active_tab !='Recharge'">Debit</th>
+              <th class="w100 text-right" *ngIf="active_tab == 'Ledger' || active_tab =='Recharge'">Credit</th>
+              <th class="w100 text-right" >Balance</th>
+              <th *ngIf="active_tab !='Recharge'">Transaction Description</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w90">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      [(ngModel)]="filter.date_created" (ngModelChange)="date_format()" [max]="today_date" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w130" *ngIf="active_tab =='Ledger'">&nbsp;</th>
+              <th class="w100 text-right" *ngIf="active_tab !='Recharge'">&nbsp;</th>
+              <th class="w100 text-right" *ngIf="active_tab == 'Ledger' || active_tab =='Recharge'">&nbsp;</th>
+              <th class="w100 text-right" >&nbsp;</th>
+              <th *ngIf="active_tab !='Recharge'">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="payOutList.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of payOutList; let i = index;">
+                <td class="w60">{{i+1+sr_no}}</td>
+                <td class="w90">{{row.date_created | date : 'd MMM y'}}</td>
+                <td class="w130" *ngIf="active_tab =='Ledger'">{{row.transaction_type ? row.transaction_type : '0'}}</td>
+                <td class="w100 text-right" *ngIf="active_tab !='Recharge'">₹ {{row.debit ? row.debit : '0'}}</td>
+                <td class="w100 text-right" *ngIf="active_tab == 'Ledger' || active_tab =='Recharge'">₹ {{row.credit ? row.credit : '0'}}</td>
+                <td class="w100 text-right">₹ {{row.balance ? row.balance : '0'}}</td>
+                <td *ngIf="active_tab !='Recharge'">{{row.transaction_remark ? row.transaction_remark : '---'}}</td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60"><div>&nbsp;</div></td>
+                <td class="w90"><div>&nbsp;</div></td>
+                <td class="w130" *ngIf="active_tab =='Ledger'"><div>&nbsp;</div></td>
+                <td class="w100 text-right" *ngIf="active_tab !='Recharge'"><div>&nbsp;</div></td>
+                <td class="w100 text-right" *ngIf="active_tab == 'Ledger' || active_tab =='Recharge'"><div>&nbsp;</div></td>
+                <td class="w100 text-right"><div>&nbsp;</div></td>
+                <td *ngIf="active_tab !='Recharge'"><div>&nbsp;</div></td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+
+        <div *ngIf="payOutList.length == 0">
+          <app-not-result-found></app-not-result-found>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</ng-container>
+
+
+<ng-container *ngIf="logined_user_data.organisation_data.payout == '0'">
+  <div class="container pb100 no-tab">
+
+    <p class="no-content-text">Payout not activated yet</p>
+  </div>
+</ng-container>
+
+

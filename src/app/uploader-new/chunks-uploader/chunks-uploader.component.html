@@ -1,0 +1,459 @@
+<!-- Product Master , Primary , Secondary Chunk  Uploader -->
+
+<div class="edit-modal" *ngIf="modal_for == 'Product Master'|| modal_for == 'Sales User'  || modal_for == 'Primary' ||  modal_for == 'Secondary' ||  modal_for == 'secondary sale' || modal_for == 'Enquiry' || modal_for == 'Transation Redeem' || modal_for == 'Territory Code' || modal_for == 'Redeem Status'">
+
+  <div *ngIf="loader">
+      <mat-spinner class="loader">
+          <div>
+              <p>Loading....</p>
+          </div>
+      </mat-spinner>
+  </div>
+
+  <p class="heading">Upload {{modal_for}}</p>
+  <div mat-dialog-content>
+      <div class="dialog-content">
+          <div class="excel-box">
+              <label>
+                  <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                      <input type="file" (change)="onUploadChange($event)" name="fileupload"
+                          accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                          style="display: none;">
+                  </form>
+                  <i class="material-icons">
+                      cloud_upload
+                  </i>
+                  <p *ngIf="excel_name == ''">Click Here To Upload {{modal_for}} Excel(In csv format)</p>
+                  <p *ngIf="excel_name != ''">{{excel_name}}</p>
+              </label>
+              <a (click)="downloadSampleFile()"><i
+                      class="material-icons">download</i>Click Here To Download {{modal_for}} Sample File</a>
+          </div>
+      </div>
+  </div>
+  <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+      <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+          [ngClass]="{'loading': excel_loader == true}" (click)="createQueueRequest()"
+          accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">{{excel_loader
+          == true ? 'Saving' : 'Upload'}}</button>
+  </div>
+</div>
+
+
+<div class="edit-modal" *ngIf="modal_for == 'Travel Plan Daily' || modal_for == 'Territory Travel Plan'">
+    <p class="heading">Upload {{modal_for}}</p>
+        <div mat-dialog-content>
+            <div class="dialog-content">
+                <div class="cs-form pl16 pr16">
+                    <div class="row mb0" *ngIf="modal_for == 'Travel Plan Daily'">
+                        <div class="col s12 m4 l4" >
+                            <mat-form-field appearance="outline">
+                                <mat-label>Customer Type</mat-label>
+                                <mat-select name="type" #type="ngModel" [(ngModel)]="filter.type">
+                                    <mat-option value="1">Primary</mat-option>
+                                    <mat-option value="3">Secondary</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+
+                        <div class="col s12 m4 l4">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Users*</mat-label>
+                                <mat-select name="id" #id="ngModel" [(ngModel)]="filter.id">
+                                    <mat-option>
+                                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                            placeholderLabel="Search.." #name="ngModel"
+                                            [(ngModel)]="filter.name"></ngx-mat-select-search>
+                                    </mat-option>
+                                    <mat-option *ngFor="let row of usersList | filterBy:{name:filter.name}"
+                                        value={{row.id}}>{{row.name ? (row.name | titlecase) : ''}} <strong>{{row.employee_id ? ('-'+row.employee_id) : ''}}</strong></mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="excel-box">
+                    <label>
+                        <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                            <input type="file" name="fileupload"
+                                accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                (change)="onUploadChange($event)" style="display: none;">
+                        </form>
+                        <i class="material-icons">
+                            cloud_upload
+                        </i>
+                        <p>Click Here To Upload Travel Plan Excel(In csv format)</p>
+                        <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                    </label>
+                    <a *ngIf="filter.id && filter.type"
+                        (click)="downloadSampleFileTravel('Travel/exportDailyTravelPlanUser')"><i
+                            class="material-icons">download</i> {{filter.type == '1' ? 'Primary' : 'Secondary'}} customer travel plan sample file</a>
+
+                            <!-- downloadSampleFileTravel('Travel/Territory Travel Plan') -->
+                    <a *ngIf="modal_for == 'Territory Travel Plan'"
+                        (click)="downloadSampleFile(); "><i
+                            class="material-icons">download</i>Territory wise travel plan sample file</a>
+
+
+                </div>
+            </div>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+                [ngClass]="{'loading': excel_loader == true}"
+                (click)="excel_name!='' && createQueueRequest()"
+                accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">{{excel_loader
+                == true ? 'Saving' : 'Upload'}}</button>
+        </div>
+</div>
+
+<!-- Travel Plan Monthly Chunk Uploader -->
+
+<div class="edit-modal" *ngIf="modal_for == 'Travel Plan Monthly'">
+    <p class="heading">Upload {{modal_for}}</p>
+    <div mat-dialog-content>
+        <div class="dialog-content">
+            <div class="cs-form pl16 pr16">
+                <div class="row mb0">
+                    <div class="col s12 m4 l4">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Users*</mat-label>
+                            <mat-select name="id" #id="ngModel" [(ngModel)]="filter.id">
+                                <mat-option>
+                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                                        placeholderLabel="Search.." #name="ngModel"
+                                        [(ngModel)]="filter.name"></ngx-mat-select-search>
+                                </mat-option>
+                                <mat-option *ngFor="let row of usersList | filterBy:{name:filter.name}"
+                                    value={{row.id}}>{{row.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col s12 m4 l4">
+                        <mat-form-field  appearance="outline">
+                            <mat-label>Date From</mat-label>
+                            <input name="date_from" matInput [matDatepicker]="pickers" [min]="today_date" [max]="filter.date_to"  #date_from="ngModel" readonly [(ngModel)]="filter.date_from" required>
+                            <mat-datepicker-toggle matSuffix [for]="pickers"  ></mat-datepicker-toggle>
+                            <mat-datepicker #pickers></mat-datepicker>
+                          </mat-form-field>
+                          <div class="alert alert-danger" *ngIf="date_from.touched || f.submitted">
+                            <p *ngIf="date_from.errors?.required">This field is required</p>
+                          </div>
+                    </div>
+
+                    <div class="col s12 m4 l4">
+                        <mat-form-field  appearance="outline">
+                            <mat-label>Date To</mat-label>
+                            <input name="date_to" matInput [matDatepicker]="pickerTo" [min]="filter.date_from ? filter.date_from : today_date"  #date_to="ngModel" readonly [(ngModel)]="filter.date_to" required>
+                            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerTo></mat-datepicker>
+                          </mat-form-field>
+                          <div class="alert alert-danger" *ngIf="date_to.touched || f.submitted">
+                            <p *ngIf="date_to.errors?.required">This field is required</p>
+                          </div>
+                    </div>
+
+                    <!-- <div class="col s12 m4 l4">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Month*</mat-label>
+                            <mat-select name="month" #month="ngModel" [(ngModel)]="filter.month">
+                                <mat-option value="01">January</mat-option>
+                                <mat-option value="02">February</mat-option>
+                                <mat-option value="03">March</mat-option>
+                                <mat-option value="04">April</mat-option>
+                                <mat-option value="05">May</mat-option>
+                                <mat-option value="06">June</mat-option>
+                                <mat-option value="07">July</mat-option>
+                                <mat-option value="08">August</mat-option>
+                                <mat-option value="09">September</mat-option>
+                                <mat-option value="10">October</mat-option>
+                                <mat-option value="11">November</mat-option>
+                                <mat-option value="12">December</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col s12 m4 l4">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Year*</mat-label>
+                            <input matInput placeholder="Type Here ..." minlength="4" maxlength="4" min="4"
+                                name="year" #year="ngModel"
+                                onkeypress="return event.charCode>=48 && event.charCode<=57"
+                                [(ngModel)]="filter.year">
+                        </mat-form-field>
+                    </div> -->
+                </div>
+            </div>
+
+            <div class="excel-box">
+                <label>
+                    <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                        <input type="file" name="fileupload"
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            (change)="onUploadChange($event)" style="display: none;">
+                    </form>
+                    <i class="material-icons">
+                        cloud_upload
+                    </i>
+                    <p>Click Here To Upload Travel Plan Excel(In csv format)</p>
+                    <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                </label>
+
+                <a *ngIf="filter.id && filter.date_from && filter.date_to"
+                    (click)="downloadSampleFileTravel('Travel/exportMonthlyTravelPlanUser')"><i
+                        class="material-icons">download</i>Area Travel Plan sample file</a>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+            [ngClass]="{'loading': excel_loader == true}"
+            (click)="excel_name!='' && createQueueRequest()"
+            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">{{excel_loader
+            == true ? 'Saving' : 'Upload'}}</button>
+    </div>
+</div>
+
+<!-- primary And secondary Target Chunk Uploader -->
+
+
+<div class="edit-modal" *ngIf="modal_for == 'Direct Primary Target' || modal_for == 'Direct Secondary Target'">
+    <p class="heading">Upload {{modal_for == 'Direct Primary Target' ? 'Direct Primary Target' : 'Direct Secondary Target'}}</p>
+    <div mat-dialog-content>
+        <div class="dialog-content">
+            <div class="excel-box">
+                <label>
+                    <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                        <input type="file" (change)="onUploadChange($event)" name="fileupload"
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            style="display: none;">
+                    </form>
+                    <i class="material-icons">
+                        cloud_upload
+                    </i>
+                    <p *ngIf="excel_name == ''">Click Here To Upload  {{data.customer_type | titlecase}} Target Excel(In csv format)</p>
+                    <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                </label>
+                <a (click)="secondaryTargetSample()"><i class="material-icons">download</i>{{data.customer_type | titlecase}} Target sample
+                    file</a>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+        <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+            [ngClass]="{'loading': excel_loader == true}" (click)="createQueueRequest()"
+            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            {{excel_loader == true ? 'Saving' : 'Upload'}}
+        </button>
+    </div>
+</div>
+
+<!-- Visit Target Chunk Uploader -->
+
+
+<div class="edit-modal" *ngIf="modal_for == 'User Visit Target'">
+    <p class="heading">Upload {{modal_for}}</p>
+
+    <div mat-dialog-content>
+        <div class="dialog-content">
+            <div class="excel-box">
+                <label>
+                    <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                        <input type="file" (change)="onUploadChange($event)" name="fileupload"
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            style="display: none;">
+                    </form>
+                    <i class="material-icons">
+                        cloud_upload
+                    </i>
+                    <p *ngIf="excel_name == ''">Click Here To Upload User Visit Target Excel(In csv format)</p>
+                    <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                </label>
+                <a (click)="visitSample()"><i class="material-icons">download</i> User Visit Target sample file</a>
+            </div>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+            <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+                [ngClass]="{'loading': excel_loader == true}" (click)="createQueueRequest()"
+                accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">Upload</button>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Primary Customer Target Chunk Uploader -->
+
+<div class="edit-modal" *ngIf="modal_for == 'Distributor Target'">
+    <p class="heading">Upload {{modal_for}}</p>
+    <div mat-dialog-content>
+        <div class="dialog-content">
+            <div class="excel-box">
+                <label>
+                    <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                        <input type="file" (change)="onUploadChange($event)" name="fileupload"
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            style="display: none;">
+                    </form>
+                    <i class="material-icons">
+                        cloud_upload
+                    </i>
+                    <p *ngIf="excel_name == ''">Click Here To Upload Primary Customer Target Excel(In csv format)</p>
+                    <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                </label>
+                <a (click)="targetSample()"><i class="material-icons">download</i>Primary Customer Target {{modal_type}}
+                    sample file</a>
+            </div>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+            <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+                [ngClass]="{'loading': excel_loader == true}" (click)="createQueueRequest()"
+                accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">Upload</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="edit-modal" *ngIf="modal_for == 'PendingBills'">
+
+    <div *ngIf="loader">
+        <mat-spinner class="loader">
+            <div>
+                <p>Loading....</p>
+            </div>
+        </mat-spinner>
+    </div>
+
+    <p class="heading">Upload Pending Bills</p>
+    <div mat-dialog-content>
+        <div class="dialog-content">
+            <div class="excel-box">
+                <label>
+                    <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                        <input type="file" (change)="onUploadChange($event)" name="fileupload"
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            style="display: none;">
+                    </form>
+                    <i class="material-icons">
+                        cloud_upload
+                    </i>
+                    <p *ngIf="excel_name == ''">Click Here To Upload Pending Bills Excel(In csv format)</p>
+                    <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                </label>
+                <a href="{{uploadurl}}sample_file/PendingBillsUpload.csv" target="_blank"><i
+                        class="material-icons">download</i>Click Here To Download Pending Bills Sample File</a>
+            </div>
+            <div *ngIf="uploadError">
+                <p mat-dialog-title>Failed To Upload: </p>
+                <div class="cs-table left-right-10">
+                    <div class="collapse-body pt0">
+                        <div class="cs-form">
+                            <div class="cs-table">
+                                <div class="table-container">
+                                    <div class="table-content">
+                                        <table>
+                                            <tr>
+                                                <td class=" padding0">
+                                                    <table>
+                                                        <tr *ngFor="let row of uploadErrorMsg">
+                                                            <td class="border-top border-bottom">{{row.statusMsg}} in
+                                                                row no. {{row.row}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+        <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+            [ngClass]="{'loading': excel_loader == true}" (click)="createQueueRequest(modal_type)"
+            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">{{excel_loader
+            == true ? 'Saving' : 'Upload'}}</button>
+    </div>
+</div>
+
+
+
+<div class="edit-modal" *ngIf="modal_for == 'uploadInvoice'">
+
+    <div *ngIf="loader">
+        <mat-spinner class="loader">
+            <div>
+                <p>Loading....</p>
+            </div>
+        </mat-spinner>
+    </div>
+
+    <p class="heading">Upload Invoice</p>
+    <div mat-dialog-content>
+        <div class="dialog-content">
+            <div class="excel-box">
+                <label>
+                    <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+                        <input type="file" (change)="onUploadChange($event)" name="fileupload"
+                            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            style="display: none;">
+                    </form>
+                    <i class="material-icons">
+                        cloud_upload
+                    </i>
+                    <p *ngIf="excel_name == ''">Click Here To Upload Invoice Excel(In csv format)</p>
+                    <p *ngIf="excel_name != ''">{{excel_name}}</p>
+                </label>
+                <a href="{{uploadurl}}sample_file/InvoiceUpload.csv" target="_blank"><i
+                        class="material-icons">download</i>Click Here To Download Invoice Sample File</a>
+            </div>
+            <div *ngIf="uploadError">
+                <p mat-dialog-title>Failed To Upload: </p>
+                <div class="cs-table left-right-10">
+                    <div class="collapse-body pt0">
+                        <div class="cs-form">
+                            <div class="cs-table">
+                                <div class="table-container">
+                                    <div class="table-content">
+                                        <table>
+                                            <tr>
+                                                <td class=" padding0">
+                                                    <table>
+                                                        <tr *ngFor="let row of uploadErrorMsg">
+                                                            <td class="border-top border-bottom">{{row.statusMsg}} in
+                                                                row no. {{row.row}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Close</button>
+        <button mat-raised-button color="accent" [disabled]="excel_loader == true"
+            [ngClass]="{'loading': excel_loader == true}" (click)="createQueueRequest(modal_type)"
+            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">{{excel_loader
+            == true ? 'Saving' : 'Upload'}}</button>
+    </div>
+</div>

@@ -1,0 +1,127 @@
+<div class="edit-modal" *ngIf="viewType=='items'">
+  <div mat-dialog-content>
+    <p class="heading"> {{data.main_data.coupon_code ? (data.main_data.coupon_code + ' Master Box') : ''}} Detail<span
+        class="cls-btn" (click)="deleteItem == true ?  closeRefresh() : closeDialog()"> <i
+          class="material-icons">close</i></span></p>
+    <div class="container container-scroll">
+      <div class="cs-table horizontal-scroll">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th>Product Detail</th>
+                <th class="w100 text-center">QTY.</th>
+                <th class="w60 text-center" *ngIf="data.action == 'true' && data.status == 'readyToDispatch'">Action
+                </th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of smallBoxlisting let i = index;">
+                  <td>{{row.product_detail?row.product_detail:'---'}}</td>
+                  <td class="w100 text-center">{{row.totalItems?row.totalItems:'---'}}</td>
+                  <td class="w60" *ngIf="data.action == 'true' && data.status == 'readyToDispatch'">&nbsp;</td>
+                </tr>
+
+                <tr *ngFor="let row of noScanListing let i = index;">
+                  <td>{{row.product_detail?row.product_detail:'---'}}</td>
+                  <td class="w100 text-center">{{row.sale_dispatch_qty?row.sale_dispatch_qty:'---'}}</td>
+                  <td class="w60 text-center" *ngIf="data.action == 'true' && data.status == 'readyToDispatch'">
+                    <div class="action-button">
+                      <button mat-icon-button matTooltip="Remove Item"
+                        (click)="removeItem(row.product_id, row.order_id, row.master_box_id)">
+                        <i class="material-icons del">remove_circle</i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+              </ng-container>
+
+
+              <ng-container *ngIf="loader">
+                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                  <td>
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w60" *ngIf="data.action == 'true' && data.status == 'readyToDispatch'">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="smallBoxlisting.length == 0 && noScanListing.length == 0">
+                <app-not-result-found></app-not-result-found>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<div class="edit-modal" *ngIf="viewType=='small_boxes'">
+  <div mat-dialog-content>
+    <p class="heading">Master Box {{data.main_data.coupon_code}} Details <span class="cls-btn" (click)="closeDialog()">
+        <i class="material-icons">close</i></span></p>
+    <div class="container container-scroll">
+      <div class="cs-table horizontal-scroll">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table>
+              <tr>
+                <th class="w30">Sr.No</th>
+                <th class="w150">Coupon Code</th>
+                <th class="w250">Product Detail</th>
+                <th class="w100">Total QTY.</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-content">
+            <table>
+              <ng-container *ngIf="!loader">
+                <tr *ngFor="let row of smallBoxlisting let i = index;">
+                  <td class="w30">{{i+1}}</td>
+                  <td class="w150">{{row.small_box_coupon?row.small_box_coupon:'---'}}</td>
+                  <td class="w250">{{row.product_detail?row.product_detail:'---'}}</td>
+                  <td class="w100">{{row.totalItems?row.totalItems:'---'}}</td>
+                </tr>
+              </ng-container>
+
+
+              <ng-container *ngIf="loader">
+                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                  <td class="w30">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w150">
+                    <div>&nbsp;</div>
+                  </td>
+                  <td class="w250">
+                    <div>&nbsp;</div>
+                  </td>
+
+                  <td class="w100">
+                    <div>&nbsp;</div>
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

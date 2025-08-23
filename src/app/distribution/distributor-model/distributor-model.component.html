@@ -1,0 +1,486 @@
+<!-- Add Distributor/Lead secondry contact start -->
+
+<div class="edit-modal" *ngIf='(data.type=="addDbContact")||(data.type=="addLeadContact")'>
+    <p class="heading">Contact Information</p>
+    <form #add_sec_contact="ngForm" name="add_sec_contact"
+        (ngSubmit)="(add_sec_contact.valid && add_sec_contact.submitted)?add_data():''" validate>
+        <div mat-dialog-content>
+            <div class="cs-form">
+                <div class="row">
+                    <div class="col s3">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>Name</mat-label>
+                                <!-- <input matInput placeholder="Placeholder"> -->
+                                <input matInput placeholder="Type Here ..." name="name" #name="ngModel"
+                                    value={{data2.name}} [(ngModel)]="data2.name"
+                                    [ngClass]="{'has-error' : name.invalid } " required>
+                            </mat-form-field>
+                            <div class="alert alert-danger"
+                                *ngIf="!name.valid && add_sec_contact.submitted && (empData.length<1)">
+                                Name is required...
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Mobile Number</mat-label>
+                            <input type="tel" maxlength="10" minlength="10" matInput placeholder="Type Here ..."
+                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                [ngClass]="{'has-error' : mobile.invalid } " name="mobile" #mobile="ngModel"
+                                value={{data2.mobile}} [(ngModel)]="data2.mobile" required>
+                        </mat-form-field>
+                        <div class="alert alert-danger"
+                            *ngIf="!mobile.valid && add_sec_contact.submitted && (empData.length<1)">
+                            Mobile no. must be 10 digits...
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Email ID</mat-label>
+                            <!-- <input matInput> -->
+                            <input type="email" minlength="6" matInput placeholder="Type Here ..." name="email"
+                                #email="ngModel" value={{data2.email}} [(ngModel)]="data2.email"
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                                [ngClass]="{'has-error' : email.invalid } ">
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!email.valid && add_sec_contact.submitted">
+                            Email is Invalid...
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>Designation</mat-label>
+                                <!-- <input matInput placeholder="Placeholder"> -->
+                                <input matInput placeholder="Type Here ..." name="designation" #designation="ngModel"
+                                    value={{data2.designation}} [(ngModel)]="data2.designation"
+                                    [ngClass]="{'has-error' : designation.invalid } ">
+                            </mat-form-field>
+                            <div class="alert alert-danger"
+                                *ngIf="!designation.valid && add_sec_contact.submitted && (empData.length<1)">
+                                Please Enter Right Designation
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Watsapp No.</mat-label>
+                            <input type="tel" minlength="0" maxlength="10" matInput placeholder="Type Here ..."
+                                onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="whatsapp_no"
+                                #whatsapp_no="ngModel" value={{data2.whatsapp_no}} [(ngModel)]="data2.whatsapp_no"
+                                [ngClass]="{'has-error' : whatsapp_no.invalid } ">
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!whatsapp_no.valid && whatsapp_no.touched">
+                            Whatsapp is Invalid...
+                        </div>
+                    </div>
+
+                    <div class="col s3">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>D.O.B</mat-label>
+                                <input matInput placeholder="Type Here ..." name="dob" #dob="ngModel"
+                                    [(ngModel)]="data2.dob" [matDatepicker]="picker" [max]="today_date" disabled>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="col s3">
+                <div class="control-field">
+                    <mat-form-field class="cs-input" appearance="outline">
+                        <mat-label>D.O.A</mat-label>
+                        <input matInput placeholder="Type Here ..." name="doa" #doa="ngModel"
+                        [(ngModel)]="data2.doa" [matDatepicker]="pickers" [max]="today_date" disabled>
+                        <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                        <mat-datepicker #pickers  disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>  -->
+                    <div class="col s3">
+                        <button mat-raised-button color="accent" type="submit" class="add-item wp100">
+                            Add To list
+                        </button>
+                    </div>
+                </div>
+
+                <div class="cs-table left-right-10" *ngIf="(empData.length>=1)">
+                    <div class="sticky-head">
+                        <div class="table-head border-top">
+                            <table>
+                                <tr>
+                                    <th class="w50">S. No</th>
+                                    <th class="w100">Name</th>
+                                    <th class="w90">Mobile No.</th>
+                                    <th class="w90">WhatsApp No.</th>
+                                    <th class="">EmailID</th>
+                                    <th class="w110">Designation</th>
+                                    <th class="w80 text-center">DOB</th>
+                                    <!-- <th class="w80 text-center">DOA</th> -->
+                                    <th class="w50 text-center"> Action</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger" *ngIf="((showErr) && (empData.length<1))">
+                        Add at least one Contact Detail...
+                    </div>
+                    <div class="table-container">
+                        <div class="table-content">
+                            <table>
+                                <tr *ngFor="let eData of empData ; let i = index">
+                                    <td class="w50 text-center">{{i+1}}</td>
+                                    <td class="w100">{{eData.contact_person}}</td>
+                                    <td class="w90">{{eData.mobile_no}}</td>
+
+                                    <td class="w90">{{eData.whatsapp_no? eData.whatsapp_no:'N/A'}}</td>
+
+
+                                    <td class="">{{eData.email?eData.email:'N/A'}}</td>
+                                    <td class="w110">{{eData.designation?eData.designation:'N/A'}}</td>
+
+                                    <td class="w80" *ngIf="eData.dob !='0000-00-00' && (eData.dob != 'Invalid date')">
+                                        {{eData.dob}}
+                                    </td>
+                                    <td class="w80" *ngIf="(eData.dob =='0000-00-00')||(eData.dob == 'Invalid date')">
+                                        N/A</td>
+
+                                    <!-- <td class="w80"
+                        *ngIf="eData.doa !='0000-00-00' && (eData.doa != 'Invalid date')">{{eData.doa}}
+                    </td> -->
+                                    <!-- <td class="w80"
+                    *ngIf="(eData.doa =='0000-00-00')||(eData.doa == 'Invalid date')">N/A</td> -->
+
+                                    <td class="w50 text-center">
+                                        <button mat-button class="delete-mat"><i class="material-icons red-clr"
+                                                (click)="deleteContactDetail(i)">delete_sweep</i></button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+                <button mat-button color="accent" type="button"
+                    (click)="(empData.length>0)?addSecContact():(showErr='true')">Save</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!-- Add Distributor/Lead secondry contact End -->
+
+
+<!-- update Distributor secondry contact start -->
+
+<div class="edit-modal" *ngIf='(data.type=="updateDBSecContact")'>
+    <p class="heading">Update Contact Information</p>
+    <form #update_contact="ngForm" name="update_contact"
+        (ngSubmit)="(update_contact.valid && update_contact.submitted)?updateContactDetail():''" validate>
+        <div mat-dialog-content>
+            <div class="cs-form">
+                <div class="row">
+                    <div class="col s3">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>Name</mat-label>
+                                <input matInput placeholder="Type Here ..." name="name" #name="ngModel"
+                                    value={{data.updateData.contact_person}}
+                                    [(ngModel)]="data.updateData.contact_person"
+                                    [ngClass]="{'has-error' : name.invalid } " required>
+                            </mat-form-field>
+                            <div class="alert alert-danger" *ngIf="!name.valid && update_contact.submitted">
+                                Name is required...
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Mobile Number</mat-label>
+                            <input type="tel" maxlength="10" minlength="10" matInput placeholder="Type Here ..."
+                                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                [ngClass]="{'has-error' : mobile.invalid } " name="mobile" #mobile="ngModel"
+                                value={{data.updateData.mobile_no}} [(ngModel)]="data.updateData.mobile_no" required>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!mobile.valid && update_contact.submitted">
+                            Mobile no. must be 10 digits...
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Email ID</mat-label>
+                            <input type="email" minlength="6" matInput placeholder="Type Here ..." name="email"
+                                #email="ngModel" value={{data.updateData.email}} [(ngModel)]="data.updateData.email"
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                                [ngClass]="{'has-error' : email.invalid } ">
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!email.valid && update_contact.submitted">
+                            Email is Invalid...
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>Designation</mat-label>
+                                <input matInput placeholder="Type Here ..." name="designation" #designation="ngModel"
+                                    value={{data.updateData.designation}} [(ngModel)]="data.updateData.designation"
+                                    [ngClass]="{'has-error' : designation.invalid } ">
+                            </mat-form-field>
+                            <div class="alert alert-danger" *ngIf="!designation.valid && update_contact.submitted">
+                                Please Enter Right Designation...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col s4">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Watsapp No.</mat-label>
+                            <input type="tel" minlength="10" maxlength="10" matInput placeholder="Type Here ..."
+                                onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="whatsapp_no"
+                                #whatsapp_no="ngModel" value={{data.updateData.whatsapp_no}}
+                                [(ngModel)]="data.updateData.whatsapp_no"
+                                [ngClass]="{'has-error' : whatsapp_no.invalid } ">
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!whatsapp_no.valid && whatsapp_no.touched">
+                            Whatsapp is Invalid...
+                        </div>
+                    </div>
+
+                    <div class="col s4">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>D.O.B</mat-label>
+                                <input matInput placeholder="Type Here ..." name="dob" #dob="ngModel"
+                                    [(ngModel)]="data.updateData.dob" [matDatepicker]="picker" [max]="today_date"
+                                    disabled>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <!-- <div class="col s4">
+                    <div class="df">
+                        <div class="control-field">
+                            <mat-form-field class="cs-input" appearance="outline">
+                                <mat-label>D.O.A</mat-label>
+                                <input matInput placeholder="Type Here ..." name="doa" #doa="ngModel"
+                                [(ngModel)]="data.updateData.doa" [matDatepicker]="pickers" [max]="today_date" disabled>
+                                <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                                <mat-datepicker #pickers  disabled="false"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div> -->
+                </div>
+            </div>
+            <div mat-dialog-actions>
+                <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+                <button mat-button color="accent" type="submit">Update</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!-- update Distributor secondry contact End -->
+
+
+<!-- update Google Location start -->
+<div class="edit-modal" *ngIf='(data.type=="updateGoogleLocation")'>
+    <p class="heading">Update Google Location</p>
+    <!-- <form #update_googleLocation="ngForm" name="update_googleLocation"
+        (ngSubmit)="(update_googleLocation.valid && update_googleLocation.submitted)?getLatLong():''" validate>
+        <div class="cs-form">
+            <div class="row">
+                <div class="col s12">
+                 
+                    <div class="control-field">
+                        <mat-form-field class="cs-input wp100" appearance="outline">
+                            <mat-label>Address</mat-label>
+                            <textarea matInput placeholder="Type Here ..." name="address" #address="ngModel"
+                                value={{googleData}} [(ngModel)]="googleData"
+                                [ngClass]="{'has-error' : address.invalid } " required></textarea>
+                        </mat-form-field>
+                        <div class="alert alert-danger" *ngIf="!address.valid && update_googleLocation.submitted">
+                            address is required...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cs-btn mb10 mt10 mr10 text-right">
+            <div class="in-btn sm-btn">
+                <button mat-raised-button color="accent" type="submit">Get Location</button>
+            </div>
+        </div>
+
+    </form> -->
+    <form #update_googleLocation="ngForm" name="update_googleLocation"
+        (ngSubmit)="(update_googleLocation.valid && update_googleLocation.submitted)?updategoogleLocation():''"
+        validate>
+        <div class="cs-table">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w100 text-center">Latitude</th>
+                            <th class="w100 text-center">Latitude</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <tr>
+                            <td class="w100 text-center">
+                                <div class="control-field">
+                                    <mat-form-field class="cs-input wp100" appearance="outline">
+                                        <mat-label>Latitude</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="lat" #lat="ngModel"
+                                            [(ngModel)]="latlongData.lat" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="!lat.valid && update_googleLocation.submitted"> Latitude is required...
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="w100 text-center">
+                                <div class="control-field">
+                                    <mat-form-field class="cs-input wp100" appearance="outline">
+                                        <mat-label>Longitude</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="long" #long="ngModel"
+                                            [(ngModel)]="latlongData.long" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger"
+                                        *ngIf="!long.valid && update_googleLocation.submitted"> Longitude is required...
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div mat-dialog-actions>
+            <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button mat-button color="accent" type="submit">Update Location</button>
+        </div>
+    </form>
+
+</div>
+
+
+<!-- update Google Location End -->
+
+<div class="edit-modal" *ngIf='data.type=="addrequirement"'>
+
+    <form #update_basic="ngForm" name="update_basic" validate>
+        <div mat-dialog-content>
+            <p class="heading">Add Requirement</p>
+            <div class="cs-form">
+                <div class="row">
+
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Category</mat-label>
+                            <mat-select name="category" #category="ngModel" [(ngModel)]="requiredata.category"
+                                [ngClass]="{'has-error' : category.invalid } " required>
+                                <mat-option *ngFor="let productData of category_list" (click)="getProducts()"
+                                    value="{{productData.category}}">{{productData.category}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Product Name</mat-label>
+                            <mat-select name="product" #product="ngModel" [(ngModel)]="requiredata.product"
+                                [ngClass]="{'has-error' : product.invalid } " required>
+                                <mat-option *ngFor="let productData of productlist"
+                                    value="{{productData.id}}">{{productData.product_name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col s3">
+                        <mat-form-field class="cs-input" appearance="outline">
+                            <mat-label>Quantity</mat-label>
+                            <input matInput type="text" onkeypress="return event.charCode>=48 && event.charCode<=57"
+                                placeholder="Type Here ..." name="qty" #qty="ngModel" [(ngModel)]="requiredata.qty"
+                                (ngModelChange)="data.amount=conInt(data.qty)*conInt(data.price); data.gst = (conInt(data.amount) * conInt(data.gstPercentage) / 100)"
+                                required>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col s3">
+                        <button mat-raised-button color="accent" type="submit" class="add-item wp100"
+                            [disabled]="!requiredata.category || !requiredata.product || !requiredata.qty"
+                            (click)="add_requirement()">
+                            Add To list
+                        </button>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+        <!-- <button mat-button color="accent" type="submit" (click)="add_requirement()">Add To list</button> -->
+        <!-- ///////////////////////////////////////// -->
+
+        <div class="cs-table left-right-10">
+            <div class="sticky-head">
+                <div class="table-head border-top">
+                    <table>
+                        <tr>
+                            <th class="w50">S.no</th>
+                            <th class="w100">Category</th>
+                            <th class="w90">Product Name</th>
+                            <th class="w90">Quantity</th>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <tr *ngFor="let d of requirement_list ; let i = index">
+                            <td class="w50 text-center">{{i+1}}</td>
+                            <td class="w100">{{d.category_name}}</td>
+                            <td class="w90">{{d.product_name}}</td>
+                            <td class="w90">{{d.qty}}</td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ////////////////////////////////////////////// -->
+        <div mat-dialog-actions>
+            <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button mat-button color="accent" type="submit" (click)="save_requirement()">Save</button>
+        </div>
+    </form>
+</div>

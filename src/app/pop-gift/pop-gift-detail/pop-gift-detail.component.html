@@ -1,0 +1,111 @@
+<div class="main-container">
+    
+    <div class="tools-container">
+        <a mat-icon-button  matTooltip="Back" routerLink="/pop-gift-list">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Pop Gift Detail</h2>
+    </div>
+    
+    
+    <div class="container pt10 pl10 pr10 pb100" >
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <!-- product data start -->
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Basic Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <span>Name</span>
+                                <p>{{popData.item_name?popData.item_name:"N/A"}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Qty Stock</span>
+                                <p>{{popData.qty_stock?popData.qty_stock:"N/A"}}</p>
+                            </div>
+                            
+                            <div class="block-feilds">
+                                <span>Description</span>
+                                <p>{{popData.description? popData.description:'N/A'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- product data end -->
+                
+                
+                <!-- Skeleton start -->
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skeleton end -->
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 m6 l6">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Stock Incoming</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="cs-table left-right-10">
+                            <div class="border-top">
+                                <div class="table-head border-bottom">
+                                    <table class="sno-border">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th class="w100 text-center">Qty</th>
+                                            <th class="w100">Receive Date</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="table-container pb0">
+                                <div class="table-content table-scroll" *ngIf="stockList.length > 0">
+                                    <table class="sno-border">
+                                        <tr *ngFor="let row of stockList">
+                                            <td>{{row.item_name}}</td>
+                                            <td class="w100 text-center">{{row.qty}}</td>
+                                            <td class="w100">{{row.receiving_date| date : 'd MMM y'}}</td>
+                                        </tr>
+                                        <ng-container *ngFor="let row of [].constructor(10)">
+                                            <tr class="sk-loading" *ngIf="skLoading"  >
+                                                <td><div>&nbsp;</div></td>
+                                                <td class="w100 text-center"><div>&nbsp;</div></td>
+                                                <td class="w100"><div>&nbsp;</div></td>
+                                            </tr>
+                                        </ng-container>
+                                    </table>
+                                </div>
+                                <ng-container *ngIf="stockList.length == 0">
+                                    <app-not-result-found></app-not-result-found>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        
+    </div>
+    
+</div>
+
+

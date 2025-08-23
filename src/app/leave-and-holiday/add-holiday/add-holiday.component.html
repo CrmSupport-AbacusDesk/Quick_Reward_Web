@@ -1,0 +1,103 @@
+
+
+<div class="main-container" >
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" routerLink="/holiday-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add Holiday</h2>
+  </div>
+  
+  <div class="container pt10 pl10 pr10 pb50" >
+    <form #f="ngForm" (ngSubmit)="f.valid && submit()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Holiday Type</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m6 l6">
+                  <mat-radio-group class="example-section" name="type" [(ngModel)]="data.type">
+                    <mat-radio-button class="wp50" color="primary" value="National">
+                      National
+                    </mat-radio-button>
+                    <mat-radio-button class="wp50" color="primary" value="Regional" (click)="getStateList()">
+                      Regional
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Date </mat-label>
+                    <input name="holiday_date" matInput [matDatepicker]="pickers"   #holiday_date="ngModel" readonly [(ngModel)]="data.holiday_date" required>
+                    <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                    <mat-datepicker #pickers></mat-datepicker>
+                  </mat-form-field>
+                  
+                  <div class="alert alert-danger" *ngIf="holiday_date.touched || f.submitted">
+                    <p *ngIf="holiday_date.errors?.required">This field is required</p>
+                  </div>
+                  <!-- <mat-form-field appearance="outline">
+                    <mat-label>Date</mat-label>
+                    <input matInput [matDatepicker]="picker" readonly  name="holiday_date" #holiday_date="ngModel" [(ngModel)]="data.holiday_date" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field> -->
+                  
+                  
+                </div>
+                
+                <div class="col s12 m3 l3">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>Title</mat-label>
+                    <input matInput placeholder="Type Here ..." name="title" [(ngModel)]="data.title"  #title="ngModel" required>
+                  </mat-form-field>
+                  <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                    <p *ngIf="title.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+                <div class="col s12 m3 l3" *ngIf="data.type == 'Regional'">
+                  <mat-form-field  appearance="outline">
+                    <mat-label>State</mat-label>
+                    <mat-select name="state" #state="ngModel" multiple [(ngModel)]="data.state" required   (selectionChange)="getDistrict(1)">
+                      <mat-option disabled="">Select State</mat-option>
+                      <mat-option *ngFor="let row of states"value="{{row.state_name}}">
+                        {{row.state_name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  
+                  <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+                    <p *ngIf="state.errors?.required">This field is required</p>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+

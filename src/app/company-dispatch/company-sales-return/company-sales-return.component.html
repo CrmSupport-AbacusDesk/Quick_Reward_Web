@@ -1,0 +1,98 @@
+<div class="main-container" >
+  <div class="tools-container">
+      
+      <a mat-icon-button matTooltip="Back" (click)="back()">
+          <i class="material-icons">arrow_back</i>
+      </a>
+      <h2>Add Sales Return</h2>
+      
+  </div>
+  
+  <div class="container pl10 pr10 pb50 pt10">
+      
+          <div class="row ">
+              <div class="col s12">
+                  <div class="card pb0">
+                      <div class="card-body cs-form">
+                          <div class="row">
+                              <div class="col s12 m6 l6">
+                                  <mat-form-field  appearance="outline">
+                                      <mat-label>Coupon Number</mat-label>
+                                      <input matInput placeholder="Type Here ..."  name="coupon_number" #coupon_number="ngModel" [(ngModel)]="couponNumber.coupon_number"  minlength="16" maxlength="16" min="0"  appPrefixFocusAndSelect #focusInput   (ngModelChange)="checkCoupon(couponNumber.coupon_number)">
+                                  </mat-form-field>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+              <ng-container *ngIf="couponList.length > 0;">
+                  
+                  
+                  <div class="cs-table" >
+                      <div class="sticky-head">
+                          <div class="table-head">
+                              <table>
+                                  <tr>
+                                      <th class="w60">Sr.No</th>
+                                      <th class="w140">Coupon Code</th>
+                                      <th class="w100">Coupon Type</th>
+                                      <th class="w100">Packing Size</th>
+                                      <th class="w120">Dispatch Date</th>
+                                      <th class="w130">Dispatch Type</th>
+                                      <th class="w130">Invoice Number</th>
+                                      <th>Primary Customer/Dealer Detail</th>
+                                      <th class="w120 text-center">Scanning Status</th>
+                                      <th class="w70 text-center">Action</th>
+                                  </tr>
+                              </table>
+                          </div>
+                      </div>
+                      
+                      <div class="table-container">
+                          <div class="table-content">
+                              <table>
+                                  <tr *ngFor="let row of couponList; let i = index;">
+                                      <td class="w60">{{i+1}}</td>
+                                      <td class="w140">{{row.coupon_code}}</td>
+                                      <td class="w100">{{row.coupon_type == 'Master Box' ? 'Box' :'Product'}}</td>
+                                      <td class="w100">{{row.master_packing_size}}</td>
+                                      <td class="w120">{{row.dispatch_date | date:'d MMM y'}}</td>
+                                      <td class="w130">{{row.dispatch_type}}</td>
+                                      <td class="w130">{{row.invoice_number}}</td>
+                                      <td>{{row.dr_detail}}</td>
+                                      <td class="w120 text-center">{{row.scan_status}}</td>
+                                      <td class="w70 text-center">
+                                          <div class="action-button">
+                                              <ng-container *ngIf="row.coupon_type == 'Master Box'"> 
+                                                  <button  mat-icon-button  matTooltip="View"  (click)="openDialog(row.id)">
+                                                      <i class="material-icons edit">visibility</i>
+                                                  </button>
+                                              </ng-container>
+                                              <button  mat-icon-button  matTooltip="Delete"  (click)="deleteCoupon(i)">
+                                                  <i class="material-icons del">delete</i>
+                                              </button>
+                                          </div>
+                                      </td>
+                                  </tr>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="row">
+                      <div class="col s12">
+                          <div class="text-right">
+                              <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+                                  {{savingFlag == true ? 'Please Wait' : 'Save'}}
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </ng-container>
+          </form>
+  </div>
+</div>
+

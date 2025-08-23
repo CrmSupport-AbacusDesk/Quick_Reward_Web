@@ -1,0 +1,37 @@
+.full-width
+{
+    width: 160%;
+    padding: -3px;    
+}
+
+.master-search{
+    position:relative;
+    
+    .fix-search-btn {
+        position: absolute;
+        top: -4px;
+        right: 0px;
+        color:#6b6b6b
+    }
+}
+
+.loginUser{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    line-height: 12px;
+    span{
+        text-transform: capitalize;
+        color: #999;
+    }
+}
+
+.logs_p{
+    display: flex;
+    color: green;
+    padding: 3px;
+    font-weight: 600;
+}
+
+
+// .mat-form-field-outline ng-tns-c4-4 ng-star-inserted

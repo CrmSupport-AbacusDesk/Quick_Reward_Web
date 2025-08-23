@@ -1,0 +1,181 @@
+<div class="main-container">
+  <!-- <div class="tab-surface">
+    <button *ngFor="let row of calenderInfo; let i =index;" mat-button
+        [ngClass]="OrderMonth == row.month && OrderYear == row.year ? 'active' : ''"
+        (click)="creditNote('',row.month,row.year);">{{row.month_name}} {{row.year}}<span
+            class="order-value">&#x20B9;{{row.total_payment_amount ? (row.total_payment_amount | number:'1.1-2') : '0'}}</span></button>
+  </div> -->
+  <div class="tools-container">
+    <h2>Payment List</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh('refresh',OrderMonth,OrderYear)">
+        <i class="material-icons">refresh</i>
+      </a>
+
+      <div class="pagination" *ngIf="paymentData.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious('',OrderMonth,OrderYear)" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <!-- <input type="text" placeholder="GO TO" name="pagenumber" (keyup.enter)="inputValue(pagenumber); " [(ngModel)]="pagenumber" min="1" max={{total_page}}> -->
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage('',OrderMonth,OrderYear)" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pb100">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">S.no.</th>
+              <th class="w100">Payment Date</th>
+              <th class="w80">Account Code</th>
+              <th class="w200">Customer Details</th>
+              <th class="w100">Payment Type</th>
+              <th class="w100">Transaction Number</th>
+              <th class="w100">Transaction Type</th>
+              <th class="w100 text-right">Transaction Amount</th>
+              <th class="w200">Remark</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table class="sno-border">
+            <tr>
+              <th class="w60">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker1" placeholder="Date" name="transaction_date"
+                      [(ngModel)]="filter.transaction_date" (ngModelChange)="date_format($event,OrderMonth,OrderYear)" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w80">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search ..." type="text" name="account_code"
+                      [(ngModel)]="filter.account_code" (keyup.enter)="creditNote('',OrderMonth,OrderYear)">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search ..." type="text" name="payment_type"
+                      [(ngModel)]="filter.payment_type" (keyup.enter)="creditNote('',OrderMonth,OrderYear)">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search ..." type="text" name="transaction_type"
+                      [(ngModel)]="filter.transaction_type" (keyup.enter)="creditNote('',OrderMonth,OrderYear)">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-right">&nbsp;</th>
+              <th class="w200">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of paymentData; let i =index">
+                <td class="w60">{{ i + 1 + sr_no }}</td>
+                <td class="w100">{{ row.transaction_date != '0000-00-00' ? (row.transaction_date | date:'dd MMM yyyy') : '---'}}</td>
+                <td class="w80">{{row.account_code ? row.account_code : '---'}}</td>
+                <td class="w200">{{row.company_name ? (row.company_name | titlecase) : '---'}}</td>
+
+                <td class="w100">{{row.payment_type ? row.payment_type : '---'}}</td>
+                <td class="w100">{{row.transaction_id ?row.transaction_id :'---'}}</td>
+                <td class="w100">{{row.transaction_type ? row.transaction_type : '---'}}</td>
+                <td class="w100">{{row.transaction_amount ?row.transaction_amount : '---'}}</td>
+                <td class="w200">{{row.remark ? row.remark : '---'}}</td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td> 
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <ng-container *ngIf="paymentData.length == 0 && datanotfound == true ">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+  <!-- <div class="fab-btns">
+    <button class="excel pulse" mat-fab color="primary"  [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+    <mat-menu #menu="matMenu">
+
+      <button mat-menu-item (click)="upload_excel();">
+        <mat-icon>cloud_upload</mat-icon>
+        <span>Upload New Data</span>
+      </button>
+      <button mat-menu-item (click)="exportAsXLSX(OrderMonth, OrderYear)"  *ngIf="paymentData.length > 0">
+        <mat-icon>download</mat-icon>
+        <span>Download in excel</span>
+        Download Excel
+      </button>
+    </mat-menu>
+  </div> -->
+
+</div>

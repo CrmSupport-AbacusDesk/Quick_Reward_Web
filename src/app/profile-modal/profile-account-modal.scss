@@ -1,0 +1,151 @@
+page-profile-account-modal {
+    .flex{
+        display: flex;
+        justify-content: space-between;
+    }
+    .transprant-bg
+    {
+        background: rgba(0, 0, 0, 0.5);
+    }
+    .headText{
+        flex: 1;
+        text-align: center;
+    }
+    
+
+    .activeAccSection{
+        padding: 10px 0 !important;
+        background: #e6e5e5;
+        border-radius: 8px;
+    }
+    .otherAccSection{
+        background: #f6f6f6;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 0 !important;
+        // .radio-icon{
+        //     display: none;
+        // }
+    }
+
+    .work-modal
+    {
+        padding: 16px;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    
+    .work-modal-bg
+    {
+        width: 100%;
+        background: #fff;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.5);
+        
+        .head
+        {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: -16px -16px 16px -16px;
+            padding: 10px 16px;
+            border-bottom: 1px solid #cccccc;
+            margin-bottom: 10px;
+            
+            h2
+            {
+                font-size: 16px;
+            }
+            
+            a
+            {
+                &.close
+                {
+                    line-height: 0px;
+                    
+                    i
+                    {
+                        font-size: 20px;
+                        color: #64104b;
+                    }
+                }
+            }
+        }
+
+        ion-item
+        {
+            padding-left: 0px;
+        }
+    }
+    
+    ion-label 
+    {
+        font-size: 14px !important;
+    }
+
+    .approvedAmtLabel{
+        margin: 0 !important;
+    }
+    .edit {
+         margin: 0px; 
+         border: none !important; 
+         border-radius: 6px; 
+         padding: 0px !important;
+}
+
+.primaryAcc{    
+        background: black;
+        color: white;
+        padding: 1px 2px;
+        border-radius: 4px;
+        font-size: 10px !important;
+    }
+    .ionItem{
+        margin: 0 !important;
+        
+            border-bottom: 1px dashed rgb(216, 215, 215);
+            border-top: 1px dashed rgb(216, 215, 215);
+        
+        background-color: transparent;
+    }
+    .accId{
+        color: black;
+    }
+    .nameSection{
+        color: gray;
+        font-size: 12px; 
+    }
+}
+
+
+
+// .ionItem{
+    //     padding: 0;
+    // }
+    // .profile-popover{
+    //     .popover-content{ width: 180px; }
+    //     span{
+    //         text-transform: capitalize;
+    //         font-size: 12px;
+    //     }
+    // .accId{
+    //     display: flex;
+    //     justify-content: space-between;
+    //     font-size: 12px;
+        
+    // }
+    // .primaryAcc{    
+    //     background: black;
+    //     color: white;
+    //     padding: 1px 2px;
+    //     border-radius: 4px;
+    //     font-size: 10px !important;
+    // }
+    // .label{
+    //     margin: 0;
+    // }
+    // }

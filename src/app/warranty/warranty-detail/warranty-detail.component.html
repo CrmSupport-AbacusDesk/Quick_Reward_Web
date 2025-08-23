@@ -1,0 +1,183 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Warranty Details</h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12 m12 l8">
+        <!-- product data start -->
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Warranty Information</h2>
+            <div class="left-auto" *ngIf="getData.company_verification_status=='Pending'">
+              <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+                [routerLink]="[ 'add-warranty/', this.id ]">
+                <i class="material-icons">edit</i>
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date Created</span>
+                <p>{{getData.date_created ? (getData.date_created | date : 'dd MMM yyy ,h:mm a') :'---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Created By</span>
+                <p>{{getData.created_by_type ? (getData.created_by_type | titlecase) :'---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Customer Name</span>
+                <p>{{getData.customer_name ? (getData.customer_name | titlecase) :'---'}}</p>
+              </div>
+
+
+
+              <div class="block-feilds">
+                <span>Customer Mobile No.</span>
+                <p>{{getData.customer_mobile ? getData.customer_mobile :'---'}}</p>
+              </div>
+
+
+
+              <div class="block-feilds">
+                <span>Product Name</span>
+                <p>{{getData.product_name ? (getData.product_name | titlecase) :'---'}}</p>
+              </div>
+
+
+
+              <div class="block-feilds">
+                <span>Product Code</span>
+                <p>{{getData.product_code ? (getData.product_code ):'---'}}</p>
+              </div>
+
+              
+
+              <div class="block-feilds">
+                <span>Serial No.</span>
+                <p>{{getData.serial_no ? (getData.serial_no | titlecase) :'---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Warranty Months</span>
+                <p>{{getData.warranty_period ? getData.warranty_period :'---'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Date Of Purchase</span>
+                <p>{{getData.date_of_purchase != "0000-00-00" ? (getData.date_of_purchase | date :"dd MMM yyy "): "--"
+                  }}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>End Date</span>
+                <p>{{getData.warranty_end_date != "0000-00-00" ? (getData.warranty_end_date | date :"dd MMM yyy"): "--"
+                  }}</p>
+              </div>
+
+
+              <div class="block-feilds flex-heading">
+                <div>
+
+                  <span>Status</span>
+                  <!-- <p>{{getData.company_verification_status ? getData.company_verification_status :'---'}}</p> -->
+                  <p>
+                    <strong class="yellow-clr" *ngIf="getData.company_verification_status=='Pending'">
+                      {{getData.company_verification_status ? (getData.company_verification_status | titlecase) :
+                      '--'}}</strong>
+                    <strong class="green-clr" *ngIf="getData.company_verification_status=='Verified'">
+                      {{getData.company_verification_status ? (getData.company_verification_status | titlecase) :
+                      '--'}}</strong>
+                    <strong class="red-clr" *ngIf="getData.company_verification_status=='Reject'">
+                      {{getData.company_verification_status ? (getData.company_verification_status | titlecase) :
+                      '--'}}</strong>
+                  </p>
+                </div>
+
+                <div class="left-auto" *ngIf="getData.company_verification_status=='Pending'">
+                  <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                    (click)="updateWarrantyStataus(getData.id,getData.warranty_period,getData.date_of_purchase)">
+                    <i class="material-icons">edit</i>
+                  </a>
+                </div>
+              </div>
+              <div class="block-feilds" *ngIf="getData.company_verification_status=='Reject'">
+                <span>Reason Of Reject</span>
+                <p>{{getData.reject_reason ? (getData.reject_reason | titlecase) : '--'}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="getData.company_verification_status!='Pending'">
+                <span>Status Update Date</span>
+                <p>{{getData.verification_on != '0000-00-00 00:00:00' ? (getData.verification_on | date : 'dd MMM yyy
+                  ,h:mm a') :'---'}}</p>
+              </div>
+              <div class="block-feilds" *ngIf="getData.company_verification_status!='Pending'">
+                <span>Status Update By</span>
+                <p>{{getData.verification_by_name ? getData.verification_by_name : '--'}}</p>
+              </div>
+
+
+
+
+            </div>
+          </div>
+        </div>
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="img-container">
+              <div class="image-block sk-loading" *ngFor="let row of [].constructor(3)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s12 m12 l4">
+        <div class="card" *ngIf="!skLoading">
+          <div class="card-head">
+            <h2>Images</h2>
+          </div>
+          <div class="card-body">
+            <div class="img-container">
+              <div class="image-block" *ngIf="getData.warranty_card_copy_img.length">
+                <img [src]="url+getData.warranty_card_copy_img" (click)="imageModel(url+getData.warranty_card_copy_img)"
+                  style="cursor: zoom-in;">
+                <p>Warranty Card Image</p>
+
+              </div>
+              <div class="image-block" *ngIf="getData.bill_copy_img.length">
+                <img [src]="url+getData.bill_copy_img" (click)="imageModel(url+getData.bill_copy_img)"
+                  style="cursor: zoom-in;">
+                <p>Bill Card Image</p>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" *ngIf="skLoading">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="img-container">
+              <div class="image-block sk-loading" *ngFor="let row of [].constructor(3)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

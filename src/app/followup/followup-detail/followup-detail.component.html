@@ -1,0 +1,109 @@
+<div class="main-container" >
+  <!-- <app-loader *ngIf="loader"></app-loader> -->
+  <div class="tools-container">
+    <a mat-icon-button  matTooltip="Back" routerLink="/followup-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Followup Details</h2>
+    
+    <div class="left-auto">
+      <button matTooltip="Edit Followup" *ngIf="followup_detail.status == 'Pending'"  (click)="edit_followup_modal()"  mat-raised-button color="primary"><i class="material-icons">edit</i> Edit Followup</button>
+    </div>
+  </div>
+  
+  <div class="container pt10 pl10 pr10 pb50" >
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <!-- product data start -->
+        <div class="card" *ngIf="!loader">
+          <div class="card-head">
+            <h2>Basic Details</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box">
+              <div class="block-feilds">
+                <span>Date Created</span>
+                <p>{{followup_detail.date_created && followup_detail.date_created!=''?(followup_detail.date_created |date : 'd MMM y'):'--'}}</p>
+              </div>
+              <div class="block-feilds">
+                <span>Created By</span>
+                <p>{{followup_detail.name && followup_detail.name!=''?(followup_detail.name | titlecase):'--'}}</p>
+              </div>
+
+              <div class="block-feilds">
+                <span>Company Name / Type</span>
+                <p>{{followup_detail.dr_name && followup_detail.dr_name!=''?(followup_detail.dr_name | titlecase):'--'}} 
+                  <!-- (  -->
+                  <!-- <ng-container *ngIf="followup_detail.type == '1'">Distributor/Dealer</ng-container>
+                  <ng-container *ngIf="followup_detail.type == '3'">Retailer</ng-container>
+                  <ng-container *ngIf="followup_detail.type == '7'">Direct Dealer</ng-container>
+                  ) -->
+                </p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Followup Type</span>
+                <p>{{followup_detail.dr_type_name && followup_detail.dr_type_name!=''?followup_detail.dr_type_name:'--'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Contact Person Name</span>
+                <p>{{followup_detail.dr_name && followup_detail.dr_name!=''?(followup_detail.dr_name | titlecase):'--'}}</p>
+              </div>
+              
+              <!-- <div class="block-feilds">
+                <span>Mobile Number</span>
+                <p>{{followup_detail.mobile && followup_detail.mobile!=''?followup_detail.mobile:'--'}}</p>
+              </div> -->
+              
+              <div class="block-feilds">
+                <span>Followup Date</span>
+                <p>{{followup_detail.next_follow_date && followup_detail.next_follow_date!=''?(followup_detail.next_follow_date |date : 'd MMM y'):'--'}}</p>
+              </div>
+              
+              <div class="block-feilds">
+                <span>Assign To</span>
+                <p>{{followup_detail.assigned_to_name && followup_detail.assigned_to_name!=''?(followup_detail.assigned_to_name | titlecase):'--'}}</p>
+              </div>
+              
+              <div class="block-feilds {{followup_detail.status}}">
+                <span>Status</span>
+                <p>{{followup_detail.status && followup_detail.status!=''?(followup_detail.status | titlecase) :'--'}}</p>
+              </div>
+              
+              <!-- <div class="block-feilds">
+                <span>Last Status Changed By</span>
+                <p>{{getData.status_changed_by_name ? getData.status_changed_by_name : '--'}}</p>
+              </div> -->
+            </div>
+          </div>
+          
+          <div class="grid-box single mt16">
+            <div class="block-feilds">
+              <span>Description</span>
+              <p>{{followup_detail.description?followup_detail.description:'--'}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- product data end -->
+      
+      
+      <!-- Skeleton start -->
+      <div class="card" *ngIf="loader">
+        <div class="sk-head">
+          <h2>&nbsp;</h2>
+        </div>
+        <div class="card-body">
+          <div class="grid-box">
+            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+              &nbsp;
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Skeleton end -->
+      
+    </div>
+  </div>
+</div>

@@ -1,0 +1,179 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Invoice Details</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <div class="group-btn">
+        <button mat-button class="ouline-btns whatsapp" (click)="addPayment(getData.id,getData.invoice_final_amount)"
+        *ngIf="getData.status=='Pending'">Add Payment</button>
+        <button mat-button class="ouline-btns pdf" (click)="exportPdf()"><img src="assets/img/icons/pdf.png">Export
+          PDF</button>
+        </div>
+      </div>
+    </div>
+    <div class="container pt10 pl10 pr10 pb50">
+      <div class="row">
+        <div class="col s12 m12 ">
+          <div class="card" *ngIf="!skLoading">
+            <div class="card-head">
+              <h2>Customer Basic Information</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Customer Name</span>
+                  <p>{{getData.customer_name ? (getData.customer_name | titlecase) :'---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Customer Mobile No.</span>
+                  <p>{{getData.customer_mobile ? getData.customer_mobile :'---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Customer Address</span>
+                  <p>{{getData.customer_name ? (getData.customer_name | titlecase) :'---'}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" *ngIf="skLoading">
+            <div class="sk-head">
+              <h2>&nbsp;</h2>
+            </div>
+            <div class="card-body">
+              <div class="img-container">
+                <div class="image-block sk-loading" *ngFor="let row of [].constructor(3)">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 mt15 ">
+          <div class="card" *ngIf="!skLoading">
+            <div class="card-head">
+              <h2>Invoice Information</h2>
+            </div>
+            <div class="card-body">
+              <div class="grid-box">
+                <div class="block-feilds">
+                  <span>Date Created</span>
+                  <p>{{getData.date_created ? (getData.date_created | date : 'dd MMM yyy ,h:mm a') :'---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Invoice No.</span>
+                  <p>{{getData.invoice_no ? getData.invoice_no :'---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Complaint No.</span>
+                  <p>{{getData.complaint_no ? getData.complaint_no :'---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Total Amount</span>
+                  <p>{{getData.invoice_final_amount ? (getData.invoice_final_amount | number:'1.2-2') :'0'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Status</span>
+                  <p>
+                    <strong class="yellow-clr" *ngIf="getData.status=='Pending'">
+                      {{getData.status ? (getData.status | titlecase) :
+                        '--'}}</strong>
+                        <strong class="green-clr" *ngIf="getData.status=='Paid'">
+                          {{getData.status ? (getData.status | titlecase) :
+                            '--'}}</strong>
+                          </p>
+                        </div>
+                        
+                        <div class="block-feilds" *ngIf="getData.status!='Pending'">
+                          <span>Payment Mode</span>
+                          <p>{{getData.payment_mode ? (getData.payment_mode) :'---'}}</p>
+                        </div>
+                        <div class="block-feilds" *ngIf="getData.status!='Pending'">
+                          <span>Transaction No.</span>
+                          <p>{{getData.transaction_no ? (getData.transaction_no) :'---'}}</p>
+                        </div>
+                        <div class="block-feilds" *ngIf="getData.status!='Pending'">
+                          <span>Payment Remark</span>
+                          <p>{{getData.payment_remark ? (getData.payment_remark) :'---'}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s12 mt15 ">
+                  <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                      <h2>Invoice Information</h2>
+                    </div>
+                    <div class="edit-modal mt15" *ngIf="add_list.length > 0">
+                      <div mat-dialog-content>
+                        <div class="cs-table left-right-10">
+                          <div class="table-head">
+                            <table>
+                              <tr>
+                                <th class="w30 text-center">Sr.No</th>
+                                <th class="w150">Part Details</th>
+                                <th class="w60 text-center">Qty</th>
+                                <th class="w60 text-right">MRP</th>
+                                <th class="w60 text-right">Amount</th>
+                                <th class="w60 text-right">Discounted Amount</th>
+                                <th class="w100 text-right">Total</th>
+                              </tr>
+                            </table>
+                          </div>
+                          <div class="table-container pb0">
+                            <div class="table-content none-shadow">
+                              <table>
+                                <ng-container *ngFor="let row of add_list; let i = index">
+                                  <tr>
+                                    <td class="w30 text-center">{{ i + 1 }}</td>
+                                    <td class="w150">{{ row.part_name}}-{{row.part_no}}</td>
+                                    <td class="w60 text-center">{{ row.qty }}</td>
+                                    <td class="w60 text-right">{{ row.rate }}</td>
+                                    <td class="w60 text-right">{{ row.amount | number:'1.2-2'}}</td>
+                                    <td class="w60 text-right">{{ row.discount_amount | number:'1.2-2'}}</td>
+                                    <td class="w100 text-right">{{ row.final_amount | number:'1.2-2'}}</td>
+                                  </tr>
+                                </ng-container>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div mat-dialog-content>
+                      <div class="row">
+                        <div class="col s7 offset-s6">
+                          <div class="invoice-table">
+                            <table>
+                              <tr *ngIf="add_list.length > 0">
+                                <td>Sub Total</td>
+                                <th>{{ getData.sub_amount | number:'1.2-2'}}</th>
+                              </tr>
+                              <tr *ngIf="add_list.length > 0">
+                                <td>Discount Amonut</td>
+                                <th>{{ getData.discount_amount | number:'1.2-2'}}</th>
+                              </tr>
+                              <tr *ngIf="add_list.length > 0">
+                                <td>GST Amount</td>
+                                <th>{{ getData.gst_amount | number:'1.2-2'}}</th>
+                              </tr>
+                              <tr>
+                                <td>Service Charge</td>
+                                <th>{{ getData.service_charge | number:'1.2-2'}}</th>
+                              </tr>
+                              <tr>
+                                <td>Total</td>
+                                <th>{{ getData.invoice_final_amount | number:'1.2-2'}}</th>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>

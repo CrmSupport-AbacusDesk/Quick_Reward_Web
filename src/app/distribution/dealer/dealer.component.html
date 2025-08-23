@@ -1,0 +1,266 @@
+<div class="main-container">
+  <div class="tools-container mb0">
+    <div class="page-heading">
+      <div class="heading-text">
+        <h2>Retailers</h2>
+        <p>Total Retailers: {{dr_count}}</p>
+      </div>
+    
+      <div class="left-auto">
+      
+        <div class="uppr-one m-right-data mr10">
+          
+        
+          
+          <div class="cs-form date-filter">
+          
+          
+              <mat-form-field class="cs-input" appearance="outline">
+                <mat-label>SORT</mat-label>
+                <mat-select name="SORT" #type1="ngModel" [(ngModel)]="sort.type1" (ngModelChange)="distributorList()" required>
+                 
+                  <mat-option  value="ASC">A TO Z</mat-option>
+          <mat-option  value="DESC">Z TO A</mat-option>
+         
+                </mat-select>
+              </mat-form-field>
+            </div>
+          
+        </div>
+       
+        <div class="top-pagination">
+  
+          <ul>
+                <li class="refresh-area mr0 after-none">
+    
+                   <a class="refresh-btn" mat-raised-button (click)="refresh()" matTooltip="Refresh"><i class="material-icons"> refresh</i></a>
+              </li>
+              <li>
+                  <p>Pages {{pagenumber}} Of {{total_page}}</p>
+              </li>
+              <li>
+                  <button mat-button class="left-btn" (click)="start=start-page_limit; distributorList()" [disabled]="pagenumber == 1">
+          <i class="material-icons">keyboard_arrow_left</i></button>
+              </li>
+              <li>
+                  <input type="text" placeholder="GO TO" name="pagenumber" (keyup.enter)="start=(pagenumber*page_limit)-page_limit; distributorList()" [(ngModel)]="pagenumber" min="1" max={{total_page}}>
+              </li>
+    
+              <li>
+                  <button mat-button class="right-btn" (click)="start=start+page_limit; distributorList()" [disabled]="pagenumber == total_page">
+            <i class="material-icons">keyboard_arrow_right</i>
+          </button>
+              </li>
+          </ul>
+      </div>
+          
+        </div>
+      
+    </div>
+    <div class="uppr-one m-right-data">
+      <ul>
+       
+
+        <li class="refresh-area mr0 after-none">
+          <a class="refresh-btn" mat-raised-button (click)="distributorList('refresh') "  matTooltip="Refresh" ><i class="material-icons"> refresh</i></a>
+        </li>
+      </ul>
+      <div  class="tabs ml15">
+        <ul>
+        <li><a class="" [ngClass]="active_tab == 'active' ? 'active' : ''" (click)="active_tab = 'active'; distributorList();">Active <span class="counter">{{all_count.active}}</span></a></li>
+        <li><a class="" [ngClass]="active_tab == 'notactive' ? 'active' : ''" (click)="active_tab = 'notactive'; distributorList();">NotActive <span class="counter">{{all_count.notactive}}</span></a></li>
+      </ul>
+      </div>
+    </div> 
+    
+  </div>
+  
+  <div class="container-outer padding0">
+    <!-- <div *ngIf="loader">
+      <mat-spinner class="loader">
+        <div><p>Loading....</p></div>
+      </mat-spinner>
+    </div> -->
+    <div class="container mb60" >
+      <div class="cs-table horizontal-scroll">
+        <div class="sticky-head">
+          <div class="table-head">
+            <table class="sno-border">
+              <tr>
+                <th class="w50">S.no.</th>
+
+                <th class="w100">Date Created</th>
+                <th class="w100">Created By</th>
+                <th class="w170">Company Name</th>
+                <th class="w170">Contact Person</th>
+                <th class="w100">Contact Number</th>
+                <th class="w100">State Name</th>
+                <th class="w100" >Secondary Sale</th>
+                <th class="w100">Primary Customer</th>
+                <!-- <th class="w100">Credit Limit</th> -->
+                <th class="w160">Assigned To</th>
+                <th>Address</th>
+
+              </tr>
+            </table>
+          </div>
+          <div class="table-head border-top" >
+            <table class="sno-border">
+              <tr>
+                <th class="w50"></th>
+
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="cs-input date-column infix-bodr">
+                      <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created" [max]="today_date" [(ngModel)]="search_val.date_created" (dateChange)="onDate($event)" readonly>
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Created By. . ." type="text" name="created_by" [(ngModel)]="search_val.created_by" (keyup)="distributorList()">
+                      
+                    </mat-form-field>
+                  </div>
+                </th>
+                <!-- <th class="w100"></th> -->
+                <th class="w170">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Company Name. . ." name="company_name" (keyup)="distributorList()" [(ngModel)]="search_val.company_name" >
+                    </mat-form-field>
+                  </div>
+                </th>    
+                <th class="w170">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Contact Person . ." name="contact_person" (keyup)="distributorList()" [(ngModel)]="search_val.contact_person" >
+                    </mat-form-field>
+                  </div>
+                </th>  
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Contact Number." name="contact_number" onkeypress="return event.charCode >= 48 && event.charCode <= 57"  maxlength="10"  (keyup)="distributorList()" [(ngModel)]="search_val.contact_number" >
+                    </mat-form-field>
+                  </div>
+                </th>  
+                
+                <th class="w100">
+                  <div class="th-search">
+                    <select (change)="distributorList()" name="state" [(ngModel)]="search_val.state">
+                      <option value="">Select an Option</option>
+                      <option *ngFor="let val of state_values">{{val.state_name}}</option>
+                    </select>
+                  </div>
+                </th>
+                <th class="w100"></th>
+                <th class="w100">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Primary Customer" name="distributor" (keyup)="distributorList()" [(ngModel)]="search_val.distributor" >
+                    </mat-form-field>
+                  </div>
+                </th>
+               
+                <th class="w160">
+                  <div class="th-search-acmt">
+                    <mat-form-field class="example-full-width cs-input select-input">
+                      <input matInput placeholder="Assigned To" name="assign_user" (keyup)="distributorList()" [(ngModel)]="search_val.assign_user" >
+                    </mat-form-field>
+                  </div>
+                </th> 
+                <th></th>
+              </tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-content">
+            <table class="sno-border">
+              <tr *ngFor="let list of distributor_list;let i=index">
+                <td class="w50">{{i+1+start}}</td>
+
+                <td class="w100">{{list.date_created | date : 'd MMM y'}}</td>
+                <td *ngIf="!list.created_name" class="w100">Admin</td>
+                <td *ngIf="list.created_name" class="w100">{{list.created_name}}</td>
+                <!-- <td class="w100">{{list.dr_code}}</td> -->
+                <td class="w170">{{list.company_name}}</td>
+                <td class="w170">{{list.contactperson}}</td>
+                <td class="w100"><a class="link-btn" mat-button routerLink="distribution-detail/{{list.id}}" routerLinkActive="active">{{list.mobile}}</a></td>
+                <td class="w100">{{list.state ? list.state : '--'}}</td>
+                <td class="w100">
+                  <div class="one-line">
+                    {{list.secondary_sale.count}} | &#8377; {{list.secondary_sale.sum}}
+                  </div>  
+                </td>
+                <td class="w100">
+                  {{list.assign_distributor}}
+                </td>
+                <!-- <td class="w100">{{list.credit_limit?list.credit_limit:'--'}}</td> -->
+                <td class="w160" >{{list.assign_user}}
+                  
+                </td>
+                <td matTooltip="{{list.address}}, {{list.area}}, {{list.district}}, {{list.state}}" matTooltipPosition="above">
+                  <div class="one-line">
+                    {{list.address && list.address!='' ? list.address+',' : '--'}} {{list.area && list.area!='' ? list.area+',' :''  | uppercase }} {{list.district && list.district!='' ? list.district+',' : '' }} {{list.state && list.state!='' ? list.state+',' : ''}}
+                  </div>
+                  <div class="action-btns">
+                    <a mat-button class="view" (click)="userDetail(list.id)"><i class="material-icons">remove_red_eye</i> View</a>
+                    <button mat-button class="delete" (click)="deleteUser(list.id)"><i class="material-icons">delete_sweep</i> Delete</button>
+                  </div>
+                </td>  
+
+
+              </tr>
+              
+              
+              <ng-container *ngFor="let lead of skelton">
+                <tr class="sk-loading sno-border"  *ngIf="loader">
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w170"><div>&nbsp;</div></td>
+                  <td class="w170"><div>&nbsp;</div></td>
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w100"><div>&nbsp;</div></td>
+                  <td class="w160"><div>&nbsp;</div></td>
+                  <td><div>&nbsp;</div></td>
+
+                </tr>
+              </ng-container>
+            </table>
+            <div
+            class="search-results"
+            data-infinite-scroll
+            debounce
+            [infiniteScrollDistance]="1"
+            [infiniteScrollUpDistance]="2"
+            [infiniteScrollThrottle]="10"
+            (scrolled)="distributorList()"              
+            >
+          </div>
+          
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="no-data" *ngIf="data_not_found==true">
+      <img src="assets/img/no-data.gif" alt="">
+      <p>Data not <span>available !</span></p>
+    </div>
+  </div>
+  
+  <div class="fix-btn">
+    <a class="bottom-btn ecxel-btn" matTooltip="Download Excel" matTooltipPosition="above" mat-raised-button (click)="exportAsXLSX()"><img src="assets/img/excel.svg"></a>
+    <a class="bottom-btn"  matTooltip="Add New" matTooltipPosition="above" mat-raised-button routerLink="/add-distribution/3"><i class="material-icons">add</i></a>
+  </div>
+</div>
+</div>
+

@@ -1,0 +1,198 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>Generate Master Box</h2>
+    <div class="left-auto left-auto df ac flex-gap-10">
+      <button class="mr16" matTooltip="Add Master Boxes" [disabled]="btnFlag == true" (click)="addGrandmasterboxes()"
+        mat-raised-button color="primary">
+        <i class="material-icons">add</i>
+        {{btnFlag == true ? 'Please Wait': 'Add Master Boxes' }}
+      </button>
+    </div>
+  </div>
+  <ng-container>
+    <div class="container pt10 pl10 pr10 pb50">
+      <div class="row">
+        <div class="col s6">
+          <div class="card  pb0">
+            <div class="card-body cs-form">
+              <div class="row">
+                <h2 style="padding: 10px;text-align: center;font-size: 20px;" *ngIf="!masterboxData.length">Please Add
+                  Master Boxes First..</h2>
+                <div class="col s12 m6 l3" *ngIf="masterboxData.length">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Grand Master Box</mat-label>
+                    <mat-select name="couponGrandMasterId" [(ngModel)]="couponNumber.couponGrandMasterId"
+                      #couponGrandMasterId="ngModel" *ngIf="masterboxData.length">
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getmasterbox($event.target.value,invoice_detail.order_no)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let row of masterboxData" value="{{row.id}}">{{row.coupon_code}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col s12 m6 l6" *ngIf="couponNumber.couponGrandMasterId">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Coupon Number</mat-label>
+                    <input matInput placeholder="Type Here ..." name="coupon_number" #coupon_number="ngModel"
+                      [(ngModel)]="couponNumber.coupon_number" minlength="16" maxlength="16" #focusInput min="0"
+                      (ngModelChange)="checkCoupon(couponNumber.coupon_number,couponNumber.couponGrandMasterId)">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card mt16 pl10 pr10" *ngIf="temCoupon.length > 0">
+            <div class="card-head">
+              <h2>Scan Coupon</h2>
+            </div>
+            <div class="card-body">
+              <div class="row mb0">
+                <div class="cs-table font-lg border-top">
+                  <div class="table-head border-bottom">
+                    <table>
+                      <tr>
+                        <th class="w50">S.no.</th>
+                        <th class="w150">Coupon Code</th>
+                        <th>Product Detail</th>
+                        <th class="w100">Status</th>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="table-container">
+                    <div class="table-content">
+                      <table>
+                        <tr *ngFor="let row of temCoupon; let i =index" class="dispatchCom">
+                          <td class="w50">{{i+1}}</td>
+                          <td class="w150">{{row.coupon_code ? row.coupon_code : ''}}</td>
+                          <td>{{row.product_detail ? row.product_detail :''}}</td>
+                          <td class="w100"><strong>Success</strong></td>
+                        </tr>
+                      </table>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col s6" *ngIf="masterdispatchboxitemdetail.length > 0">
+          <div class="card  pb0 ">
+            <div class="card-head">
+              <h2 style="margin-bottom: 0px;">Master Box Detail</h2>
+            </div>
+
+            <div class="card-body cs-form">
+              <div class="cs-table font-lg left-right-10">
+                <div class="table-head border-bottom">
+                  <table>
+                    <tr>
+                      <th class="w40">S.no.</th>
+                      <th class="w180 text-center">Master Box Serial No.</th>
+                      <th class="w100 text-center">Total Small Boxes</th>
+                      <th class="w100 text-center">Total Items</th>
+                      <th class="w80 text-center">Action</th>
+
+                    </tr>
+                  </table>
+                </div>
+
+
+                <div class="table-container">
+                  <div class="table-content" *ngIf="masterdispatchboxitemdetail.length > 0">
+                    <table>
+                      <ng-container *ngIf="!skLoading">
+                        <tr *ngFor="let row of masterdispatchboxitemdetail; let i =index">
+                          <td class="w40">{{i+1}}</td>
+                          <td class="w180 text-center">{{row.coupon_code}}</td>
+                          <td class="w100 text-center"><a
+                              [ngClass]="row.master_grand_coupon_small_box_qty!='0'?'link-btn':''"
+                              (click)="row.master_grand_coupon_small_box_qty!='0'?viewmasterboxdetail(row,'small_boxes'):''">{{row.master_grand_coupon_small_box_qty}}
+                            </a></td>
+                          <td class="w100 text-center"><a
+                              [ngClass]="row.master_grand_coupon_item_qty!='0'?'link-btn':''"
+                              (click)="row.master_grand_coupon_item_qty!='0'?viewmasterboxdetail(row,'items'):''">{{row.master_grand_coupon_item_qty}}
+                            </a></td>
+
+                          <td class="w80 text-center">
+                            <div class="action-button">
+                              <button
+                                *ngIf="row.master_grand_coupon_small_box_qty!='0' || row.master_grand_coupon_item_qty!='0'"
+                                mat-icon-button matTooltip="Print Master Box"
+                                (click)="printData(row,invoice_detail.order_no)">
+                                <i class="material-icons edit">print</i>
+                              </button>
+
+                              <button mat-icon-button matTooltip="delete"
+                                *ngIf="row.master_grand_coupon_small_box_qty=='0' && row.master_grand_coupon_item_qty=='0'"
+                                (click)="deletemasterboxes(row,invoice_detail.order_no)">
+                                <i class="material-icons del">delete</i>
+                              </button>
+                              <button mat-icon-button matTooltip="Reopen Master Box"
+                                *ngIf="row.master_grand_coupon_small_box_qty!='0' || row.master_grand_coupon_item_qty!='0'"
+                                (click)="reOpenMasterBox(row,invoice_detail.order_no)">
+                                <i class="material-icons outlined">restore_from_trash</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- MASTER LABEL PRINT CODE START -->
+      <ng-container *ngIf="cartennumber != undefined ">
+        <div style="width: 50%;margin-left: 250px;" hidden>
+          <div style="width:377.95275591px; height:566.92913386px;" class="paper-layout" id="print_card">
+            <div style="padding: 0px 100px 5px 5px; position: relative;">
+              <p style=" font-size: 10px; line-height: 5px;"><strong style=" font-size: 10px; line-height: 5px;">Master
+                  Box Serial No.</strong> : {{cartennumber}}</p>
+              <p style=" font-size: 10px; line-height: 5px;"><strong style=" font-size: 10px; line-height: 5px;">Master
+                  Box Total QTY.</strong> : {{masterQTY}}</p>
+              <div style="position: absolute; top: -18px; right: 0px; width: 70px; height: 70px; background:#000;">
+                <ngx-qrcode [elementType]="elementType" value="{{cartennumber}}" cssClass="aclass master_qr_img"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+                <span
+                  style="text-align: center; display: block; font-weight: 900; font-size: 10px; margin-top: -5px;">{{cartennumber}}</span>
+              </div>
+            </div>
+            <div style="width:100%; height:1.5px; margin:3px 0px;">&nbsp;</div>
+            <table style=" margin-top: 20px; border:1px solid #ccc;border-collapse:collapse;">
+              <tr>
+                <th
+                  style="font-size: 10px; border:1px solid #ccc; line-height: 12px; padding: 2px; background: #fafbfc; text-align:left;">
+                  Sr.No</th>
+                <th
+                  style="font-size: 10px; border:1px solid #ccc; line-height: 12px; padding: 2px; background: #fafbfc; text-align:left; width:250px;">
+                  Product Detail</th>
+                <th
+                  style="font-size: 10px; border:1px solid #ccc; line-height: 12px; padding: 2px; background: #fafbfc;">
+                  Total Qty.</th>
+              </tr>
+              <tr *ngFor="let item of printdata; let i=index">
+                <td style="font-size: 10px; border:1px solid #ccc; line-height: 12px; padding: 2px;">{{i+1}}</td>
+                <td style="font-size: 10px; border:1px solid #ccc; line-height: 12px; padding: 2px;">
+                  {{item.product_detail}}</td>
+                <td style="font-size: 10px; border:1px solid #ccc; line-height: 12px; padding: 2px; text-align:center;">
+                  <b>{{item.totalItems}}</b>
+                </td>
+              </tr>
+
+            </table>
+          </div>
+        </div>
+      </ng-container>
+      <!-- MASTER LABEL PRINT CODE END -->
+    </div>
+  </ng-container>
+</div>

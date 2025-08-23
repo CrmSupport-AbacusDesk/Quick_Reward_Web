@@ -1,0 +1,340 @@
+<div class="main-container" >
+    <div class="tools-container">
+        <a mat-icon-button  matTooltip="Back" (click)="back();">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2 *ngIf="organisation_data.qr_generate_enable=='1'">Generate QR Codes</h2>
+        <h2 *ngIf="organisation_data.qr_generate_enable=='0'">Generated QR Codes</h2>
+    </div>
+    
+    <div class="container container-scroll pt10 pl10 pr10 pb50">
+        <ng-container *ngIf="(assign_login_data2.add_coupon_code == 1 || assign_login_data2.add_dispatch == 1) && organisation_data.qr_generate_enable=='1'">
+            <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+                <div class="row">
+                    
+                    <div class="col s12">
+                        <div class="card pb0">
+                            <div class="card-head">
+                                <h2>Basic Information</h2>
+                            </div>
+                            <div class="card-body cs-form">
+                                <div class="row">
+                                
+                                    <div class="col s12 m3 l3" *ngIf="assign_login_data2?.organisation_data?.qr_printing == 0">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Paper Size</mat-label>
+                                            <mat-select name="template_id" [(ngModel)]="data.template_id" #template_id="ngModel"  (selectionChange)="findId(data.template_id)" required>
+                                                <mat-option value="" disabled>Select</mat-option>
+                                                <ng-container *ngFor="let row of paperSize">
+                                                    <mat-option value="{{row.id}}">{{row.size}}</mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                            
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="template_id.touched || f.submitted">
+                                            <p *ngIf="template_id.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <div class="col s12 m3 l3" *ngIf="assign_login_data2?.organisation_data?.secondary_network_loyalty == 1">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Coupon Type</mat-label>
+                                            <mat-select name="coupon_type" [(ngModel)]="data.coupon_type" #coupon_type="ngModel" [ngClass]="{'has-error' : coupon_type.invalid }" (selectionChange)="getProduct('')" required>
+                                                <mat-option value="" disabled>Select</mat-option>
+                                                <mat-option value="Master Box" >Box</mat-option>
+                                                <mat-option value="Item Box" >Product</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="coupon_type.touched || f.submitted">
+                                            <p *ngIf="coupon_type.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col s12 m4 l4" *ngIf="assign_login_data2?.organisation_data?.qr_genration==0">
+                                        <mat-form-field  appearance="outline">
+                                            <mat-label>Product</mat-label>
+                                            <mat-select  name="product_code" [(ngModel)]="data.product_code" #product_code="ngModel" required (ngModelChange)="findProductId(data.product_code)" >
+                                                <mat-option >
+                                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getProduct($event.target.value)"></ngx-mat-select-search>
+                                                </mat-option>
+                                                <mat-option *ngFor="let row of product_data" value="{{row.product_code}}">{{row.product_name}} -{{row.product_code}} - {{ row.point_category_name ? ' Point Cat. - ' + row.point_category_name : 'Point Cat. - NO' }}                                                    <ng-container *ngIf="data.coupon_type == 'Master Box'">{{row.small_packing_size > 0 ? '(' + row.small_packing_size + ')' : ''}}</ng-container> </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="product_code.touched || f.submitted">
+                                            <p *ngIf="product_code.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col s12 m4 l4" *ngIf="assign_login_data2?.organisation_data?.qr_genration==1">
+                                        <mat-form-field  appearance="outline">
+                                            <mat-label>Point Categories</mat-label>
+                                            <mat-select  name="Categories" [(ngModel)]="data.point_category_id" #point_category_id="ngModel" required (ngModelChange)="findCategoryName(data.point_category_id)" >
+                                                <mat-option >
+                                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.." (keyup)="getProduct($event.target.value)"></ngx-mat-select-search>
+                                                </mat-option>
+                                                <mat-option *ngFor="let row of pointCategories_data" value="{{row.id}}"
+                                                (click)="data.point_category_name=row.point_category_name">{{row.point_category_name ?
+                                                    (row.point_category_name | titlecase) : '---'}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="point_category_id.touched || f.submitted">
+                                                <p *ngIf="point_category_id.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col s12 m2 l2">
+                                            <mat-form-field  appearance="outline">
+                                                <mat-label>Batch No.</mat-label>
+                                                <input matInput placeholder="Type Here ..."  name="batch_no" #batch_no="ngModel"
+                                                [(ngModel)]="data.batch_no">
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                        <div class="col s12 m3 l3">
+                                            <mat-form-field  appearance="outline">
+                                                <mat-label>Total Number Of QR Code</mat-label>
+                                                <input matInput placeholder="Type Here ..."  name="total_coupon" #total_coupon="ngModel"
+                                                [(ngModel)]="data.total_coupon" onkeypress="return event.charCode>=48 && event.charCode<=57"  required>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger" *ngIf="total_coupon.touched || f.submitted">
+                                                <p *ngIf="total_coupon.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col s12 m3 l3">
+                                            <mat-form-field  appearance="outline">
+                                                <mat-label>Remark</mat-label>
+                                                <input matInput placeholder="Type Here ..."  name="coupon_remark" #coupon_remark="ngModel"
+                                                [(ngModel)]="data.coupon_remark">
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                        <div class="col s12 m6 l6">
+                                            <img src="{{uploadurl + 'template_img/' + data.temp_image}}" *ngIf="data.temp_image">
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="text-right">
+                                <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">
+                                    {{savingFlag == true ? 'Please Wait' : 'Generate'}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </ng-container>
+            
+            
+            
+            <div class="left-auto jfe df flex-gap-10">
+                <a mat-icon-button  matTooltip="Refresh" (click)="refresh()">
+                    <i class="material-icons">refresh</i>
+                </a>
+                
+                <div class="pagination" *ngIf="coupon_summary_list.length > 0">
+                    <div class="pagination-content">
+                        Pages
+                        <span>{{pagenumber}}</span>
+                        of
+                        <span>{{total_page}}</span>
+                    </div>
+                    <div class="page-nav">
+                        <button mat-icon-button  matTooltip="Older" (click)="pervious()"  [disabled]="start == 0 || total_page == 0">
+                            <i class="material-icons">navigate_before</i>
+                        </button>
+                        <button mat-icon-button  matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page || total_page == 0 ">
+                            <i class="material-icons">navigate_next</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cs-table horizontal-scroll">
+                <div class="">
+                    <div class="table-head">
+                        <table>
+                            <tr>
+                                <th class="w60">Sr.No</th>
+                                <th class="w90">Date</th>
+                                <th class="w120">Created by</th>
+                                <th class="w120">Coupon Type</th>
+                                <th class="w80">Paper Size</th>
+                                <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
+                                    <th class="w250">Product Detail</th>
+                                    <th class="w100">Product Code</th>
+                                </ng-container>
+                                <th class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1">Point Category</th>
+                                <th class="w110 text-center">Total QR Code</th>
+                                <th class="w100">Batch No.</th>
+                                <th class="w250">Remark</th>
+                                <th class="w100">Printing Status</th>
+                                <th class="w100" *ngIf="assign_login_data2.add_coupon_code== 1 || assign_login_data2.delete_coupon_code==1">Action</th>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="table-head border-top">
+                        <table>
+                            <tr>
+                                <th class="w60">&nbsp;</th>
+                                <th class="w90">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input date-column infix-bodr">
+                                            <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created" [(ngModel)]="filter.date_created" (dateChange)="date_format()" [max]="today_date" disabled>
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker disabled="false"></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w120">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <input matInput placeholder="Search..." type="text" name="created_by" [(ngModel)]="filter.created_by" (keyup.enter)="!filter.created_by ? refresh() : generated_coupon_listing();">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w120">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <input matInput placeholder="Search..." type="text" name="coupon_type" [(ngModel)]="filter.coupon_type" (keyup.enter)="!filter.coupon_type ? refresh() : generated_coupon_listing();">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w80">&nbsp;</th>
+                                <!-- <th class="w120">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="cs-input select-input">
+                                            <mat-select [(ngModel)]="filter.coupon_type" name="coupon_type" (selectionChange)="!filter.coupon_type ? refresh() : generated_coupon_listing();">
+                                                <mat-option value="">All</mat-option>
+                                                <mat-option value="Master Box" >Box</mat-option>
+                                                <mat-option value="Item Box" >Product</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </th> -->
+                                <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
+                                    
+                                    <th class="w250">
+                                        <div class="th-search-acmt">
+                                            <mat-form-field class="example-full-width cs-input select-input">
+                                                <input matInput placeholder="Search..." type="text" name="point_category" [(ngModel)]="filter.point_category" (keyup.enter)="!filter.point_category ? refresh() : generated_coupon_listing();">
+                                            </mat-form-field>
+                                        </div>
+                                    </th>
+                                    <th class="w100">
+                                        <div class="th-search-acmt">
+                                            <mat-form-field class="example-full-width cs-input select-input">
+                                                <input matInput placeholder="Search..." type="text" name="product_code" [(ngModel)]="filter.product_code" (keyup.enter)="!filter.product_code ? refresh() : generated_coupon_listing();">
+                                            </mat-form-field>
+                                        </div>
+                                    </th>
+                                </ng-container>
+                                <th class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1">
+                                    &nbsp;
+                                    <!-- <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <input matInput placeholder="Search..." type="text" name="product_code" [(ngModel)]="filter.product_code" (keyup.enter)="!filter.product_code ? refresh() : generated_coupon_listing();">
+                                        </mat-form-field>
+                                    </div> -->
+                                </th>
+                                <th class="w110">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input select-input">
+                                            <input matInput placeholder="Search..." type="text" name="total_coupon" [(ngModel)]="filter.total_coupon" (keyup.enter)="!filter.total_coupon ? refresh() : generated_coupon_listing();">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w100">&nbsp;</th>
+                                <th class="w250">&nbsp;</th>
+                                <th class="w100">&nbsp;</th>
+                                <th class="w100" *ngIf="assign_login_data2.add_coupon_code==1 || assign_login_data2.delete_coupon_code==1">&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-content">
+                        <table>
+                            <ng-container *ngIf="!loader">
+                                <tr *ngFor="let row of coupon_summary_list; let i = index;">
+                                    <td class="w60">{{ i + 1 + sr_no }}</td>
+                                    <td class="w90">{{(row.date_created?row.date_created:'N/A') | date:'d MMM y'}}</td>
+                                    <td class="w120">{{row.created_by_name?row.created_by_name:'N/A'}}</td>
+                                    <td class="w120">{{row.coupon_type?row.coupon_type:'N/A'}}</td>
+                                    <td class="w80">{{row.paper_size ? row.paper_size : '---'}}</td>
+                                    <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
+                                        <td class="w250">{{row.product_detail?row.product_detail:'N/A'}}</td>
+                                        <td class="w100">{{row.product_code?row.product_code:'N/A'}}</td>
+                                    </ng-container>
+                                    
+                                    <td class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1">{{row.point_category?row.point_category:'N/A'}}</td>
+                                    <td class="w110 text-center"><strong>{{row.total_coupon?row.total_coupon:'N/A'}}</strong></td>
+                                    <td class="w100">{{row.batch_no ? row.batch_no: '---'}}</td>
+                                    <td class="w250">{{row.remarks ? row.remarks: '---'}}</td>
+                                    <td class="w100 text-center f15" *ngIf="row.print_status == '1'"><span color="accent">Printed</span></td>
+                                    <td class="w100" *ngIf="row.print_status == '0'">
+                                        <button mat-raised-button color="primary" (click)="printStatus(row.id)" >
+                                            <i class="material-icons">update</i>  Update</button>
+                                    </td>
+                                    <td class="w100 text-center" *ngIf="assign_login_data2.add_coupon_code == 1 || assign_login_data2.delete_coupon_code==1">
+                                        <div class="action-button">
+                                            <button  mat-icon-button  matTooltip="download" *ngIf="assign_login_data2.export_coupon_code==1 " (click)="progressService.setCancelReq(false);downloadInChunks(row.id)">
+                                                <i class="material-icons">download</i>
+                                            </button>
+                                            
+                                            <button  mat-icon-button *ngIf="assign_login_data2.add_coupon_code == 1 && row.total_coupon <= 5000" matTooltip="View Coupon" routerLink="coupon-code-detail/{{row.encrypt_id}}">
+                                                <i class="material-icons edit">visibility</i>
+                                            </button>
+                                            
+                                            <button  mat-icon-button  matTooltip="Delete" *ngIf="assign_login_data2.delete_coupon_code==1" (click)="deletecoupon(row.id)">
+                                                <i class="material-icons del">delete</i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-container *ngIf="loader">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                                    <td class="w60"><div>&nbsp;</div></td>
+                                    <td class="w90"><div>&nbsp;</div></td>
+                                    <td class="w120"><div>&nbsp;</div></td>
+                                    <td class="w80"><div>&nbsp;</div></td>
+                                    <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
+                                        <td class="w250"><div>&nbsp;</div></td>
+                                        <td class="w100"><div>&nbsp;</div></td>
+                                    </ng-container>
+                                    
+                                    <td class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1"><div>&nbsp;</div></td>
+                                    <td class="w110"><div>&nbsp;</div></td>
+                                    <td class="w100"><div>&nbsp;</div></td>
+                                    <td class="w250"><div>&nbsp;</div></td>
+                                    <td class="w100"><div>&nbsp;</div></td>
+                                    <td class="w100" *ngIf="assign_login_data2.add_coupon_code==1 || assign_login_data2.delete_coupon_code==1"><div>&nbsp;</div></td>
+                                </tr>
+                            </ng-container>
+                        </table>
+                    </div>
+                    
+                    
+                    <ng-container *ngIf="coupon_summary_list.length == 0 && noResult">
+                        <app-not-result-found></app-not-result-found>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    

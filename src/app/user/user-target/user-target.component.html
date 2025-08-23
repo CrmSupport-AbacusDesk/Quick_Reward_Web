@@ -1,0 +1,586 @@
+<div class="main-container" >
+  <div *ngIf="loader">
+    <mat-spinner class="loader">
+      <div><p>Loading....</p></div>
+    </mat-spinner>
+  </div>
+  <div class="tools-container" style="padding: 7px 10px; margin: 0px;">
+    <div class="page-heading">
+      <div class="heading-text bc-space">
+        <div class="back-btn">
+          <a mat-button routerLink="/sale-user-list" routerLinkActive="active"><i class="material-icons">west</i></a>
+        </div>
+        <h2>User Target</h2>
+      </div>
+    </div>
+    
+    <div class="target">
+      <div class="pagination target-head">
+        <ul class="padding0">
+          <li>
+            <div class="data-table">
+              <ul>
+                <li>
+                  <div class="upr-section">
+                    <a class="save-target" (click)="year_target=false; add_year_target()" *ngIf="year_target==true">
+                      <i class="material-icons">save</i>
+                    </a>
+                    <a class="edit-target" (click)="year_target=true" *ngIf="year_target==false">
+                      <i class="material-icons">edit</i>
+                    </a>
+                    <p>Year Target</p>
+                    <span *ngIf="year_target==false">&#8377; {{data.target}}</span>
+                    <input type="number" name="target" [(ngModel)]="data.target" [disabled]="year_target==true ? false : true" (keypress)="MobileNumber($event)" *ngIf="year_target==true">
+                  </div>
+                </li>
+                <li>
+                  <div class="upr-section">
+                    <p>Achievement</p>
+                    <span>&#8377; {{year_achievement}}</span>
+                  </div>
+                </li>
+                <li>
+                  <div class="upr-section">
+                    <p>Balance</p>
+                    <span>&#8377; {{year_balance}}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="ul-search">
+              <mat-radio-group aria-label="Select an option" name="order_type" [(ngModel)]="type.order_type" (click)="get_year_target();get_monthly_target_data();get_assign_sales_user();">
+                <mat-radio-button value="Primary">Primary</mat-radio-button>
+                <mat-radio-button value="Secondary">Secondary</mat-radio-button>
+              </mat-radio-group>
+              <!-- <section name="order_type" [(ngModel)]="type.order_type">
+                <mat-checkbox [checked]="type.order_type == 'Primary'" (click)="get_year_target();get_monthly_target_data();get_assign_sales_user();" >{{type.order_type}}</mat-checkbox>
+                
+                <mat-checkbox [checked]="type.order_type == 'Secondary'" (click)="get_year_target();get_monthly_target_data();get_assign_sales_user();" >Secondary</mat-checkbox>
+              </section> -->
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-outer">
+    <div class="container">
+      
+      <div class="cs-table left-right-20">
+        <div class="sticky-head" style="top: 119px;">
+          <div class="table-head">
+            <table class="">
+              <tr>
+                <th class="w130">Month</th>
+                <th class="w150 text-center" *ngIf="type.order_type == 'Primary'">Target</th>
+                <th class="w150 text-center" *ngIf="type.order_type == 'Secondary'">Target</th>
+                <th class="w150 text-center" >Achievement</th>
+                <th class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr>
+                      <th >Name</th>
+                      <th class="w120">Target</th>
+                      <th class="w120">Achievement</th>
+                    </tr>
+                  </table>
+                </th>
+                <th class="w130">Total Achievement</th>
+                <th class="w120">Balance</th>
+              </tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-content">
+            <table class="">
+              <!-- *ngIf="month_condition >= march_date" -->
+              <!-- {{next_Year}} -->
+              <tr >
+                <td class="w130">March </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target1==true} ">
+                    <input type="number" name="march_target" [(ngModel)]="form.march_target" [disabled]="edit_target1==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target1=false; add_monthly_target('March')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target1=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach1==true } ">
+                    <input type="number" name="march_ach" [(ngModel)]="form.march_ach" [disabled]="edit_ach1==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach1=false; update_ach('March')">save</i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach1=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[3] ? type.order_type == 'Primary' ? row.target[3].pri_target : row.target[3].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[3] ? type.order_type == 'Primary' ? row.target[3].pri_achivement : row.target[3].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_mar_ach ? total_mar_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_mar_ach ? bal_mar_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= feb_date" -->
+              <!-- {{next_Year}} -->
+              <tr >
+                <td class="w130">February </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target2==true} ">
+                    <input type="number" name="february_target" [(ngModel)]="form.february_target" [disabled]="edit_target2==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target2=false; add_monthly_target('February')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target2=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach2==true } ">
+                    <input type="number"name="february_ach" [(ngModel)]="form.february_ach" [disabled]="edit_ach2==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach2=false; update_ach('February')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach2=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[2] ? type.order_type == 'Primary' ? row.target[2].pri_target : row.target[2].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[2] ? type.order_type == 'Primary' ? row.target[2].pri_achivement : row.target[2].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_feb_ach ? total_feb_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_feb_ach ? bal_feb_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= jan_date" -->
+              <!-- {{next_Year}} -->
+              <tr >
+                <td class="w130">January </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target3==true} ">
+                    <input type="number" name="january_target" [(ngModel)]="form.january_target" [disabled]="edit_target3==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target3=false; add_monthly_target('January')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target3=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach3==true } ">
+                    <input type="number" name="january_ach" [(ngModel)]="form.january_ach" [disabled]="edit_ach3==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach3=false; update_ach('January')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach3=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[1] ? type.order_type == 'Primary' ? row.target[1].pri_target : row.target[1].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[1] ? type.order_type == 'Primary' ? row.target[1].pri_achivement : row.target[1].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_jan_ach ? total_jan_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_jan_ach ? bal_jan_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= dec_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">December </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target4==true} ">
+                    <input type="number" name="december_target" [(ngModel)]="form.december_target" [disabled]="edit_target4==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target4=false; add_monthly_target('December')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target4=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach4==true } ">
+                    <input type="number" name="december_ach" [(ngModel)]="form.december_ach" [disabled]="edit_ach4==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach4=false; update_ach('December')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach4=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[12] ? type.order_type == 'Primary' ? row.target[12].pri_target : row.target[12].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[12] ? type.order_type == 'Primary' ? row.target[12].pri_achivement :  row.target[12].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_dec_ach ? total_dec_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_dec_ach ? bal_dec_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= nov_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">November </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target5==true} ">
+                    <input type="number" name="november_target" [(ngModel)]="form.november_target" [disabled]="edit_target5==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target5=false; add_monthly_target('November')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target5=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach5==true } ">
+                    <input type="number" name="november_ach" [(ngModel)]="form.november_ach" [disabled]="edit_ach5==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach5=false; update_ach('November')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach5=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[11] ? type.order_type == 'Primary' ? row.target[11].pri_target : row.target[11].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[11] ? type.order_type == 'Primary' ? row.target[11].pri_achivement : row.target[11].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_nov_ach ? total_nov_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_nov_ach ? bal_nov_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= oct_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">October </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target6==true} ">
+                    <input type="number" name="october_target" [(ngModel)]="form.october_target" [disabled]="edit_target6==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target6=false; add_monthly_target('October')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target6=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach6==true } ">
+                    <input type="number" name="october_ach" [(ngModel)]="form.october_ach" [disabled]="edit_ach6==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach6=false; update_ach('October')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach6=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[10] ? type.order_type == 'Primary' ? row.target[10].pri_target : row.target[10].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[10] ? type.order_type == 'Primary' ? row.target[10].pri_achivement : row.target[10].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_oct_ach ? total_oct_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_oct_ach ? bal_oct_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= sep_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">September </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target7==true} ">
+                    <input type="number" name="september_target" [(ngModel)]="form.september_target" [disabled]="edit_target7==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target7=false; add_monthly_target('September')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target7=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach7==true } ">
+                    <input type="number" name="september_ach" [(ngModel)]="form.september_ach" [disabled]="edit_ach7==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach7=false; update_ach('September')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach7=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[9] ? type.order_type == 'Primary' ? row.target[9].pri_target : row.target[9].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[9] ? type.order_type == 'Primary' ? row.target[9].pri_achivement : row.target[9].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_sep_ach ? total_sep_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_sep_ach ? bal_sep_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= aug_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">August </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target8==true} ">
+                    <input type="number" name="august_target" [(ngModel)]="form.august_target" [disabled]="edit_target8==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target8=false; add_monthly_target('August')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target8=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach8==true } ">
+                    <input type="number" name="august_ach" [(ngModel)]="form.august_ach" [disabled]="edit_ach8==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach8=false; update_ach('August')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach8=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[8] ? type.order_type == 'Primary' ? row.target[8].pri_target : row.target[8].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[8] ? type.order_type == 'Primary' ? row.target[8].pri_achivement : row.target[8].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_aug_ach ? total_aug_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_aug_ach ? bal_aug_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= july_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">July </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target9==true} ">
+                    <input type="number" name="july_target" [(ngModel)]="form.july_target" [disabled]="edit_target9==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target9=false; add_monthly_target('July')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target9=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach9==true } ">
+                    <input type="number" name="july_ach" [(ngModel)]="form.july_ach" [disabled]="edit_ach9==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach9=false; update_ach('July')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach9=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b"  *ngIf="row.target">&#8377; {{row.target[7] ? type.order_type == 'Primary' ? row.target[7].pri_target : row.target[7].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b"  *ngIf="row.target">&#8377; {{row.target[7] ? type.order_type == 'Primary' ? row.target[7].pri_achivement : row.target[7].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_july_ach ? total_july_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_july_ach ? bal_july_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= june_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">June </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target10==true} ">
+                    <input type="number" name="june_target" [(ngModel)]="form.june_target" [disabled]="edit_target10==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target10=false; add_monthly_target('June')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target10=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach10==true } ">
+                    <input type="number" name="june_ach" [(ngModel)]="form.june_ach" [disabled]="edit_ach10==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach10=false; update_ach('June')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach10=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[6] ? type.order_type == 'Primary' ? row.target[6].pri_target : row.target[6].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[6] ? type.order_type == 'Primary' ? row.target[6].pri_achivement : row.target[6].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_june_ach ? total_june_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_june_ach ? bal_june_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= may_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">May </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target11==true} ">
+                    <input type="number" name="may_target" [(ngModel)]="form.may_target" [disabled]="edit_target11==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target11=false; add_monthly_target('May')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target11=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach11==true } ">
+                    <input type="number" name="may_ach" [(ngModel)]="form.may_ach" [disabled]="edit_ach11==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach11=false; update_ach('May')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach11=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[5] ? type.order_type == 'Primary' ? row.target[5].pri_target : row.target[5].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[5] ? type.order_type == 'Primary' ? row.target[5].pri_achivement : row.target[5].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_may_ach ? total_may_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_may_ach ? bal_may_ach : '0'}}</td>
+              </tr>
+              <!-- *ngIf="month_condition >= april_date" -->
+              <!-- {{current_year}} -->
+              <tr >
+                <td class="w130">April </td>
+                <td class="w150 text-center">
+                  <div class="enter-form" [ngClass]="{'active' : edit_target12==true} ">
+                    <input type="number" name="april_target" [(ngModel)]="form.april_target" [disabled]="edit_target12==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_target12=false; add_monthly_target('April')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_target12=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="w150 text-right">
+                  <div class="enter-form" [ngClass]="{'active' : edit_ach12==true } ">
+                    <input type="number" name="april_ach" [(ngModel)]="form.april_ach" [disabled]="edit_ach12==true ? false : true" (keypress)="MobileNumber($event)">
+                    <a class="t-save">
+                      <i class="material-icons" (click)="edit_ach12=false; update_ach('April')">save </i>
+                    </a>
+                    <a class="t-edit">
+                      <i class="material-icons" (click)="edit_ach12=true">edit</i>
+                    </a>
+                  </div>
+                </td>
+                <td class="padding0" *ngIf="assign_sales_user.length != '0'">
+                  <table>
+                    <tr *ngFor="let row of assign_sales_user">
+                      <td class="bdr-b">{{row.name}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[4] ? type.order_type == 'Primary' ? row.target[4].pri_target : row.target[4].sec_target : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="row.target">&#8377; {{row.target[4] ? type.order_type == 'Primary' ? row.target[4].pri_achivement : row.target[4].sec_achivement : '0'}}</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                      <td class="w120 bdr-b" *ngIf="!row.target">&#8377; 0</td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="w130">&#8377; {{total_apr_ach ? total_apr_ach : '0'}}</td>
+                <td class="w120">&#8377; {{bal_apr_ach ? bal_apr_ach : '0'}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

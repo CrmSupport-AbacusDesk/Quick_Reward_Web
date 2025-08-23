@@ -1,0 +1,479 @@
+<div class="main-container {{padding0}}">
+  <div class="tools-container">
+    <div class="attendance-mat-tabbar">
+      <div>
+        <button mat-button [ngClass]="tabType == 'Live' ? 'active' : ''"
+          (click)="tabType = 'Live';  refresh(); btnValue = true; mapVisible = true;waypoints = []">
+          <i class="material-icons">podcasts</i>
+          Live
+        </button>
+        <!-- <button mat-button [ngClass]="tabType == 'Tracker' ? 'active' : ''"
+        (click)="tabType = 'Tracker'; btnValue = true; mapVisible= true; refresh();RemovePlayBack()">
+        <i class="material-icons">not_started</i>
+        Tracker
+      </button> -->
+        <button mat-button [ngClass]="tabType == 'Play Back' ? 'active' : ''"
+          (click)="tabType = 'Play Back'; btnValue = true; mapVisible= true; refresh()">
+          <i class="material-icons">not_started</i>
+          Play Back
+        </button>
+        <button mat-button [ngClass]="tabType == 'Attendance Summary' ? 'active' : ''"
+          (click)="tabType = 'Attendance Summary'; btnValue = true; mapVisible= false;refresh();AttendanceSummary()">
+          <i class="material-icons">view_module</i>
+          Attendance Summary
+        </button>
+        <button mat-button [ngClass]="tabType == 'Battery' ? 'active' : ''"
+          (click)="tabType = 'Battery'; getBatteryInfo(); btnValue = true; mapVisible= false; refresh();waypoints = []">
+          <i class="material-icons">battery_charging_full</i>
+          Battery Statistics
+        </button>
+        <button mat-button [ngClass]="tabType == 'Suspected Location' ? 'active' : ''"
+          (click)="tabType = 'Suspected Location'; getSuspectLocation(); btnValue = true; mapVisible= false; refresh();waypoints = []">
+          <i class="material-icons">battery_charging_full</i>
+          Suspected Location
+        </button>
+      </div>
+
+      <div class="backgroundVirtualPercentageContainer">
+        <p style="font-size: 16px;font-weight:600;">Tracking Percentage :</p>
+        <div class="bgPercentageContainer">
+          Background : {{location_accuracy.background+' %'}}
+        </div>
+        <div class="virtualPercentageContainer">
+          Virtual : {{location_accuracy.virtual+' %'}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row" *ngIf="skLoading" hidden>
+      <div class="col s12">
+        <div class="card">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box four">
+              <div class="sk-box" *ngFor="let row of [].constructor(4)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <ng-container *ngIf="!skLoading">
+      <div class="row" style="margin-top: 40px;">
+        <div class="col s12">
+          <div class="card">
+            <!-- <div class="card-head">
+              <h2>Basic Details</h2>
+            </div> -->
+            <div class="card-body" style="
+            margin-bottom: 10px;
+        ">
+              <div class="grid-box five wp100 ">
+                <div class="block-feilds">
+                  <span>Employee Name</span>
+                  <p>{{empData.name ? (empData.name | titlecase) : '---'}} </p>
+                </div>
+                <div class="block-feilds">
+                  <span>Employee Id</span>
+                  <p>{{empData.employee_id ? empData.employee_id :'---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Reporting Manager 1</span>
+                  <p>{{empData.reporting_manager_name ? (empData.reporting_manager_name | titlecase) : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>Reporting Manager 2</span>
+                  <p>{{ empData.rsm2_name ? (empData.rsm2_name | titlecase) : '---'}}</p>
+                </div>
+                <div class="block-feilds">
+                  <span>H.O.D.</span>
+                  <p>{{empData.hod_name ? (empData.hod_name | titlecase) : '---'}}</p>
+                </div>
+                <div class="block-feilds" *ngIf="isTodayLatest">
+                  <span>Latest Battery Percentage</span>
+                  <p>{{latestLocation.battery ? ((latestLocation.battery * 100 )+' %') : '---'}}</p>
+                </div>
+                <ng-container *ngIf="tabType == 'Attendance Summary'">
+                  <div class="block-feilds">
+                    <span> Total Checkin Count</span>
+                    <p>{{Checkincount}}</p>
+                  </div>
+                  <!-- <div class="block-feilds">
+                    <span> Total Distance</span>
+                    <p>{{totalDistanceSummary}}</p>
+                  </div> -->
+                </ng-container>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="row">
+      <div class="col s12 m3 l3">
+        <div class="card" *ngIf="skLoading && tabType == 'Live' ">
+          <div class="sk-head">
+            <h2>&nbsp;</h2>
+          </div>
+          <div class="card-body">
+            <div class="grid-box single">
+              <div class="sk-box" *ngFor="let row of [].constructor(5)">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card vertical-height50" *ngIf="!skLoading && tabType != 'Attendance Summary'">
+          <div class="card-head">
+            <h2>Location Summary</h2>
+            <div class="left-auto">
+              <a class="sm-mat-icon-button" mat-icon-button matTooltip="Refresh" (click)="refreshData();">
+                <i class="material-icons">refresh</i>
+              </a>
+            </div>
+
+          </div>
+          <div class="sm-card-container">
+            <div class="sm-card filter-date">
+              <p>{{selectedDate | date}}</p>
+              <a class="sm-mat-icon-button" mat-icon-button (click)="picker.open()">
+                <i class="material-icons">event</i>
+              </a>
+              <mat-form-field style="width: 0;">
+                <input matInput [matDatepicker]="picker" #date="ngModel" [max]="today_date" name="date"
+                  [(ngModel)]="selectedDate" (ngModelChange)="dateFormat()" hidden>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <!-- <mat-form-field style="width: 0;">
+                <input matInput [matDatepicker]="picker" #date="ngModel" [max]="today_date" name="date"
+                  [(ngModel)]="filter.date" (ngModelChange)="dateFormat()" hidden>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field> -->
+            </div>
+            <div class="sm-card">
+              <p>Check-in</p>
+              <span>{{latestLocation.total_checkin ? latestLocation.total_checkin : '---'}}</span>
+            </div>
+            <div class="sm-card">
+              <p>Distance</p>
+              <span>{{LocationDistance ? (LocationDistance +' Km') : '---'}}</span>
+            </div>
+
+
+          </div>
+          <div class="card-body">
+            <div class="routes" *ngFor="let row of pathCoords;">
+              <div class="travel-flag"
+                [ngClass]="{'attendence': row.type == 'Attendence Start' ||  row.type == 'Attendence Stop', 'background-loc': row.type == 'Background','checkout': row.type == 'Checkout'}">
+                <i class="material-icons">
+
+                  {{row.type == 'Checkin' ? 'where_to_vote' : row.type == 'Background' ? 'person_pin_circle' : row.type
+                  == 'Checkout' ? 'pin_drop' : 'pin_drop'}}
+                </i>
+              </div>
+
+              <div class="travel-content">
+                <div class="type">
+                  <p class="heading">
+                    {{row.type ? (row.type == 'Background' ? 'Background Location' : row.type | titlecase) : '---'}}
+                    {{row.distance_from_last ? (' ' + '('+row.distance_from_last + ' KM') + ')' :''}}
+                  </p>
+                  <!-- <p class="stamp">{{row.date_created | date:'h:mm a'}}</p> -->
+                  <p class="stamp">{{row.timestamp | date:'h:mm a'}}</p>
+                </div>
+
+                <div class="desc">
+                  <p>
+                    <ng-container *ngIf="row.dr_name"><span style="color: #eea700;">Party
+                        Name</span>--({{row.dr_name}})</ng-container> <br /> {{row.address ? row.address : ''}}
+                    {{row.lat ? ( 'Latitude - ' + row.lat) : ''}}
+                    {{row.lng ? (' , Longitude - ' + row.lng) : ''}}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="no-centent-text" *ngIf="pathCoords.length == 0">
+              <p>No Data available</p>
+            </div>
+          </div>
+          <div class="sm-card-container" *ngIf="latestLocation.gps">
+            <div class="sm-card bottom-card">
+              <span>Last Location <strong class="Success">{{latestLocation.time ? (latestLocation.time | date:'h:mm a')
+                  : ''}}</strong></span>
+              <p>
+                {{latestLocation.gps ? latestLocation.gps : ''}} <br>
+                {{latestLocation.lat ? ( 'Latitude - ' + latestLocation.lat) : ''}}
+                {{latestLocation.lng ? (' , Longitude - ' + latestLocation.lng) : ''}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div [ngClass]="'col s12 m9 l9'">
+
+        <ng-container
+          *ngIf="locationMarkers.length && tabType != 'Battery' && tabType != 'Attendance Summary' && tabType != 'Suspected Location'">
+          <div class="direction-map mt0">
+            <div id="map" style="width: 100%; height: 100%;"></div>
+            <div class="loading-overlay" *ngIf="isLoading">
+              <mat-progress-bar mode="indeterminate" color="accent"
+                style="border-radius: 6px;width: 50%;"></mat-progress-bar>
+              <p style="font-size: 18px;"><strong>Please Wait Map is Loading ..</strong></p>
+            </div>
+          </div>
+
+          <div class="animationController" *ngIf="tabType == 'Play Back'&&locationMarkers.length&&isLoading == false">
+            <button mat-raised-button color="accent" type="submit"
+              *ngIf="control.status === 'original'||control.status === 'pause'||control.status === 'finished' "
+              (click)="control.start()">
+              &nbsp;<i class="material-icons">play_circle_filled</i>
+            </button>
+            <button mat-raised-button color="warn" type="submit"
+              *ngIf="control.status == 'start' || control.status == 'moving'" (click)="control.pause()">
+              &nbsp;<i class="material-icons">pause_circle_filled</i>
+            </button>
+
+            <!-- <mat-slider min="5" max="20" step="5" showTickMarks discrete [displayWith]="formatLabel">
+              <input matSliderThumb>
+            </mat-slider> -->
+
+            <mat-slider min="0" max="100" step="1" [(ngModel)]="control.progress" (input)="updateProgress($event)"
+              color="accent">
+            </mat-slider>
+            <div class="sliderHandler">
+              <button mat-raised-button color="primary" type="submit" (click)="setShowSpeedSlider()">
+                &nbsp;<i class="material-icons">speed</i>
+              </button>
+              <div class="slideSpeed" *ngIf="showSpeedSlider">
+                <mat-slider min="300" max="5000" step="1" (input)="updateSpeed($event)" color="primary">
+                </mat-slider>
+                <!-- <a mat-button></a> -->
+              </div>
+            </div>
+            <div class="DateTimeKm">
+              <p style="color: black;font-size: 14px;"><strong style="font-size: 14px;">Date Time / Km :
+                </strong>{{dateTimeKM ?
+                dateTimeKM
+                :(selectedDate |
+                date)}}</p>
+            </div>
+
+
+
+
+          </div>
+        </ng-container>
+
+        <ng-container
+          *ngIf="!locationMarkers.length && tabType != 'Battery' && tabType != 'Attendance Summary' && tabType != 'Suspected Location'">
+          <div class="direction-map mt0">
+
+            <div class="no-centent-text" style="width: 100%; height: 100%;">
+              <p>No Map Data available</p>
+            </div>
+
+          </div>
+
+        </ng-container>
+
+        <ng-container *ngIf="tabType == 'Battery' && tabType != 'Suspected Location'">
+          <div>
+            <zingchart-angular [config]="batteryChart" class="invoiceCollectionChart"
+              [height]="300"></zingchart-angular>
+          </div>
+        </ng-container>
+
+
+        <ng-container *ngIf="tabType == 'Suspected Location'">
+          <div class="container container-scroll ">
+
+            <div class="cs-table horizontal-scroll" style="width: 100%">
+              <div class="sticky-head">
+                <div class="table-head">
+                  <table class="sno-border">
+                    <tr>
+                      <th class="w30">&nbsp;S.No</th>
+                      <th class="w80">Date & Time</th>
+                      <th class="w100">Gps Check</th>
+                      <th class="w100">Internet Check </th>
+                      <th class="w100">Aeroplane Check </th>
+                  </table>
+                </div>
+
+              </div>
+
+              <div class="table-container">
+                <div class="table-content">
+                  <table class="sno-border">
+                    <ng-container *ngIf="!skLoading">
+
+                      <tr *ngFor="let row of suspectedLocation; let i = index">
+                        <td class="w30">{{i+1}}</td>
+                        <td class="w80"><strong>{{row.date?(row.date | date:'dd MMM yyyy hh:mm aa'):'--'}}</strong></td>
+                        <!-- <td class="w100">{{row.date_created| date : 'd MMM y' }}</td> -->
+                        <td class="w100">{{row.gpsChk=='1'?'On':'Off'}}</td>
+                        <td class="w100">{{row.networkChk=='1'?'On':'Off'}}</td>
+                        <td class="w100">{{row.aeroplaneModeChk=='1'?'On':'Off'}}</td>
+
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngFor="let row of [].constructor(10)">
+                      <tr class="sk-loading" *ngIf="skLoading">
+                        <td class="w30">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w180">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w100">
+                          <div>&nbsp;</div>
+                        </td>
+                        <td>
+                          <div>&nbsp;</div>
+                        </td>
+                        <td>
+                          <div>&nbsp;</div>
+                        </td>
+                        <td class="w60">
+                          <div>&nbsp;</div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </table>
+                </div>
+              </div>
+              <ng-container *ngIf="suspectedLocation.length== 0&&datanotfound == true">
+                <app-not-result-found></app-not-result-found>
+              </ng-container>
+            </div>
+
+          </div>
+        </ng-container>
+
+      </div>
+
+
+
+    </div>
+    <ng-container *ngIf="tabType == 'Attendance Summary' && tabType != 'Suspected Location'">
+
+      <div class="sm-card filter-date">
+        <p>{{selectedDate | date}}</p>
+        <a class="sm-mat-icon-button" mat-icon-button (click)="picker.open()">
+          <i class="material-icons">event</i>
+        </a>
+        <mat-form-field style="width: 0;">
+          <input matInput [matDatepicker]="picker" #date="ngModel" [max]="today_date" name="date"
+            [(ngModel)]="selectedDate" (ngModelChange)="dateFormat()" hidden>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <ng-container>
+        <div class="container container-scroll ">
+
+          <div class="cs-table horizontal-scroll" style="width: 100%">
+            <div class="sticky-head">
+              <div class="table-head">
+                <table class="sno-border">
+                  <tr>
+                    <th class="w30">&nbsp;S.No</th>
+                    <th class="w80">Activity Type</th>
+                    <!-- <th class="w100">Date </th> -->
+                    <th class="w100">Checkin /Attendance Start </th>
+                    <th class="w100">Check Out /Attendance Stop </th>
+                    <th class="w200">Location</th>
+                    <th class="w100">Customer Info</th>
+
+                </table>
+              </div>
+
+            </div>
+
+            <div class="table-container">
+              <div class="table-content">
+                <table class="sno-border">
+                  <ng-container *ngIf="!skLoading">
+
+                    <tr *ngFor="let row of Attendancedata; let i = index">
+                      <td class="w30">{{i+1}}</td>
+                      <td class="w80"><strong>{{row.type?row.type:'--'}}</strong></td>
+                      <!-- <td class="w100">{{row.date_created| date : 'd MMM y' }}</td> -->
+                      <td class="w100">{{row.type!='Attendence Stop'?(row.timestamp|date:'hh:mm a'):'-'}}</td>
+                      <td class="w100">{{row.type=='Attendence Stop'?(row.timestamp|date:'hh:mm
+                        a'):row.type=='Checkin'?(row.visit_end?(row.visit_end|date:'hh:mm a'):'-'):'-'}}</td>
+
+                      <td class="w200">{{(' Party Name -')-row.dr_name ? row.dr_name : ''}}
+                        {{row.address?row.address:'--'}}</td>
+                      <td class="w100"> {{row.dr_name}} ({{row.dr_type_name?row.dr_type_name:'--'}}) </td>
+
+                    </tr>
+                  </ng-container>
+                  <ng-container *ngFor="let row of [].constructor(10)">
+                    <tr class="sk-loading" *ngIf="skLoading">
+                      <td class="w30">
+                        <div>&nbsp;</div>
+                      </td>
+                      <td class="w100">
+                        <div>&nbsp;</div>
+                      </td>
+                      <td class="w100">
+                        <div>&nbsp;</div>
+                      </td>
+                      <td class="w180">
+                        <div>&nbsp;</div>
+                      </td>
+                      <td class="w100">
+                        <div>&nbsp;</div>
+                      </td>
+                      <td class="w100">
+                        <div>&nbsp;</div>
+                      </td>
+                      <td>
+                        <div>&nbsp;</div>
+                      </td>
+                      <td>
+                        <div>&nbsp;</div>
+                      </td>
+                      <td class="w60">
+                        <div>&nbsp;</div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </table>
+              </div>
+            </div>
+            <ng-container *ngIf="Attendancedata.length== 0&&datanotfound == true">
+              <app-not-result-found></app-not-result-found>
+            </ng-container>
+          </div>
+
+        </div>
+      </ng-container>
+    </ng-container>
+
+
+  </div>
+</div>
+<!-- <div id="map" style="width: 100%; height: 100%;margin: auto;"></div> -->

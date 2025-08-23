@@ -1,0 +1,89 @@
+.product-item-table {
+    margin-top: 10px;
+    table {
+        width: 100%;
+        table-layout: fixed;
+        box-sizing: border-box;
+        border-collapse: collapse;
+        tr {
+            
+            th,
+            td 
+            {
+                border: 1px solid #cccccc;
+                padding: 5px;
+                font-size: 11px;
+                text-align: left;
+                
+                table
+                {
+                    &.in-table
+                    {
+                        tr
+                        {
+                            td,th
+                            {
+                                
+                                &:last-child
+                                {
+                                    border-right: 0px;
+                                }
+                                &:first-child
+                                {
+                                    border-left: 0px;
+                                }
+                            }
+                            
+                            &:first-child
+                            {
+                                th, td
+                                {
+                                    border-top: 0px;
+                                }
+                            }
+                            
+                            &:last-child
+                            {
+                                th, td
+                                {
+                                    border-bottom: 0px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            th {
+                background: #ececec;
+                font-weight: 600;
+                position: sticky;
+                top: -1px;
+                input {
+                    border: 1px solid #ccc;
+                    border-radius: 3px;
+                    height: 20px;
+                    font-size: 11px;
+                    font-weight: 400;
+                }
+            }
+            td {
+                background: #f9f9f9;
+                input {
+                    width: 100%;
+                    box-sizing: border-box;
+                    height: 20px;
+                    padding: 0px 5px;
+                    border: 1px solid #ccc;
+                    text-align: center;
+                    font-size: 11px;
+                    border-radius: 3px;
+                }
+            }
+        }
+    }
+    &.scroll-150 {
+        overflow: scroll;
+        min-height: auto;
+        max-height: 250px;
+    }
+} 

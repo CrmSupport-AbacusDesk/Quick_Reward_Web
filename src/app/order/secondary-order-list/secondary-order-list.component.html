@@ -1,0 +1,234 @@
+<div class="main-container {{padding0}}">
+  <div class="tab-surface">
+    <button *ngFor="let row of calenderInfo; let i =index;" mat-button [ngClass]="OrderMonth == row.month && OrderYear == row.year ? 'active' : ''" (click)="orderList('',row.month,row.year);">{{row.monthYEAR | date :'MMM'}} {{row.year}}
+      <span class="order-value" *ngIf="login_data?.organisation_data?.order_place==0">&#x20B9;{{row.sale ? (row.sale | number:'1.0-0') : '0'}}</span></button>
+    </div>
+    <div class="tools-container">
+      <h2>Secondary Order Test</h2>
+      <div class="left-auto left-auto df ac flex-gap-10">
+        <button mat-icon-button matTooltip="Refresh" (click)="refresh('refresh',OrderMonth,OrderYear)">
+          <i class="material-icons">refresh</i>
+        </button>
+        <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+          <i class="material-icons">filter_alt</i>
+        </button>
+        <button mat-icon-button matTooltip="Sorting" (click)="sortData()">
+          <i class="material-icons">swap_vert</i>
+        </button>
+        <div class="pagination" *ngIf="tmp_orderlist.length > 0">
+          <div class="pagination-content">
+            Pages
+            <span>{{pagenumber}}</span>
+            of
+            <span>{{total_page}}</span>
+          </div>
+          <div class="page-nav">
+            <button mat-icon-button matTooltip="Older" (click)="pervious('',OrderMonth,OrderYear)"
+            [disabled]="start == 0 || total_page == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage('',OrderMonth,OrderYear)"
+          [disabled]="pagenumber == total_page || total_page == 0 ">
+          <i class="material-icons">navigate_next</i>
+        </button>
+      </div>
+    </div>
+    <div class="mat-tabbar">
+      
+      <button mat-button [ngClass]="active_tab == 'All' ? 'active' : ''"
+      (click)="active_tab='All';orderList('',OrderMonth,OrderYear);"><i class="material-icons">done_all</i>All
+      ({{count.all}}) </button>
+      
+      <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+      (click)="active_tab='Pending';orderList('',OrderMonth,OrderYear);"><i
+      class="material-icons">pending_actions</i>Pending ({{count.Pending}})</button>
+      
+      <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+      (click)="active_tab = 'Approved';orderList('',OrderMonth,OrderYear);"><i
+      class="material-icons">task_alt</i>Approved ({{count.Approved}})</button>
+      <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+      (click)="active_tab = 'Reject';orderList('',OrderMonth,OrderYear);"><i
+      class="material-icons">unpublished</i>Reject ({{count.Reject}})</button>
+      <!-- <button mat-button [ngClass]="active_tab == 'Hold' ? 'active' : ''" (click)="active_tab = 'Hold';orderList('',OrderMonth,OrderYear);"><i class="material-icons">back_hand</i>Hold ({{count.Draft}})</button>
+      <button mat-button [ngClass]="active_tab == 'Partially' ? 'active' : ''" (click)="active_tab = 'Partially';orderList('',OrderMonth,OrderYear);"><i class="material-icons">local_shipping</i>Partially Dispatch ({{count.Partial_Dispatch}})</button>
+      <button mat-button [ngClass]="active_tab == 'Dispatched' ? 'active' : ''" (click)="active_tab = 'Dispatched';orderList('',OrderMonth,OrderYear);"><i class="material-icons">local_shipping</i>Dispatched ({{count.Dispatch}})</button> -->
+    </div>
+  </div>
+</div>
+
+<div class="container container-scroll no-tab">
+  <div class="cs-table horizontal-scroll">
+    <div class="sticky-head">
+      <div class="table-head">
+        <table>
+          <tr>
+            <th class="w50">Sr. NO.</th>
+            <th class="w110">Date</th>
+            <th class="w110">Created By</th>
+            <th class="w150">Reporting Manager</th>
+            <th class="w120">Order Id</th>
+            <th class="w200">Dealer Details</th>
+            <th class="w200">Primary Customer Details</th>
+            <th class="w80 text-center">Total Items</th>
+            <th class="w90 text-right">Item QTY.</th>
+            <th class="w120 text-right" *ngIf="login_data?.organisation_data?.order_place==0">Order Amount</th>
+            <th class="w120 text-right">Order Type</th>
+            <th class="w120 text-right" *ngIf="active_tab == 'All'">Order Status</th>
+            <th class="w200">Remark</th>
+            <th class="w100" *ngIf="active_tab == 'All'">Status</th>
+            <th class="w80" *ngIf="active_tab == 'Pending'">Action</th>
+          </tr>
+        </table>
+      </div>
+      <div class="table-head border-top">
+        <table>
+          <tr>
+            <th class="w50">&nbsp;</th>
+            <th class="w110">
+              <div class="th-search-acmt">
+                <mat-form-field class="example-full-width cs-input">
+                  <input matInput [matDatepicker]="picker2" placeholder="Date" name="date_created"
+                  [(ngModel)]="search_val.date_created" (dateChange)="onDate($event,OrderMonth,OrderYear)" [min]="minDate" [max]="date" readonly>
+                  <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </th>
+            <th class="w110">
+              <div class="th-search-acmt">
+                <mat-form-field class="example-full-width cs-input">
+                  <input matInput placeholder="Search" name="created_by" [(ngModel)]="search_val.created_by_name"
+                  (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+                </mat-form-field>
+              </div>
+            </th>
+               <th class="w150">
+            <!-- <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput placeholder="Search" name="reporting_manager" [(ngModel)]="search_val.reporting_manager"
+                (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+              </mat-form-field>
+            </div> -->
+          </th>
+            <th class="w120">
+              <div class="th-search-acmt">
+                <mat-form-field class="example-full-width cs-input">
+                  <input matInput placeholder="Search" name="order_id" [(ngModel)]="search_val.order_id"
+                  (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+                </mat-form-field>
+              </div>
+            </th>
+            <th class="w200">
+              <div class="th-search-acmt">
+                <mat-form-field class="example-full-width cs-input">
+                  <input matInput placeholder="Search" name="retailer_detail" [(ngModel)]="search_val.retailer_detail"
+                  (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+                </mat-form-field>
+              </div>
+            </th>
+            <th class="w200">
+              <div class="th-search-acmt">
+                <mat-form-field class="example-full-width cs-input">
+                  <input matInput placeholder="Search" name="distributor_detail"
+                  [(ngModel)]="search_val.distributor_detail" (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+                </mat-form-field>
+              </div>
+            </th>
+            <th class="w80 text-center">&nbsp; {{totalData.total_item}}</th>
+            <th class="w90 text-right">&nbsp; {{totalData.total_order_qty}}</th>
+            <th class="w120 text-right" *ngIf="login_data?.organisation_data?.order_place==0">&#8377;{{totalData.net_price}}</th>
+            <th class="w120 text-right"></th>
+            <th class="w120 text-right" *ngIf="active_tab == 'All'"></th>
+            <th class="w200">&nbsp;</th>
+            <th class="w100" *ngIf="active_tab == 'All'"></th>
+            <th class="w80" *ngIf="active_tab == 'Pending'">&nbsp;</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <div class="table-content">
+        <table>
+          <ng-container *ngIf="!loader">
+            <tr *ngFor="let row of tmp_orderlist; let i =index;"
+            [ngClass]="{'Current': service.currentUserID == row.id}">
+            <td class="w50">{{ i + 1 + sr_no }}</td>
+            <td class="w110">{{row.date_created | date:"d MMM yyyy , h:mm a"}}</td>
+            <td class="w110">{{row.created_by_name}}</td>
+            <td class="w150">{{row.reporting_manager}}</td>
+            <td class="w120">
+              <a class="link-btn" (click)="service.setData(search_val)"
+              [routerLink]="[ 'secondary-order-detail/', row.encrypt_id]"
+              [queryParams]="{'id':row.encrypt_id, 'status':active_tab}" routerLinkActive="active">{{row.order_no}}</a>
+              
+            </td>
+            <td class="w200">{{row.company_name}} {{row.dr_code ? ( '-('+row.dr_code+')') : ''}}</td>
+            <!-- - ({{row.name}} {{row.mobile}}) -->
+            <!-- - ({{row.distributor_name}} {{row.distributor_mobile}}) -->
+            <td class="w200">{{row.distributor_company_name}} </td>
+            <td class="w80 text-center">{{row.order_item}}</td>
+            <td class="w90 text-right">{{row.qty}}</td>
+            <td class="w120 text-right" *ngIf="login_data?.organisation_data?.order_place==0"><strong>&#x20B9; {{row.net_price}}</strong></td>
+            <td class="w120 text-right"><strong>{{row.order_type}}</strong></td>
+            <td class="w120 text-right" *ngIf="active_tab == 'All'">{{row.order_status}}</td>
+            <td class="w200">{{row.order_create_remark}}</td>
+            <td class="w100 {{row.order_status}}" *ngIf="active_tab == 'All'">
+              {{row.order_status=='Partial_Dispatch'?'In Process':row.order_status}}
+            </td>
+            <td class="w80" *ngIf="active_tab == 'Pending'">
+              <div class="action-button" *ngIf="login_data.delete_secondary_orders=='1'">
+                <button mat-icon-button matTooltip="Delete" (click)="delete(row.id)">
+                  <i class="material-icons del">delete</i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="loader">
+          <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+            <td class="w50"><div>&nbsp;</div></td>
+            <td class="w110"><div>&nbsp;</div></td>
+            <td class="w110"><div>&nbsp;</div></td>
+            <td class="w120"><div>&nbsp;</div></td>
+            <td class="w200"><div>&nbsp;</div></td>
+            <td class="w200"><div>&nbsp;</div></td>
+            <td class="w80 text-center"><div>&nbsp;</div></td>
+            <td class="w90 text-right"><div>&nbsp;</div></td>
+            <td class="w120 text-right"><div>&nbsp;</div></td>
+            <td class="w120 text-right"><div>&nbsp;</div></td>
+            <td class="w120 text-right" *ngIf="active_tab == 'All'"><div>&nbsp;</div></td>
+            <td class="w200"><div>&nbsp;</div></td>
+            <td class="w100" *ngIf="active_tab == 'All'"><div>&nbsp;</div></td>
+            <td class="w80" *ngIf="active_tab == 'Pending'"><div>&nbsp;</div></td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+  
+  <ng-container *ngIf="tmp_orderlist.length == 0 && datanotfound == true">
+    <app-not-result-found></app-not-result-found>
+  </ng-container>
+</div>
+
+<div class="fab-btns pulse"
+*ngIf="(login_data.export_secondary_orders=='1' || login_data.export_order=='1') || (login_data.add_order=='1' || login_data.add_secondary_orders=='1') ">
+<button class="excel pulse " mat-fab color="primary" [matMenuTriggerFor]="menu">
+  <i class="material-icons">apps</i>
+  Action
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="lastBtnValue('excel');progressService.setCancelReq(false);downloadInChunks(OrderMonth, OrderYear)"
+  *ngIf="tmp_orderlist.length > 0 &&  login_data.export_secondary_orders=='1'">
+  <mat-icon>download</mat-icon>
+  <span>Download in excel</span>
+</button>
+<button mat-menu-item [routerLink]="login_data?.organisation_data?.order_place == 1?'/secondary-order-list/secondary-order-add-quantity':'/secondary-order-list/secondary-order-add'" *ngIf="login_data.add_secondary_orders=='1'">
+  <mat-icon>add</mat-icon>
+  <span>Add Order</span>
+</button>
+</mat-menu>
+</div>
+
+</div>

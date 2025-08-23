@@ -1,0 +1,278 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add Controls</h2>
+    <!-- <div class="left-auto df" style="overflow: auto;">
+          <div class="mat-tabbar df">
+              <button mat-button [ngClass]="{'active' :tabType== 'Auto Logout'}"
+                  (click)="tabType= 'Auto Logout'"><i
+                      class="material-icons">touch_app</i>Auto Logout</button>
+              <button mat-button [ngClass]="{'active' :tabType== 'Deny Permissions'}"
+                  (click)=" tabType = 'Deny Permissions'"><i
+                      class="material-icons">highlight_off</i>Deny Permissions</button>
+              <button mat-button [ngClass]="{'active' :tabType== 'Module Access'}"
+                  (click)="tabType = 'Module Access'"><i
+                      class="material-icons">visibility_off</i>Module Access</button>
+              <button mat-button [ngClass]="{'active' :tabType== 'System Alerts'}"
+                  (click)="tabType = 'System Alerts'"><i
+                      class="material-icons">settings</i>System Alerts</button>
+          </div>
+
+      </div> -->
+  </div>
+
+
+  <div class="container pt10 pl10 pr10 pb100">
+
+    <ng-container *ngIf="tabType== 'Auto Logout'">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <div class="card-head">
+              <h2>Auto Logout</h2>
+            </div>
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m3 l3">
+                  <mat-form-field appearance="outline">
+                    <mat-label>User Type</mat-label>
+                    <mat-select name="typeId" [(ngModel)]="data.typeId" #typeId="ngModel"
+                      (selectionChange)="getTypeName(data.typeId);" required>
+                      <mat-option *ngFor="let row of userType" value="{{row.typeId}}">{{row.typeName}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="typeId.touched">
+                    <p *ngIf="typeId.errors?.required">This field is required</p>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="card-head mt16">
+                <h2>Select Alert Type</h2>
+              </div>
+
+              <div class="row">
+                <div class="col s12 m8 l8">
+                  <mat-radio-group class="example-section" id="alertType" name="alertType"
+                    [(ngModel)]="data.logoutType">
+                    <mat-radio-button class="wp25" color="primary" value="Custom"
+                      (click)="getUserData(data.typeId, '')">
+                      Custom
+                    </mat-radio-button>
+                    <mat-radio-button class="wp25" color="primary" value="Genric">
+                      Genric
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s12 m3 l3" *ngIf="data.logoutType == 'Custom'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Select {{data.typeName}}</mat-label>
+                    <mat-select multiple name="assignTo" #assignTo="ngModel" [(ngModel)]="data.totalIds" required>
+                      <mat-option>
+                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                          (keyup)="getUserData(data.typeId, $event.target.value)"></ngx-mat-select-search>
+                      </mat-option>
+                      <mat-option *ngFor="let row of assignData" value="{{row.id}}">{{row.name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="alert alert-danger" *ngIf="assignTo.touched">
+                    <p *ngIf="assignTo.errors?.required">This field is required</p>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s12">
+                  <div class="text-right">
+                    <button [ngClass]="{'loading': savingFlag == true }" mat-raised-button color="accent" type="submit"
+                      [disabled]="savingFlag == true || (!data.typeId || !data.logoutType || (!data.totalIds && (data.logoutType == 'Custom')))"
+                      (click)="autoLogout();">
+                      {{savingFlag == true ? 'Saving' : 'Save'}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="tabType== 'Module Access'">
+
+    </ng-container>
+
+    <ng-container *ngIf="tabType== 'System Alerts'">
+      <form #f="ngForm" (ngSubmit)="f.valid && submitDetail()">
+
+        <div class="row">
+          <div class="col s12">
+            <div class="card pb0">
+              <div class="card-head">
+                <h2>System Alerts</h2>
+              </div>
+              <div class="card-body cs-form">
+                <div class="row">
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>User Type</mat-label>
+                      <mat-select name="typeId" [(ngModel)]="data.typeId" #typeId="ngModel"
+                        (selectionChange)="getTypeName(data.typeId);" required>
+                        <mat-option *ngFor="let row of userType" value="{{row.typeId}}">{{row.typeName}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <div class="alert alert-danger" *ngIf="typeId.touched || f.submitted">
+                      <p *ngIf="typeId.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="card-head mt16">
+                  <h2>Select Alert Type</h2>
+                </div>
+
+                <div class="row">
+                  <div class="col s12 m8 l8">
+                    <mat-radio-group class="example-section" id="alertType" name="alertType"
+                      [(ngModel)]="data.alertType">
+                      <mat-radio-button class="wp25" color="primary" value="Custom"
+                        (click)="getUserData(data.typeId, ''); !data.typeId ? data.alertType == '' : ''">
+                        Custom
+                      </mat-radio-button>
+                      <mat-radio-button class="wp25" color="primary" value="Genric">
+                        Genric
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s12 m3 l3" *ngIf="data.alertType == 'Custom'">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Select {{data.typeName}}</mat-label>
+                      <mat-select multiple name="assignTo" #assignTo="ngModel" [(ngModel)]="data.totalIds">
+                        <mat-option>
+                          <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                            (keyup)="getUserData(data.typeId, $event.target.value)"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option *ngFor="let row of assignData" value="{{row.id}}">{{row.name}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+
+                    <div class="alert alert-danger" *ngIf="assignTo.touched || f.submitted">
+                      <p *ngIf="assignTo.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Title</mat-label>
+                      <input matInput placeholder="Type Here ..." name="title" #title="ngModel" [(ngModel)]="data.title"
+                        required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                      <p *ngIf="title.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+
+
+
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Select Visibility</mat-label>
+                      <mat-select name="visible" [(ngModel)]="data.visible" #visible="ngModel" required>
+                        <mat-option value="By Choice">By Choice</mat-option>
+                        <mat-option value="By Force">By Force</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="visible.touched || f.submitted">
+                      <p *ngIf="visible.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Call Button</mat-label>
+                      <mat-select name="callButton" [(ngModel)]="data.callButton" #callButton="ngModel">
+                        <mat-option value="1">Yes</mat-option>
+                        <mat-option value="0">No</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+
+                </div>
+
+                <div class="row">
+                  <div class="col s12 m3 l3" *ngIf="data.callButton == '1'">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Calling Number</mat-label>
+                      <input type="text" name="number" minlength="10" maxlength="10" matInput placeholder=""
+                        #number="ngModel" (keypress)="MobileNumber($event)" [(ngModel)]="data.number" required>
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="number.touched || f.submitted">
+                      <p *ngIf="number.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Page URL</mat-label>
+                      <mat-select name="pageUrl" [(ngModel)]="data.pageUrl" #pageUrl="ngModel">
+                        <mat-option *ngFor="let row of urlPages"
+                          value="{{row.actualPageName}}">{{row.showPageName}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+
+                  </div>
+                  <div class="col s12 m3 l3">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Link URL</mat-label>
+                      <input matInput placeholder="Type Here ..." name="linkUrl" #linkUrl="ngModel"
+                        [(ngModel)]="data.linkUrl">
+                    </mat-form-field>
+
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s6">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Description</mat-label>
+                      <textarea matInput placeholder="Type Here ..." name="content" #content="ngModel" class="h100"
+                        [(ngModel)]="data.content" required></textarea>
+
+                    </mat-form-field>
+                    <div class="alert alert-danger" *ngIf="content.touched || f.submitted">
+                      <p *ngIf="content.errors?.required">This field is required</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="text-right">
+              <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+                [disabled]="savingFlag == true">
+                {{savingFlag == true ? 'Saving' : 'Save'}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+
+
+    </ng-container>
+
+  </div>

@@ -1,0 +1,129 @@
+
+<!-- Add Segment Modal Start Here -->
+
+<div class="edit-modal" *ngIf="modelType =='basic'">
+  <p class="heading">Update Bonus Details</p>
+  <form #f="ngForm" (ngSubmit)=" f.valid && submitDetail()">
+    <div  mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 m6 l6">
+            <mat-form-field  appearance="outline">
+              <mat-label>Title</mat-label>
+              <input matInput placeholder="Type Here ..." name="tittle" #tittle="ngModel" [(ngModel)]="formData.tittle">
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="tittle.touched || f.submitted">
+              <p *ngIf="tittle.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 m6 l6">
+            <mat-form-field  appearance="outline">
+              <mat-label>Start Date</mat-label>
+              <input name="start_date" matInput [matDatepicker]="pickers" placeholder="" [min]="minDate" #start_date="ngModel" readonly [(ngModel)]="formData.start_date">
+              <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+              <mat-datepicker #pickers></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="start_date.touched || f.submitted">
+              <p *ngIf="start_date.errors?.required">This field is required</p>
+            </div>
+          </div>
+
+          <div class="col s12 m6 l6">
+            <mat-form-field  appearance="outline">
+              <mat-label>End Date</mat-label>
+              <input name="end_date" matInput [matDatepicker]="picker1" placeholder="" [min]="formData.start_date" #end_date="ngModel" readonly [(ngModel)]="formData.end_date">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="end_date.touched || f.submitted">
+              <p *ngIf="end_date.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+      <!-- <div class="col s12 m6 l6">
+        <div class="cs-form">
+          <div class="row">
+            <div class="col s12 m6 l6" >
+              <mat-form-field appearance="outline">
+                <mat-label>User Type</mat-label>
+                <mat-select  name="types" [(ngModel)]="formData.types" #types="ngModel" (selectionChange)="blankArray(); pointCategory_data(formData.types == 'Retailer' ? 'Master Box' : 'Item Box')" >
+                  <mat-option  value="Retailer">Retailer</mat-option>
+                  <mat-option  value="Influencer">Influencer</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="types.touched || f.submitted">
+                <p *ngIf="types.errors?.required">This field is required</p>
+              </div>
+            </div>
+
+
+            <div class="col s12 m6 l6" *ngIf="formData.types == 'Influencer'">
+              <mat-form-field appearance="outline">
+                <mat-label>Influencer Type</mat-label>
+                <mat-select  name="influencer_type" [(ngModel)]="formData.influencer_type" #influencer_type="ngModel" >
+                  <mat-option *ngFor="let row of influencerUser"  value="{{row.type}}">{{row.module_name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="influencer_type.touched || f.submitted">
+                <p *ngIf="influencer_type.errors?.required">This field is required</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="col s12 m6 l6">
+        <div class="card pb0" *ngIf="formData.types">
+          <div class="card-head">
+            <h2>Update Product Points</h2>
+          </div>
+          <div class="card-body">
+            <div class="cs-table left-right-10 scroll310">
+              <div class="sticky-head border-top">
+                <div class="table-head">
+                  <table>
+                    <tr>
+                      <th class="w50">S.No</th>
+                      <th>Product Name</th>
+                      <th class="w200  text-center">Points</th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="table-container">
+                <div class="table-content">
+                  <table>
+                    <ng-container>
+                      <tr *ngFor="let row of newProdcut[0]; let i = index">
+                        <td class="w50">{{i+1}}</td>
+                        <td>{{row.point_category_name}}</td>
+                        <td class="w200  text-center">
+                          <div class="th-search-acmt">
+                            <mat-form-field>
+                              <input type="text" matInput class="cs-text-input text-center" placeholder="Enter Points" [name]="'scheme_influencer_point'+i"  [(ngModel)] = "row.scheme_influencer_point"  onkeypress="return event.charCode>=48 && event.charCode<=57">
+                              </mat-form-field>
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+      <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Update'}}</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Add Segment Modal End Here -->

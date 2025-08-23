@@ -1,0 +1,19 @@
+diff --git a/node_modules/bn-ng-idle/fesm5/bn-ng-idle.js b/node_modules/bn-ng-idle/fesm5/bn-ng-idle.js
+index 522abad..afa6e07 100644
+--- a/node_modules/bn-ng-idle/fesm5/bn-ng-idle.js
++++ b/node_modules/bn-ng-idle/fesm5/bn-ng-idle.js
+@@ -1,4 +1,4 @@
+-import { Injectable, ɵɵdefineInjectable, NgModule } from '@angular/core';
++import { Injectable, defineInjectable, NgModule } from '@angular/core';
+ import { Subject, merge, fromEvent, timer } from 'rxjs';
+ 
+ /**
+@@ -76,7 +76,7 @@ var BnNgIdleService = /** @class */ (function () {
+     ];
+     /** @nocollapse */
+     BnNgIdleService.ctorParameters = function () { return []; };
+-    /** @nocollapse */ BnNgIdleService.ngInjectableDef = ɵɵdefineInjectable({ factory: function BnNgIdleService_Factory() { return new BnNgIdleService(); }, token: BnNgIdleService, providedIn: "root" });
++    /** @nocollapse */ BnNgIdleService.ngInjectableDef = defineInjectable({ factory: function BnNgIdleService_Factory() { return new BnNgIdleService(); }, token: BnNgIdleService, providedIn: "root" });
+     return BnNgIdleService;
+ }());
+ if (false) {

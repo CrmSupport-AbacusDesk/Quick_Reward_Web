@@ -1,0 +1,603 @@
+<div class="main-container">
+    <!-- <app-loader *ngIf="loader"></app-loader> -->
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>{{(isEditEnabled&&paramsData?.edit_type=='primaryInfo')?('Update Scheme'):
+            (isEditEnabled&&paramsData?.edit_type=='slabInfo')?('Update Slab'):
+            (isEditEnabled&&paramsData.edit_type=='addNewSlab')?('Add New Slab'):
+            'Create Scheme'}}<br />
+            <small *ngIf="paramsData?.id">Scheme Id: {{paramsData?.id}}</small>
+            <small *ngIf="slabId"> | Slab Id: {{slabId}}</small>
+        </h2>
+    </div>
+    <div class="container pt10 pl10 pr10 pb50">
+        <form #f="ngForm" (ngSubmit)="f.valid && cartHandler()">
+            <div class="card" *ngIf="(isEditEnabled&&paramsData?.edit_type=='primaryInfo')||!isEditEnabled">
+                <div class="card-head custom-card-head">
+                    <h2>PRIMARY INFORMATION</h2>
+                </div>
+                <div class="card-body cs-form">
+                    <div class="row">
+                        <div class="col s12 m9 l9">
+                            <div class="row">
+                                <div class="col s12 m4 l4">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Scheme Title</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="title"
+                                            [(ngModel)]="data.title" pattern="^(?! )[^\r\n]*$" #title="ngModel"
+                                            required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="title.touched || f.submitted">
+                                        <p *ngIf="title.errors?.required">This field is required</p>
+                                        <p *ngIf="title.errors?.pattern">This is not valid!</p>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m4 l4 custom-date-input">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Date From</mat-label>
+                                        <input matInput [matDatepicker]="start_date" readonly name="start_date"
+                                            #start_date="ngModel" [(ngModel)]="data.start_date" [min]="currentDate"
+                                            [max]="data?.end_date" required>
+                                        <mat-datepicker-toggle matSuffix [for]="start_date"></mat-datepicker-toggle>
+                                        <mat-datepicker #start_date></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="col s12 m4 l4 custom-date-input">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Date To</mat-label>
+                                        <input matInput [matDatepicker]="end_date" readonly name="end_date"
+                                            #end_date="ngModel" [(ngModel)]="data.end_date"
+                                            [disabled]="!data?.start_date" [min]="data?.start_date" required>
+                                        <mat-datepicker-toggle matSuffix [for]="end_date"></mat-datepicker-toggle>
+                                        <mat-datepicker #end_date></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="row mt20">
+                                <div class="col s12 m4 l4 pl10">
+                                    <mat-label>Scheme Applicability</mat-label>
+                                    <div class="custom-radio-btns">
+                                        <mat-radio-group class="example-section" id="genric" name="genric"
+                                            [(ngModel)]="data.genric">
+                                            <mat-radio-button color="primary" value="All">
+                                                All
+                                            </mat-radio-button>
+                                            <mat-radio-button class="ml25" color="primary" value="Area Wise">
+                                                Area Wise
+                                            </mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                </div>
+
+                                <div class="col s12 m4 l4 pl10">
+                                    <mat-label>Type of customer</mat-label>
+                                    <div class="custom-radio-btns">
+                                        <mat-radio-group class="example-section" id="customer_type" name="customer_type"
+                                            [(ngModel)]="data.customer_type">
+
+                                            <mat-radio-button class="wp25" color="primary" value="1">
+                                                Primary Customer
+                                            </mat-radio-button>
+
+                                            <mat-radio-button class="wp25 ml80" color="primary" value="3">
+                                                Secondary Customer
+                                            </mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt20" *ngIf="data?.genric=='Area Wise'">
+                                <div class="col s12 m4 l4">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>State</mat-label>
+                                        <mat-select name="state_name" [(ngModel)]="data.state_name"
+                                            #state_name="ngModel" multiple>
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no search found'"
+                                                    (keyup)="searchItems($event, 'state')"
+                                                    placeholderLabel="Search.."></ngx-mat-select-search>
+                                            </mat-option>
+                                            <div class="pl16" *ngIf="stateList?.length">
+                                                <mat-checkbox [(ngModel)]="data.allstate_name"
+                                                    (change)="selectAllOption(data?.allstate_name, stateList, 'data', 'state_name')"
+                                                    name="allstate_name" value="true">Select All</mat-checkbox>
+                                            </div>
+                                            <mat-option *ngFor="let row of stateList"
+                                                value="{{row?.state_name}}">{{row?.state_name ? (row?.state_name |
+                                                titlecase)
+                                                :''}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s12 m3 l3">
+                            <div class="uploade-image">
+                                <ul>
+                                    <li class="add-bg-1 wp40" *ngIf="data?.image">
+                                        <img src="{{data?.image}}">
+                                    </li>
+                                    <li class="add-bg-1 wp40">
+                                        <label class="fix-label">
+                                            <input type="file" (change)="uploadImageHandler($event)"
+                                                style="display: none;" accept=".png, .jpg, .jpeg," required />
+                                            <div class="other">
+                                                <i class="material-icons">cloud_upload</i>
+                                                <p>{{isEditEnabled?'Update':'Upload'}} Banner<br />
+                                                    <span class="dimension">Dimension<br />(950 X 1346 px)</span>
+                                                </p>
+                                            </div>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ng-container>
+                <div class="card mt20"
+                    *ngIf="(isEditEnabled&&(paramsData?.edit_type=='slabInfo'||isAddNewSlab))||!isEditEnabled">
+                    <div class="card-body cs-form">
+                        <div class="card-head custom-card-head mb10 flex align-center">
+                            <h2 class="mb0">TYPE OF SCHEME</h2>
+                            <a mat-icon-button matTooltip="Reset" (click)="reset()"
+                                *ngIf="isAddNewSlab||!isEditEnabled">
+                                <i class="material-icons">refresh</i>
+                            </a>
+                        </div>
+
+                        <div class="row"
+                            *ngIf="scheme_slab?.scheme_type=='Product'||scheme_slab?.scheme_type=='Category'">
+                            <div class="col s12 m6 l6">
+                                <div class="custom-radio-btns" *ngIf="isAddNewSlab||!isEditEnabled">
+                                    <mat-radio-group class="example-section" id="scheme_type" name="scheme_type"
+                                        [(ngModel)]="scheme_slab.scheme_type"
+                                        (ngModelChange)="scheme_slab.subCategoryInp=[]; scheme_slab.products=[]; scheme_slab.slab_item_arr=[]">
+                                        <mat-radio-button color="primary" value="Product">
+                                            Product Wise
+                                        </mat-radio-button>
+                                        <mat-radio-button class="ml25" color="primary" value="Category">
+                                            Category Wise
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+
+                                <ng-container *ngIf="isAddNewSlab||!isEditEnabled">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Category</mat-label>
+                                        <mat-select name="categoryInp" [(ngModel)]="scheme_slab.categoryInp"
+                                            (ngModelChange)="categoryHandler()" #categoryInp="ngModel" required
+                                            multiple>
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no search found'"
+                                                    (keyup)="searchItems($event, 'category')"
+                                                    placeholderLabel="Search.."></ngx-mat-select-search>
+                                            </mat-option>
+                                            <div class="pl16" *ngIf="categoryList?.length">
+                                                <mat-checkbox [(ngModel)]="scheme_slab.allCategory"
+                                                    (change)="selectAllOption(scheme_slab?.allCategory, categoryList, 'scheme_slab', 'categoryInp')"
+                                                    name="allCategory" value="true">Select All</mat-checkbox>
+                                            </div>
+                                            <!--  [value]="{'item_id':row?.id, 'item_name':row?.category}" -->
+                                            <mat-option *ngFor="let row of categoryList"
+                                                [value]="row?.id">{{row?.category ? (row?.category |
+                                                titlecase) :''}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="categoryInp.touched || f.submitted">
+                                        <p *ngIf="categoryInp.errors?.required">This field is required</p>
+                                    </div>
+                                </ng-container>
+
+                                <ng-container
+                                    *ngIf="(isAddNewSlab||!isEditEnabled)&&(scheme_slab?.scheme_type=='Product'||scheme_slab?.scheme_type=='Category')">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Sub Category</mat-label>
+                                        <mat-select name="subCategoryInp" [(ngModel)]="scheme_slab.subCategoryInp"
+                                            (ngModelChange)="subCategoryHandler()" #subCategoryInp="ngModel" required
+                                            multiple>
+                                            <mat-option>
+                                                <ngx-mat-select-search noEntriesFoundLabel="'no search found'"
+                                                    (keyup)="searchItems($event, 'subCategoryInp')"
+                                                    placeholderLabel="Search.."></ngx-mat-select-search>
+                                            </mat-option>
+                                            <div class="pl16" *ngIf="subCategoryList?.length">
+                                                <mat-checkbox [(ngModel)]="scheme_slab.allSubCategory"
+                                                    (change)="selectAllOption(scheme_slab?.allSubCategory, subCategoryList, 'scheme_slab', 'subCategoryInp')"
+                                                    name="allSubCategory" value="true">Select All</mat-checkbox>
+                                            </div>
+                                            <!--  [value]="{'item_id':row?.id, 'item_name':row?.sub_category_name}" -->
+                                            <mat-option *ngFor="let row of subCategoryList"
+                                                [value]="row?.id">{{row?.sub_category_name ? (row?.sub_category_name |
+                                                titlecase) :''}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="subCategoryInp.touched || f.submitted">
+                                        <p *ngIf="subCategoryInp.errors?.required">This field is required</p>
+                                    </div>
+
+                                    <ng-container *ngIf="scheme_slab?.scheme_type=='Product'">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Product</mat-label>
+                                            <mat-select name="products" [(ngModel)]="scheme_slab.products"
+                                                (ngModelChange)="itemHandler(this.productList, 'scheme_slab', 'products', 'slab_item_arr'); productList?.length==scheme_slab?.products?.length?scheme_slab.allProduct=true:scheme_slab.allProduct=false"
+                                                #products="ngModel" required multiple>
+                                                <mat-option>
+                                                    <ngx-mat-select-search noEntriesFoundLabel="'no search found'"
+                                                        (keyup)="searchItems($event, 'product')"
+                                                        placeholderLabel="Search.."></ngx-mat-select-search>
+                                                </mat-option>
+                                                <div class="pl16" *ngIf="productList?.length">
+                                                    <mat-checkbox [(ngModel)]="scheme_slab.allProduct"
+                                                        (change)="selectAllOption(scheme_slab?.allProduct, productList, 'scheme_slab', 'products')"
+                                                        name="allProduct" value="true">Select All</mat-checkbox>
+                                                </div>
+                                                <!--  [value]="{'item_id':row?.id, 'item_name':row?.product_name, 'uom':row?.uom}" -->
+                                                <mat-option *ngFor="let row of productList"
+                                                    [value]="row?.id">{{row?.product_name ? (row?.product_name |
+                                                    titlecase) :''}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="products.touched || f.submitted">
+                                            <p *ngIf="products.errors?.required">This field is required</p>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+
+                                <div class="row mt20">
+                                    <div class="col s12 m6 l6">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Scheme Standard</mat-label>
+                                            <mat-select name="scheme_standard" [(ngModel)]="scheme_slab.scheme_standard"
+                                                (ngModelChange)="schemeStandardHandler()" #scheme_standard="ngModel"
+                                                required>
+                                                <mat-option *ngFor="let row of schemeStandardList"
+                                                    value="{{row?.option}}">{{row?.option ? (row?.option |
+                                                    titlecase) :''}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="scheme_standard.touched || f.submitted">
+                                            <p *ngIf="scheme_standard.errors?.required">This field is required</p>
+                                        </div>
+                                        <a class="link-btn" mat-button
+                                            *ngIf="scheme_slab?.scheme_standard=='Over All Each'||scheme_slab?.scheme_standard=='Each'"
+                                            (click)="openDialog('eachPoints', scheme_slab.slab_item_arr)">
+                                            View each target
+                                        </a>
+                                    </div>
+
+                                    <ng-container>
+                                        <div class="col s12 m6 l6"
+                                            *ngIf="scheme_slab.scheme_standard=='Over All (Minimum Item)'">
+                                            <mat-form-field appearance="outline">
+                                                <mat-label>
+                                                    Number of Item
+                                                </mat-label>
+                                                <input matInput placeholder="Type Here ..." name="minimum_item_qty"
+                                                    [(ngModel)]="scheme_slab.minimum_item_qty"
+                                                    #minimum_item_qty="ngModel" required>
+                                            </mat-form-field>
+                                            <div class="alert alert-danger"
+                                                *ngIf="minimum_item_qty.touched || f.submitted">
+                                                <p *ngIf="minimum_item_qty.errors?.required">This field is required</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="col s12 m6 l6">
+                                            <ng-container *ngIf="scheme_slab?.scheme_standard!='Flat'">
+                                                <mat-form-field appearance="outline">
+                                                    <mat-label>Criteria for slab</mat-label>
+                                                    <mat-select name="criteria" [(ngModel)]="scheme_slab.criteria"
+                                                        #criteria="ngModel" required>
+                                                        <mat-option *ngFor="let row of slabList"
+                                                            value="{{row?.option}}">{{row?.option ? (row?.option |
+                                                            titlecase)
+                                                            :''}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <div class="alert alert-danger" *ngIf="criteria.touched || f.submitted">
+                                                    <p *ngIf="criteria.errors?.required">This field is required</p>
+                                                </div>
+                                            </ng-container>
+
+                                            <div class="custom-radio-btns"
+                                                *ngIf="scheme_slab?.criteria=='Volume'||scheme_slab?.scheme_standard=='Flat'">
+                                                <mat-radio-group class="example-section" id="sub_criteria"
+                                                    name="sub_criteria" [(ngModel)]="scheme_slab.sub_criteria">
+                                                    <mat-radio-button color="primary" value="uom">
+                                                        Unit of Measurement
+                                                    </mat-radio-button>
+                                                    <mat-radio-button class="ml25" color="primary" value="Quantity">
+                                                        Quantity
+                                                    </mat-radio-button>
+                                                </mat-radio-group>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+
+                                <div class="card-head custom-card-head  mb10 mt30"
+                                    *ngIf="scheme_slab?.scheme_standard!='Flat'">
+                                    <h2>TARGET DETAIL</h2>
+                                </div>
+
+                                <div class="row mt20" *ngIf="scheme_slab?.scheme_standard!='Flat'">
+                                    <div class="col s12 m6 l6 customRadioWrapper">
+                                        <div class="custom-radio-btns">
+                                            <mat-radio-group class="example-section" id="slab_type" name="slab_type"
+                                                [(ngModel)]="scheme_slab.slab_type">
+                                                <mat-radio-button color="primary" value="Range">
+                                                    Range
+                                                </mat-radio-button>
+                                                <mat-radio-button class="ml25" color="primary" value="Above">
+                                                    Above
+                                                </mat-radio-button>
+                                            </mat-radio-group>
+                                        </div>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>
+                                                Slab {{scheme_slab?.slab_type=='Above'?'':'Start Range'}}
+                                                {{scheme_slab.criteria=='Volume'&&scheme_slab?.sub_criteria?('(in
+                                                '+scheme_slab?.sub_criteria+')'):''}}
+                                            </mat-label>
+                                            <input matInput placeholder="Type Here ..." name="slab_start" type="number"
+                                                [(ngModel)]="scheme_slab.slab_start" #slab_start="ngModel" required>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="slab_start.touched || f.submitted">
+                                            <p *ngIf="slab_start.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col s12 m6 l6" *ngIf="scheme_slab?.slab_type=='Range'">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Slab End Range
+                                                {{scheme_slab.criteria=='Volume'&&scheme_slab?.sub_criteria?('(in
+                                                '+scheme_slab?.sub_criteria+')'):''}}
+                                            </mat-label>
+                                            <input matInput placeholder="Type Here ..." name="slab_end" type="number"
+                                                [min]="scheme_slab?.slab_start" [(ngModel)]="scheme_slab.slab_end"
+                                                #slab_end="ngModel" required>
+                                        </mat-form-field>
+                                        <div class="alert alert-danger" *ngIf="slab_end.touched || f.submitted">
+                                            <p *ngIf="slab_end.errors?.required">This field is required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6 l6" *ngIf="scheme_slab?.slab_item_arr?.length">
+                                <div class="mx-auto bg-white itemHeadWrapper">
+                                    <div class="header align-center">
+                                        <ul>
+                                            <li class="flex justify-between">
+                                                <div>Total Items - {{scheme_slab?.slab_item_arr?.length | number}}</div>
+                                                <div class="clearAllBtn" *ngIf="(isAddNewSlab||!isEditEnabled)"
+                                                    (click)="deleteDialog('allItem')">Clear All <i
+                                                        class="material-icons deleteIcon ml4">delete_sweep</i></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="content">
+                                        <ul>
+                                            <li *ngFor="let row of scheme_slab?.slab_item_arr; let i = index"
+                                                class="flex itemListWrapper justify-between align-center">
+                                                <div>{{row?.item_name}}</div>
+                                                <div class="clearAllBtn" *ngIf="(isAddNewSlab||!isEditEnabled)"
+                                                    (click)="deleteDialog('item', i)"><i
+                                                        class="material-icons deleteIcon">delete</i></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="card-head custom-card-head mb10 mt20">
+                            <h2>REWARD</h2>
+                        </div>
+                        <div class="row ">
+                            <div class="col s12 m4 l4">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Type of Reward</mat-label>
+                                    <mat-select name="reward_type" [(ngModel)]="scheme_slab.reward_type"
+                                        #reward_type="ngModel" required>
+                                        <mat-option *ngFor="let row of rewardList" value="{{row?.option}}">{{row?.option
+                                            ? (row?.option | titlecase)
+                                            :''}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div class="alert alert-danger" *ngIf="reward_type.touched || f.submitted">
+                                    <p *ngIf="reward_type.errors?.required">This field is required</p>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m4 l4" *ngIf="scheme_slab?.reward_type=='value'">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Value</mat-label>
+                                    <input matInput placeholder="Type Here ..." name="value_type"
+                                        [(ngModel)]="scheme_slab.value_type" #value_type="ngModel" required>
+                                </mat-form-field>
+                                <div class="alert alert-danger" *ngIf="value_type.touched || f.submitted">
+                                    <p *ngIf="value_type.errors?.required">This field is required</p>
+                                </div>
+                            </div>
+
+                            <div [ngClass]="{'customRadioWrapper':scheme_slab?.reward_type=='Both'}"
+                                class="col s12 m4 l4"
+                                *ngIf="scheme_slab?.reward_type=='Gift'||scheme_slab?.reward_type=='Both'">
+                                <div class="custom-radio-btns" *ngIf="scheme_slab?.reward_type=='Both'">
+                                    <mat-radio-group class="example-section" id="both_type" name="both_type"
+                                        [(ngModel)]="scheme_slab.both_type">
+                                        <mat-radio-button color="primary" value="And">
+                                            And
+                                        </mat-radio-button>
+                                        <mat-radio-button class="ml25" color="primary" value="OR">
+                                            OR
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Gift</mat-label>
+                                    <input matInput placeholder="Type Here ..." name="gift_name"
+                                        [(ngModel)]="scheme_slab.gift_name" #gift_name="ngModel" required>
+                                </mat-form-field>
+                                <div class="alert alert-danger" *ngIf="gift_name.touched || f.submitted">
+                                    <p *ngIf="gift_name.errors?.required">This field is required</p>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <div class="col s12 m4 l4 customRadioWrapper"
+                                *ngIf="scheme_slab?.reward_type=='Point'||scheme_slab?.reward_type=='Both'">
+                                <div class="custom-radio-btns">
+                                    <mat-radio-group class="example-section" id="point_type" name="point_type"
+                                        [(ngModel)]="scheme_slab.point_type">
+                                        <mat-radio-button color="primary" value="Fixed Points"
+                                            *ngIf="scheme_slab.scheme_standard!='Flat'">
+                                            Fixed Points
+                                        </mat-radio-button>
+                                        <mat-radio-button class="ml25" color="primary" value="UOM Fixed">
+                                            UOM Fixed
+                                        </mat-radio-button>
+                                        <mat-radio-button class="wp25 ml25" color="primary" value="Product Wise Points"
+                                            *ngIf="scheme_slab.scheme_standard!='Flat'"
+                                            (click)="openDialog('levelPoints', scheme_slab.slab_item_arr)">
+                                            {{scheme_slab?.scheme_type}} Wise Points
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                                <ng-container *ngIf="scheme_slab?.point_type!='Product Wise Points'">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Point</mat-label>
+                                        <input matInput placeholder="Type Here ..." type="number" name="point"
+                                            [(ngModel)]="scheme_slab.point" #point="ngModel" required>
+                                    </mat-form-field>
+                                    <div class="alert alert-danger" *ngIf="point.touched || f.submitted">
+                                        <p *ngIf="point.errors?.required">This field is required</p>
+                                    </div>
+                                </ng-container>
+                                <a class="link-btn" mat-button *ngIf="scheme_slab?.point_type=='Product Wise Points'"
+                                    (click)="openDialog('levelPoints', scheme_slab.slab_item_arr)">
+                                    View {{scheme_slab?.scheme_type}} Wise Points
+                                </a>
+                                <a mat-button *ngIf="scheme_slab?.scheme_standard=='Flat'">
+                                    {{scheme_slab?.point}} pt. per {{scheme_slab?.sub_criteria}}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="(isAddNewSlab||!isEditEnabled)">
+                            <div class="col s12 m1 l1">
+                                <button mat-raised-button color="accent" type="submit" class="add-item wp100">
+                                    Add To list
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt20"
+                    *ngIf="(isEditEnabled&&isEditEnabled&&paramsData?.edit_type=='primaryInfo'||isAddNewSlab)||!isEditEnabled">
+                    <div class="card-head custom-card-head mb10">
+                        <h2>SLABS</h2>
+                    </div>
+                    <div class="cs-table horizontal-scroll cartTable">
+                        <div class="sticky-head" style="top: -10px;">
+                            <div class="table-head">
+                                <table>
+                                    <tr>
+                                        <th class="w60 text-center">S.No</th>
+                                        <th class="w120">Type of Scheme</th>
+                                        <th class="w120">Scheme Standard</th>
+                                        <th class="w120">Slab Criteria</th>
+                                        <th class="w120">Target</th>
+                                        <th class="w120">Reward Type</th>
+                                        <th class="">Gift/Point Details/Value</th>
+                                        <th class="w80 text-center" *ngIf="isAddNewSlab||!isEditEnabled">Action</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-content">
+                                <table>
+                                    <ng-container *ngFor="let row of cartList; let i =index">
+                                        <tr class="itemListWrapper">
+                                            <td class="w60 text-center">{{i+1}}</td>
+                                            <td class="w120">{{row?.scheme_type}}</td>
+                                            <td class="w120">{{row?.scheme_standard}}</td>
+                                            <td class="w120">{{row?.criteria}}</td>
+                                            <td class="w120">{{row?.slab_start}} {{row?.slab_type=='Range'?" to
+                                                "+row?.slab_end:'Above'}}</td>
+                                            <td class="w120">{{row?.reward_type}}</td>
+                                            <td class="">
+                                                <ng-container *ngIf="row?.reward_type=='Both' && row?.reward_type!='value'">
+                                                    {{row?.gift_name+" "+row.both_type+" "+row?.point+"Ptee."}}
+                                                </ng-container>
+                                                   <ng-container *ngIf="row?.reward_type=='value'">
+                                                    {{row?.value_type}}
+                                                </ng-container>
+                                                <ng-container *ngIf="row?.reward_type!='Both' && row?.reward_type!='value'">
+                                                    <a class="link-btn" mat-button
+                                                        *ngIf="row?.point_type=='Product Wise Points'"
+                                                        (click)="openDialog('levelPoints', row?.slab_item_arr, true)">
+                                                        View {{row?.scheme_type}} Wise Points
+                                                    </a>
+                                                    <span *ngIf="row?.point_type!='Product Wise Points'">
+                                                        {{row?.gift_name||row?.point+"Pt."}}
+                                                    </span>
+                                                </ng-container>
+                                            </td>
+                                            <!-- row?.reward_type!='Both'?
+                    (row?.gift_name||row?.point+"Pt."):
+                    null -->
+                                            <td class="w80" *ngIf="isAddNewSlab||!isEditEnabled">
+                                                <div class="action-btns text-center">
+                                                    <!-- <a mat-button class="view" routerLink="/add-discount/"
+                            routerLinkActive="active"><i class="material-icons">edit</i></a> -->
+                                                    <button mat-button class="delete" type="button"
+                                                        (click)="deleteDialog('cartItem', i)"><i
+                                                            class="material-icons">delete_sweep</i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-container *ngIf="!cartList?.length">
+                                        <tr class="itemListWrapper">
+                                            <td colspan="8">No data added</td>
+                                        </tr>
+                                    </ng-container>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </ng-container>
+            <div class="row mt25">
+                <div class="col s12">
+                    <div class="text-right">
+                        <button mat-raised-button color="accent" [disabled]="!isEditEnabled && !cartList?.length"
+                            (click)="formHandler()" type="button">{{isEditEnabled?'Update':'Create'}}
+                            {{slabId?'Slab':'Scheme'}}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,373 @@
+<div class="main-container">
+  <div class="tab-surface">
+    <button *ngFor="let row of calenderInfo; let i =index;" mat-button
+    [ngClass]="OrderMonth == row.month && OrderYear == row.year ? 'active' : ''"
+    (click)="orderList('',row.month,row.year);">{{row.monthYEAR | date :'MMM'}} {{row.year}}
+    <span class="order-value" *ngIf="this.login_data?.organisation_data?.order_place==0 && login_data.designation_name != 'DISPATCH PLANNING'">&#x20B9; {{row.sale ?
+      (row.sale | number:'1.0-0') : '0'}}</span>
+    </button>
+  </div>
+  <div class="tools-container">
+    <h2>Primary Order </h2>
+    <div class="left-auto left-auto df ac flex-gap-5">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh('refresh',OrderMonth,OrderYear)">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+        <i class="material-icons">filter_alt</i>
+      </button>
+      <button mat-icon-button matTooltip="Sorting" (click)="sortData()">
+        <i class="material-icons">swap_vert</i>
+      </button>
+      <div class="pagination" *ngIf="tmp_orderlist.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious('',OrderMonth,OrderYear)"
+          [disabled]="start == 0 || total_page == 0">
+          <i class="material-icons">navigate_before</i>
+        </button>
+        <button mat-icon-button matTooltip="Newer" (click)="nextPage('',OrderMonth,OrderYear)"
+        [disabled]="pagenumber == total_page || total_page == 0 ">
+        <i class="material-icons">navigate_next</i>
+      </button>
+    </div>
+  </div>
+  <div class="left-auto df" style="overflow: auto;">
+    <div class="mat-tabbar df">
+      <ng-container *ngIf="login_data.designation_name != 'DISPATCH PLANNING'">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''" (click)="active_tab = 'Pending';orderList('',OrderMonth,OrderYear);">
+          Pending ({{count?.Pending || '0'}})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''" (click)="active_tab = 'Approved';orderList('',OrderMonth,OrderYear);">
+          Approved ({{count?.Approved || '0'}})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''" (click)="active_tab = 'Reject';orderList('',OrderMonth,OrderYear);">
+          Reject ({{count?.Reject || '0'}})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Hold' ? 'active' : ''" (click)="active_tab = 'Hold';orderList('',OrderMonth,OrderYear);">
+          Hold ({{count?.Hold}})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Partially Dispatched' ? 'active' : ''" (click)="active_tab = 'Partially Dispatched';orderList('',OrderMonth,OrderYear);">
+          Partially Dispatched ({{count['Partially Dispatched']}})
+        </button>
+        <button mat-button [ngClass]="active_tab == 'Dispatched' ? 'active' : ''" (click)="active_tab = 'Dispatched';orderList('',OrderMonth,OrderYear);">
+          Dispatched ({{count?.Dispatched}})
+        </button>
+      </ng-container>
+      
+      <ng-container  *ngIf="login_data?.organisation_data?.dispatch == '1'">
+        <ng-container *ngIf="login_data.designation_name == 'DISPATCH PLANNING' || login_data.id == '1' || login_data.designation_name == 'FINANCE'">
+          <button mat-button [ngClass]="active_tab == 'dispatchPlanning' ? 'active' : ''" (click)="active_tab = 'dispatchPlanning';orderList('',OrderMonth,OrderYear);">
+            Dispatch Planning ({{count.dispatchPlanning ? count.dispatchPlanning :'0'}})
+          </button>
+        </ng-container>
+        <button mat-button [ngClass]="active_tab == 'partialDispatched' ? 'active' : ''" (click)="active_tab = 'partialDispatched';orderList('',OrderMonth,OrderYear);">
+          Partially Planned ({{count.partialDispatched ? count.partialDispatched :'0'}})
+        </button>
+        
+        <button mat-button [ngClass]="active_tab == 'completeDispatched' ? 'active' : ''" (click)="active_tab = 'completeDispatched';orderList('',OrderMonth,OrderYear);">
+          Complete Planned ({{count.completeDispatched ? count.completeDispatched : '0'}})
+        </button>
+        
+        <button mat-button [ngClass]="active_tab == 'orderPartial' ? 'active' : ''" (click)="active_tab = 'orderPartial';orderList('',OrderMonth,OrderYear);">
+          Partially Dispatched ({{count.orderPartial ? count.orderPartial : '0'}})
+        </button>
+        
+        <ng-container *ngIf="login_data.designation_name != 'DISPATCH PLANNING'">
+          <button mat-button [ngClass]="active_tab == 'Dispatched' ? 'active' : ''" (click)="active_tab = 'Dispatched';orderList('',OrderMonth,OrderYear);">
+            Dispatched ({{count.Dispatched ? count.Dispatched : '0'}})
+          </button>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="container container-scroll no-tab">
+  <div class="cs-table horizontal-scroll">
+    <div class="sticky-head">
+      <div class="table-head">
+        <table>
+          <tr>
+            <th class="w50">S NO</th>
+            <th class="w110">Date</th>
+            <th class="w110">Created By</th>
+            <th class="w150">Reporting Manager</th>
+            <th class="w80">Order Id</th>
+            <!-- <th class="w110" *ngIf="active_tab == 'Approved' || active_tab == 'Dispatch'">Order Number</th> -->
+            <ng-container
+            *ngIf="active_tab == 'Approved' || active_tab == 'DISPATCH PLANNING' || active_tab == 'partialDispatched' || active_tab == 'completeDispatched' || active_tab == 'orderPartial' || active_tab == 'Dispatched' ">
+            <th class="w200" *ngIf="login_data?.organisation_data?.dispatch == '1'">Organisation Name</th>
+          </ng-container>
+          <th class="w200">Company Details</th>
+          <th class="w130">State</th>
+          <th class="w130">District</th>
+          <th class="w100">Account Code</th>
+          <th class="w80 text-center">Total Items</th>
+          <th class="w90 text-right">Item QTY.</th>
+          <th class="w90 text-right" *ngIf="active_tab == 'partialDispatched'">Dispatch QTY.</th>
+          <th class="w90 text-right" *ngIf="active_tab == 'partialDispatched'">Pending QTY.</th>
+          <th class="w90 text-right" *ngIf="this.login_data?.organisation_data?.order_place==0">Order Amount</th>
+          <th class="w120 text-right">Order Type</th>
+          <th class="w200">Remark</th>
+          <th class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'Hold'">Reason</th>
+          <th class="w100" *ngIf="active_tab == 'All'">Status</th>
+          <th class="w80 text-center" *ngIf="active_tab == 'Pending'">Action</th>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="table-head border-top">
+      <table>
+        <tr>
+          <th class="w50">&nbsp;</th>
+          <th class="w110">
+            <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput [matDatepicker]="picker2" placeholder="Date" name="date_created"
+                [(ngModel)]="search_val.date_created" (dateChange)="onDate($event)" [min]="minDate" [max]="date" readonly>
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </th>
+          <th class="w110">
+            <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput placeholder="Search" name="created_by_name" [(ngModel)]="search_val.created_by_name"
+                (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+              </mat-form-field>
+            </div>
+          </th>
+           <th class="w150">
+            <!-- <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput placeholder="Search" name="reporting_manager" [(ngModel)]="search_val.reporting_manager"
+                (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+              </mat-form-field>
+            </div> -->
+          </th>
+          <th class="w80">
+            <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput placeholder="Search" name="order_id" [(ngModel)]="search_val.order_id"
+                (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+              </mat-form-field>
+            </div>
+          </th>
+          <!-- <th class="w110" *ngIf="active_tab == 'Approved' || active_tab == 'Dispatch'">
+            <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput placeholder="Search" name="order_no" [(ngModel)]="search_val.order_no"
+                (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+              </mat-form-field>
+            </div>
+          </th> -->
+          <ng-container
+          *ngIf="active_tab == 'Approved' || active_tab == 'DISPATCH PLANNING' || active_tab == 'partialDispatched' || active_tab == 'completeDispatched' || active_tab == 'orderPartial' || active_tab == 'Dispatched' ">
+          <th class="w200" *ngIf="login_data?.organisation_data?.dispatch == '1'">
+            <div class="th-search-acmt">
+              <mat-form-field class="example-full-width cs-input">
+                <input matInput placeholder="Search" name="organisation_name"
+                [(ngModel)]="search_val.organisation_name" (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+              </mat-form-field>
+            </div>
+          </th>
+        </ng-container>
+        <th class="w200">
+          <div class="th-search-acmt">
+            <mat-form-field class="example-full-width cs-input">
+              <input matInput placeholder="Search" name="company_detail" [(ngModel)]="search_val.company_detail"
+              (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+            </mat-form-field>
+          </div>
+        </th>
+        <th class="w130">
+          <div class="th-search-acmt">
+            <mat-form-field class="example-full-width cs-input">
+              <input matInput placeholder="Search" name="state" [(ngModel)]="search_val.state"
+              (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+            </mat-form-field>
+          </div>
+        </th>
+        <th class="w130">
+          <div class="th-search-acmt">
+            <mat-form-field class="example-full-width cs-input">
+              <input matInput placeholder="Search" name="district" [(ngModel)]="search_val.district"
+              (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+            </mat-form-field>
+          </div>
+        </th>
+        <th class="w100">
+          <div class="th-search-acmt">
+            <mat-form-field class="example-full-width cs-input">
+              <input matInput placeholder="Search" name="account_code" [(ngModel)]="search_val.dr_code"
+              (keyup.enter)="orderList('',OrderMonth,OrderYear)">
+            </mat-form-field>
+          </div>
+        </th>
+        <th class="w80 text-center">&nbsp; {{totalData.total_item}}</th>
+        <th class="w90 text-right">&nbsp; {{totalData.total_order_qty}}</th>
+        <th class="w90 text-right" *ngIf="active_tab == 'partialDispatched'">&nbsp;</th>
+        <th class="w90 text-right" *ngIf="active_tab == 'partialDispatched'">&nbsp;</th>
+        <th class="w90 text-right" *ngIf="this.login_data?.organisation_data?.order_place==0">₹ {{totalData.total_amount > 0 ?
+          (totalData.total_amount.toLocaleString('en-IN', {style:'decimal',currency:'INR'})) : '0'}}</th>
+          <th class="w120 text-right">&nbsp;</th>
+          <th class="w200"></th>
+          <th class="w200" *ngIf="active_tab == 'Reject' || active_tab == 'Hold'">&nbsp;</th>
+          <th class="w100" *ngIf="active_tab == 'All'"></th>
+          <th class="w80" *ngIf="active_tab == 'Pending'">
+            <!-- <button mat-icon-button matTooltip="Delete" [(ngModel)]="search_val.deleteAll"
+            (click)="delete('deleteAll')">
+            <i class="material-icons del">delete</i>Delete
+          </button> -->
+        </th>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="table-container">
+  <div class="table-content">
+    <table>
+      <ng-container *ngIf="!loader">
+        <tr *ngFor="let row of tmp_orderlist; let i =index;"
+        [ngClass]="{'Current': service.currentUserID == row.id}">
+        <td class="w50">{{ i + 1 + sr_no }}</td>
+        <td class="w110">{{row.date_created | date : 'dd MMM yyy ,h:mm a'}}</td>
+        <td class="w110">{{row.created_by_name}}</td>
+        <td class="w150">{{row.reporting_manager? row.reporting_manager : '---'}}</td>
+        <td class="w80"><a class="link-btn" (click)="service.setData(search_val)"
+          routerLink="order-detail/{{row.encrypt_id }}" [queryParams]="{'id':row.id, 'status':active_tab}"
+          routerLinkActive="active">{{row.order_no}}</a></td>
+          <!-- <td class="w110" *ngIf="active_tab == 'Approved' || active_tab == 'Dispatchl'">{{row.account_order_no}}
+          </td> -->
+          <!-- - ({{row.name}} {{row.mobile}}) -->
+          <ng-container
+          *ngIf="active_tab == 'Approved' || active_tab == 'DISPATCH PLANNING' || active_tab == 'partialDispatched' || active_tab == 'completeDispatched' || active_tab == 'orderPartial' || active_tab == 'Dispatched' ">
+          <td class="w200" *ngIf="login_data?.organisation_data?.dispatch == '1'">{{row.organisation_name ? (row.organisation_name | titlecase) : ''}}</td>
+        </ng-container>
+        <td class="w200">{{row.company_name ? (row.company_name | titlecase) : '---'}}</td>
+        <td class="w130">{{row.state ? (row.state | titlecase) : '----'}}</td>
+        <td class="w130">{{row.district ? (row.district | titlecase): '----'}}</td>
+        <td class="w100">{{row.dr_code}}</td>
+        <td class="w80 text-center">{{row.order_item}}</td>
+        <td class="w90 text-right">{{row.total_order_qty}}</td>
+        <td class="w90 text-right" *ngIf="active_tab == 'partialDispatched'">{{row.dispatch_qty}}</td>
+        <td class="w90 text-right" *ngIf="active_tab == 'partialDispatched'">{{row.pending_qty}}</td>
+        <td class="w90 text-right" *ngIf="this.login_data?.organisation_data?.order_place==0"><strong>&#x20B9; {{row.order_grand_total}}</strong></td>
+        <td class="w120 text-right"><strong>{{row.order_type}}</strong></td>
+        <td class="w200">{{row.order_create_remark}}</td>
+        <td class="w200" *ngIf="active_tab == 'Reject'|| active_tab == 'Hold' ">{{row.reason_reject}}</td>
+        <td class="w100 {{row.order_status}}" *ngIf="active_tab == 'All'">
+          {{row.order_status=='partialDispatched'?'In Process':row.order_status}}
+        </td>
+        <td class="w80" *ngIf="active_tab == 'Pending'">
+          <div class="action-button text-center" *ngIf="login_data.delete_primary_order=='1'">
+            <button mat-icon-button matTooltip="Delete" (click)="delete('singleDelete', row.id)">
+              <i class="material-icons del">delete</i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="loader">
+      <tr class="sk-loading" *ngFor="let row of [].constructor(100)">
+        <td class="w50">
+          <div>&nbsp;</div>
+        </td>
+        <td class="w110 text-center">
+          <div>&nbsp;</div>
+        </td>
+        <td class="w110">
+          <div>&nbsp;</div>
+        </td>
+        <td class="w80">
+          <div>&nbsp;</div>
+        </td>
+        <ng-container
+        *ngIf="active_tab == 'Approved' || active_tab == 'DISPATCH PLANNING' || active_tab == 'partialDispatched' || active_tab == 'completeDispatched' || active_tab == 'orderPartial' || active_tab == 'Dispatched' ">
+        <td class="w200" *ngIf="login_data?.organisation_data?.dispatch == '1'">
+          <div>&nbsp;</div>
+        </td>
+      </ng-container>
+      <td class="w200">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w130">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w130">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w100">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w80">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w90">
+        <div>&nbsp;</div>
+      </td>
+      <td *ngIf="active_tab == 'partialDispatched'" class="w90">
+        <div>&nbsp;</div>
+      </td>
+      <td *ngIf="active_tab == 'partialDispatched'" class="w90">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w90">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w120">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w200">
+        <div>&nbsp;</div>
+      </td>
+      <td *ngIf="active_tab == 'Reject' || active_tab == 'Hold'" class="w200">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w100" *ngIf="active_tab == 'All'">
+        <div>&nbsp;</div>
+      </td>
+      <td class="w80" *ngIf="active_tab == 'Pending'">
+        <div>&nbsp;</div>
+      </td>
+    </tr>
+  </ng-container>
+</table>
+</div>
+</div>
+<ng-container *ngIf="tmp_orderlist.length == 0 && datanotfound == true">
+  <app-not-result-found></app-not-result-found>
+</ng-container>
+</div>
+
+</div>
+<div class="fab-btns pulse"
+*ngIf="(login_data.export_primary_order=='1' || login_data.export_order=='1') || (login_data.add_order=='1' || login_data.add_primary_order=='1') ">
+<button class="excel pulse " mat-fab color="primary" [matMenuTriggerFor]="menu">
+  <i class="material-icons">apps</i>
+  Action
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="lastBtnValue('excel');progressService.setCancelReq(false);downloadInChunks(OrderMonth, OrderYear)"
+  *ngIf="tmp_orderlist.length > 0 &&  login_data.export_primary_order=='1'">
+  <mat-icon>download</mat-icon>
+  <span>Download in excel</span>
+</button>
+<button mat-menu-item [routerLink]="this.login_data?.organisation_data?.order_place==1?'add-order-quantity/primary':'add-order/primary'"
+*ngIf="login_data.add_primary_order=='1' && login_data.designation_name != 'DISPATCH PLANNING'">
+<mat-icon>add</mat-icon>
+<span>Add Order</span>
+</button>
+</mat-menu>
+</div>
+
+</div>

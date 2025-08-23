@@ -1,0 +1,172 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <h2>Pop Requisition Req.</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </button>
+      <div class="pagination" *ngIf="popList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mat-tabbar">
+        <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+          (click)="active_tab = 'Pending';transactionData();"><i class="material-icons">pending_actions</i>Pending
+          ({{tabCount.pending ? tabCount.pending : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
+          (click)="active_tab = 'Approved'; transactionData();"><i class="material-icons">task_alt</i>Approved
+          ({{tabCount.approved ? tabCount.approved : '0'}})</button>
+        <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
+          (click)="active_tab = 'Reject'; transactionData();"><i class="material-icons">unpublished</i>Reject
+          ({{tabCount.reject ? tabCount.reject : '0'}})</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="container pb100">
+    <div class="cs-table">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table class="sno-border">
+            <tr>
+              <th class="w55">Sr No.</th>
+              <th class="w120">Date Created</th>
+              <th class="w200">Created By</th>
+              <th class="w120">Gift Type</th>
+              <th class="w120 text-center">QTY.</th>
+              <th class="w120 text-center" *ngIf="active_tab == 'Approved'">Approved QTY</th>
+              <th>Remark</th>
+              <th *ngIf="active_tab == 'Reject'">Reason</th>
+
+              <th class="w100 text-center" *ngIf="active_tab == 'Pending'">
+                Action
+              </th>
+            </tr>
+          </table>
+        </div>
+        <div class="table-head  border-top">
+          <table class="sno-border">
+            <tr>
+              <th class="w55">&nbsp;</th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter.date_created" (ngModelChange)="date_format()"
+                      [max]="today" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w200">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="transactionData()" #created_by_name="ngModel"
+                      [(ngModel)]="filter.created_by_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="transactionData()" #gift_type="ngModel"
+                      [(ngModel)]="filter.gift_type">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w120 text-center">&nbsp;</th>
+              <th class="w120 text-center" *ngIf="active_tab == 'Approved'">&nbsp;</th>
+              <th>&nbsp;</th>
+              <th *ngIf="active_tab == 'Reject'">&nbsp;</th>
+
+              <th class="w100 text-center" *ngIf="active_tab == 'Pending'">
+                &nbsp;
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="popList.length > 0">
+          <table class="sno-border">
+            <ng-container *ngIf="!loader">
+              <tr *ngFor=" let row of popList, let i = index;" [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w55">{{i + 1 + sr_no}}</td>
+                <td class="w120">{{row.date_created ? (row.date_created | date : 'dd MMM yyy') : '---'}}</td>
+                <td class="w200">{{row.created_by_name ? (row.created_by_name | titlecase) : '---'}}</td>
+                <td class="w120">{{row.gift_type}}</td>
+                <td class="w120 text-center">{{row.qty ? row.qty : '0'}}</td>
+                <td class="w120 text-center" *ngIf="active_tab == 'Approved'">{{row.approved_qty ? row.approved_qty :
+                  '0'}}</td>
+                <td>{{row.remark ? row.remark : '---'}}</td>
+                <td *ngIf="active_tab == 'Reject'">{{row.remark ? row.remark : '---'}}</td>
+                <td class="w100 text-center" *ngIf="active_tab == 'Pending'">
+                  <div class="action-button">
+                    <button mat-icon-button matTooltip="Update" (click)="openModal(row.id, row.qty, row.status)">
+                      <i class="material-icons edit">update</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w55">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120 text-center" *ngIf="active_tab == 'Approved'">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td *ngIf="active_tab == 'Reject'">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center" *ngIf="active_tab == 'Pending'">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+
+      <ng-container *ngIf="popList.length == 0">
+        <app-not-result-found></app-not-result-found>
+      </ng-container>
+    </div>
+  </div>
+</div>

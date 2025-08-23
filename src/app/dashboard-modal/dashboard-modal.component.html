@@ -1,0 +1,121 @@
+<div class="edit-modal">
+    <p class="heading" *ngIf="data.type=='rsmWiseEnquiry'">RSM Enquiry</p>
+
+    <div mat-dialog-content class="pl4 pr4" *ngIf="data.type=='rsmWiseEnquiry'">
+        <div class="modal-container container-scroll">
+            <div class="cs-table">
+                <div class="sticky-head">
+                      <div class="table-head border-top">
+                          <table>
+                              <tr>
+                                  <th>Sales User</th>
+                                  <th class="w100 text-center">Total</th>
+                                  <th class="w110 text-center">Review Pending</th>
+                                  <th class="w100 text-center">Assigned</th>
+                                  <th class="w100 text-center">Inprocess</th>
+                                  <th class="w100 text-center">Win </th>
+                                  <th class="w100 text-center">Junk & Close</th>
+                                  <!-- <th class="w20 text-center"></th> -->
+                              </tr>
+                          </table>
+                      </div>
+                </div>
+                <div class="table-container ">
+                  <div class="table-content">
+                <!-- <div class="cs-collapse">
+                  <mat-accordion class="example-headers-align">
+                      <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle *ngFor="let row of juniorWiseEnquiry;let i = index;">
+                          <mat-expansion-panel-header>
+                              <mat-panel-title> -->
+                                  <table>
+                                      <tr *ngFor="let row of juniorWiseEnquiry;let i = index;">
+                                          <td *ngIf="!row.junior_flag">{{row.rsm_name}}</td>
+                                          <td *ngIf="row.junior_flag"><a class="link-btn" (click)="getLeadData(row.id)">{{row.rsm_name}}</a></td>
+                                          <td class="w100 text-center">{{row.total}}</td>
+                                          <td class="w110 text-center">{{row.Pending}}</td>
+                                          <td class="w100 text-center">{{row.Assigned}}</td>
+                                          <td class="w100 text-center">{{row.Inprocess}}</td>
+                                          <td class="w100 text-center">{{row.Win}}</td>
+                                          <td class="w100 text-center">{{row.Disqualified}}</td>
+                                          
+                                      </tr>
+                                  </table>
+                              <!-- </mat-panel-title>
+                            </mat-expansion-panel-header>
+                      </mat-expansion-panel>
+                  </mat-accordion>
+                </div> -->
+                </div>
+
+                <div class="no-data" *ngIf="!juniorWiseEnquiry.length">
+                    <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                    <p>Data not <span>available !</span></p>
+                </div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+
+    <div mat-dialog-content class="pl4 pr4" *ngIf="data.type=='rsmWiseSales'">
+        <div class="modal-container container-scroll">
+            <div class="cs-table">
+                <div class="sticky-head">
+                      <div class="table-head border-top">
+                        <table>
+                            <tr>
+                                <th class="w360">&nbsp;</th>
+                                <th class="text-center" colspan="2">Month</th>
+                                <th class="text-center" colspan="2">Year</th>
+                            </tr> 
+                        </table>
+                      </div>
+                      <div class="table-head border-top">
+                        <table>
+                            <tr>
+                                <th class="w360">RSM</th>
+                                <th class="text-center">Target</th>
+                                <th class="text-center">Achievement</th>
+                                <th class="text-center">Target</th>
+                                <th class="text-center">Achievement</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="table-container ">
+                  <div class="table-content">
+                <!-- <div class="cs-collapse">
+                  <mat-accordion class="example-headers-align">
+                      <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle *ngFor="let row of juniorWiseEnquiry;let i = index;">
+                          <mat-expansion-panel-header>
+                              <mat-panel-title> -->
+                                <table>
+                                    <tr *ngFor="let row of juniorWiseData">
+                                        <td class="w360" *ngIf="row.junior_flag"><a class="link-btn" (click)="getJuniorTarget(row.id)">{{row.rsm_name}}</a></td>
+                                        <td class="w360" *ngIf="!row.junior_flag">{{row.rsm_name}}</td>
+                                        <td class="text-center">{{row.monthly_target}}</td>
+                                        <td class="text-center">{{row.monthly_achieved}}</td>
+                                        <td class="text-center">{{row.yearly_target}}</td>
+                                        <td class="text-center">{{row.yearly_achieved}}</td>
+                                    </tr>
+                                </table>
+                              <!-- </mat-panel-title>
+                            </mat-expansion-panel-header>
+                      </mat-expansion-panel>
+                  </mat-accordion>
+                </div> -->
+                </div>
+                <div class="no-data" *ngIf="!juniorWiseData.length">
+                    <img src="assets/img/no-data.gif" style="border: none;" alt="">
+                    <p>Data not <span>available !</span></p>
+                </div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+
+    <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      </div>
+</div>

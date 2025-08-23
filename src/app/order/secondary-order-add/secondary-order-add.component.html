@@ -1,0 +1,237 @@
+<div class="main-container">
+  <app-loader *ngIf="loader"></app-loader>
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add Secondary Order</h2>
+    
+  </div>
+  <div class="container pt10 pl10 pr10 pb50">
+    <div class="row">
+      <div class="col s12">
+        <div class="card pb0">
+          <div class="card-body cs-form">
+            <div class="row">
+              <div class="col s12 m5 l4">
+                <mat-form-field appearance="outline">
+                  <mat-label>Select Secondary Customer</mat-label>
+                  <mat-select name="dealer_name" [(ngModel)]="data.dealer_name" #dealer_name="ngModel"
+                  (ngModelChange)="get_distributorList(''); getItemList('',this.dr_detail.brand);getdealerstate(data.dealer_name);">
+                  <mat-option>
+                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                    (keyup)="distributors($event.target.value)"
+                    placeholderLabel="Search.."></ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let row of dealerList"
+                  value="{{row.id}}">{{row.display_name ? (row.display_name | titlecase) : ''}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <div class="col s12 m4 l4">
+              <mat-form-field appearance="outline">
+                <mat-label>Select Primary Customer</mat-label>
+                <mat-select name="distributor_id" #distributor_id="ngModel"
+                [disabled]="add_list.length>0" [(ngModel)]="data.distributor_id"
+                (selectionChange)="distributorDetail()" required>
+                <mat-option disabled="">Select An Option</mat-option>
+                <mat-option *ngFor="let row of Distributor_list"
+                [value]="row.id">{{row.display_name ? (row.display_name | titlecase) : ''}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col s12 m3 l3" *ngIf="data.distributor_id">
+            <mat-form-field appearance="outline">
+              <mat-label>Category</mat-label>
+              <mat-select name="segment" [(ngModel)]="data.segment" #segment="ngModel" (ngModelChange)="data.product_id = '';getSubSegment(); getitem('')">
+                <mat-option *ngFor="let row of segmentList" value="{{row.id}}">{{row.segment ? (row.segment | titlecase) :''}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+          <div class="col s12 m3 l3" *ngIf="data.distributor_id">
+            <mat-form-field appearance="outline">
+              <mat-label>Sub Category</mat-label>
+              <mat-select name="sub_segment" [(ngModel)]="data.sub_segment" #sub_segment="ngModel" (ngModelChange)="data.product_id = ''; getCatId(data.sub_segment); getitem('')">
+                <mat-option *ngFor="let row of subCatList" value="{{row.id}}">{{row.sub_category_name ? (row.sub_category_name | titlecase) :''}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+          <div class="col s12 m5 l4" *ngIf="data.distributor_id">
+            <mat-form-field appearance="outline">
+              <mat-label>Select Item</mat-label>
+              <mat-select name="product_id" [(ngModel)]="data.product_id" #product_id="ngModel"
+              (click)="getItemList('',this.dr_detail.brand);"
+              (ngModelChange)="getitemdetail(data.product_id);get_product_details(data.product_id);">
+              <mat-option>
+                <ngx-mat-select-search noEntriesFoundLabel="'no data found'"
+                placeholderLabel="Search.."
+                (keyup)="getItemList($event.target.value,this.dr_detail.brand)"></ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let row of items" value="{{row.id}}">{{row.product_name ? (row.product_name | titlecase) : ''}}
+                <strong>{{row.product_code}}</strong> </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <ng-container  *ngIf="data.product_id">
+          <div class="card-head">
+            <h2>Product Information</h2>
+          </div>
+          <div class="row">
+            <div class="col s12 m4 l4">
+              <mat-form-field appearance="outline">
+                <mat-label>Product Detail</mat-label>
+                <input matInput placeholder="Type Here ..." name="product_name" #product_name="ngModel"
+                [(ngModel)]="data.product_name" readonly>
+              </mat-form-field>
+            </div>
+            
+            
+            <div class="col s12 m2 l2">
+              <mat-form-field appearance="outline">
+                <mat-label>Price</mat-label>
+                <input matInput placeholder="Type Here ..." name="mrp" #mrp="ngModel"
+                [(ngModel)]="data.mrp" readonly>
+              </mat-form-field>
+            </div>
+            <div class="col s12 m2 l2">
+              <mat-form-field appearance="outline">
+                <mat-label>Discount(%)</mat-label>
+                <input matInput placeholder="Type Here ..." name="discount" #discount="ngModel" [(ngModel)]="data.discount"
+                onkeypress="return event.charCode>=48 && event.charCode<=57">
+              </mat-form-field>
+              
+            </div>
+            <div class="col s12 m2 l2">
+              <div class="d-flex ac ">
+                <mat-form-field appearance="outline" class="w110">
+                  <mat-label>QTY</mat-label>
+                  <input matInput placeholder="Type Here ..." name="qty" #qty="ngModel" [(ngModel)]="data.qty"
+                  onkeypress="return event.charCode>=48 && event.charCode<=57" required>
+                </mat-form-field>
+                <button mat-raised-button class="add-item ml10" (click)="addToList()" type="submit"
+                [disabled]="data.qty != '' && data.qty == 'undefined'"><i class="material-icons">add</i></button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="add_list.length">
+          <div class="cs-table left-right-10">
+            <div class="sticky-head border-top" style="top: -10px;">
+              <div class="table-head">
+                <table>
+                  <tr>
+                    <th class="w40">S.no.</th>
+                    <th class="w230">Item Details</th>
+                    <th class="w100 text-right">Price</th>
+                    <th class="w80 text-right">QTY.</th>
+                    <th class="w100 text-right">Total Price</th>
+                    <th class="w120 text-right">Discount Amount</th>
+                    <th class="w100 text-right">Sub Total</th>
+                    <th class="w120 text-right">GST Amount</th>
+                    <th class="w100  text-right">Net Amount</th>
+                    <th class="w40 text-right">Action</th>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="table-container">
+              <div class="table-content">
+                <table>
+                  <tr *ngFor="let row of add_list;let i=index">
+                    <td class="w40">{{i+1}}</td>
+                    <td class="w230">{{row.product_name ? (row.product_name | titlecase) : '---'}} {{row.product_code ? ( '('+row.product_code+')') : '---'}}</td>
+                    <td class="w100 text-right">₹ {{row.price ? (row.price | number:'1.2-2') :
+                      row.price}}</td>
+                      <td class="w80  text-right">{{row.qty}} </td>
+                      <td class="w100 text-right">₹ {{row.total_price ? (row.total_price | number:'1.2-2') : row.total_price}}</td>
+                      <td class="w120  text-right">
+                        {{row.discount_amount | number:'1.2-2'}}{{row.discount_percent ? ( '('+ row.discount_percent +' '+'%'+')') :''}}
+                      </td>
+                      <td class="w100 text-right">₹ {{row.amount | number:'1.2-2'}}</td>
+                      <td class="w120 text-right"> ₹ {{row.gst_amount | number:'1.2-2'}} ({{row.gst_percent?row.gst_percent+' %':'0 %'}})</td>
+                      <td class="w100  text-right">₹ {{row.net_price | number:'1.2-2'}}</td>
+                      <td class="w40 text-center">
+                        <div class="action-button">
+                          <button mat-icon-button matTooltip="Delete" (click)="listdelete(i)">
+                            <i class="material-icons del">delete</i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s4" *ngIf="add_list.length">
+                <mat-form-field appearance="outline">
+                  <mat-label> Remark</mat-label>
+                  <textarea matInput placeholder="Type Here ..." name="remark" #remark="ngModel"
+                  [(ngModel)]="data.remark" class="h100"></textarea>
+                </mat-form-field>
+                
+              </div>
+              <div class="col s4 offset-s4">
+                <div class="invoice-table">
+                  <table>
+                    <tr>
+                      <td>Total Item : </td>
+                      <th class="text-right">{{add_list.length}}</th>
+                    </tr>
+                    <tr>
+                      <td>Total Item Qty. : </td>
+                      <th class="text-right">{{total_qty}}</th>
+                    </tr>
+                    <tr>
+                      <td>Total Order Amount : </td>
+                      <th class="text-right">{{total_price ? '₹' + ' ' + (total_price | number:'1.2-2') + ' ' + '/-': '0'}}
+                      </th>
+                    </tr>
+                    <tr>
+                      <td>Total Discount Amount : </td>
+                      <th class="text-right">{{discount_amount ? '₹' + ' ' + (discount_amount | number:'1.2-2') + '' + '/-': '0'}}</th>
+                    </tr>
+                    
+                    
+                    <tr>
+                      <td>Sub Total : </td>
+                      <th class="text-right">{{amount ? '₹' + ' ' + (amount | number:'1.2-2') + ' ' + '/-': '0'}}</th>
+                    </tr>
+                    <tr>
+                      <td>Total GST Amount : </td>
+                      <th class="text-right">{{gst_amount ? '₹' + ' ' + (gst_amount | number:'1.2-2') + ' ' + '/-': '0'}}</th>
+                    </tr>
+                    
+                    <tr>
+                      <td>Net Amount : </td>
+                      <th class="text-right">{{net_price ? '₹' + ' ' + (net_price | number:'1.2-2') + ' ' + '/-': '0'}}</th>
+                    </tr>
+                  </table>
+                  
+                </div>
+              </div>
+            </div>
+            
+          </ng-container>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row" *ngIf="add_list.length > 0">
+    <div class="col s12">
+      <div class="text-right">
+        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+        [disabled]="savingFlag == true" (click)="user_data.order_status='Pending';save_order('save');">
+        {{savingFlag == true ? 'Saving' : 'Save'}}
+      </button>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,330 @@
+<div class="edit-modal" *ngIf="modelData.type == 'designation'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('designation')">
+    <p class="heading">Add New {{modelData.user_type == 'ORG' ? 'Organization' : 'Designation'}}</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l6 m6" *ngIf="modelData.user_type != 'ORG'">
+            <mat-form-field appearance="outline">
+              <mat-label>User Type</mat-label>
+              <mat-select name="user_type" #user_type="ngModel" [(ngModel)]="data.user_type" required>
+                <mat-option value="Sales User" *ngIf="logined_user_data.organisation_data.sfa == '1'"> Sales User</mat-option>
+                <mat-option value="System User" *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms == '1' || logined_user_data.organisation_data.loyalty == '1' || logined_user_data.organisation_data.dispatch == '1')">System User</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="user_type.touched || f.submitted">
+              <p *ngIf="user_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+          
+          <div class="col s12 " [ngClass]="modelData.user_type == 'ORG' ? 'l12 m12' : 'l6 m6'">
+            <mat-form-field appearance="outline">
+              <mat-label>{{modelData.user_type == 'ORG' ? 'Organization Name' : 'Designation'}}</mat-label>
+              <input matInput placeholder="Type Here ..." name="designation" #designation="ngModel"
+              [(ngModel)]="data.designation" pattern="^(?! )[^\r\n]*$"  required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="designation.touched || f.submitted">
+              <p *ngIf="designation.errors?.required">This field is required</p>
+              <p *ngIf="designation.errors?.pattern">This field is Invalid!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+      [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+
+
+<div class="edit-modal" *ngIf="modelData.type == 'edit_designation'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('edit_designation')">
+    <p class="heading" *ngIf="modelData.type == 'edit_designation'">{{modelData.user_type == 'ORG' ? 'Update
+      Organization' :
+      'Update Designation'}}</p>
+      <div mat-dialog-content>
+        
+        
+        <div class="cs-form">
+          <div class="row">
+            <div class="col s12 l6 m6" *ngIf="modelData.user_type != 'ORG'">
+              <mat-form-field appearance="outline">
+                <mat-label>User Type</mat-label>
+                <mat-select name="user_type" #user_type="ngModel" [(ngModel)]="data.user_type" required>
+                  <mat-option value="Sales User"> Sales User</mat-option>
+                  <mat-option value="System User">System User</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="user_type.touched || f.submitted">
+                <p *ngIf="user_type.errors?.required">This field is required</p>
+              </div>
+            </div>
+            
+            <div class="col s12 " [ngClass]="modelData.user_type == 'ORG' ? 'l12 m12' : 'l6 m6'">
+              <mat-form-field appearance="outline">
+                <mat-label>{{modelData.user_type == 'ORG' ? 'Organization Name' : 'Designation'}}</mat-label>
+                <input matInput placeholder="Type Here ..." name="designation" #designation="ngModel"
+                [(ngModel)]="data.designation" required>
+              </mat-form-field>
+              <div class="alert alert-danger" *ngIf="designation.touched || f.submitted">
+                <p *ngIf="designation.errors?.required">This field is required</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+        [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+      </div>
+    </form>
+  </div>
+  
+  
+  <div class="edit-modal" *ngIf="modelData.type == 'transferData'">
+    <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('transfer-data')">
+      <p class="heading">Transfer Data</p>
+      <div mat-dialog-content>
+        <div class="cs-form">
+          <div class="row">
+            
+            <div class="col s12 l5 m5">
+              <mat-form-field appearance="outline">
+                <mat-label>User Detail</mat-label>
+                <input matInput placeholder="Type Here ..." name="name" #name="ngModel" [(ngModel)]="data.name" readonly>
+              </mat-form-field>
+              
+            </div>
+            <div class="col s12 l1 m1">
+              <div class="swap_horiz">
+                <i class="material-icons">swap_horiz</i>
+              </div>
+            </div>
+            
+            <div class="col s12 l6 m6">
+              <mat-form-field appearance="outline">
+                <mat-label>Transfer User Data</mat-label>
+                <mat-select name="assigned_id" #assigned_id="ngModel" [(ngModel)]="data.assigned_id" required="">
+                  <mat-option>
+                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                    (keyup)="getReportManager($event.target.value)"></ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let list of users;let index=index" value="{{list.id}}"
+                  (click)="data.assigned_name=list.name">
+                  {{list.name}} - {{list.role_name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <div class="alert alert-danger" *ngIf="assigned_id.touched || f.submitted">
+              <p *ngIf="assigned_id.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>Select Module</mat-label>
+              <mat-select name="transfer_module" #transfer_module="ngModel" [(ngModel)]="data.transfer_module" multiple
+              required>
+              <mat-option value="Enquiry">Enquiry</mat-option>
+              <!-- <mat-option value="Influencer">Influencer</mat-option> -->
+              <mat-option value="Customer" (click)="getAssignedChannelPartner()">Customer Network</mat-option>
+              <mat-option value="Travel">Travel Plan</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="alert alert-danger" *ngIf="transfer_module.touched || f.submitted">
+            <p *ngIf="transfer_module.errors?.required">This field is required</p>
+          </div>
+        </div>
+        <div class="col s12 l6 m6" *ngIf="showChannelPartner">
+          <mat-form-field appearance="outline">
+            <mat-label>Select Channel Partner</mat-label>
+            <mat-select name="channel_partner_id" #channel_partner_id="ngModel" [(ngModel)]="data.channel_partner_id"
+            multiple required>
+            <mat-option>
+              <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+              name="searchChannelPartner" (keyup)="searchChannelPartner(data.searchChannelPartner)"
+              [(ngModel)]="data.searchChannelPartner"></ngx-mat-select-search>
+            </mat-option>
+            <div class="padding12" *ngIf="allAssignChannelPartner.length>0">
+              <mat-checkbox [(ngModel)]="data.allChannelPartners" (change)="selectAll2('allChannelPartners')"
+              name="allChannelPartners" value="true">Select All</mat-checkbox>
+            </div>
+            <div class="padding12" *ngIf="allAssignChannelPartner.length<1">
+              <mat-checkbox disabled>No Channel Partner</mat-checkbox>
+            </div>
+            
+            <mat-option *ngFor="let row of allAssignChannelPartner" [value]="row.id"
+            (click)="data.channel_partner_id.length==allAssignChannelPartner.length ? data.allChannelPartners=true:data.allChannelPartners=false">{{row.company_name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="alert alert-danger" *ngIf="channel_partner_id.touched || f.submitted">
+          <p *ngIf="channel_partner_id.errors?.required">This field is required</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+  [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+</div>
+</form>
+</div>
+
+
+<div class="edit-modal" *ngIf="modelData.type == 'transfercustomerData'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('merge-data')">
+    <p class="heading">Merge Party Data</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          
+          <div class="col s12 l5 m5">
+            <mat-form-field appearance="outline">
+              <mat-label>Party A</mat-label>
+              <mat-select name="party_a" #party_a="ngModel" [(ngModel)]="data.party_a" (selectionChange)="getPartyDataB('')" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                  (keyup)="getPartyData($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <ng-container *ngFor="let list of drList;let index=index">
+                  <mat-option  value="{{list.id}}" [disabled]="list.id == data.party_b">
+                    {{list.display_name ? (list.display_name | titlecase) : ''}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+            
+            <div class="alert alert-danger" *ngIf="party_a.touched || f.submitted">
+              <p *ngIf="party_a.errors?.required">This field is required</p>
+            </div>
+          </div>
+          <div class="col s12 l1 m1">
+            <div class="swap_horiz">
+              <i class="material-icons">arrow_forward</i>
+            </div>
+          </div>
+          
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>Party B</mat-label>
+              <mat-select name="party_b" #party_b="ngModel" [(ngModel)]="data.party_b" required [disabled]="!data.party_a"> 
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                  (keyup)="getPartyDataB($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <ng-container *ngFor="let list of drListB;let index=index">
+                  <mat-option  value="{{list.id}}" [disabled]="list.id == data.party_a">
+                    {{list.display_name ? (list.display_name | titlecase) : ''}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+            
+            <div class="alert alert-danger" *ngIf="party_b.touched || f.submitted">
+              <p *ngIf="party_b.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex">
+          <strong>Note : </strong><h6 class="note"> Party A will remain active, and Party B's data will be merged into Party A.</h6>
+        </div>
+        
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+      [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+
+
+
+<div class="edit-modal" *ngIf="modelData.type == 'updatePassword'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('update-password')">
+    <p class="heading">Update Password</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l4 m4">
+            <mat-form-field appearance="outline">
+              <mat-label>User Name</mat-label>
+              <input matInput placeholder="Type Here ..." name="username" #username="ngModel"
+              [(ngModel)]="data.username">
+            </mat-form-field>
+          </div>
+          <div class="col s12 l4 m4">
+            <mat-form-field appearance="outline">
+              <mat-label>Current Password</mat-label>
+              <input matInput placeholder="Type Here ..." name="password" #password="ngModel"
+              [(ngModel)]="data.password" readonly>
+            </mat-form-field>
+          </div>
+          
+          <div class="col s12 l4 m4">
+            <mat-form-field appearance="outline">
+              <mat-label>New Password</mat-label>
+              <input matInput placeholder="Type Here ..." name="new_password" #new_password="ngModel"
+              [(ngModel)]="data.new_password" required>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="new_password.touched">
+              <p *ngIf="new_password.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+      [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>
+
+<!-- update colors -->
+<div class="edit-modal" *ngIf="modelData.type == 'color_add'">
+  <form name="detail" #f="ngForm" (ngSubmit)=" f.valid && submitDetail('add-color')">
+    <p class="heading">Add New Color</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>Color</mat-label>
+              <input matInput placeholder="Type Here ..." name="display_name" #display_name="ngModel"
+              [(ngModel)]="data.display_name">
+            </mat-form-field>
+          </div>
+          <div class="col s12 l6 m6">
+            <mat-form-field appearance="outline">
+              <mat-label>Color Code</mat-label>
+              <input matInput placeholder="Type Here ..." name="color_code" #color_code="ngModel"
+              [(ngModel)]="data.color_code">
+            </mat-form-field>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+      [disabled]="savingFlag == true">{{savingFlag == true ? 'Saving' : 'Save'}}</button>
+    </div>
+  </form>
+</div>

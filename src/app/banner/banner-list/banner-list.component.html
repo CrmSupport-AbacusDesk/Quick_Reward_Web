@@ -1,0 +1,178 @@
+<div class="main-container">
+	<div class="tools-container">
+		<h2>{{active_tab | titlecase}}</h2>
+		
+		<div class="left-auto left-auto df ac flex-gap-10">
+			<button mat-icon-button matTooltip="Refresh" (click)="refresh(active_tab)">
+				<i class="material-icons">refresh</i>
+			</button>
+			
+			<div class="pagination" *ngIf="active_tab == 'Video List' && video_list.length > 0">
+				<div class="pagination-content">
+					Pages
+					<span>{{pagenumber}}</span>
+					of
+					<span>{{total_page}}</span>
+				</div>
+				<div class="page-nav">
+					<button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+						<i class="material-icons">navigate_before</i>
+					</button>
+					<button mat-icon-button matTooltip="Newer" (click)="nextPage()"
+					[disabled]="pagenumber == total_page ">
+					<i class="material-icons">navigate_next</i>
+				</button>
+			</div>
+		</div>
+		
+		<div class="mat-tabbar">
+			<button mat-button [ngClass]="active_tab == 'Banner List' ? 'active' : ''"
+			(click)="active_tab = 'Banner List'; getbannerList();"><i
+			class="material-icons">collections</i>Banner ({{banner_count}})</button>
+			<button mat-button [ngClass]="active_tab == 'Video List' ? 'active' : ''"
+			(click)="active_tab = 'Video List'; videoList();"><i class="material-icons">smart_display</i>Video
+			({{video_count}})</button>
+			<button mat-button [ngClass]="active_tab == 'About Us' ? 'active' : ''"
+			(click)="active_tab = 'About Us';"><i class="material-icons">info</i>About Us</button>
+			<button mat-button [ngClass]="active_tab == 'Contact Us' ? 'active' : ''"
+			(click)="active_tab = 'Contact Us';"><i class="material-icons">location_city</i>Contact Us</button>
+			<button mat-button [ngClass]="active_tab == 'Faq' ? 'active' : ''"
+			(click)="active_tab = 'Faq';"><i class="material-icons">quiz</i>Faq</button>
+		</div>
+	</div>
+</div>
+
+
+<ng-container *ngIf="active_tab == 'Banner List'">
+	<div class="container pb100">
+		<div class="card-container" *ngIf="!loader">
+			<!-- <div class="card-image banner_img db" *ngFor="let row of banner_list;"> -->
+				<div class="card-image db" *ngFor="let row of banner_list; let i=index">
+					<img src="{{bannerUlr+row.banner}}">
+					<div *ngIf="logined_user_data.delete_gallery_master=='1'"
+					class="action-button right-action-circel text-right">
+					<button mat-icon-button matTooltip="Delete" (click)="delete(row.id)">
+						<i class="material-icons del">delete</i>
+					</button>
+				</div>
+				<div class="video-content">
+					<div class="status-bar pb5">
+						User Type
+						<div>
+							<strong *ngFor="let items of row.item">{{items.user_type | titlecase}}
+								&nbsp;&nbsp;</strong>
+							</div>
+						</div>
+						<!-- <div class="status-bar">
+							Sequence
+							<ng-container *ngFor="let items of row.item">
+								<ng-container *ngIf="items.editSequenceNo == true">
+									<div class="th-search-acmt mr30 wp15">
+										<mat-form-field>
+											<input type="text" matInput class="text-right"
+											onkeypress="return event.charCode>=48 && event.charCode<=57"
+											placeholder="Enter Sequence No." [name]="'sequence_no'+i"
+											#sequence_no="ngModel" [(ngModel)]="items.sequence_no">
+										</mat-form-field>
+									</div>
+									<div class="action-button text-right pt10" *ngIf="logined_user_data.edit_gallery_master=='1'">
+										<a mat-icon-button matTooltip="Save" (click)="Update_sequence_no(i, items.id, items.sequence_no)">
+											<i class="material-icons edit">save</i>
+										</a>
+									</div>
+								</ng-container>
+								<ng-container *ngIf="items.editSequenceNo == ''">
+									<div class="action-button text-right pt10" *ngIf="logined_user_data.edit_gallery_master=='1'">
+										<a mat-icon-button matTooltip="Edit Sequence No" (click)="edit_sequence_no(items)">
+											<strong>{{items.sequence_no}} &nbsp;</strong>
+											<i class="material-icons edit">edit</i>
+										</a>
+									</div>
+								</ng-container>
+							</ng-container>
+							
+							
+						</div> -->
+					</div>
+				</div>
+			</div>
+			
+			<div class="card-container" *ngIf="loader">
+				<div class="card-image skeleton" *ngFor="let row of [].constructor(10)">
+					<div>&nbsp;</div>
+				</div>
+			</div>
+			
+			<ng-container *ngIf="banner_list== 0">
+				<app-not-result-found></app-not-result-found>
+			</ng-container>
+		</div>
+		<div class="fab-btns" *ngIf="logined_user_data.add_master=='1' || logined_user_data.add_gallery_master=='1'">
+			<button class="pulse" mat-fab [ngClass]="{'pulse': fabBtnValue=='add'}" color="accent"
+			routerLink="banner-add">
+			<i class="material-icons">add</i>
+			Add New
+		</button>
+	</div>
+</ng-container>
+
+<ng-container *ngIf="active_tab == 'Video List'">
+	<div class="container pb100">
+		
+		<div class="card-container" *ngIf="!videoloader">
+			<div class="card-image db" *ngFor="let row of video_list; let i = index;">
+				<div *ngIf="logined_user_data.delete_gallery_master=='1'" class="action-button right-action-circel text-right">
+					<button mat-icon-button matTooltip="Delete" (click)="deleteVideo(row.id)">
+						<i class="material-icons del">delete</i>
+					</button>
+				</div>
+				<iframe width="100%" height="250px" [src]="row.video | safe" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				<div class="video-content">
+					<p>{{row.desc}}</p>
+					<div class="status-bar pb5">
+						User Type
+						<div>
+							<strong *ngFor="let items of row.item">{{items.user_type | titlecase}}
+								&nbsp;&nbsp;</strong>
+							</div>
+						</div>
+						<div class="status-bar" *ngIf="logined_user_data.edit_gallery_master=='1' ">
+							Status
+							<mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="row.newStatus"
+							(change)="updateStatus(i,$event,row.id)">
+						</mat-slide-toggle>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card-container" *ngIf="videoloader">
+			<div class="card-image skeleton" *ngFor="let row of [].constructor(10)">
+				<div>&nbsp;</div>
+			</div>
+		</div>
+		
+		<ng-container *ngIf="video_list== 0">
+			<app-not-result-found></app-not-result-found>
+		</ng-container>
+		<div class="fab-btns" *ngIf="logined_user_data.add_gallery_master=='1' ">
+			<button class="pulse" mat-fab color="accent" routerLink="video-add">
+				<i class="material-icons">add</i>
+				Add New
+			</button>
+		</div>
+	</div>
+</ng-container>
+<ng-container *ngIf="active_tab == 'About Us'">
+	<app-about-us></app-about-us>
+</ng-container>
+
+<ng-container *ngIf="active_tab == 'Contact Us'">
+	<app-contact-us></app-contact-us>
+</ng-container>
+
+<ng-container *ngIf="active_tab == 'Faq'">
+	<app-faq-list></app-faq-list>
+</ng-container>
+
+</div>

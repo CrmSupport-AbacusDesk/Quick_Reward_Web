@@ -1,0 +1,152 @@
+<div class="main-container">
+    <!-- <app-loader *ngIf="loader"></app-loader> -->
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Scheme Detail</h2>
+        <div class="left-auto df ac  flex-gap-10">
+            <button mat-button class="addNewSlabBtn active" [routerLink]="[ 'edit/', data?.id, 'addNewSlab']">
+                <i class="material-icons">post_add</i>
+                <span>Add new slab</span>
+            </button>
+            <button mat-button class="addNewSlabBtn active" (click)="deleteDialog(data?.id, 'Scheme/deleteSchemeAllSlab')">
+                <i class="material-icons deleteBtn ml0 mr5">delete_sweep</i>
+                <span>Delete All slabs</span>
+            </button>
+            <button mat-button class="addNewSlabBtn active" [routerLink]="[ 'result/', data?.id]" [queryParams]="{resultType:'AllSlabResult'}">
+                <i class="material-icons arrow ml0 mr5">shortcut</i>
+                <span>Overall Result</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="container pt10 pl10 pr10 pb50">
+        <div class="card">
+            <div class="card-body cs-form">
+                <div class="grid-box custom-eight">
+                    <div class="block-feilds ">
+                        <p>Banner</p>
+                        <div class="flex banner-img">
+                            <div (click)="openDialog('imageViewer', [data?.image])">
+                                <img [src]="data?.image" class="w40" />
+                                <div class="zoomIcon"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="block-feilds">
+                        <p>Scheme Title</p>
+                        <span>{{data?.title}}</span>
+                    </div>
+                    <div class="block-feilds">
+                        <span>Date</span>
+                        <p>
+                            {{data?.start_date | date:'dd MMM yyyy'}} to {{data?.end_date | date:'dd MMM yyyy'}}
+                        </p>
+                    </div>
+                    <div class="block-feilds">
+                        <span>Total Slab</span>
+                        <p>
+                            {{data?.scheme_slab?.length||0}}
+                        </p>
+                    </div>
+                    <div class="block-feilds">
+                        <span>Customer Type</span>
+                        <p>
+                            {{data?.customer_type}}
+                        </p>
+                    </div>
+                    <div class="block-feilds">
+                        <span>Scheme Applicability</span>
+                        <p class="jumpBtn">
+                            <a [ngClass]="{'link-btn':data?.genric!='All'}"
+                            (click)="data?.genric=='Area Wise'?openDialog('Area', data?.state_name):null">
+                            {{data?.genric}}
+                        </a>
+                        <i *ngIf="data?.genric=='Area Wise'" class="material-icons arrow">north_east</i>
+                    </p>
+                </div>
+                <div class="block-feilds">
+                    <span>Scheme Status</span>
+                    <p>
+                        <span *ngIf="data?.scheme_state=='Running'" class="schemeStatus running">
+                            Running
+                        </span>
+                        <span *ngIf="data?.scheme_state=='Expired'" class="schemeStatus expired">
+                            Expired
+                        </span>
+                        <span *ngIf="data?.scheme_state=='Upcoming'" class="schemeStatus upcoming">
+                            Upcoming
+                        </span>
+                    </p>
+                </div>
+                <div class="block-feilds btnwrapper">
+                    <p>
+                        <i class="material-icons editBtn" tooltip="Edit Primary Info" [routerLink]="[ 'edit/', data?.id, 'primaryInfo']">edit_note</i>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt10" *ngFor="let row of data?.scheme_slab; let i = index">
+        <div class="card-head flex align-center justify-between">
+            <h2 class="slabHeader">#{{i+1}} Slab</h2>
+            <p>
+                <i class="material-icons editBtn" [routerLink]="[ 'edit/', data?.id, 'slabInfo']" [queryParams]="{slabId:row?.id}">edit</i>
+                <i class="material-icons deleteBtn"
+                (click)="deleteDialog(row?.id, 'Scheme/deleteSchemeSlab')">delete</i>
+            </p>
+        </div>
+        <div class="card-body cs-form">
+            <div class="grid-box six">
+                <div class="card-box or-gr">
+                    <p>Type of Scheme</p>
+                    <p class="jumpBtn">
+                        <a class="link-btn" (click)="openDialog(row?.scheme_type, row?.scheme_item_list, row)">
+                            {{row?.scheme_type}}
+                        </a>
+                        <i class="material-icons arrow">north_east</i>
+                    </p>
+                </div>
+                <div class="card-box or-gr">
+                    <p>Scheme Standard</p>
+                    <span>
+                        {{row?.scheme_standard=='Over All (Minimum Item)'?'Over All (Minimum '+row?.minimum_item_qty+' Item)':row?.scheme_standard}}
+                    </span>
+                </div>
+                <div class="card-box or-gr">
+                    <p>Slab Criteria</p>
+                    <span>{{row?.criteria}} {{ row?.sub_criteria ? '(' + (row?.sub_criteria | uppercase) + ')' : '' }}</span>
+                </div>
+                <div class="card-box or-gr" *ngIf="row?.scheme_standard!='Flat'">
+                    <p>Target</p>
+                    <span>{{row?.slab_start}} {{row?.slab_type=='Range'?'to '+row?.slab_end:'& Above'}}</span>
+                </div>
+                <div class="card-box or-gr">
+                    <p *ngIf="row.reward_type == 'Gift'">{{row.reward_type}}</p>
+                    <p *ngIf="row.reward_type == 'Point'">{{row.reward_type}} ({{row.point_type}})</p>
+                    <p *ngIf="row.reward_type == 'Both'">{{row.reward_type}} (Gift <strong>{{row.both_type | uppercase}}</strong> Point)</p>
+                    <span>{{row?.gift_name}} {{row?.reward_type=='Both' ? row.both_type : ''}} {{row?.point?(row?.point+' Pt.'):''}}</span>
+                    
+                    <p *ngIf="row?.point_type=='Product Wise Points'" class="jumpBtn">
+                        <a class="link-btn" (click)="openDialog(row?.scheme_type, row?.scheme_item_list, row)">
+                            View All
+                        </a>
+                        <i class="material-icons arrow">north_east</i>
+                    </p>
+                </div>
+                <div class="card-box or-gr">
+                    <p>Result</p>
+                    <p class="jumpBtn">
+                        <a class="link-btn" [routerLink]="[ 'result/', data?.id]" [queryParams]="{slabId:row?.id, slabData:stringify(row)}">
+                            View Result
+                        </a>
+                        <i class="material-icons arrow">north_east</i>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,48 @@
+
+<div class="edit-modal">
+  <p class="heading">Message Template</p>
+  <div mat-dialog-content>
+    <div class="row" *ngIf="templateTitle.length > 0">
+      <div class="col s2">
+        <mat-action-list>
+          <ng-container *ngFor="let row of templateTitle; let i = index;" >
+            <button mat-list-item [ngClass]="{'active' :row.active == 'active'}" color="primary" (click)="getMsg(row.title, row.id)"> {{row.title ? (row.title | titlecase) : ''}} </button>
+          </ng-container>
+        </mat-action-list>
+      </div>
+      <div class="col s10">
+        <div class="card-column">
+          <ng-container  *ngIf="!loader">
+            <mat-card class="example-card" *ngFor="let row of templateMsg">
+              <mat-card-content>
+                <span class="mb10">Dear {{data.customer_name ? data.customer_name : ''}},</span>
+                <p>{{row.template}}</p>
+                <span class="mt16 mb2">Thanks & Regards</span>
+                <span>{{login_data.name ? login_data.name : ''}}</span>
+              </mat-card-content>
+              <mat-card-actions>
+                <button  mat-stroked-button color="primary" class="wp100" (click)="shareWhatsapp(row.template)" *ngIf="data.shareType == 'whatsapp'">Send In Whatsapp</button>
+                <button  mat-stroked-button color="primary" class="wp100" (click)="sendEmail(row.title, row.template)" *ngIf="data.shareType == 'email'">Send In Email</button>
+              </mat-card-actions>
+            </mat-card>
+          </ng-container>
+          
+          <ng-container *ngIf="loader">
+            <div class="card-image skeleton" *ngFor="let row of [].constructor(4)">
+              <div>&nbsp;</div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="templateTitle.length === 0">
+      <div class="col s12">
+        <app-not-result-found></app-not-result-found>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>

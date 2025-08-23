@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "attendence.component.scss"
+    ],
+    "names": [],
+    "file": "attendence.component.css"
+}

@@ -1,0 +1,222 @@
+<div class="main-container">
+  <app-loader *ngIf="excelLoader"></app-loader>
+  <div class="tools-container">
+    <h2>Complaint Visits </h2>
+
+
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </a>
+
+      <div class="pagination" *ngIf="complaintVisitList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">Sr.No</th>
+              <th class="w150">Date Created</th>
+              <th class="w180">Visitor Details</th>
+              <th class="w100">Compliant No.</th>
+              <th class="w80">Start Time</th>
+              <th class="w180">Start Adddress</th>
+              <th class="w100">Start latitude </th>
+              <th class="w110">Start longitude</th>
+              <th class="w80">Stop Time</th>
+              <th class="w180">Stop Adddress</th>
+              <th class="w100">Stop latitude </th>
+              <th class="w100">Stop longitude</th>
+              <th class="w100">Stop By</th>
+              <th class="w100 text-center">Total Time</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w50"></th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter_data.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="visitor_detail"
+                      (keyup.enter)="getComplaintVisitList('')" #visitor_detail="ngModel"
+                      [(ngModel)]="filter_data.visitor_detail">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="complaint_no"
+                      (keyup.enter)="getComplaintVisitList('')" #complaint_no="ngModel"
+                      [(ngModel)]="filter_data.complaint_no">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w80"></th>
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="visit_start_address"
+                      (keyup.enter)="getComplaintVisitList('')" #visit_start_address="ngModel"
+                      [(ngModel)]="filter_data.visit_start_address" />
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100"></th>
+              <th class="w110"></th>
+              <th class="w80"></th>
+              <th class="w180">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="visit_stop_address"
+                      (keyup.enter)="getComplaintVisitList('')" #visit_stop_address="ngModel"
+                      [(ngModel)]="filter_data.visit_stop_address" />
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100"></th>
+              <th class="w100"></th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="visit_stop_by_name"
+                      (keyup.enter)="getComplaintVisitList('')" #visit_stop_by_name="ngModel"
+                      [(ngModel)]="filter_data.visit_stop_by_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100 text-center"></th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of complaintVisitList; let i = index "
+                [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w50">{{i + 1 + sr_no}}</td>
+                <td class="w150">{{row.date_created ? (row.date_created | date : 'dd MMM yyy ,h:mm a') : '--'}}</td>
+                <td class="w180">{{row.created_by_name? (row.created_by_name |
+                  titlecase):'--'}}-{{row.created_by_mobile}}</td>
+                <td class="w100">{{row.complaint_no}}</td>
+                <td class="w80">{{row.visit_start_time !='0000-00-00 00:00:00' ? (row.visit_start_time | date : 'shortTime') : '--'}}</td>
+                <td class="w180">{{row.visit_start_address? (row.visit_start_address | titlecase):'--'}}</td>
+                <td class="w100">{{row.visit_start_lat? (row.visit_start_lat):'--'}}</td>
+                <td class="w110">{{row.visit_start_lng? (row.visit_start_lng):'--'}}</td>
+                <td class="w80" >{{row.visit_stop_time !='0000-00-00 00:00:00' ? (row.visit_stop_time | date : 'shortTime') : '--'}}</td>
+                <td class="w180">{{row.visit_stop_address? (row.visit_stop_address | titlecase):'--'}}</td>
+                <td class="w100">{{row.visit_stop_lat? (row.visit_stop_lat):'--'}}</td>
+                <td class="w100">{{row.visit_stop_lng? (row.visit_stop_lng):'--'}}</td>
+                <td class="w100">{{row.visit_stop_by_name? (row.visit_stop_by_name):'--'}}</td>
+                <td class="w100 text-center" *ngIf="row.visit_stop_time=='0000-00-00 00:00:00'">
+                  <button mat-raised-button color="accent" (click)="endVisit(row.id)"
+                    [ngClass]="{'pulse': fabBtnValue=='activity'}">End Visit</button>
+                </td>
+                <td class="w100 text-center" *ngIf="row.visit_stop_time!='0000-00-00 00:00:00'">{{row.total_time ?
+                  row.total_time : '--'}}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w110">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w180">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="datanotofound==true && complaintVisitList.length == 0;">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+
+  <div class="fab-btns">
+    <button mat-fab class="excel pulse" (click)="downloadExcel()" *ngIf="complaintVisitList.length > 0">
+      <img src="assets/img/excel.svg">
+      Download Excel
+    </button>
+  </div>
+
+
+
+</div>

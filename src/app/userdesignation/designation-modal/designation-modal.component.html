@@ -1,0 +1,349 @@
+<div class="edit-modal" *ngIf="modelData.type=='designation'">
+    <form name="detail" #f="ngForm" (ngSubmit)="f.valid && submitDetail()">
+        <p class="heading mb0">Update Module Rights</p>
+
+        <div mat-dialog-content>
+            <div class="cs-table left-right-10">
+                <div class="stickyHead sticky-head">
+                    <div class="table-head">
+                        <table>
+                            <tr>
+                                <th class="w50">S.No.</th>
+                                <th>Module Name</th>
+                                <th class="w150" *ngIf="modelData.user_type == 'ORG'">Department Name</th>
+                                <th class="w80 text-center">View</th>
+                                <ng-container *ngIf="modelData.user_type != 'ORG'">
+                                    <th class="w80 text-center">Edit</th>
+                                    <th class="w80 text-center">Delete</th>
+                                    <th class="w80 text-center">Add</th>
+                                    <th class="w80 text-center">Download Excel</th>
+                                    <th class="w80 text-center">Upload Excel</th>
+                                    <th class="w80 text-center">Approval</th>
+                                </ng-container>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table-head border-top">
+                        <table>
+                            <tr>
+                                <th class="w50"></th>
+                                <th>
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input">
+                                            <input matInput placeholder="Search" name="moduleName"
+                                                [(ngModel)]="filter.moduleName"
+                                                (keyup)="searchModuleName(filter.moduleName)">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w150" *ngIf="modelData.user_type == 'ORG'">
+                                    <div class="th-search-acmt">
+                                        <mat-form-field class="example-full-width cs-input">
+                                            <input matInput placeholder="Search" name="department_name"
+                                                [(ngModel)]="filter.department_name"
+                                                (keyup)="searchDepartmentName(filter.department_name)">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w80 text-center">
+                                    <mat-checkbox (change)="selectAll($event,'View')" name="viewAll"
+                                        [(ngModel)]="checked.viewAll"
+                                        [checked]="checked.viewAll == 'true'"></mat-checkbox>
+                                </th>
+                                <ng-container *ngIf="modelData.user_type != 'ORG'">
+                                    <th class="w80 text-center">
+                                        <mat-checkbox (change)="selectAll($event,'Edit')" name="editAll"
+                                            [(ngModel)]="checked.editAll"
+                                            [checked]="checked.editAll == 'true'"></mat-checkbox>
+                                    </th>
+                                    <th class="w80 text-center">
+                                        <mat-checkbox (change)="selectAll($event,'Delete')" name="deleteAll"
+                                            [(ngModel)]="checked.deleteAll"
+                                            [checked]="checked.deleteAll == 'true'"></mat-checkbox>
+                                    </th>
+                                    <th class="w80 text-center">
+                                        <mat-checkbox (change)="selectAll($event,'Add')" name="addAll"
+                                            [(ngModel)]="checked.addAll"
+                                            [checked]="checked.addAll == 'true'"></mat-checkbox>
+                                    </th>
+                                    <th class="w80 text-center">
+                                        <mat-checkbox (change)="selectAll($event,'Export')" name="exportAll"
+                                            [(ngModel)]="checked.exportAll"
+                                            [checked]="checked.exportAll == 'true'"></mat-checkbox>
+                                    </th>
+                                    <th class="w80 text-center">
+                                        <mat-checkbox (change)="selectAll($event,'Import')" name="importAll"
+                                            [(ngModel)]="checked.importAll"
+                                            [checked]="checked.importAll == 'true'"></mat-checkbox>
+                                    </th>
+                                    <th class="w80 text-center">
+                                        <mat-checkbox (change)="selectAll($event,'Approved')" name="approvalAll"
+                                            [(ngModel)]="checked.approvalAll"
+                                            [checked]="checked.approvalAll == 'true'"></mat-checkbox>
+                                    </th>
+                                </ng-container>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="table-container">
+                    <div class="table-content">
+                        <table>
+                            <ng-container *ngIf="!skLoading">
+                                <tr *ngFor="let data of assign_module_data; let i = index">
+                                    <td class="w50">{{i+1}}</td>
+                                    <td>{{data.module_name}}</td>
+                                    <td class="w150" *ngIf="modelData.user_type == 'ORG'">{{data.department_name}}</td>
+                                    <td class="w80 text-center">
+                                        <mat-checkbox
+                                            *ngIf="data.view  == false || data.view  == 'false' || data.view  == 'true' || data.view  == true"
+                                            [checked]="data.view==true || data.view== 'true'"
+                                            (change)="assign_module('view',$event,i)"></mat-checkbox>
+                                        <mat-checkbox *ngIf="data.view== 'disable'" [disabled]=true></mat-checkbox>
+                                    </td>
+                                    <ng-container *ngIf="modelData.user_type != 'ORG'">
+                                        <td class="w80 text-center">
+                                            <mat-checkbox
+                                                *ngIf="data.edit  == false || data.edit  == 'false' || data.edit  == 'true' || data.edit  == true"
+                                                [checked]="data.edit==true || data.edit== 'true'"
+                                                (change)="assign_module('edit',$event,i)"></mat-checkbox>
+                                            <mat-checkbox *ngIf="data.edit== 'disable'" [disabled]=true
+                                                [indeterminate]=true></mat-checkbox>
+                                        </td>
+                                        <td class="w80 text-center">
+                                            <mat-checkbox
+                                                *ngIf="data.delete  == false || data.delete  == 'false' || data.delete  == 'true' || data.delete  == true"
+                                                [checked]="data.delete==true || data.delete== 'true'"
+                                                (change)="assign_module('delete',$event,i)"></mat-checkbox>
+                                            <mat-checkbox *ngIf="data.delete== 'disable'" [disabled]=true
+                                                [indeterminate]=true></mat-checkbox>
+                                        </td>
+                                        <td class="w80 text-center">
+                                            <mat-checkbox
+                                                *ngIf="data.add  == false || data.add  == 'false' || data.add  == 'true' || data.add  == true"
+                                                [checked]="data.add==true || data.add== 'true'"
+                                                (change)="assign_module('add',$event,i)"></mat-checkbox>
+                                            <mat-checkbox *ngIf="data.add== 'disable'" [disabled]=true
+                                                [indeterminate]=true></mat-checkbox>
+
+                                        </td>
+                                        <td class="w80 text-center">
+
+                                            <mat-checkbox
+                                                *ngIf="data.export  == false || data.export  == 'false' || data.export  == 'true' || data.export  == true"
+                                                [checked]="data.export==true || data.export== 'true'"
+                                                (change)="assign_module('export',$event,i)"></mat-checkbox>
+                                            <mat-checkbox *ngIf="data.export== 'disable'" [disabled]=true
+                                                [indeterminate]=true></mat-checkbox>
+
+                                        </td>
+                                        <td class="w80 text-center">
+
+                                            <mat-checkbox
+                                                *ngIf="data.import  == false || data.import  == 'false' || data.import  == 'true' || data.import  == true"
+                                                [checked]="data.import==true || data.import== 'true'"
+                                                (change)="assign_module('import',$event,i)"></mat-checkbox>
+                                            <mat-checkbox *ngIf="data.import== 'disable'" [disabled]=true
+                                                [indeterminate]=true></mat-checkbox>
+
+                                        </td>
+                                        <td class="w80 text-center">
+                                            <mat-checkbox
+                                                *ngIf="data.approval  == false || data.approval  == 'false' || data.approval  == 'true' || data.approval  == true"
+                                                [checked]="data.approval==true || data.approval== 'true'"
+                                                (change)="assign_module('approval',$event,i)"></mat-checkbox>
+                                            <mat-checkbox *ngIf="data.approval== 'disable'" [disabled]=true
+                                                [indeterminate]=true></mat-checkbox>
+
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </ng-container>
+
+
+                            <ng-container *ngIf="skLoading">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                                    <td class="w50">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td>
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w80">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <ng-container *ngIf="modelData.user_type != 'ORG'">
+                                        <td class="w80">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w80">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w80">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w80">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w80">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                        <td class="w80">
+                                            <div>&nbsp;</div>
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </ng-container>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div mat-dialog-actions>
+            <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+                [disabled]="savingFlag == true">{{savingFlag == true ? 'Updating' : 'Update'}}</button>
+        </div>
+    </form>
+</div>
+
+<div class="edit-modal" *ngIf="modelData.type=='typesManagement' || modelData.type=='loyaltyBaseManagement'">
+    <form name="detail" #f="ngForm" (ngSubmit)="f.valid">
+        <p class="heading mb0 filte-sp cs-flex">
+            <span>Update {{modelData?.info?.name||'Type'}} Options</span>
+            <button mat-icon-button color="warn" [mat-dialog-close]="false">
+                <i class="material-icons edit">close</i>
+            </button>
+        </p>
+
+        <div mat-dialog-content>
+            <div class="cs-table left-right-10">
+                <div class="stickyHead sticky-head">
+                    <div class="table-head">
+                        <table>
+                            <tr>
+                                <th class="w50">S.No.</th>
+                                <th>Options</th>
+                                <th class="w70">Action</th>
+                                <th class="w200"
+                                    *ngIf="modelData.type =='loyaltyBaseManagement' && modelData.info.name == 'Influencer Network'">
+                                    Loyalty Base</th>
+
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table-head border-top">
+                        <table>
+                            <tr>
+                                <th class="w50"></th>
+                                <th>
+                                    <div class="th-search-acmt d-flex">
+                                        <mat-form-field class="example-full-width cs-input">
+                                            <input matInput placeholder="Add new option..." name="moduleName"
+                                                [(ngModel)]="options.moduleName">
+                                        </mat-form-field>
+                                    </div>
+                                </th>
+                                <th class="w70 text-center">
+                                    <div class="action-button">
+                                        <button mat-icon-button matTooltip="Add To List"
+                                            [disabled]="!options.moduleName" type="button" (click)="addToList()">
+                                            <i class="material-icons edit">post_add</i>
+                                        </button>
+                                    </div>
+                                    <!-- <mat-checkbox (change)="selectAll($event,'View')" name="viewAll" [(ngModel)]="checked.viewAll"
+                                    [checked]="checked.viewAll == 'true'"></mat-checkbox> -->
+                                </th>
+                                <th class="w200"
+                                    *ngIf="modelData.type=='loyaltyBaseManagement' && modelData.info.name == 'Influencer Network'">
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="table-container">
+                    <div class="table-content">
+                        <table>
+                            <ng-container>
+                                <tr *ngFor="let data of optionsList; let i = index">
+                                    <td class="w50">{{i+1}}</td>
+                                    <td>
+                                        <div class="th-search-acmt" *ngIf="optionsList[i].active">
+                                            <mat-form-field class="example-full-width cs-input">
+                                                <input matInput [name]="'opt'+i" [(ngModel)]="optionsList[i].name">
+                                            </mat-form-field>
+                                        </div>
+
+                                        <span *ngIf="!optionsList[i].active">{{data.name}}</span>
+                                    </td>
+                                    <td class="w70 text-center">
+                                        <div class="action-button">
+                                            <!-- <button mat-icon-button matTooltip="View" *ngIf="!optionsList[i].active" (click)="optionsList[i].active=!optionsList[i].active" type="button">
+                                                <i class="material-icons edit">edit</i>
+                                            </button> -->
+                                            <button mat-icon-button matTooltip="View" *ngIf="optionsList[i].active"
+                                                (click)="optionsList[i].active=!optionsList[i].active" type="button">
+                                                <i class="material-icons edit">check</i>
+                                            </button>
+                                            <button mat-icon-button matTooltip="Delete" type="button"
+                                                (click)="delteDataRequest(data, i)">
+                                                <i class="material-icons del">delete_sweep</i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="w200" *ngIf="modelData.type=='loyaltyBaseManagement' && modelData.info.name == 'Influencer Network'">
+                                        <div class="th-search">
+                                            <select class="cs-input select-input" [name]="'field_1'+i"
+                                                placeholder="Select Base of Loyalty"
+                                                [(ngModel)]="optionsList[i].field_1" (change)="updateStatus(data, i) ">
+                                                <option value="0">Scanning Base</option>
+                                                <option value="1">Purchase Base</option>
+                                                <option value="2">None</option>
+                                            </select>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr *ngIf="!optionsList?.length">
+                                    <td colspan="3">No options available.</td>
+                                </tr>
+                            </ng-container>
+
+
+                            <ng-container *ngIf="skLoading">
+                                <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                                    <td class="w50">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td>
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w100">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                    <td class="w200"
+                                        *ngIf="modelData.type=='loyaltyBaseManagement' && modelData.info.name == 'Influencer Network'">
+                                        <div>&nbsp;</div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- <div mat-dialog-actions>
+            <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent" type="submit"
+            [disabled]="savingFlag == true">{{savingFlag == true ? 'Updating' : 'Update'}}</button>
+        </div> -->
+    </form>
+</div>

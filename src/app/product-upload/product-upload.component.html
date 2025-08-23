@@ -1,0 +1,88 @@
+<h1 mat-dialog-title>{{savingFlag == true ? 'Please Wait ...': (modal_type=='insert'?'Upload
+  product':modal_type=='update'?'Update product basic details':modal_type=='update_mrp'?'Update product
+  price':modal_type=='update_point'?'Update category point':'Update product')}}</h1>
+<div mat-dialog-content>
+  <div class="dialog-content">
+    <div class="excel-box">
+      <label>
+        <form name="couponForm" #f="ngForm" novalidate autocomplete="off">
+          <input type="file" (change)="onUploadChange($event, f)" name="fileupload"
+            accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            style="display: none;">
+        </form>
+        <i class="material-icons">
+          cloud_upload
+        </i>
+        <p *ngIf="excel_name == ''">Upload Product Data (In csv format)</p>
+        <p *ngIf="excel_name != ''">{{excel_name}}</p>
+      </label>
+      <a *ngIf="modal_type=='insert'" href="{{url}}sample_file/Product Sample File.csv" target="_blank"><i
+          class="material-icons">download</i>Click Here To Download Sample File</a>
+      <a *ngIf="modal_type=='update'" (click)="download_sample_file('update')" target="_blank"><i
+          class="material-icons">download</i>Click Here To Download Sample File</a>
+      <a *ngIf="modal_type=='update_mrp'" (click)="download_sample_file('update_mrp')" target="_blank"><i
+          class="material-icons">download</i>Click Here To Download Sample File</a>
+      <a *ngIf="modal_type=='update_point'" (click)="download_sample_file('update_point')" target="_blank"><i
+          class="material-icons">download</i>Click Here To Download Sample File</a>
+    </div>
+
+    <div *ngIf="uploadError">
+      <p mat-dialog-title>Failed To Upload: <span class="red-clr">Failed:
+          {{uploadErrorMsgCount.failes}}</span> | <span class="green-clr">Success:
+          {{uploadErrorMsgCount.success}}</span></p>
+      <div class="cs-table left-right-10">
+        <div class="collapse-body pt0">
+          <div class="cs-form">
+            <div class="cs-table">
+              <div class="table-container">
+                <div class="table-content">
+                  <table>
+                    <tr>
+                      <td class=" padding0">
+                        <table>
+                          <tr *ngFor="let row of uploadErrorMsg; let i=index">
+                            <td class="border-top border-bottom">{{i+1}}. {{row}}
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div mat-dialog-actions>
+  <div class="text-right wp100">
+    <button class="mr10" mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    <button *ngIf="modal_type=='insert'" mat-raised-button color="accent" [disabled]="savingFlag == true"
+      [ngClass]="{'loading': savingFlag == true}" (click)="upload_user_data_excel('insert')"
+      accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      {{savingFlag == true ? 'Saving' : 'Upload'}}
+    </button>
+
+    <button *ngIf="modal_type=='update'" mat-raised-button color="accent" [disabled]="savingFlag == true"
+      [ngClass]="{'loading': savingFlag == true}" (click)="upload_user_data_excel('update')"
+      accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      {{savingFlag == true ? 'Saving' : 'Upload'}}
+    </button>
+
+    <button *ngIf="modal_type=='update_mrp'" mat-raised-button color="accent" [disabled]="savingFlag == true"
+      [ngClass]="{'loading': savingFlag == true}" (click)="upload_user_data_excel('update_mrp')"
+      accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      {{savingFlag == true ? 'Saving' : 'Upload'}}
+    </button>
+
+    <button *ngIf="modal_type=='update_point'" mat-raised-button color="accent" [disabled]="savingFlag == true"
+      [ngClass]="{'loading': savingFlag == true}" (click)="upload_user_data_excel('update_point')"
+      accept=".csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      {{savingFlag == true ? 'Saving' : 'Upload'}}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="edit-modal" *ngIf="modelData.type == 'date'">
+  <form validate #f="ngForm" name="update_basic" (ngSubmit)="f.form.valid && submit()">
+    <p class="heading">Update Promise Date</p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field  appearance="outline">
+              <mat-label>Promise Date</mat-label>
+              <input name="promise_date" matInput [matDatepicker]="pickers" [min]="minDate" #promise_date="ngModel" readonly [(ngModel)]="data.promise_date" required>
+              <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+              <mat-datepicker #pickers></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="f.submitted && promise_date?.invalid">
+              <p> {{ 'This field is required'}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+      [ngClass]="{'loading': savingFlag == true}">
+      {{savingFlag == true ? 'Saving' : 'Save'}}
+    </button>
+  </div>
+</form>
+</div>
+
+
+
+<div class="edit-modal" *ngIf="modelData.type == 'close_task'">
+  <form validate #f="ngForm" name="update_basic" (ngSubmit)="f.form.valid && submitRemark()">
+    <p class="heading">Update close remark </p>
+    <div mat-dialog-content>
+      <div class="cs-form">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Task Status</mat-label>
+              <mat-select name="task_status" #task_status="ngModel" [(ngModel)]="data.task_status" required>
+                <mat-option value="Done">Done </mat-option>
+                <mat-option value="Not Done">Not Done</mat-option>
+               
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="f.submitted && task_status?.invalid">
+              <p> {{ 'This field is required'}}</p>
+            </div>
+          </div>
+          
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field class="cs-input" appearance="outline">
+              <mat-label>Remark</mat-label>
+              <textarea class="h100" matInput name="reason" placeholder="Type here..." #close_remark="ngModel" [(ngModel)]="data.close_remark" [ngClass]="{'has-error' : close_remark.invalid } " required></textarea>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="f.submitted && close_remark?.invalid">
+              <p> {{ 'This field is required'}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="savingFlag == true"
+      [ngClass]="{'loading': savingFlag == true}">
+      {{savingFlag == true ? 'Saving' : 'Save'}}
+    </button>
+  </div>
+</form>
+</div>

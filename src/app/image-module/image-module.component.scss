@@ -1,0 +1,17 @@
+.heading{
+    position: relative;
+    height: 45px;
+    
+    button.close-btn{
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }
+}
+
+.image-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

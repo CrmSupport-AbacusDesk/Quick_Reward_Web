@@ -1,0 +1,48 @@
+<div class="edit-modal">
+  <p class="heading">PRODUCT WISE SECONDARY REPORT</p>
+  <div class="cs-table left-right-20">
+    <div class="table-head">
+      <table>
+        <tr>
+          <th>Sub Categry</th>
+          <th class="w50">Qty</th>
+          <th class="text-right w70">Amount</th>
+          <th class="padding0" *ngIf="reportProductCodeData.length != '0'">
+            <table>
+              <tr>
+                <th>Product Code</th>
+                <th class="w50">Qty</th>
+                <th class="text-right w70">Amount</th>
+              </tr>
+            </table>
+          </th>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="table-container">
+      <div class="table-content table-scroll_400">
+        <table>
+          <tr *ngFor="let data of reportSubcategoryData">
+            <td><a class="link-btn" (click)="getProductCodes(data.sub_category)">{{data.sub_category ? data.sub_category : 'N A'}}</a></td>
+            <td class="w50">{{data.qty}}</td>
+            <td class="text-right w70">&#x20B9; {{data.total_amount}}</td>
+            <td class="padding0" *ngIf="reportProductCodeData.length != '0'">
+              <table>
+                <tr *ngFor="let val of reportProductCodeData">
+                  <td *ngIf="data.sub_category == val.sub_category">{{val.cat_no}}</td>
+                  <td *ngIf="data.sub_category == val.sub_category" class="w50">{{val.qty}}</td>
+                  <td *ngIf="data.sub_category == val.sub_category" class="text-right w70">&#x20B9; {{val.total_amount}}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <div mat-dialog-actions>
+    <button mat-raised-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>

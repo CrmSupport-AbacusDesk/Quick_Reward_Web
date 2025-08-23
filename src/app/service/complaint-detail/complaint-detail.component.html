@@ -1,0 +1,690 @@
+<div class="main-container">
+    <div class="tools-container">
+        <a mat-icon-button matTooltip="Back" (click)="back()">
+            <i class="material-icons">arrow_back</i>
+        </a>
+        <h2>Complaint Details</h2>
+        <div class="left-auto left-auto df ac flex-gap-10">
+            <div class="group-btn">
+                <button mat-button class="ouline-btns whatsapp" (click)="openInvoicePage(getData)"
+                    *ngIf="getData.inspection_status=='Done' && getData.complaint_status=='Closed' && getData.invoice_status!='Done'">Add
+                    Invoice</button>
+                <button mat-button class="ouline-btns whatsapp" (click)="reOpenComplaint(getData.id)"
+                    *ngIf="getData.complaint_status=='Closed'">Re-open</button>
+                <!-- <button mat-button class="ouline-btns whatsapp" (click)="updateComplaintStataus(getData.id,'replacement')" *ngIf="getData.inspection_status=='Done' && getData.closing_type=='Replacement' && getData.complaint_status!='Closed' && getData.complaint_status!='Cancel'">Replacement</button> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt10 pl10 pr10 pb50">
+        <div class="row">
+            <div class="col s12 m8 l8">
+                <div class="col s12 mt16 m12 l12">
+                    <!-- product data start -->
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Customer Details</h2>
+                            <div class="left-auto" *ngIf="getData.complaint_status=='Pending'">
+                                <a class="sm-mat-icon-button" mat-icon-button matTooltip="Edit Detail"
+                                    [routerLink]="[ 'add-complaint/', 'complaint',this.id ]">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="block-feilds">
+                                    <span>Customer Name</span>
+                                    <p>{{getData.customer_name ? (getData.customer_name | titlecase) :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Customer Mobile No.</span>
+                                    <p>{{getData.customer_mobile ? getData.customer_mobile :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Alternate Mobile No.</span>
+                                    <p>{{getData.alternate_mobile_no ? getData.alternate_mobile_no :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Customer Address</span>
+                                    <p>{{getData.address ? (getData.address | titlecase):'---'}} ,{{getData.district ?
+                                        (getData.district | titlecase) :'---'}} ,{{getData.pincode ? getData.pincode
+                                        :'---'}},
+                                        {{getData.state ? (getData.state | titlecase):'---'}}</p>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                            <div class="sk-box">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 mt16 m12 l12">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Complaint Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="block-feilds">
+                                    <span>Date Created</span>
+                                    <p>{{getData.date_created ? (getData.date_created | date : 'dd MMM yyy ,h:mm a')
+                                        :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Created By</span>
+                                    <p>{{getData.created_name ? (getData.created_name | titlecase ):'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Complaint No.</span>
+                                    <p>{{getData.complain_no ? getData.complain_no :'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds flex-heading">
+                                    <div>
+
+                                        <span>Complaint Status</span>
+                                        <p>
+                                            <strong class="yellow-clr" *ngIf="getData.complaint_status=='Pending'">
+                                                {{getData.complaint_status ? (getData.complaint_status | titlecase) :
+                                                '--'}}</strong>
+                                            <strong class="green-clr" *ngIf="getData.complaint_status=='Closed'">
+                                                {{getData.complaint_status ? (getData.complaint_status | titlecase) :
+                                                '--'}}</strong>
+                                            <strong class="red-clr" *ngIf="getData.complaint_status=='Cancel'">
+                                                {{getData.complaint_status ? (getData.complaint_status | titlecase) :
+                                                '--'}}</strong>
+                                        </p>
+                                    </div>
+                                    <div class="left-auto" *ngIf="getData.complaint_status=='Pending'">
+                                        <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
+                                            (click)="updateComplaintStataus(getData.id)">
+                                            <i class="material-icons">edit</i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.complaint_status=='Cancel'">
+                                    <span>Reason Of Cancellation</span>
+                                    <p>{{getData.status_reason ? (getData.status_reason| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Nature Of Problem</span>
+                                    <p>{{getData.nature_of_problem ? (getData.nature_of_problem| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.carpenter_assign_status=='Done'">
+                                    <span>Technician Name</span>
+                                    <p>{{getData.carpenter_name ? (getData.carpenter_name | titlecase ):'---'}}</p>
+                                </div>
+
+                                <div class="block-feilds" *ngIf="getData.carpenter_assign_status=='Done'">
+                                    <span>Technician Mobile No.</span>
+                                    <p>{{getData.carpenter_mobile ? getData.carpenter_mobile :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>TAT</span>
+                                    <p>{{getData.pending_at ? (getData.pending_at | titlecase ):'---'}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-head mt15" *ngIf="complaintImg.length">
+                            <h2>Complaint Images</h2>
+                        </div>
+                        <div class="card-body" *ngIf="complaintImg.length">
+                            <div class="grid-box">
+                                <div class="block-feilds">
+                                    <div class="doc-img">
+                                        <div class="image-block" *ngFor="let row of complaintImg">
+                                            <img [src]="url+row.image" (click)="imageModel(url+row.image)"
+                                                style="cursor: zoom-in;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                                <div class="sk-box">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                            <div class="sk-box">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 mt16 m12 l12" *ngIf="getData.inspection_status!='Pending'">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Inspection Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <!-- <div class="block-feilds">
+                                    <span>Serial No.</span>
+                                    <p>{{getData.serial_no ? getData.serial_no :'---'}}</p>
+                                </div> -->
+                                <div class="block-feilds">
+                                    <span>Product Name</span>
+                                    <p>{{getData.product_name ? (getData.product_name| titlecase) :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Product Code</span>
+                                    <p>{{getData.product_code ? (getData.product_code) :'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Warranty Status</span>
+                                    <p>{{getData.warranty_status ? (getData.warranty_status | titlecase):'---'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Closing Type</span>
+                                    <p>{{getData.closing_type ? getData.closing_type:'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Inspection Remark</span>
+                                    <p>{{getData.inspection_remark ? (getData.inspection_remark| titlecase):'N/A'}}</p>
+                                </div>
+                            </div>
+                            <div class="card-head mt15" *ngIf="inspectionImg.length">
+                                <h2>Inspection Images</h2>
+                            </div>
+                            <div class="card-body" *ngIf="inspectionImg.length">
+                                <div class="grid-box">
+                                    <div class="block-feilds">
+                                        <div class="doc-img">
+                                            <div class="image-block" *ngFor="let row of inspectionImg">
+                                                <img [src]="url+row.image" (click)="imageModel(url+row.image)"
+                                                    style="cursor: zoom-in;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" *ngIf="skLoading">
+                        <div class="sk-head">
+                            <h2>&nbsp;</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                                <div class="sk-box">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 mt16 m12 l12" *ngIf="spare_list.length > 0">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Spare Part Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div mat-dialog-content>
+                                <div class="cs-table left-right-10">
+                                    <div class=" border-top">
+                                        <div class="table-head">
+                                            <table>
+                                                <tr>
+                                                    <th class="w30 text-center ">Sr.No</th>
+                                                    <th class="w110">Install Date</th>
+                                                    <th class="w150">Technician Details</th>
+                                                    <th class="w80">Part Name</th>
+                                                    <th class="w80">Part No.</th>
+                                                    <th class="w30 text-center ">Qty</th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-container pb0">
+                                        <div class="table-content none-shadow">
+                                            <table>
+                                                <ng-container>
+                                                    <tr *ngFor="let row of spare_list; let i = index">
+                                                        <td class="w30 text-center ">{{i+1}}</td>
+                                                        <td class="w110">{{row.installed_on ? (row.installed_on |
+                                                            date : 'dd MMM yyy ,h:mm a') : '--'}}</td>
+                                                        <td class="w150 ">{{row.installation_by_name?
+                                                            (row.installation_by_name |
+                                                            titlecase):'--'}}-{{row.installation_by_mobile}}</td>
+                                                        <td class="w80">{{row.part_name? (row.part_name| titlecase)
+                                                            :'--'}}</td>
+                                                        <td class="w80">{{row.part_no?( row.part_no| titlecase) :'--'}}
+                                                        </td>
+                                                        <td class="w30 text-center ">{{row.qty? row.qty :'--'}}</td>
+                                                    </tr>
+                                                </ng-container>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 mt16 m12 l12" *ngIf="complaint_visit.length > 0">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Complaint Visit</h2>
+                        </div>
+                        <div class="card-body">
+                            <div mat-dialog-content>
+                                <div class="cs-table left-right-10">
+                                    <div class=" border-top">
+                                        <div class="table-head">
+                                            <table>
+                                                <tr>
+                                                    <th class="w40">Sr.No</th>
+                                                    <th class="w130">Visit Date</th>
+                                                    <th class="w180">Technician Details</th>
+                                                    <th class="w50">Start Time</th>
+                                                    <th class="w180">Start Adddress</th>
+                                                    <th class="w50">Stop Time</th>
+                                                    <th class="w200">Stop Adddress</th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-container pb0">
+                                        <div class="table-content none-shadow">
+                                            <table>
+                                                <ng-container>
+                                                    <tr *ngFor="let row of complaint_visit; let i = index">
+                                                        <td class="w40 text-center">{{i + 1}}</td>
+                                                        <td class="w130">{{row.date_created ? (row.date_created | date :
+                                                            'dd MMM yyy ,h:mm a') : '--'}}</td>
+                                                        <td class="w180">{{row.created_by_name? (row.created_by_name |
+                                                            titlecase):'--'}}-{{row.created_by_mobile}}</td>
+                                                        <td class="w50">{{row.visit_start_time ? (row.visit_start_time |
+                                                            date : 'shortTime') : '--'}}</td>
+                                                        <td class="w180">{{row.visit_start_address?
+                                                            (row.visit_start_address | titlecase):'--'}}</td>
+                                                        <td class="w50">{{row.visit_stop_time ? (row.visit_stop_time |
+                                                            date : 'shortTime') : '--'}}</td>
+                                                        <td class="w200">{{row.visit_stop_address?
+                                                            (row.visit_stop_address | titlecase):'--'}}</td>
+                                                    </tr>
+                                                </ng-container>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col s12 mt16 m12 l12"
+                    *ngIf="getData.complaint_status=='Closed' || getData.complaint_status=='Cancel'">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>{{getData.complaint_status}} Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="block-feilds" *ngIf="getData.replaced_status=='Done'">
+                                    <span>New Serial No.</span>
+                                    <p>{{getData.new_serial_no ? (getData.new_serial_no| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.replaced_status=='Done'">
+                                    <span>Replaced By</span>
+                                    <p>{{getData.replaced_by_type ? (getData.replaced_by_type| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.replaced_by_type=='Dealer'">
+                                    <span>Company Name</span>
+                                    <p>{{getData.replaced_by_company_name?(getData.replaced_by_company_name |
+                                        titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.replaced_by_type=='Dealer'">
+                                    <span>Dealer Name</span>
+                                    <p>{{getData.replaced_by_name ? (getData.replaced_by_name | titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.replaced_by_type=='Dealer'">
+                                    <span>Dealer Mobile</span>
+                                    <p>{{getData.replaced_by_mobile ? getData.replaced_by_mobile:'N/A'}}</p>
+                                </div>
+
+                                <div class="block-feilds" *ngIf="getData.replaced_status=='Done'">
+                                    <span>Product type</span>
+                                    <p>{{getData.product_type ? getData.product_type:'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>{{getData.complaint_status}} Date</span>
+                                    <p>{{getData.closed_date != '0000-00-00 00:00:00' ? (getData.closed_date |
+                                        date : 'dd MMM yyy ,h:mm a'):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.complaint_status=='Cancel'">
+                                    <span>{{getData.complaint_status}} Reason</span>
+                                    <p>{{getData.status_reason ? (getData.status_reason| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds" *ngIf="getData.complaint_status=='Closed'">
+                                    <span>{{getData.complaint_status}} Remark</span>
+                                    <p>{{getData.closing_remark ? (getData.closing_remark| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Status Update Date</span>
+                                    <p>{{getData.status_updated_date != '0000-00-00 00:00:00' ?
+                                        (getData.status_updated_date |
+                                        date : 'dd MMM yyy ,h:mm a'):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Status Update By</span>
+                                    <p>
+                                        {{ getData.status_updated_by_name ? (getData.status_updated_by_name |
+                                        titlecase): "N/A" }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="card-head mt15" *ngIf="closeImg.length">
+                                <h2>{{getData.complaint_status}} Images</h2>
+                            </div>
+                            <div class="card-body" *ngIf="closeImg.length">
+                                <div class="grid-box">
+                                    <div class="block-feilds">
+                                        <div class="doc-img">
+                                            <div class="image-block" *ngFor="let row of closeImg">
+                                                <img [src]="url+row.image" (click)="imageModel(url+row.image)"
+                                                    style="cursor: zoom-in;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 mt16 m12 l12" *ngIf="getData.feedback_status=='Done'">
+                    <div class="card" *ngIf="!skLoading">
+                        <div class="card-head">
+                            <h2>Feedback Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-box">
+                                <div class="block-feilds">
+                                    <span>Feedback Date</span>
+                                    <p>{{getData.feedback_date !='0000-00-00 00:00:00' ? getData.feedback_date:'N/A'}}
+                                    </p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Recommend</span>
+                                    <p>{{getData.recommend ? (getData.recommend| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Technician Behavior</span>
+                                    <p>{{getData.behavior ? (getData.behavior| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Rating</span>
+                                    <p>{{getData.rating ? (getData.rating| titlecase):'N/A'}}</p>
+                                </div>
+                                <div class="block-feilds">
+                                    <span>Feedback Remark</span>
+                                    <p>{{getData.feedback_remark ? (getData.feedback_remark| titlecase):'N/A'}}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m10 l4" *ngIf="getData.log.length>0">
+
+                <div class="card mt16 " *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Logs</h2>
+                    </div>
+
+                    <div class="logs-box">
+                        <ng-container *ngFor="let row of getData.log">
+                            <div class="logshead ">{{row.created_by_name}} :- {{row.date_created | date:'dd MMM yyyy
+                                ,h:mm a'}}
+                            </div>
+                            <div class="logscontent ">
+                                <span>Remark : </span> {{row.msg ? (row.msg| titlecase) : (row.remark| titlecase)}}
+                            </div>
+                        </ng-container>
+                    </div>
+
+                </div>
+
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box single mt10" *ngFor="let row of [].constructor(5)">
+                            <div class="sk-box">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ######################  TRACKER ######################## -->
+
+
+            <div class="row">
+                <div class="col s12 m4 l4 mt25" *ngIf="!skLoading">
+                    <div>
+                        <div class="travel">
+                            <ul>
+                                <li class="check">
+                                    <span class="vistit-count">
+                                        <i class="material-icons">location_on</i>
+                                    </span>
+                                    <div class="tracking-con">
+                                        <strong>
+                                            <p>Complaint Tracker</p>
+                                        </strong>
+                                        <!-- <p>{{getData.date_created |date : 'dd MMM yyy ,h:mm a'}}</p> -->
+                                    </div>
+                                    <br>
+                                </li>
+
+                                <li class="check">
+                                    <span class="vistit-count"><i class="material-icons">location_on</i></span>
+                                    <!-- <span class="km"> {{getData.date_created_to_assign
+                                        ? getData.date_created_to_assign :''}}</span> -->
+
+                                    <div class="counter">
+                                        <div>
+                                            <div class="visit-time">
+
+                                                <div class="visit-hours mt10">
+                                                    <span class="green-clr">Date Created</span>
+                                                    <p>{{getData.date_created |date : 'dd MMM yyy ,h:mm a'}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <br>
+                                </li>
+                                <li *ngIf="getData.carpenter_assign_date!=='0000-00-00 00:00:00'">
+                                    <span class="vistit-count"><i class="material-icons">location_on</i></span>
+                                    <!-- <span class="km">{{getData.date_created_to_assign
+                                        ? getData.date_created_to_assign :''}}</span> -->
+                                    <div class="counter">
+                                        <div>
+                                            <!-- <p><strong>Assign Date :</strong>
+                                                {{getData.carpenter_assign_date != '0000-00-00' ?
+                                                (getData.carpenter_assign_date |date : 'dd MMM yyy ,h:mm a') :'---'}}
+                                            </p> -->
+                                            <!-- <p *ngIf="row.start_address"><strong>End GPS Address :</strong> {{row.address}}</p> -->
+                                            <div class="visit-time">
+                                                <div class="visit-hours mt10">
+                                                    <span class="green-clr">Assign Date</span>
+                                                    <p>
+                                                        {{getData.carpenter_assign_date != '0000-00-00 00:00:00' ?
+                                                        (getData.carpenter_assign_date |date : 'dd MMM yyy ,h:mm a')
+                                                        :'---'}}</p>
+                                                    <!-- <p *ngIf="carpenter_assign_date == '0000-00-00 00:00:00'">--</p> -->
+                                                </div>
+                                                <div class="visit-hours mt10">
+                                                    <span>Total Time Taken</span>
+                                                    <p>{{getData.date_created_to_assign
+                                                        ? getData.date_created_to_assign :'--'}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </li>
+                                <li *ngIf="getData.inspection_date!=='0000-00-00 00:00:00'">
+                                    <span class="vistit-count"><i class="material-icons">location_on</i></span>
+                                    <!-- <span class="km">{{getData.assign_to_inspection
+                                        ? getData.assign_to_inspection :''}}</span> -->
+                                    <div class="counter">
+                                        <div>
+                                            <!-- <p><strong>Inspection Date :</strong>
+                                                {{getData.inspection_date != '0000-00-00' ? (getData.inspection_date |
+                                                date : 'dd MMM yyy ,h:mm a') :'---'}}</p> -->
+                                            <!-- <p *ngIf="row.start_address"><strong>End GPS Address :</strong> {{row.address}}</p> -->
+                                            <div class="visit-time">
+                                                <div class="visit-hours mt10">
+                                                    <span class="green-clr">Inspection Date</span>
+                                                    <p>{{getData.inspection_date != '0000-00-00 00:00:00' ?
+                                                        (getData.inspection_date |
+                                                        date : 'dd MMM yyy ,h:mm a') :'---'}}</p>
+                                                </div>
+                                                <div class="visit-hours mt10">
+                                                    <span>Total Time Taken</span>
+                                                    <p>{{getData.assign_to_inspection
+                                                        ? getData.assign_to_inspection :'--'}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </li>
+                                <li *ngIf="getData.closed_date!=='0000-00-00 00:00:00'">
+                                    <span class="vistit-count"><i class="material-icons">location_on</i></span>
+                                    <!-- <span class="km"> {{getData.inspection_to_closed
+                                        ? getData.inspection_to_closed :''}}</span> -->
+                                    <div class="counter">
+                                        <div>
+                                            <!-- <p><strong>Closed Date :</strong>
+                                                {{getData.closed_date != '0000-00-00' ? (getData.closed_date |
+                                                date :'dd MMM yyy ,h:mm a'):'---'}}</p> -->
+                                            <!-- <p *ngIf="row.start_address"><strong>End GPS Address :</strong> {{row.address}}</p> -->
+                                            <div class="visit-time">
+                                                <div class="visit-hours mt10"
+                                                    *ngIf="getData.complaint_status=='Closed'">
+                                                    <span class="green-clr">Closed Date</span>
+                                                    <p>{{getData.closed_date != '0000-00-00 00:00:00' ?
+                                                        (getData.closed_date |
+                                                        date :'dd MMM yyy ,h:mm a'):'---'}}</p>
+                                                </div>
+                                                <div class="visit-hours mt10"
+                                                    *ngIf="getData.complaint_status=='Cancel'">
+                                                    <span class="green-clr">Cancel Date</span>
+                                                    <p>{{getData.closed_date != '0000-00-00 00:00:00' ?
+                                                        (getData.closed_date |
+                                                        date :'dd MMM yyy ,h:mm a'):'---'}}</p>
+                                                </div>
+                                                <div class="visit-hours mt10">
+                                                    <span>Total Time Taken</span>
+                                                    <p>{{getData.inspection_to_closed
+                                                        ? getData.inspection_to_closed :'--'}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </li>
+                                <li *ngIf="getData.feedback_date!=='0000-00-00 00:00:00'">
+                                    <span class="vistit-count"><i class="material-icons">location_on</i></span>
+                                    <!-- <span class="km">{{getData.inspection_to_closed
+                                        ? getData.inspection_to_closed :''}} </span> -->
+                                    <div class="counter">
+                                        <div>
+                                            <!-- <p><strong>Feedback Date :</strong>
+                                                {{getData.feedback_date != '0000-00-00' ? (getData.feedback_date | date
+                                                :
+                                                'dd MMM yyy ,h:mm a'):'---'}}</p> -->
+                                            <!-- <p *ngIf="row.start_address"><strong>End GPS Address :</strong> {{row.address}}</p> -->
+                                            <div class="visit-time">
+                                                <div class="visit-hours mt10">
+                                                    <span class="green-clr">Feedback Date</span>
+                                                    <p>{{getData.feedback_date != '0000-00-00 00:00:00' ?
+                                                        (getData.feedback_date
+                                                        | date
+                                                        :
+                                                        'dd MMM yyy ,h:mm a'):'---'}}</p>
+                                                </div>
+                                                <div class="visit-hours mt10">
+                                                    <span>Total Time Taken</span>
+                                                    <p>{{getData.closed_to_feedback
+                                                        ? getData.closed_to_feedback :'--'}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fab-btns">
+        <button class=" pulse excel" mat-fab color="primary" [matMenuTriggerFor]="menu">
+            <i class="material-icons">apps</i>
+            Action
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openDialog(getData.id,getData.state,getData.carpenter_id)"
+                [ngClass]="{'pulse': fabBtnValue=='activity'}" *ngIf="getData.complaint_status=='Pending'">
+                <mat-icon>assignment</mat-icon>
+                <span>Assign Technician</span>
+            </button>
+
+            <button mat-menu-item (click)="openDialog2(getData.id)" [ngClass]="{'pulse': fabBtnValue=='activity'}"
+                *ngIf="getData.complaint_status!='Closed'">
+                <mat-icon>add</mat-icon>
+                <span>Add Remark</span>
+            </button>
+
+            <button mat-menu-item (click)="openFeedbackForm(getData.id)" [ngClass]="{'pulse': fabBtnValue=='activity'}"
+                *ngIf="getData.complaint_status=='Closed'">
+                <mat-icon>rate_review</mat-icon>
+                <span>Add Feedback</span>
+            </button>
+
+        </mat-menu>
+    </div>
+</div>

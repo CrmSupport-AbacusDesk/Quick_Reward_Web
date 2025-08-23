@@ -1,0 +1,130 @@
+<div class="edit-modal" *ngIf="comes_from!='survey_result'">
+  <p class="heading mb0">Survey Information</p>
+  <div mat-dialog-content>
+    <div class="cs-table left-right-10">
+      <div class="stickyHead sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S.No.</th>
+              <th>Name</th>
+              <th class="w200">Type</th>
+              <th class="w200">Answers</th>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!skLoading">
+              <tr class="sk-loading" *ngFor="let row of surveyAnswerList; let i =index">
+                <td class="w50">
+                  {{i+1}}
+                </td>
+                <td>{{row.created_by_name}}</td>
+                <td class="w200">{{row.created_by_type}}</td>
+                <td class="w200">{{row.answers}}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="skLoading">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+          <div class="search-results" data-infinite-scroll debounce [infiniteScrollDistance]="1"
+            [infiniteScrollUpDistance]="2" [infiniteScrollThrottle]="10" (scrolled)="getSurveyDetail()">
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+  </div>
+</div>
+
+<div class="edit-modal" *ngIf="comes_from=='survey_result'">
+  <p class="heading mb0">Survey Information</p>
+  <div mat-dialog-content>
+    <div class="cs-table left-right-10">
+      <div class="stickyHead sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w50">S.No.</th>
+              <th class="w100">Date Created</th>
+              <th>Name</th>
+              <th class="w200">Type</th>
+              <th class="w200" *ngFor="let ques of surveyResultQuestions">{{ques}}</th>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!skLoading">
+              <tr class="sk-loading" *ngFor="let row of surveyResult; let i =index">
+                <td class="w50">{{i+1}}</td>
+                <td class="w100">
+                  {{row.date_created | date:'dd MMM yyyy'}}
+                </td>
+                <td>{{row.created_by_name}}</td>
+                <td class="w200">{{row.created_by_type}}</td>
+                <td class="w200" *ngFor="let newans of row.answer">{{newans}}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="skLoading">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                <td class="w50">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td>
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w200">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+          <div class="search-results" data-infinite-scroll debounce [infiniteScrollDistance]="1"
+            [infiniteScrollUpDistance]="2" [infiniteScrollThrottle]="10" (scrolled)="getSurveyResult()">
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-stroked-button color="warn" [mat-dialog-close]="false">Cancel</button>
+    <!-- <button mat-raised-button color="accent" [ngClass]="{'loading': skLoading == true}" [disabled]="skLoading" *ngIf="surveyResult.length > 0 && assign_login_data2.export_survey=='1'"  (click)="downloadExcel();">
+      Download Excel 
+      <img src="assets/img/excel.svg" height="20px">
+    </button> -->
+  </div>
+</div>

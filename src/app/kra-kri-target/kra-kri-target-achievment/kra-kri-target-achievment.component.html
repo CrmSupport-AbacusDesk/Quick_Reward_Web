@@ -1,0 +1,202 @@
+<div class="main-container">
+  <div class="tools-container">
+    <h2>KRA KPI List</h2>
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh1()">
+        <i class="material-icons">refresh</i>
+      </a>
+      <div class="pagination" *ngIf="distributor_list.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start==0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w40">Sr.No.</th>
+              <th class="w100">Date Created</th>
+              <th class="w100">EMP. CODE</th>
+              <th class="w100">BDO Name</th>
+              <th class="w150">ASM Name</th>
+              <th class="w100">ZM Name</th>
+              <th class="w150">Plumber Meet (Sacha Saathi) ACHIEVE %</th>
+              <th class="w100">Tour Plan ACHIEVE %</th>
+              <th class="w150">Secondary Sale ACHIEVE %</th>
+              <th class="w100 text-right">Scheme ACHIEVE %</th>
+              <th class="w120 text-right">Daily Reporting ACHIEVE %</th>
+              <th class="w120 text-right">New Dealer ACHIEVE %</th>
+              <th class="w120 text-right">Product of the Month ACHIEVE %</th>
+              <th class="w120 text-right">Knowledge Management Score ACHIEVE %</th>
+              <th class="w120 text-right">100% Score</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head border-top">
+          <table>
+            <tr>
+              <th class="w40">&nbsp;</th>
+              <th class="w100">&nbsp;</th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="get_distributor_list()"
+                      #employee_id="ngModel" [(ngModel)]="value.employee_id">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="get_distributor_list()" #user_name="ngModel"
+                      [(ngModel)]="value.user_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150">
+                <div class="th-search-acmt">
+                  <mat-form-field class="example-full-width cs-input select-input">
+                    <input matInput placeholder="Search..." (keyup.enter)="get_distributor_list()" #asm_name="ngModel"
+                      [(ngModel)]="value.asm_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100"></th>
+              <th class="w150">
+
+              </th>
+              <th class="w100 text-center">
+
+              </th>
+              <th class="w150 text-center">
+
+              </th>
+              <th class="w100 text-right">&nbsp;</th>
+              <th class="w120 text-right">&nbsp;</th>
+              <th class="w120 text-right">&nbsp;</th>
+              <th class="w120 text-right">&nbsp;</th>
+              <th class="w120 text-right">&nbsp;</th>
+              <th class="w120 text-right">&nbsp;</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="table-container">
+        <div class="table-content" *ngIf="distributor_list.length > 0">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of distributor_list;let i=index ">
+                <td class="w40">{{i + 1 + sr_no}}</td>
+                <td class="w100">{{row.date_created | date : 'd MMM y'}}</td>
+                <td class="w100">{{row.employee_id}}</td>
+                <td class="w100">{{row.user_name}}</td>
+                <td class="w150">{{row.asm_name}}</td>
+                <td class="w100">{{row.zm_name}}</td>
+                <td class="w150">{{row.plumber_meet_percent}}</td>
+                <td class="w100">{{row.tour_plan_percent}} %</td>
+                <td class="w150 text-right"><strong>
+                    {{row.secondary_sale_percent?row.secondary_sale_percent:'--' }} </strong></td>
+                <td class="w100 text-right">
+                  <strong>{{row.scheme_percent}} %</strong>
+                </td>
+                <td class="w120 text-right">
+                  <strong>{{row.daily_reporting_percent}} %</strong>
+                </td>
+                <td class="w120 text-right">
+                  <strong>{{row.new_dealer_percent}} %</strong>
+                </td>
+                <td class="w120 text-right">
+                  <strong>{{row.product_of_month_percent}} %</strong>
+                </td>
+                <td class="w120 text-right">
+                  <strong>{{row.knowledge_mng_score_percent}} %</strong>
+                </td>
+                <td class="w120 text-right">
+                  <strong>{{row.total_percent}} %</strong>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w40">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w250">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150 text-center">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100 text-right">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w120 text-right">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="distributor_list.length == 0 ">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+  <div class="fab-btns" *ngIf="assign_login_data2.export_kra_kpi=='1' || assign_login_data2.import_kra_kpi=='1'">
+    <button mat-fab color="accent" class="pulse" [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="exportAsXLSX();"
+        *ngIf="distributor_list.length > 0 && assign_login_data2.export_kra_kpi=='1'">
+        <mat-icon>download</mat-icon>
+        <span>Download in excel</span>
+      </button>
+      <button mat-menu-item (click)="upload_excel('add new');" *ngIf=" assign_login_data2.import_kra_kpi=='1'">
+        <mat-icon>cloud_upload</mat-icon>
+        <span>Upload New Data</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>

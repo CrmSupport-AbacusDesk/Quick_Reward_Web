@@ -1,0 +1,1785 @@
+<div class="main-container">
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" (click)="back()">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>QR Code Detail</h2>
+  </div>
+
+  <div class="container pt10 pl10 pr10 pb50">
+
+
+
+    <!-- 25*25 mm sticker Bewro Company  sticker  layout 1 -->
+    <ng-container *ngIf="getData.template_id == 1">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 94.488188976px; height: 94.488188976px; margin: 3px 0px 0px; position: relative;"
+              *ngFor="let row of qrCode">
+              <div class="qr_section">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <span class='qr_content' style="text-align: center; text-transform: uppercase;">{{ row.coupon_code
+                }}</span>
+              <span class='qr_content' style="text-align: center; text-transform: uppercase;">{{ getData.product_code
+                }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 25*25 mm sticker -->
+
+
+    <!-- ***** CASE 1 BOX WITH ITEM START***** -->
+    <ng-container *ngIf="getData.box_type == 1">
+      <div id="print_card">
+        <div id='qr_code_container' *ngFor="let row of qrCode; let i = index;">
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr;">
+            <div class="qr_img"
+              style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass qr_img_card"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span class='fix-text'>Box {{ i+1 }}</span>
+              <span class='fix-code' style="text-align: left; margin-left: 5px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+
+            </div>
+
+            <ng-container *ngFor="let subRow of row.itembox">
+              <div class="qr_img"
+                style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;">
+                <ngx-qrcode [elementType]="elementType" value="{{ subRow.coupon_code }}" cssClass="aclass qr_img_card"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+                <span class='fix-text-code'>{{ getData.product_code }}</span>
+                <span class='fix-code' style="text-transform: uppercase;">{{ subRow.coupon_code }}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- ***** CASE 1 BOX WITH ITEM END***** -->
+
+
+    <!-- ***** CASE 2 ONLY BOX START ***** -->
+    <ng-container *ngIf="getData.box_type == 2">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img"
+              style="width: 94.488188976px; margin: 0 auto;  height: 94.488188976px;  position: relative;"
+              *ngFor="let row of qrCode; let i = index;">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass qr_img_card"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span class='fix-text'>BOX {{ i+1 }}</span>
+              <span class='fix-code' style="text-align: center; margin-left: -5px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <span class='fix-text-right' style="text-align:left"> {{ getData.product_code }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- ***** CASE 2 ONLY BOX END ***** -->
+
+
+    <!-- 50*20 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 2">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 75.590551181; position: relative;  display: grid;grid-template-columns: 1fr 1fr;">
+            <ng-container *ngFor="let row of qrCode">
+              <div style="width: 188.97637795px; display: flex;">
+                <div style="height: 75.590551181px; width: 100.97637795px;">
+                  <div style="height: 20px; margin-top: 4px;">
+                  </div>
+                  <div style="width: 100%; margin: 0px;">
+                    <p
+                      style="font-size: 10px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                      Code: <strong> {{ getData.product_code }}</strong></p>
+                    <p
+                      style="font-size: 10px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                      Batch No.: <strong> {{ getData.batch_no }}</strong></p>
+                    <p
+                      style="font-size: 9px; margin:2px 0px;  line-height: 10px; text-align: left; display:block; text-transform: uppercase;">
+                      <strong> {{ row.coupon_code }}</strong>
+                    </p>
+                  </div>
+                </div>
+                <div style="width: 88px; min-width: 88px;">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_sm_qr"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*20 mm sticker -->
+
+    <!-- 50*25 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 3">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 377.95275591px; position: relative;  display: grid;grid-template-columns: 1fr 1fr;">
+            <ng-container *ngFor="let row of qrCode">
+              <div style="width: 178.97637795px; display: flex; align-items: center; margin: 0 auto;">
+                <div style="height: 94.488188976; width: 90.97637795px;">
+                  <div style="height: 30px; margin-top: 4px;">
+                  </div>
+                  <div style="width: 100%; margin: 0px;">
+                    <p
+                      style="font-size: 10px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                      Code: <strong> {{ getData.product_code }}</strong></p>
+                    <p
+                      style="font-size: 10px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                      Batch No.: <strong> {{ getData.batch_no }}</strong></p>
+                    <p
+                      style="font-size: 9px; margin:2px 0px;  line-height: 10px; text-align: left; display:block; text-transform: uppercase;">
+                      <strong> {{ row.coupon_code }}</strong>
+                    </p>
+                  </div>
+                </div>
+                <div style="width: 88px; min-width: 88px; padding-right: 3px;">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_sm_qr"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm sticker -->
+
+
+    <!-- 50*50 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 4">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 188.97637795px; position: relative;  display: grid;grid-template-columns: 1fr 1fr;">
+            <div
+              style="width: 188.97637795px; display: flex; flex-direction: column;  align-items: center;padding: 0px 15px;"
+              *ngFor="let row of qrCode">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="dura_qr"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span
+                style="height: 20px; font-size: 11px; letter-spacing: 0.5px; font-weight: 600; margin-top: -4px; margin-right: 8px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <div style="width: 100%; margin: 0px;">
+                <p
+                  style="font-size: 11px; margin:2px 0px; line-height: 13px; text-align: left; display:block; text-transform: uppercase;margin-top: -4px;">
+                  Name: <strong> {{ transform(getData.product_name) }}</strong></p>
+                <p
+                  style="font-size: 11px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                  Code: <strong> {{ getData.product_code }}</strong></p>
+                <p style="font-size: 9px; margin:2px 0px;  line-height: 12px; text-align: left; display:block; text-transform: uppercase;"
+                  *ngIf="getData.batch_no != ''">Batch No.: <strong> {{ getData.batch_no }}</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*50 mm sticker -->
+
+    <!-- 70*50 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 5">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 264.56692913px; height: 188.97637795px; position: relative;" *ngFor="let row of qrCode">
+            <div style="height: 188.97637795px; display: flex; flex-direction: column;  align-items: end;">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_qr"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span
+                style="height: 20px; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; margin-top: -3px; margin-right: 10px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <div style="width: 100%; margin: 0px;">
+                <p
+                  style="font-size: 12px; margin:2px 0px; line-height: 16px; text-align: left; display:block; text-transform: uppercase;">
+                  Name: <strong> {{ transform(getData.product_name) }}</strong></p>
+                <p
+                  style="font-size: 12px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                  Code: <strong> {{ getData.product_code }}</strong></p>
+                <p style="font-size: 10px; margin:2px 0px;  line-height: 12px; text-align: left; display:block; text-transform: uppercase;"
+                  *ngIf="getData.batch_no != ''">Batch No.: <strong> {{ getData.batch_no }}</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 70*50 mm sticker -->
+
+    <!-- 75*50 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 6">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 283.46456693; height: 188.97637795px; position: relative;" *ngFor="let row of qrCode">
+            <div style="height: 10px;"></div>
+            <div style="height: 178.97637795px; display: flex; flex-direction: column;  align-items: end;">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_qr"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span
+                style="height: 20px; font-size: 12px; letter-spacing: 0.5px; font-weight: 600; margin-top: -3px; margin-right: 10px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <div style="width: 100%; margin: 0px;">
+                <p
+                  style="font-size: 12px; margin:2px 0px; line-height: 16px; text-align: left; display:block; text-transform: uppercase;">
+                  Name: <strong> {{ transform(getData.product_name) }}</strong></p>
+                <p
+                  style="font-size: 12px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                  Code: <strong> {{ getData.product_code }}</strong></p>
+                <p style="font-size: 10px; margin:2px 0px;  line-height: 12px; text-align: left; display:block; text-transform: uppercase;"
+                  *ngIf="getData.batch_no != ''">Batch No.: <strong> {{ getData.batch_no }}</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 75*50 mm sticker -->
+
+    <!-- 75*50 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 7">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 264.56692913px; height: 188.97637795px; position: relative;" *ngFor="let row of qrCode">
+            <div style="height: 188.97637795px; display: flex; flex-direction: column;  align-items: end;">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_qr"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span
+                style="height: 20px; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; margin-top: -3px; margin-right: 10px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <div style="width: 100%; margin: 0px;">
+                <p
+                  style="font-size: 13px; margin:2px 0px; line-height: 16px; text-align: left; display:block; width:100%; text-transform: uppercase;">
+                  Name:<strong> {{ transform(getData.product_name) }}</strong></p>
+                <p
+                  style="font-size: 13px; margin:2px 0px; line-height: 16px; text-align: left; display:block; width:100%; text-transform: uppercase;">
+                  Code:<strong> {{ getData.product_code }}</strong></p>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: space-between; margin: 0px;">
+                <p style="font-size: 9px; margin:2px 0px; text-align: left; display:block; line-height: 12px;">
+                  <strong>Size : {{ getData.small_packing_size ? getData.small_packing_size : '' }}
+                    {{ getData.uom ? getData.uom : '' }}</strong>
+                </p>
+                <p
+                  style="font-size: 9px; margin:2px 0px; padding-right: 10px; text-align: left; display:block; line-height: 12px;">
+                  <strong>QTY : {{ getData.qty ? (getData.qty + ' Pcs.') : '' }}</strong>
+                </p>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: space-between; margin: 0px;">
+                <p style="font-size: 9px; margin:2px 0px; text-align: left; display:block; line-height: 12px;">
+                  <strong>MRP : Rs.{{ getData.mrp ? getData.mrp : '' }}</strong> &nbsp;&nbsp; Per
+                  Pcs(Incl. All taxes)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 75*50 mm sticker -->
+
+    <!-- 38*38 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 8">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 287.24409449px; display: grid; grid-column-gap: 10px; grid-row-gap: 8px; grid-template-columns: 1fr 1fr;">
+            <ng-container *ngFor="let row of qrCode">
+              <div
+                style="width : 143.62204724px; height: 143.62204724px; display: flex;flex-direction: column; justify-content: center;  align-items: center; ">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="center_sm_qr"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+                <span
+                  style="font-size: 10px; text-align: center; display: block; letter-spacing: 0.5px; font-weight: 600; margin:0px; text-transform: uppercase;">{{
+                  row.coupon_code }}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 38*38 mm sticker -->
+
+    <!-- 38*38 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 9">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <ng-container *ngFor="let row of qrCode">
+            <div
+              style="width : 143.62204724px; height: 143.62204724px; display: flex;flex-direction: column; justify-content: center;  align-items: center; position: relative; ">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="single_center_sm_qr"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <span
+                style="font-size: 10px; text-align: center; display: block; letter-spacing: 0.5px; font-weight: 600; margin:0px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <span class='single_fix_code'>{{ getData.product_code }}</span>
+              <span class='single_fix_lable'>Scan to get gift point</span>
+
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 38*38 mm sticker -->
+
+    <!-- 100*50 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 10">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 377.95275591px; height: 188.97637795px; position: relative;" *ngFor="let row of qrCode">
+            <div style="width: 245.66929134px; height: 188.97637795px; float: left;">&nbsp;</div>
+            <div
+              style="height: 188.97637795px; width: 94.488188976px; float: left; height: 94.488188976px; margin-top: 75.590551181px;">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="new_sm_qr"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <p
+                style="font-size: 10px; margin:2px 0px; line-height: 16px; text-align: left; display:block; width:100%; text-transform: uppercase;">
+                <strong> {{ row.coupon_code }}</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 100*50 mm sticker -->
+
+    <!-- 30*35 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 11">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width:793.92px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr; position: relative;">
+            <ng-container *ngFor="let row of qrCode">
+              <div style="width: 113.38582677px; height: 132.28346457px;">
+                <div class="a-four"
+                  style="width: 113.38582677px; margin: 0 auto;   height: 100.28346457px;  position: relative;">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="a-four-qr"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <p
+                    style="text-align: center; width: 100%; display: block; margin: -9px 0px 0px 0px; font-weight: 800; font-size: 7px; line-height: 16px; text-transform: uppercase;">
+                    {{ row.coupon_code }}
+                  </p>
+                  <p
+                    style="text-align: center; display: flex; width: 100%; text-transform: uppercase; margin: 0px 0px 0px 0px; font-size: 7px; line-height: 7px; justify-content: center">
+                    {{ getData.product_name }}
+                  </p>
+                </div>
+                <div class="a-four-logo"
+                  style="width: 113.38582677px; height: 32px;  text-align: center;  position: relative;">
+                  <img
+                    src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                    style="height: 30px;" *ngIf="assign_login_data?.id != '1'">
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 30*35 mm sticker -->
+
+
+    <!-- 50*25 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 12">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 188.9763779527559px; height: 94.488188976px; position: relative;"
+            *ngFor="let row of qrCode">
+            <div class="qr_img_eskay_bond" style="background: white; position: relative;">
+              <div class="qr_section">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+                <div class="qr_logo">
+                  <img
+                    src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                    class="lightmode" *ngIf="assign_login_data?.id != '1'">
+                </div>
+              </div>
+              <p style="width: 100%; margin: 0px; display: block; font-weight: 800; font-size: 9px; line-height:10px;">
+                COUPON CODE : {{ row.coupon_code }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm sticker -->
+
+
+    <!-- 50*25 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 13">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width:377.95275591px; display: grid; grid-template-columns: 1fr 1fr; position: relative;">
+            <div style="width: 188.9763779527559px; height: 94.488188976px; position: relative; padding: 0px 5px;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_eskay_bond" style="position: relative;">
+                <div class="qr_section">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <div class="qr_logo" style="width: 80px; height: 20px; float: right;">
+                    <img
+                      src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                      class="lightmode" *ngIf="assign_login_data?.id != '1'">
+                  </div>
+                </div>
+                <p
+                  style="width: 100%; text-align: center; margin:-10px 0px 2px  0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                  {{ getData.product_name }}
+                </p>
+                <p
+                  style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 800; font-size: 8.5px; line-height:10px;">
+                  COUPON CODE : {{ row.coupon_code }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm sticker -->
+
+    <!-- (50*25 mm - Single) /(100*25 mm - Multiple) sticker -->
+    <ng-container *ngIf="getData.template_id == 14">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width:377.95275591px; display: grid; grid-template-columns: 1fr 1fr; position: relative;">
+            <div style="width: 188.9763779527559px; height: 94.488188976px; position: relative; padding: 0px 5px;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_eskay_bond" style="position: relative;">
+                <p
+                  style="text-align: center;margin: 4px 0px -4px 0px;font-size: 8.5px;line-height: 8px;z-index: 9;position: relative;">
+                  <strong>{{ assign_login_data?.organisation_data?.company_name }}</strong>
+                </p>
+                <div class="qr_section">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <div class="qr_logo" style="width: 80px; display: inline-block;">
+                    <p
+                      style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                      <strong>SCAN & WIN CASH</strong>
+                    </p>
+                    <p
+                      style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                      <strong>Help-Line</strong>
+                    </p>
+                    <p
+                      style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                      {{ getData.helpline_no }}
+                    </p>
+                  </div>
+                </div>
+                <p
+                  style="width: 100%; text-align: center; margin:-10px 0px 2px  0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                  <strong>{{getData.product_code ? (getData.product_code + ' - ') :
+                    ''}}</strong>{{ getData.product_name }}
+                </p>
+                <p
+                  style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 800; font-size: 8.5px; line-height:10px;">
+                  COUPON CODE : {{ row.coupon_code }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm sticker -->
+
+
+    <!-- 47.5*39 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 15">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width:793.92px; display: grid; justify-items: center; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-row-gap: 13px; grid-column-gap: 3px; position: relative;">
+            <ng-container *ngFor="let row of qrCode">
+              <div
+                style="width: 39mm; height: 47.5mm; display: flex;flex-direction: column; justify-content: space-around;">
+                <div class="a-four-logo"
+                  style="width: 39mm; height: 12mm; z-index: 1; text-align: center;  position: relative; display: flex ; align-items: center;  justify-content: center;">
+                  <img
+                    src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                    style="height: 6.6145833333mm;" *ngIf="assign_login_data?.id != '1'">
+                </div>
+                <div class="a-four"
+                  style="width: 39mm; margin: -15px auto 0px auto;  height: 35.5mm; position: relative; display: flex; flex-direction: column; justify-content: start;">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="a-four-qr-rama"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <div style="margin-top: -10px;">
+                    <p
+                      style="text-align: center; width: 100%; display: block; margin: 0px 0px 0px 0px; font-weight: 800; font-size: 9.5px; line-height: 10px; text-transform: uppercase;">
+                      {{ row.coupon_code }}
+                    </p>
+                    <p
+                      style="display: flex; padding: 0px 10px; width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; margin: 0px 0px 0px 0px; font-size: 10px; font-weight: bold; line-height:12px;  justify-content: center">
+                      CODE: {{ getData.product_code }}</p>
+                    <p
+                      style="display: flex; padding: 0px 10px; width: 100%; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; margin: 0px 0px 0px 0px; font-size: 9px; font-weight: bold; line-height:12px;  justify-content: center">
+                      BATCH: {{ getData.batch_no }}</p>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 47.5*39 mm sticker -->
+
+    <!-- 75*50 mm sticker (Crossbond)-->
+    <ng-container *ngIf="getData.template_id == 16">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width:283.46456693px; height: 188.97637795px; position: relative;">
+            <div style="width: 188.9763779527559px; height: 94.488188976px; position: relative; padding: 0px 5px;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_crossbond" style="display: flex; align-items: center;">
+                <div class="qr_section">
+                  <ngx-qrcode cssClass="crossbond" [elementType]="elementType" value="{{ row.coupon_code }}"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                </div>
+
+                <div class="content_section" style="margin-left: 20px">
+                  <div class="company_logo" style="height: 40px;">
+                    <img style="height: 20px; margin-top: 10px;"
+                      src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                      *ngIf="assign_login_data?.id != '1'">
+                  </div>
+                  <div class="content_section_text" style="text-align: center;">
+                    <span style="line-height: 16px;margin: 0px;"
+                      *ngIf="assign_login_data2?.organisation_data?.qr_genration==1"><strong
+                        style="font-size: 10px;">{{getData.point_category_name ?
+                        getData.point_category_name : '--'}}</strong></span>
+                    <p style="line-height: 16px;margin: 0px;"><strong style="font-size: 11px;">{{ row.coupon_code
+                        }}</strong></p>
+                  </div>
+                </div>
+                <div class="quotes" style="margin-left: 30px">
+                  <p
+                    style="margin: 0px; font-size: 13px; font-weight: 600; text-transform: uppercase; line-height: 16px; text-align: center;">
+                    SCAN USING {{ assign_login_data?.organisation_data?.company_name }} APP</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm sticker -->
+
+    <!-- (17*17 mm - Multiple) /(85*17 mm - Multiple = 5) Harson sticker -->
+    <ng-container *ngIf="getData.template_id == 17">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 340.15748031px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr 1fr; overflow: hidden;">
+            <div class="harson_qr_img"
+              style="width: 64.251968504px; margin: 0 auto;  height: 64.251968504px;  position: relative;"
+              *ngFor="let row of qrCode">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <p
+                style=" line-height: 0px; text-transform: uppercase;font-size: 6px; margin: -1px 0px 0px 0px; text-align: center; position: relative;">
+                {{ row.coupon_code }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- (17*17 mm - Multiple) /(85*17 mm - Multiple = 5) Harson sticker -->
+
+    <!-- (40*40 mm - Multiple) / (85*40 mm - Multiple = 5) Grafdoer sticker -->
+    <ng-container *ngIf="getData.template_id == 18">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 340.15748031px; position: relative; display: grid;grid-template-columns: 1fr 1fr; overflow: hidden;">
+            <div class="grafdoer_qr_img" style="width: 153.6px; margin: 0 auto;  height: 153.6px;  position: relative;"
+              *ngFor="let row of qrCode">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <p
+                style="line-height: 0px; text-transform: uppercase; font-size: 13px; margin: 8px 0px 0px 0px; text-align: center; position: relative;">
+                {{ row.coupon_code }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- (40*40 mm - Multiple) / (85*40 mm - Multiple = 5) Grafdoer sticker -->
+
+
+    <!-- (50*25 mm - Single) /(100*25 mm - Multiple) (Mwud) sticker -->
+    <ng-container *ngIf="getData.template_id == 19">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width:377.95275591px; display: grid; grid-template-columns: 1fr 1fr; position: relative;">
+            <div style="width: 188.9763779527559px; height: 94.488188976px; position: relative; padding: 0px 5px;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_mwud">
+                <div class="qr_section" style="width:60%;">
+                  <p
+                    style="width: 100%;text-align: left;margin: 0px;display: block;font-weight: 800;font-size: 8px;line-height:10px;margin-left: 7px;">
+                    {{ row.coupon_code }}
+                  </p>
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                </div>
+                <div class="qr_logo" style="width:100%;">
+                  <!-- <img src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}" *ngIf="assign_login_data?.id != '1'"> -->
+                  <p
+                    style="width: 100%;margin:0;display: block;font-weight: 500;font-size: 13px;line-height:10px;text-align: center;">
+                    <strong style="font-size: 13px;">{{getData.product_name ?
+                      (getData.product_name | uppercase) : '--'}}</strong>
+                  </p>
+                  <p
+                    style="width: 100%;margin:0;display: block;font-weight: 500;font-size: 12px;line-height:10px;text-align: center;">
+                    <strong style="font-size: 12px;">{{getData.product_code ?
+                      (getData.product_code | uppercase) : '--'}}</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- (50*25 mm - Single) /(100*25 mm - Multiple) (Mwud) sticker -->
+
+
+    <!-- 47.5*39 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 20">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width:288px;margin:0px; display: grid; justify-items: center; grid-template-columns:1fr 1fr 1fr; justify-content:space-evenly;  position: relative;align-items: center; justify-content: center; ">
+            <div style="width: 100%; height: 25mmpx;position: relative;" *ngFor="let row of qrCode">
+              <div style="width: 100%; height: 10.5mm;float: left;">&nbsp;</div>
+              <div style="width: 96px; height: 12mm; display: flex; align-items: flex-start; float: left;">
+                <p
+                  style="width : 40px; min-width: 40px; color: #000; font-weight: bold; display: -webkit-box; -webkit-line-clamp: 2; margin: 10px 0px 0px 0px; font-size: 6px; line-height: 8px; -webkit-box-orient: vertical;  overflow: hidden; text-overflow: ellipsis; text-align: center; display: block;">
+                  {{ getData.product_code }}
+                </p>
+                <div class="corsa" style="text-align: left; min-width: 42px; width : 42px; position: relative;">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="corsa"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                </div>
+              </div>
+              <div
+                style="color: #000; font-weight: bold; text-align: center; width: 100%; margin:0px; position: absolute; bottom: 2px; z-index: 2; text-transform: uppercase; font-weight: 800;  font-size: 6px;  line-height: 0px;;">
+                {{ row.coupon_code }}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 47.5*39 mm sticker -->
+
+
+    <!-- 50*25 mm (Gaumaya) (Multiple) sticker -->
+    <ng-container *ngIf="getData.template_id == 21">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width:377.95275591px; display: grid; grid-template-columns: 1fr 1fr; position: relative;">
+            <div style="width: 188.9763779527559px; height: 94.488188976px; position: relative; padding: 0px 9px;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_gaumaya" style="position: relative;">
+                <div class="qr_section">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <div class="qr_logo">
+                    <img
+                      src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                      *ngIf="assign_login_data?.id != '1'">
+                  </div>
+                </div>
+                <div class="qr_content">
+                  <p
+                    style="width: 100%; text-align: center; margin:0px 0px 2px  0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                    <strong>{{getData.product_code ? (getData.product_code + ' - ') :
+                      ''}}</strong>{{ getData.product_name }}
+                  </p>
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 800; font-size: 8.5px; line-height:10px;">
+                    COUPON CODE : {{ row.coupon_code }}</p>
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 400; font-size: 8.5px; line-height:10px;">
+                    To Redeem Call us on 011-69269828</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm (Gaumaya) (Multiple)  sticker -->
+
+    <!-- 100*50 mm (NT Wood) sticker -->
+    <ng-container *ngIf="getData.template_id == 22">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 377.95275591px; height: 188.97637795px; position: relative;" *ngFor="let row of qrCode">
+            <!-- <div style="width: 283.46456693px; float: left;">&nbsp;</div> -->
+
+            <div style="width: 215.43307087px; height: 188.97637795px; float: right;">
+
+              <div
+                style="width: 56.692913386px; float: left; margin-left: -5px; transform: rotate(90deg); margin-top: 80px;">
+                <p
+                  style="font-size: 10px; margin:2px 0px; line-height: 16px; font-weight: 600; text-align: left; display:block; width:100%; text-transform: uppercase;">
+                  {{ getData.product_code }}
+                </p>
+                <p
+                  style="font-size: 10px; margin:2px 0px; line-height: 16px; text-align: left; display:block; width:100%; text-transform: uppercase; position: relative;left: -15px;">
+                  <strong> {{ row.coupon_code }}</strong>
+                </p>
+              </div>
+
+              <div style="width: 75.590551181px; float: left; margin-top: 50px;">
+                <p style="transform: rotate(90deg); font-size: 10px; line-height: 14px; text-align: center;">
+                  {{ getData.batch_no | slice:0:8 }}
+                </p>
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="new_sm_qr"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 100*50 mm (NT Wood) sticker -->
+
+    <!-- 50*50 mm (Bafit Sanitaryware) sticker -->
+    <ng-container *ngIf="getData.template_id == 23">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 377.95275591px; position: relative;  display: grid;grid-template-columns: 1fr 1fr;">
+            <div
+              style="width: 188.97637795px; height: 188.97637795px; display: flex; flex-direction: column;  align-items: center;background: #ccc;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_bafit" style="position: relative;">
+                <p
+                  style="text-align: center;margin: 5px 0px 0px; font-weight: 800;font-size: 8.5px;line-height: 8px;z-index: 9;position: relative;">
+                  BAFIT SANITARYWARE & FAUCETS</p>
+                <p
+                  style="width: 100%; text-align: center; margin: 0px 0px; display: block; font-weight: 800; font-size: 8.5px; line-height:10px;">
+                  Customer Care: {{ getData.helpline_no }}</p>
+                <div class="qr_section">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                </div>
+                <div class="qr_content">
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px 0px; font-weight: 800; font-size: 8.5px; line-height: 10px; border-bottom: 1px solid;">
+                    COUPON CODE : {{ row.coupon_code }}</p>
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px 0px; font-weight: 800; font-size: 8.5px; line-height: 10px; border-bottom: 1px solid;">
+                    Download the app, Register as a "Plumber", Scan the QR Code and get points.</p>
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px; font-weight: 800; font-size: 8.5px; line-height: 10px;">
+                    For and query, Call on Customer Care and Press 2.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*50 mm (Bafit Sanitaryware) sticker -->
+
+    <!-- 47.5*39 mm(Nortus India) sticker -->
+    <ng-container *ngIf="getData.template_id == 24">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width:793.92px; display: grid; justify-items: center; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; grid-row-gap: 13px; grid-column-gap: 3px; position: relative;">
+            <ng-container *ngFor="let row of qrCode">
+              <div
+                style="width: 39mm; height: 47.5mm; display: flex;flex-direction: column; justify-content: space-around; ">
+                <div class="a-four-logo"
+                  style="width: 39mm; height: 12mm; z-index: 1; text-align: center;  position: relative; display: flex ; align-items: center;  justify-content: center;">
+                  <img
+                    src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                    style="height: 11.6145833333mm;" *ngIf="assign_login_data?.id != '1'">
+                </div>
+                <div class="a-four"
+                  style="width: 39mm; margin: -15px auto 0px auto;  height: 35.5mm; position: relative; display: flex; flex-direction: column; justify-content: start;">
+                  <p
+                    style="font-weight: bold; font-size: 8.5px; line-height: 11px; z-index: 9; position: absolute; top: 15px; left: 5px;text-transform: uppercase;">
+                    Scan <br> QR <br> Code & <br> Earn <br> Reward</p>
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="a-four-qr-nortus"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <div style="margin-top: -10px;">
+                    <p
+                      style="text-align: center; width: 100%; display: block; margin: 6px 0px 0px 0px; font-weight: 800; font-size: 9.5px; line-height: 10px; text-transform: uppercase;">
+                      {{ row.coupon_code }}
+                    </p>
+                    <p
+                      style="display: flex; padding: 0px 10px; width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;  margin: 3px 0px 0px 0px; font-size: 12px; font-weight: bold; line-height:12px;  justify-content: center;color: #9d3200;">
+                      Only For Electricians </p>
+                    <!-- <p  style="display: flex; padding: 0px 10px; width: 100%; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; margin: 0px 0px 0px 0px; font-size: 9px; font-weight: bold; line-height:12px;  justify-content: center">BATCH: {{ getData.batch_no }}</p> -->
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 47.5*39 mm(Nortus India) sticker -->
+
+
+    <!-- 25*25 mm sticker For Richa Cables Only  -->
+    <ng-container *ngIf="getData.template_id == 25">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 94.488188976px; height: 94.488188976px; margin: 3px 0px 0px; position: relative;"
+              *ngFor="let row of qrCode">
+              <div class="qr_section_richa" style="padding-top: 15px;">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="richa_aclass"
+                  style="margin-right: 10px;" errorCorrectionLevel="L">
+                </ngx-qrcode>
+                <p
+                  style="font-size: 7px; font-weight: 800; display: block; margin-top: -5px;
+                                    line-height: 15px;text-align: center; text-transform: uppercase; margin-right: 8px;">
+                  {{ row.coupon_code }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 25*25 mm sticker For Richa Cables Only-->
+
+
+    <!-- 80*40 mm(Moda Hardware) sticker -->
+    <ng-container *ngIf="getData.template_id == 26">
+      <div id="print_card">
+        <div style="width: 80mm; height: 40mm;" *ngFor="let row of qrCode">
+          <div style="width: 100%; height: 4mm;">&nbsp;</div>
+          <div style="display: flex; align-items: flex-start; grid-column-gap: 10px;">
+            <div style="width: 100%;">
+              <p style="font-size: 11px; margin: 0px; line-height: 12px; text-decoration: underline;">Item
+                Name: {{ getData.product_name ? (getData.product_name | uppercase | slice:0:35) : '' }}
+              </p>
+              <h2 style="font-size: 17px; margin: 0px; line-height: 17px; text-decoration: underline;">
+                Item Code: {{ getData.product_code ? getData.product_code : '' }}</h2>
+              <h2 style="font-size: 11px; margin: 0px; line-height: 12px; text-decoration: underline;">Qty
+                : {{ getData.qty ? getData.qty : '' }} {{ getData.uom ? getData.uom : '' }}</h2>
+              <p style="font-size: 11px; margin: 0px; line-height: 12px; text-decoration: underline; font-weight: 500;">
+                MRP : {{ getData.mrp ? getData.mrp : '' }} (Incl. of all taxes)</p>
+              <p style="font-size: 10px; margin: 0px; line-height: 12px; text-decoration: underline; font-weight: 500;">
+                Month & Year of Import From PRC : {{getData.date_created ? (getData.date_created |
+                date:' MMM yyyy') : '---'}} </p>
+              <p style="font-size: 10px; margin: 0px; line-height: 12px; text-decoration: underline; font-weight: 500;">
+                Sales Off: Gala No.3, Tm Industrial Complex</p>
+              <p style="font-size: 11px; margin: 0px; line-height: 12px; text-decoration: underline; font-weight: 500;">
+                Building No. A-7 Mouje Pimplas Thane Bhiwandi Maharastra-421302</p>
+            </div>
+            <div style="width: 20mm; min-width: 20mm;">
+              <div class="moda-qr" style="margin-top: 10px;">
+                <h2
+                  style="font-size: 10px; margin: 0px; line-height: 10px; text-align: center; position: relative; bottom: -10px;">
+                  Scan for rewards</h2>
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="moda-qr-img"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <span class='qr_content'
+                style="text-align: center; font-size: 7.5px; font-weight: bold; position: relative; top: -8px;">{{
+                row.coupon_code }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 80*40 mm(Moda Hardware) sticker -->
+
+    <!-- 50*50 mm (Shiv Sagar Wood) sticker -->
+    <ng-container *ngIf="getData.template_id == 29">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 188.97637795px; position: relative;  display: grid;grid-template-columns: 1fr 1fr;">
+            <div style="width: 188.97637795px; display: flex; flex-direction: column;  align-items: flex-end;"
+              *ngFor="let row of qrCode">
+              <div class="qr_shiv_sagar">
+                <div class="qr_logo_shivsagar">
+                  <img src="assets/img/shiv_logo.png" class="lightmode" *ngIf="assign_login_data?.id != '1'">
+                </div>
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_qr_shivsagar"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+
+              <span
+                style="height: 20px; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; margin-top: -1px; margin-right: 12px; text-transform: uppercase;">{{
+                row.coupon_code }}</span>
+              <div style="width: 100%; margin: 0px;">
+                <p
+                  style="font-size: 11px; margin:2px 3px;  line-height: 12px; font-weight: 600; text-align: left; display:block; text-transform: uppercase;">
+                  Cate.- {{ row.category }}</p>
+                <p
+                  style="font-size: 11px; margin:2px 3px; line-height: 16px; font-weight: 600; text-align: left; display:block; text-transform: uppercase;">
+                  Size- {{ transform(getData.product_name) }} </p>
+                <p
+                  style="font-size: 11px; margin:2px 3px; line-height: 16px; font-weight: 600; text-align: left; display:block; text-transform: uppercase;">
+                  Batch- {{ getData.batch_no ? getData.batch_no : '---' }} </p>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*50 mm (Bafit Sanitaryware) sticker -->
+
+
+    <!-- (40*25 mm - Single) (Rmson) sticker -->
+    <ng-container *ngIf="getData.template_id == 30">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 302.36220472px; display: grid; grid-template-columns: 1fr 1fr; position: relative;padding: 0px;column-gap: 10px;">
+            <div style="width: 151.18110236px; height: 94.488188976px;" *ngFor="let row of qrCode">
+              <div class="qr_ramson">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" errorCorrectionLevel="L">
+                </ngx-qrcode>
+                <p style="font-size: 9px;line-height:10px;font-weight: bold;margin: 0px;position: relative;top: -4px;">
+                  {{ row.coupon_code }}
+                </p>
+              </div>
+              <p style="font-size: 9px;line-height:10px;font-weight: bold;margin: 0px;margin-top: -3px;">
+                {{getData.product_name ? (getData.product_name | uppercase) : '--'}}
+              </p>
+              <p style="font-size: 9px;line-height:10px;font-weight: bold;margin: 0px;">
+                {{getData.product_code ? (getData.product_code | uppercase) : '--'}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- (40*25 mm- Single)  (Ramson) sticker -->
+
+
+
+    <!-- 50*50 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 31">
+
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 188.97637795px; position: relative;  display: grid;grid-template-columns: 1fr 1fr;padding-left: 30px; column-gap: 55px;">
+            <div style="width: 188.97637795px;  height: 188.97637795px; margin-top: 28px;" *ngFor="let row of qrCode">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_qr_durian"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <p
+                style="height: 20px; font-size: 11px; letter-spacing: 0.5px; font-weight: 600; margin-top: -3px; margin-right: 8px; text-transform: uppercase;">
+                {{ row.coupon_code }}
+              </p>
+              <!-- <p
+                style="font-size: 10px; margin:0px;margin-top:-15px; line-height: 10px; text-align: left;text-transform: uppercase;">
+                Name: <strong> {{ transform(getData.product_name) }}</strong></p> -->
+              <p
+                style="font-size: 10px; margin:0px;margin-top:-15px; line-height: 10px; text-align: left;text-transform: uppercase;">
+                Category: <strong> {{row.category }}</strong></p>
+              <p
+                style="font-size: 10px; margin:0px;margin-top:2px; line-height: 10px; text-align: left;text-transform: uppercase;">
+                SubCategory: <strong> {{row.sub_category_name }}</strong></p>
+              <!-- <p
+                style="font-size: 10px; margin:0px;margin-top:-15px; line-height: 16px; text-align: left;text-transform: uppercase;">
+                Category: <strong> {{ transform(row.category) }}</strong></p> -->
+              <!-- <p
+                style="font-size: 10px; margin:0px;margin-top: 3px; line-height: 12px; text-align: left;text-transform: uppercase;">
+                Sub Category: <strong> {{ row.sub_category_name }}</strong></p> -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*50 mm sticker -->
+
+    <!-- 50*30 mm (Moda Hardware) sticker -->
+    <ng-container *ngIf="getData.template_id == 32">
+      <!-- hidden -->
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 188.97637795px; height: 113.38582677px; position: relative;" *ngFor="let row of qrCode">
+
+            <div style="display: flex;">
+              <div style="width: 68.031496063px; height: 113.38582677px;">
+              </div>
+              <div style="width: 120.94488189px; height: 22.677165354px;text-align: center; ">
+
+                <div class="qr_moda_hardware">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" errorCorrectionLevel="L">
+                  </ngx-qrcode>
+                </div>
+
+                <p
+                  style="font-size: 10px; letter-spacing: 0.2px; font-weight: 600; line-height: 12px; margin:0px; text-transform: uppercase;">
+                  {{ row.coupon_code }}</p>
+                <p
+                  style="font-size: 10px; letter-spacing: 0.2px; font-weight: 600; line-height: 12px; margin:0px; text-transform: uppercase;">
+                  {{ row.product_code ? row.product_code : '---' }} </p>
+                <p
+                  style="font-size: 8px; letter-spacing: 0.2px; font-weight: 400; line-height: 12px; margin:0px; text-transform: uppercase;">
+                  Print : {{ row.date_created ? (row.date_created | date:'MMM yyyy'): '---' }} </p>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*30 mm (Moda Hardware) sticker -->
+
+
+    <!-- 50*100 mm (Gattani Plywood) sticker -->
+    <ng-container *ngIf="getData.template_id == 33 || getData.template_id == 45">
+
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 377.95275591px; height: 188.97637795px; margin: 10px 10px 20px 10px;display:flex;"
+            *ngFor="let row of qrCode">
+            <div style="width: 188.97637795px; height: 188.97637795px; margin-top: 23px;">
+              <div class="qr_logo_gattani">
+                <img src="assets/img/gattani.png">
+              </div>
+              <p
+                style="font-size: 11px; letter-spacing: 0.2px; font-weight: 600; line-height: 15px; margin-top:10px;margin-left:15px; text-transform: uppercase;">
+                Thickness: {{row.product_thickness}}</p>
+              <p
+                style="font-size: 11px; letter-spacing: 0.2px; font-weight: 600; line-height: 15px; margin-top:5px;margin-left:15px; text-transform: uppercase;">
+                Size: {{row.product_size ? row.product_size: ''}}</p>
+              <p
+                style="font-size: 11px; letter-spacing: 0.2px; font-weight: 600; line-height: 15px; margin-top:5px;margin-left:15px; text-transform: uppercase;">
+                Brand: {{row.brand}} </p>
+            </div>
+            <div style="width: 188.97637795px; height: 188.97637795px;  margin-top: 10px;" class="qr_section_gattani">
+              <div style="display: flex;" class="qr_gattani50X100">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" errorCorrectionLevel="L">
+                </ngx-qrcode>
+                <div>
+                  <img style="width: 45px;height: 45px;margin-left: 5px;" src="assets/img/gattaniUrl.png">
+                  <p style="font-size: 7px; line-height: 8px; text-align: center;">Scan to Download <br> Mobile App</p>
+                </div>
+              </div>
+              <p
+                style="height: 20px; font-size: 11px; letter-spacing: 0.5px; font-weight: 600; margin-top: 0px; margin-left: 8px; text-transform: uppercase;">
+                {{ row.coupon_code }}
+              </p>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*100 mm (Gattani Plywood) sticker -->
+
+    <!-- 50*25 mm sticker -->
+    <ng-container *ngIf="getData.template_id == 36">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width:377.95275591px; display: grid; grid-template-columns: 1fr 1fr;grid-column-gap: 5px;position: relative;padding-top: 5px;">
+            <div
+              style="width: 188.9763779527559px; height: 94.488188976px; position: relative;padding:0px 9px; display:flex;flex-direction: row;"
+              *ngFor="let row of qrCode">
+              <div style="height: 90.488188976; width: 87.97637795px;">
+
+                <div style="width: 100%; margin-top: 35px;">
+                  <p
+                    style="font-size: 10px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                    Code: <strong> {{ getData.product_code }}</strong></p>
+                  <p
+                    style="font-size: 10px; margin:2px 0px; line-height: 12px; text-align: left; display:block; text-transform: uppercase;">
+                    Batch No.: <strong> {{ getData.batch_no }}</strong></p>
+                  <p
+                    style="font-size: 9px; margin:2px 0px;  line-height: 10px; text-align: left; display:block; text-transform: uppercase;">
+                    <strong> {{ row.coupon_code }}</strong>
+                  </p>
+                </div>
+              </div>
+              <div style="width: 80px; min-width: 80px;padding-left: 12px;">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="sm_sm_qr2"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm sticker -->
+
+
+    <!-- 50*50 mm (Gattani Plywood) sticker -->
+    <ng-container *ngIf="getData.template_id == 34">
+
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 188.97637795px; position: relative;  display: grid;grid-template-columns: 1fr 1fr; column-gap: 10px;">
+            <div style="width: 377.95275591Z; height: 188.97637795px; justify-content: center; align-items: center;"
+              *ngFor="let row of qrCode">
+              <div style="width: 130.488189px;; height: 80.488189px;display: flex;margin-top: 10px;">
+                <img src="assets/img/gattani.png" style="width: 95PX; height: 60PX;">
+                <div style="display: flex;flex-direction: column;">
+                  <img style="width: 45px;height: 45px;margin-left: 13px;" src="assets/img/gattaniUrl.png">
+                  <p style="font-size: 5px; line-height: 8px; text-align: center;margin-left: 15px;">Scan to Download
+                    <br> Mobile App
+                  </p>
+                </div>
+              </div>
+              <div style="width: 162.488189px; height: 80.488188976px;display: flex;margin-top: -7px;"
+                class="qr_section_gattani_50_50">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" errorCorrectionLevel="L">
+                </ngx-qrcode>
+                <div style="display:flex;flex-direction: column;">
+                  <p
+                    style="font-size: 7px; letter-spacing: 0.2px; font-weight: 600; line-height: 0px; text-transform: uppercase;">
+                    Brand:</p>
+                  <p
+                    style="font-size: 12px; letter-spacing: 0.2px; font-weight: 600; line-height: 0px; text-transform: uppercase;">
+                    {{row.brand}} </p>
+                </div>
+              </div>
+              <p
+                style="height: 20px; font-size: 13px; letter-spacing: 0.5px; font-weight: 600; margin-top: 0px; margin-left: 8px; text-transform: uppercase;">
+                {{ row.coupon_code }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div id="print_card">
+        <div id='qr_code_container'>
+         <div style="width: 377.95275591Z; height: 188.97637795px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap;" *ngFor="let row of qrCode">
+          <div style="width: 94.488188976px; height: 188.97637795px; display: flex; flex-direction: column; align-items: center; margin-top: 11px; justify-content: center; text-align: center;">
+              <img src="assets/img/gattani.png" style="width: 100PX; height: 60PX;"> 
+            <p style="font-size: 7px; letter-spacing: 0.2px; font-weight: 600; line-height: 20px; text-transform: uppercase;">Thickness: {{row.product_thickness}}</p>
+            <p style="font-size: 7px; letter-spacing: 0.2px; font-weight: 600; line-height: 20px; text-transform: uppercase;">Brand: {{row.brand}} </p>
+          </div>
+          <div style="width: 94.488188976px; height: 188.97637795px;display: flex; flex-direction: column; align-items: center; margin-top: 11px; justify-content: center; text-align: center;" class="qr_section_gattani_50_50">
+              <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}"
+                errorCorrectionLevel="L"> </ngx-qrcode>
+              <p style="height: 20px; font-size: 8px; letter-spacing: 0.5px; font-weight: 600; margin-top: 0px; margin-left: 8px; text-transform: uppercase;">
+                {{ row.coupon_code }}
+              </p>
+              </div>
+            </div>
+          </div>
+      </div> -->
+    </ng-container>
+    <!-- 50*100 mm (Gattani Plywood) sticker -->
+
+
+    <!-- 50*50 mm (Gaumaya) sticker -->
+    <ng-container *ngIf="getData.template_id == 35">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width:188.97637795; display: grid; grid-template-columns: 1fr 1fr; position: relative;">
+            <div style="width: 188.97637795px; height: 188.97637795px; position: relative; padding: 0px 9px;"
+              *ngFor="let row of qrCode">
+              <div class="qr_img_gaumaya50X50" style="position: relative;">
+                <div class="qr_section">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                    errorCorrectionLevel="L"> </ngx-qrcode>
+                  <div>
+                    <img style="width: 90px;height: 90px;"
+                      src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                      *ngIf="assign_login_data?.id != '1'">
+                  </div>
+                </div>
+                <div class="qr_content" style="padding-top: 25px;">
+                  <p
+                    style="width: 100%; text-align: center; margin:0px 0px 2px  0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                    <strong>{{getData.product_code ? (getData.product_code + ' - ') :
+                      ''}}</strong>{{ getData.product_name }}
+                  </p>
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 800; font-size: 8.5px; line-height:10px;">
+                    COUPON CODE : {{ row.coupon_code }}</p>
+                  <p
+                    style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 400; font-size: 8px; line-height:10px;">
+                    To download app Call us at 011-6926 9828</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*50 mm (Gaumaya) sticker -->
+
+
+    <!-- 50*25 mm (Gaumaya) (Single) sticker -->
+    <ng-container *ngIf="getData.template_id == 37">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 188.9763779527559px; height: 94.488188976px;" *ngFor="let row of qrCode">
+            <div class="qr_img_gaumaya_new" style="padding-top: 10px;">
+              <div class="qr_section" style="display: flex;flex-direction: row;">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+                <div class="qr_logo">
+                  <img
+                    src="{{ assign_login_data?.organisation_data?.logo ? (url+assign_login_data?.organisation_data?.logo) : 'assets/img/logo.png' }}"
+                    *ngIf="assign_login_data?.id != '1'">
+                </div>
+              </div>
+              <div class="qr_content">
+                <p
+                  style="width: 100%; text-align: center; margin:0px 0px 2px  0px; display: block; font-weight: 500; font-size: 8.5px; line-height:10px;">
+                  <strong>{{getData.product_code ? (getData.product_code + ' - ') :
+                    ''}}</strong>{{ getData.product_name }}
+                </p>
+                <p
+                  style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 800; font-size: 8.5px; line-height:10px;">
+                  COUPON CODE : {{ row.coupon_code }}</p>
+                <p
+                  style="width: 100%; text-align: center; margin: 0px; display: block; font-weight: 400; font-size: 8.5px; line-height:10px;">
+                  To Redeem Call us on 011-69269828</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 mm (Gaumaya) (Single)  sticker -->
+
+
+    <!-- 35*20 (Rungata) sticker -->
+    <ng-container *ngIf="getData.template_id == 38">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 132.28346457px; height: 75.590551181px;" *ngFor="let row of qrCode">
+            <div class="qr_img_rungta_bond" style="background: white;padding-top: 5px; border: 1px solid black;">
+              <p style="width: 100%; margin: 0px; display: block; font-weight: 400; font-size: 7px; line-height:10px;">
+                डाउनलोड करे "Rungta Anandam" एप प्ले स्टोर या एप स्टोर से और दिए हुए QR कोड को</p>
+              <div class="qr_section">
+                <p
+                  style="width: 100%; margin: 0px 0px 0px 2px; display: block; font-weight: 400; font-size: 7px; line-height:10px;">
+                  स्कैन करे और पाए आकर्षक उपहार। हेल्पलाइन नंबर 9696512345</p>
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+
+              </div>
+              <p style="width: 100%; margin: 0px; display: block;text-align: end; font-weight: 500; font-size: 9px; line-height:10px;margin-top: -5px;
+    padding-right: 2px;">
+                {{ row.coupon_code }}</p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 35*20 (Rungata) mm sticker -->
+
+
+    <!-- 50*25 (Rungata) sticker -->
+    <ng-container *ngIf="getData.template_id == 39">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 188.97637795px; height: 94.488188976px;" *ngFor="let row of qrCode">
+            <div class="qr_img_rungta_bond" style="background: white;padding-top: 5px; border: 1px solid black;">
+              <p style="width: 100%; margin: 0px; display: block; font-weight: 400; font-size: 7px; line-height:10px;">
+                डाउनलोड करे "Rungta Anandam" एप प्ले स्टोर या एप स्टोर से और दिए हुए QR कोड को</p>
+              <div class="qr_section">
+                <p
+                  style="width: 100%; margin: -7px 0px 0px 2px; display: block; font-weight: 400; font-size: 7px; line-height:10px;">
+                  स्कैन करे और पाए आकर्षक उपहार। हेल्पलाइन नंबर 9696512345 <br>
+                  <b style="font-size: 10px;">Product:- {{row.product_name}}</b>
+                </p>
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+
+              </div>
+              <p
+                style="width: 100%; margin: 0px; display: block;text-align: end; font-weight: 500; font-size: 9px; line-height:10px;margin-top: -5px;padding-right: 2px;">
+                {{ row.coupon_code }}</p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 50*25 (Rungata) mm sticker -->
+
+
+    <!-- 25*25 mm sticker -->
+    <ng-container *ngIf="getData.template_id =='40'">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 94.488188976px; height: 94.488188976px; margin: 3px 0px 0px; position: relative;"
+              *ngFor="let row of qrCode">
+              <div class="qr_section">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <span class='qr_content' style="text-align: center; text-transform: uppercase;">{{ row.coupon_code
+                }}</span>
+              <span class='qr_content' style="text-align: center; text-transform: uppercase;">{{ getData.product_code
+                }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 25*25 mm sticker -->
+
+
+    <!-- 32*32 mm sticker For Aar kay Vox Only  layout 1 -->
+    <ng-container *ngIf="getData.template_id == 42">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 120.94488188976379px; height: 120.94488188976379px; position: relative;margin-top: 5px;"
+              *ngFor="let row of qrCode">
+              <img src="assets/img/aarkayvoxkarigarilogo.png" class="lightmode" width="118px">
+
+              <div class="qr_section_arkayvox" style="padding-top:0px;">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="richa_aclass"
+                  style="margin-right: 10px;" errorCorrectionLevel="L">
+                </ngx-qrcode>
+                <div>
+                  <p
+                    style="text-align: center;width: 100%; display: block; margin: 2px 0px 0px 0px; font-weight: 800; font-size: 7.5px; line-height: 6px; text-transform: uppercase;">
+                    {{ row.coupon_code }}
+                  </p>
+                </div>
+                <p style="font-size: 12px; font-weight: 600; display: block; margin-top: 5px;
+                                    line-height: 12px;text-align: center; text-transform: uppercase;">
+                  {{ row.product_name }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 32*32 mm sticker For Aar kay Vox Only layout 1 -->
+
+    
+    <!-- 32*32 mm sticker For Aar kay Vox Only  layout 2 -->
+    <ng-container *ngIf="getData.template_id == 41">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 396.8503937px; position: relative; display: grid;grid-template-columns: 1fr 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 120.94488188976379px; height: 120.94488188976379px;position: relative;margin-top: 3px;margin-left: -3px;"
+              *ngFor="let row of qrCode">
+              <img src="assets/img/aarkayvoxkarigarilogo.png" class="lightmode" width="118px">
+              <div style="margin-left: 5px;">
+                <p style="font-size:7px; font-weight: 600; margin: 0; line-height: 10px;
+              text-align: left; text-transform: uppercase;
+              white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ row.product_name }}
+                </p>
+                <p style="font-size:7px; font-weight: 600; margin: 0; line-height: 10px;
+              text-align: left; text-transform: uppercase;
+              white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ row.sub_category_name || '' }}
+                </p>
+
+              </div>
+
+              <div class="qr_section_arkayvox2" style="display: flex;">
+                <div style="margin-left: 5px;">
+                  <p style="font-size:7px; font-weight: 600; margin: 0; 
+              text-align: left; text-transform: uppercase;">
+                    {{ row.color || '' }}
+                  </p>
+                  <p style="font-size:7px; font-weight: 600; margin: 0; line-height: 10px;
+              text-align: left; text-transform: uppercase;">
+                    {{ row.small_packing_size || '' }}
+                  </p>
+                </div>
+                <div>
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="richa_aclass"
+                    style="margin-right: -10px;" errorCorrectionLevel="L">
+                  </ngx-qrcode>
+                  <p
+                    style="text-align: center;width: 100%; display: block; font-weight: 800;margin-top: -3px;margin-right: 14px;margin-left: -10px; font-size: 7.5px; line-height: 6px; text-transform: uppercase;">
+                    {{ row.coupon_code }}
+                  </p>
+                </div>
+
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 32*32 mm sticker For Aar kay Vox Only layout 2 -->
+
+
+
+    <!--  60*35 (CNC)) sticker -->
+    <ng-container *ngIf="getData.template_id == 43">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 226.77165354px; height: 132.28346457px;" *ngFor="let row of qrCode">
+            <div class="qr_img_cnc" style="display: flex;">
+              <div class="qr_section" style="padding-top: 40px; padding-left: 10px;">
+                <p style="font-size: 7px;">{{row.coupon_code}}</p>
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="eskay"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <div style="padding-top: 35px;padding-left: 70px;">
+                <p>{{row.product_mrp}}</p>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 60*35 (CNC) mm sticker -->
+
+
+
+    <!-- 38*22.5 mm Bewro Company  sticker layout 2 -->
+    <ng-container *ngIf="getData.template_id == 44">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 287.24409449px; position: relative; display: grid;grid-template-columns: 1fr 1fr;">
+            <div class="qr_img_section"
+              style="width: 143.62204724px; height: 85.039370079px; margin: 3px 0px 0px; position: relative;"
+              *ngFor="let row of qrCode">
+              <div class="qr_section">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                  errorCorrectionLevel="L"> </ngx-qrcode>
+              </div>
+              <span class='qr_content' style="text-align: center; text-transform: uppercase;">{{
+                row.coupon_code}}</span>
+              <span class='qr_content' style="text-align: center; text-transform: uppercase;">{{ getData.product_code
+                }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- 38*22.5 mm Bewro Company   sticker -->
+
+
+<!-- indoplast layout 2  start-->
+
+    <ng-container *ngIf="getData.template_id == 49">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div style="width: 283.46456693px; height: 283.46456693px;position: relative;">
+            <div  style="width: 283.46456693px; height: 283.46456693px;"
+              *ngFor="let row of qrCode">
+
+              <div class="indo-plst-prnt" style="display: flex;justify-content: space-around;align-items: center;">
+                <div class="indp-lgo">
+                  <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" errorCorrectionLevel="L">
+                  </ngx-qrcode>
+                  <p
+                    style="text-align: center; text-transform: uppercase;font-size: 12px;line-height: 20px;font-weight: bold;margin-top: -10px;">
+                    {{row.coupon_code}}</p>
+                </div>
+                <div class="indp-cnt">
+                  <h6
+                    style="text-transform: uppercase;font-size: 23px;line-height: 25px;font-weight: bold;text-align: center;padding-right: 10px;margin: 0px;">
+                    SCAN & GET <br>{{getData.point_category_name}}</h6>
+                </div>
+              </div>
+
+              <p
+                style="text-transform: uppercase;font-size: 14px;line-height: 20px;margin: 0px;font-weight: bold;text-align: center;">
+                Product Name : {{row.category}}</p>
+              <p
+                style="text-transform: uppercase;font-size: 14px;line-height: 20px;margin: 0px;font-weight: bold;text-align: center;">
+                NOMINAL SIZE & CLASS : {{row.product_name}}</p>
+              <p
+                style="text-transform: uppercase;font-size: 14px;line-height: 20px;margin: 0px;font-weight: bold;text-align: center;">
+                Batch No. : {{getData.batch_no}}</p>
+              <p
+                style="font-size: 14px;line-height: 20px;margin: 0px;font-weight: bold;text-align: center;padding-bottom: 12px;">
+                TOTAL QUANTITY : {{getData.qty}} {{getData.uom}}</p>
+
+              <p style="font-size: 14px;line-height: 20px;margin: 0px;font-weight: bold;text-align: center;">
+                Download app- SABKA SAATH BY IPPL</p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+<!-- indoplast layout 2 end -->
+
+ <!-- 75*150 mm spinematresses   sticker start -->
+
+    <ng-container *ngIf="getData.template_id == 46">
+      <div id="print_card"
+        style="width: 283.46456693px; height: 566.92913386px; display: flex; justify-content: center; align-items: center; padding: 0; margin: 0;">
+
+        <div id="qr_code_container"
+          style="width: 245.66929134px; height: 415.7480315px; text-align: center; box-sizing: border-box;">
+
+          <div class="qr_img_section" *ngFor="let row of qrCode"
+            style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: start;">
+
+            <div class="qr_spin" style="margin-top: 50px;">
+              <ngx-qrcode [elementType]="elementType" [value]="row.coupon_code" errorCorrectionLevel="L"></ngx-qrcode>
+            </div>
+
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              {{ row.coupon_code }}
+            </span>
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              Product Name: {{ getData.product_name }}
+            </span>
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              Product Code: {{ getData.product_code }}
+            </span>
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              Variety: {{ row.category }}
+            </span>
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              Dimension: {{ row.product_size }} mm x {{ row.product_thickness }} <i
+                style="text-transform: lowercase;">inch</i></span>
+
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              M.R.P. : {{ getData.mrp }}
+            </span>
+            <span class="qr_content" style="font-size: 10px; text-transform: uppercase; line-height: 25px;">
+              Date of issue: {{ getData.date_created | date:'dd MMM yyyy' }}
+            </span>
+            <address style="padding: 5px 16px; text-transform: capitalize;">
+              Godown No. G/2. GROUND FLOOR Floor H NO 313/2/15 G/2 . Location: RAJIV GANDHI NAGAR KAMATGHAR BHIWANDI
+              421302 of Village: Kamatghar Tehsil Bhiwandi
+              Dist Thane, Maharashtra
+            </address>
+
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- 75*150 mm spinematresses   sticker  end -->
+
+
+    <!-- 50*50 mm (Jolly  sathi) sticker -->
+    <ng-container *ngIf="getData.template_id == 48">
+
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 377.95275591px; height: 188.97637795px; position: relative;  display: grid;grid-template-columns: 1fr 1fr; column-gap: 10px;">
+            <div style="width: 188.97637795px; height: 188.97637795px; " *ngFor="let row of qrCode">
+
+              <div style="display: flex;justify-content: center;padding-top: 40px;">
+                <div class="logo_img">
+                  <img src="assets/img/jolllysaathi.png" style="width: 90PX; height: 60PX;">
+                  <p
+                    style="font-size: 7px; letter-spacing: 0.2px; font-weight: 600; line-height: 10px; width: 100px; text-transform: uppercase;margin: 0px;">
+                    Product Name: {{row.product_name}}</p>
+                  <p
+                    style="font-size: 7px; letter-spacing: 0.2px; font-weight: 600; line-height: 10px; text-transform: uppercase;margin: 0px;">
+                    Product Code: {{row.product_code}} </p>
+                </div>
+
+                <div>
+                  <p
+                    style="font-size: 6px; letter-spacing: 0.2px; font-weight: 600; line-height: 6px;position: relative;top: 6px;left: 8px; text-transform: uppercase;">
+                    Scan करे , Earn करे</p>
+                  <ngx-qrcode class="jly_qr" [elementType]="elementType" value="{{ row.coupon_code }}"
+                    errorCorrectionLevel="L">
+                  </ngx-qrcode>
+                  <p
+                    style="height: 20px; font-size: 7px; letter-spacing: 0.5px; font-weight: 600;text-transform: uppercase;margin: 0px;margin-left: -11px;">
+                    {{ row.coupon_code }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </ng-container>
+    <!-- 50*50 mm (Jolly  sathi) sticker -->
+
+
+
+
+    <!-- (40*25 mm - Single) (Duragrace) layout sticker 2 -->
+    <ng-container *ngIf="getData.template_id == 50">
+      <div id="print_card">
+        <div id='qr_code_container'>
+          <div
+            style="width: 287.24409449px; display: grid; grid-template-columns: 1fr 1fr; position: relative;padding: 0px;column-gap: 10px;">
+            <div style="width: 143.62204724px; height: 94.488188976px;padding-left: 5px;" *ngFor="let row of qrCode">
+              <div class="qr_duragrace">
+                <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" errorCorrectionLevel="L">
+                </ngx-qrcode>
+                <p style="font-size: 9px;line-height:10px;font-weight: bold;margin: 0px;position: relative;top: -4px;">
+                  {{ row.coupon_code }}
+                </p>
+              </div>
+              <!-- <p style="font-size: 9px;line-height:10px;font-weight: bold;margin: 0px;margin-top: -3px;">
+                {{getData.product_name ? (getData.product_name | uppercase) : '--'}}
+              </p> -->
+              <p style="font-size: 9px;line-height:10px;font-weight: bold;margin: 0px;">
+                {{getData.product_code ? (getData.product_code | uppercase) : '--'}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- (40*25 mm- Single)  (Duragrace) loyout sticker 2 -->
+
+
+
+    <!-- <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="card" *ngIf="!skLoading">
+                    <div class="card-head">
+                        <h2>Basic Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="block-feilds">
+                                <span>Date Created</span>
+                                <p>{{ getData.date_created | date:'d MMM y' }}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Created By</span>
+                                <p>{{ getData.created_by_name }}</p>
+                            </div>
+                            <ng-container *ngIf="assign_login_data2?.organisation_data?.qr_genration==0">
+                                <div class="block-feilds">
+                                    <span>Name</span>
+                                    <p>{{ getData.product_name||'--' }}</p>
+                                </div>
+
+                                <div class="block-feilds">
+                                    <span>Code</span>
+                                    <p>{{ getData.product_code||'--' }}</p>
+                                </div>
+                            </ng-container>
+
+                            <div class="block-feilds">
+                                <span>Paper Size</span>
+                                <p>{{ getData.paper_size ? (getData.paper_size) : '---' }}</p>
+                            </div>
+                            <div class="block-feilds">
+                                <span>Coupon Count</span>
+                                <p>{{ getData.total_coupon }}</p>
+                            </div>
+                            <div class="block-feilds" *ngIf="assign_login_data2?.organisation_data?.qr_genration==1">
+                                <span>Point Category Name</span>
+                                <p>{{ getData.point_category_name ? getData.point_category_name : '---' }}</p>
+                            </div>
+
+                            <div class="block-feilds">
+                                <span>Batch No.</span>
+                                <p>{{ getData.batch_no ? getData.batch_no : '---' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid-box two mt16" *ngIf="getData.remarks">
+                            <div class="block-feilds">
+                                <span>Remark</span>
+                                <p>{{ getData.remarks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="card" *ngIf="skLoading">
+                    <div class="sk-head">
+                        <h2>&nbsp;</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-box">
+                            <div class="sk-box" *ngFor="let row of [].constructor(10)">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row mb100" *ngIf="!skLoading">
+            <div class="col s12 m12 l12 grid-five-box">
+                <div class="qr-card" *ngFor="let row of qrCode; let i = index;">
+                    <div class="qr-box">
+                        <div class="cs-barcode" *ngIf="getData.coupon_type == 'Master Box' ">
+                            <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                                errorCorrectionLevel="L">
+                            </ngx-qrcode>
+                            <span class="fix">Box {{ i+1 }}</span>
+                            <span class="qr-code-number">{{ row.coupon_code }}</span>
+                        </div>
+
+                        <div class="cs-barcode" *ngIf="getData.coupon_type == 'Item Box' ">
+                            <ngx-qrcode [elementType]="elementType" value="{{ row.coupon_code }}" cssClass="aclass"
+                                errorCorrectionLevel="L">
+                            </ngx-qrcode>
+                            <span class="qr-code-number">{{ row.coupon_code }}</span>
+                        </div>
+
+                    </div>
+                    <div class="qr-box" *ngFor="let subRow of row.itembox">
+                        <div class="cs-barcode">
+                            <ngx-qrcode [elementType]="elementType" value="{{ subRow.coupon_code }}" cssClass="aclass"
+                                errorCorrectionLevel="L">
+                            </ngx-qrcode>
+                            <span class="qr-code-number">{{ subRow.coupon_code }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+    <div class="fab-btns" *ngIf="qrCode.length > 0">
+      <div class="fab-btns">
+        <button class="pulse excel" mat-fab color="primary" (click)="printData();">
+          <i class="material-icons">print</i>
+          Print Coupon
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

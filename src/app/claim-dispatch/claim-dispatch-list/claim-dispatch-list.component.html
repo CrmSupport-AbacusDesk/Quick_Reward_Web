@@ -1,0 +1,193 @@
+<div class="main-container">
+  <app-loader *ngIf="excelLoader"></app-loader>
+  <div class="tools-container">
+    <h2>Claim Dispatch List</h2>
+
+
+    <div class="left-auto df ac flex-gap-10">
+      <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
+        <i class="material-icons">refresh</i>
+      </a>
+
+      <div class="pagination" *ngIf="customerList.length > 0">
+        <div class="pagination-content">
+          Pages
+          <span>{{pagenumber}}</span>
+          of
+          <span>{{total_page}}</span>
+        </div>
+        <div class="page-nav">
+          <button mat-icon-button matTooltip="Older" (click)="pervious()" [disabled]="start == 0">
+            <i class="material-icons">navigate_before</i>
+          </button>
+          <button mat-icon-button matTooltip="Newer" (click)="nextPage()" [disabled]="pagenumber == total_page ">
+            <i class="material-icons">navigate_next</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container container-scroll">
+    <div class="cs-table horizontal-scroll">
+      <div class="sticky-head">
+        <div class="table-head">
+          <table>
+            <tr>
+              <th class="w60">Sr.No</th>
+              <th class="w160">Date Created</th>
+              <th class="w100">Created By</th>
+              <th class="w100">Complaint No.</th>
+              <th class="w150">Customer Detail</th>
+              <th class="w70">Company Name</th>
+              <th class="w150">Dealer Detail</th>
+              <th class="w150">Product Detail</th>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table-head bdrt">
+          <table>
+            <tr>
+              <th class="w60"></th>
+              <th class="w160">
+                <div class="th-search-acmt">
+                  <mat-form-field class="cs-input date-column infix-bodr">
+                    <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
+                      #date_created="ngModel" [(ngModel)]="filter_data.date_created" (ngModelChange)="date_format()"
+                      [max]="today_date" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="created_name"
+                      (keyup.enter)="getCumtomerList('')" #created_name="ngModel"
+                      [(ngModel)]="filter_data.created_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w100">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="complain_no"
+                      (keyup.enter)="getCumtomerList('')" #complain_no="ngModel" [(ngModel)]="filter_data.complain_no">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150 ">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="customer_detail"
+                      (keyup.enter)="getCumtomerList('')" #customer_detail="ngModel"
+                      [(ngModel)]="filter_data.customer_detail">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w70">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="replaced_by_company_name"
+                      (keyup.enter)="getCumtomerList('')" #replaced_by_company_name="ngModel"
+                      [(ngModel)]="filter_data.replaced_by_company_name">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150 ">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="dealer_detail"
+                      (keyup.enter)="getCumtomerList('')" #dealer_detail="ngModel"
+                      [(ngModel)]="filter_data.dealer_detail">
+                  </mat-form-field>
+                </div>
+              </th>
+              <th class="w150 ">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="product_detail"
+                      (keyup.enter)="getCumtomerList('')" #product_detail="ngModel"
+                      [(ngModel)]="filter_data.product_detail">
+                  </mat-form-field>
+                </div>
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-content">
+          <table>
+            <ng-container *ngIf="!loader">
+              <tr *ngFor="let row of customerList; let i = index "
+                [ngClass]="{'Current': service.currentUserID == row.id}">
+                <td class="w60 text-center">{{i + 1 + sr_no}}</td>
+                <td class="w160">{{row.date_created | date : 'dd MMM yyy ,h:mm a'}}</td>
+                <td class="w100">{{row.created_name | titlecase}}</td>
+                <td class="w100"> {{row.complain_no | titlecase}}</td>
+                <td class="w150 ">{{ row.customer_name ? (row.customer_name | titlecase) : '--'}}-{{ row.customer_mobile
+                  ? row.customer_mobile :'--' }}</td>
+                <td class="w70">{{row.replaced_by_company_name?(row.replaced_by_company_name | titlecase):'--'}}</td>
+                <td class="w150 ">{{ row.replaced_by_name ? (row.replaced_by_name | titlecase) : '--'}}-{{
+                  row.replaced_by_mobile ? row.replaced_by_mobile :'--' }}</td>
+                <td class="w150 ">{{ row.product_name | titlecase }}-{{ row.product_code | titlecase }}</td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="loader">
+              <tr class="sk-loading" *ngFor="let row of [].constructor(10)">
+                <td class="w60">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w160">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w70">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150 ">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w150 ">
+                  <div>&nbsp;</div>
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="datanotofound==true && customerList.length == 0;">
+      <app-not-result-found></app-not-result-found>
+    </ng-container>
+  </div>
+  <div>
+  </div>
+
+  <div class="fab-btns" *ngIf="customerList.length > 0">
+    <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
+      [matMenuTriggerFor]="menu">
+      <i class="material-icons">apps</i>
+      Action
+    </button>
+  </div>
+  <!-- <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="downloadExcel();">
+      <mat-icon>download</mat-icon>
+      <span>Download excel</span>
+    </button>
+  </mat-menu> -->
+</div>

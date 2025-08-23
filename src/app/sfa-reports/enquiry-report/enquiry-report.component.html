@@ -1,0 +1,116 @@
+<div class="main-container">
+    
+    <div class="tools-container">
+        <h2>Enquiry Report</h2>
+        <div class="left-auto df ac flex-gap-10">
+            <div class="date_filter">
+                <div *ngIf="filter?.date_from">
+                    <span>Date From</span>
+                    <h3>{{filter?.date_from | date:'dd MMM yyyy'}}</h3>
+                </div>
+                <div *ngIf="filter?.date_to">
+                    <span>Date To</span>
+                    <h3>{{filter?.date_to | date:'dd MMM yyyy'}}</h3>
+                </div>
+                <div *ngIf="filter?.sortBy">
+                    <span>Sort By</span>
+                    <h3>{{filter?.sortBy}}</h3>
+                </div>
+                <div *ngIf="filter?.state">
+                    <span>State</span>
+                    <h3>{{filter?.state}}</h3>
+                </div>
+            </div>
+            <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                <i class="material-icons">refresh</i>
+            </button>
+            <button mat-icon-button matTooltip="Filter" (click)="openBottomSheet()">
+                <i class="material-icons">filter_alt</i>
+            </button>
+        </div>
+    </div>
+    <div class="container container-scroll">
+        <div class="cs-table horizontal-scroll">
+            <div class="sticky-head">
+                <div class="table-head">
+                    <table>
+                        <tr>
+                            <th class="w200">{{filter?.sortBy||'Type'}}</th>
+                            <th class="w150">start date</th>
+                            <th class="w150">end date</th>
+                            <th class="w150">Total Enquiry</th>
+                            <th class="w150">Inprocess</th>
+                            <th class="w150">Lost</th>
+                            <th class="w150">Win</th>
+                            <th class="w150">Conversion Ratio</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="table-container">
+                <div class="table-content">
+                    <table>
+                        <ng-container *ngIf="!loader">
+                            <tr *ngFor="let report of reportData; let i=index">
+                                <td class="w200">{{report?.title}}</td>
+                                <td class="w150">{{report?.start_date}}</td>
+                                <td class="w150">{{report?.end_date}}</td>
+                                <td class="w150">{{report?.total_enquiry}}</td>
+                                <td class="w150">{{report?.inprocess}}</td>
+                                <td class="w150">{{report?.lost}}</td>
+                                <td class="w150">{{report?.win}}</td>
+                                <td class="w150">{{report?.conversion_ratio}}</td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="loader">
+                            <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w150">
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+            <ng-container *ngIf="reportData.length == 0">
+                <app-not-result-found></app-not-result-found>
+            </ng-container>
+        </div>
+    </div>
+    <div class="fab-btns">
+        <!-- <button mat-menu-item
+        *ngIf="reportData?.length > 0">
+        <mat-icon>download</mat-icon>
+        <span>Download in excel</span>
+    </button> -->
+    <button mat-fab class="excel" *ngIf="reportData.length > 0"
+        (click)="progressService.setCancelReq(false); downloadInChunks();" [ngClass]="{'pulse': fabBtnValue=='excel'}">
+        <img src="assets/img/excel.svg">
+        Download Excel
+    </button>
+</div>
+</div>

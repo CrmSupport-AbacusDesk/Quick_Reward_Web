@@ -1,0 +1,83 @@
+<div class="main-container">
+    <div class="toolsContainer dashboardNavigation">
+    </div>
+    <div class="container pr8 pl8 pb40">
+        <div class="counter-container pt10">
+            <div class="top_head">
+                <div class="head_label">
+                    <h1>Insights Dashboard</h1>
+                </div>
+                <div class="left_auto">
+                    <button mat-icon-button matTooltip="Refresh" (click)="refresh()">
+                        <i class="material-icons">refresh</i>
+                    </button>
+                </div>
+                
+            </div>
+            
+            <ng-container>
+                <ng-container *ngIf="!loader1">
+                    <div class="counter-card">
+                        <div class="top_box" *ngFor="let row of insightsCount1">
+                            <div class="upr_box">
+                                <div class="icon_box">
+                                    <i class="material-icons">{{row.icon}}</i>
+                                </div>
+                                <div class="count_box">
+                                    <p>{{row.count | number}}</p>
+                                </div>
+                            </div>
+                            <div class="bottom_box">
+                                <div class="small_title">
+                                    <i class="material-icons">trending_up</i>
+                                    <p>{{row.recentCount}}</p> 
+                                </div>
+                                <div class="label_box">
+                                    <p>{{row.module}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                
+                <ng-container *ngIf="loader1">
+                    <div class="counter-card skeleton-loading">
+                        <div class="top_box" *ngFor="let row of [].constructor(5)"></div>
+                    </div>
+                </ng-container>
+            </ng-container>
+            
+            <ng-container>
+                <ng-container *ngIf="!loader1">
+                    <div class="counter-card">
+                        <div class="top_box plate_change" *ngFor="let row of insightsCount2">
+                            <div class="upr_box">
+                                <div class="count_box">
+                                    <p>{{row.count | number}}</p>
+                                </div>
+                                <div class="icon_box">
+                                    <i class="material-icons">{{row.icon}}</i>
+                                </div>
+                            </div>
+                            <div class="bottom_box">
+                                <div class="label_box">
+                                    <p>{{row.module}}</p>
+                                </div>
+                                <div class="small_title">
+                                    <i class="material-icons">trending_up</i>
+                                    <p>{{row.recentCount}}</p> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                
+                <ng-container *ngIf="loader1">
+                    <div class="counter-card skeleton-loading">
+                        <div class="top_box" *ngFor="let row of [].constructor(5)"></div>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>

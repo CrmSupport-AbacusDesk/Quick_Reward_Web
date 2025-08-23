@@ -1,0 +1,117 @@
+<div class="main-container">
+
+  <div class="tools-container">
+    <a mat-icon-button matTooltip="Back" routerLink="/task-list">
+      <i class="material-icons">arrow_back</i>
+    </a>
+    <h2>Add Task</h2>
+  </div>
+
+
+
+  <div class="container pt10 pl10 pr10 pb50">
+    <form name="f" #f="ngForm" (ngSubmit)="f.valid && submitDetail()">
+      <div class="row">
+        <div class="col s12">
+          <div class="card pb0">
+            <!-- <div class="card-head">
+              <h2>Basic Information</h2>
+            </div> -->
+            <div class="card-body cs-form">
+              <div class="row">
+                <div class="col s12 m6 l6">
+                  <div class="row">
+                    <div class="col s12">
+                      <mat-form-field appearance="outline">
+                        <mat-label>User</mat-label>
+                        <mat-select name="assign_user" #assign_user="ngModel" [(ngModel)]="data.assign_user" required
+                          (selectionChange)="getInfo(data.assign_user)">
+                          <mat-option>
+                            <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
+                              (keyup)="getUsers($event.target.value)"></ngx-mat-select-search>
+                          </mat-option>
+                          <mat-option *ngFor="let list of users;let index=index" value="{{list.id}}">
+                            {{list.name}} - <strong>{{list.emp_code}}</strong>
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <div class="alert alert-danger" *ngIf="assign_user.touched || f.submitted">
+                        <p *ngIf="assign_user.errors?.required">This field is required</p>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div class="row">
+                    <div class="col s12 m12 l12">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Promise Date</mat-label>
+                        <input name="promise_date" matInput [matDatepicker]="pickers" placeholder="Promise date.." (dateChange)="publicDate(data.promise_date)"
+                          #promise_date="ngModel" readonly [(ngModel)]="data.promise_date" required>
+                        <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+                        <mat-datepicker #pickers></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col s12">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Message</mat-label>
+                        <textarea matInput placeholder="Type Here ..." name="message" [(ngModel)]="data.message"
+                          #message="ngModel" class="h85" required></textarea>
+                      </mat-form-field>
+                      <div class="alert alert-danger" *ngIf="message.touched || f.submitted">
+                        <p *ngIf="message.errors?.required">This field is required</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col s12 m16 l6">
+                  <div class="cs-file">
+                    <p>Attach Images</p>
+                    <ul>
+                      <li>
+                        <label>
+                          <i class="material-icons add-file-icon">add</i>
+                          <input multiple type="file" name="file" required (change)="fileChange($event)"
+                            placeholder="Upload file" accept=".png,.jpg,.jpeg," style="display: none;">
+                        </label>
+                      </li>
+
+                      <li class="multi-images">
+                        <label *ngFor="let imageType of selectedFile; let i = index">
+                          <img *ngIf="imageType.type == 'image/jpeg' || imageType.type ==  'image/png'  " height="75"
+                            width="75" [src]="imageType.path" src="assets/imgs/jpg.svg">
+                          <a class="close"><i class="material-icons dp48" (click)="remove_image(i)">clear</i></a>
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s12">
+          <div class="text-right">
+            <button [ngClass]="{'loading': savingFlag == true}" mat-raised-button color="accent"
+              [disabled]="savingFlag == true">
+              {{savingFlag == true ? 'Saving' : 'Save'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>

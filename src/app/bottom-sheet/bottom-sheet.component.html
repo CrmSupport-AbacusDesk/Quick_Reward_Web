@@ -1,0 +1,615 @@
+<ng-container
+  *ngIf="lastPageData.filterPage != 'checkinReportForMultiUser' && lastPageData.filterPage != 'secondaryOrderList' && lastPageData.filterPage != 'checkinDetailReport' && lastPageData.filterPage != 'expenseReportForMultiUser' && lastPageData.filterPage != 'travel_plan_list' && lastPageData.filterPage != 'productSalesReport' && lastPageData.filterPage != 'targetvsachievement' && lastPageData.filterPage != 'enquiryReport'  && lastPageData.filterPage != 'ScanRatioReport' && lastPageData.filterPage != 'today_checkin_list'">
+  <mat-nav-list>
+    <div class=" cs-form">
+
+      <form name="commonForm" #commonForm="ngForm" validate (ngSubmit)=" commonForm.valid && getValue()">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+        <div class="row" *ngIf="lastPageData.filterPage == 'visitRatioReport' ||
+          lastPageData.filterPage == 'individualAttendance' ||
+          lastPageData.filterPage == 'site_order_list' ||
+          lastPageData.filterPage == 'Expense' ||
+          lastPageData.filterPage == 'product_wise_secondary_report' ||
+          lastPageData.filterPage == 'individual-attendance-report' || lastPageData.filterPage == 'userworkingReport'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Employee Name</mat-label>
+              <mat-select name="user_id" [(ngModel)]="search.user_id" #user_id="ngModel"
+                (ngModelChange)="getSalesuserName()"
+                [multiple]="lastPageData.filterPage == 'userworkingReport' || lastPageData.filterPage == 'site_order_list'"
+                [required]="lastPageData.filterPage != 'userworkingReport'">
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no search found'" placeholderLabel="Search.."
+                    (keyup)="getSalesUser($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <!--  {{row.role_name}} -->
+                <mat-option *ngFor="let row of salesUser" value="{{row.id}}">{{row.name}}
+                  ({{row.employee_id}})</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="user_id.touched || commonForm.submitted">
+              <p *ngIf="user_id.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date {{lastPageData.filterPage!='userworkingReport'?'From':''}}</mat-label>
+              <input matInput [matDatepicker]="picker2" name="date_from" #date_from="ngModel" required
+                (dateChange)="date($event)" [max]="search.date_to||today_date" [(ngModel)]="search.date_from"
+                [min]="minDate" [max]="today_date" readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_from.touched || commonForm.submitted">
+              <p *ngIf="date_from.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="lastPageData.filterPage!='userworkingReport'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date To</mat-label>
+              <input matInput [matDatepicker]="picker3" name="date_to" #date_to="ngModel" [min]="search.date_from"
+                [max]="today_date" (dateChange)="date($event)" [(ngModel)]="search.date_to" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_to.touched || commonForm.submitted">
+              <p *ngIf="date_to.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-nav-list>
+</ng-container>
+
+
+
+<ng-container
+  *ngIf="lastPageData.filterPage == 'checkinReportForMultiUser' || lastPageData.filterPage == 'secondaryOrderList' || lastPageData.filterPage == 'expenseReportForMultiUser' || lastPageData.filterPage == 'checkinDetailReport'">
+  <mat-nav-list>
+    <div class=" cs-form">
+
+      <form name="commonForm" #commonForm="ngForm" validate (ngSubmit)=" commonForm.valid && getValue()">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Employee Name</mat-label>
+              <mat-select name="user_id" [(ngModel)]="search.user_id" #user_id="ngModel"
+                (ngModelChange)="getSalesuserName()" multiple required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no search found'" placeholderLabel="Search.."
+                    (keyup)="getSalesUser($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <!--  {{row.role_name}} -->
+                <mat-option *ngFor="let row of salesUser" value="{{row.id}}">{{row.name}}
+                  ({{row.employee_id}})</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="user_id.touched || commonForm.submitted">
+              <p *ngIf="user_id.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date {{lastPageData.filterPage!='userworkingReport'?'From':''}}</mat-label>
+              <input matInput [matDatepicker]="picker2" name="date_from" #date_from="ngModel" required
+                (dateChange)="date($event)" [max]="search.date_to||today_date" [(ngModel)]="search.date_from" readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_from.touched || commonForm.submitted">
+              <p *ngIf="date_from.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="lastPageData.filterPage!='userworkingReport'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date To</mat-label>
+              <input matInput [matDatepicker]="picker3" name="date_to" #date_to="ngModel" [min]="search.date_from"
+                [max]="maxDateForTo" (dateChange)="date($event)" [(ngModel)]="search.date_to" required readonly>
+
+
+              <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_to.touched || commonForm.submitted">
+              <p *ngIf="date_to.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-nav-list>
+</ng-container>
+
+
+<ng-container *ngIf="lastPageData.filterPage == 'targetvsachievement'">
+  <mat-nav-list>
+    <div class=" cs-form">
+      <div class="bottom-sheet-heading">
+        Filter
+      </div>
+
+      <form name="detail" #f="ngForm" validate (ngSubmit)=" f.valid && getValue()">
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Target Type</mat-label>
+              <mat-select name="target_type" [(ngModel)]="search.target_type" #target_type="ngModel" required>
+                <mat-option *ngFor="let row of targetTypeList" value="{{row}}">{{row}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="target_type.touched || f.submitted">
+              <p *ngIf="target_type.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Month</mat-label>
+              <mat-select name="month" [(ngModel)]="search.month" #month="ngModel" required>
+                <mat-option *ngFor="let row of monthList; let i = index" value="{{i+1}}">{{row}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="month.touched || f.submitted">
+              <p *ngIf="month.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Year</mat-label>
+              <mat-select name="year" [(ngModel)]="search.year" #year="ngModel" required>
+                <mat-option *ngFor="let row of yearList" value="{{row}}">{{row}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="year.touched || f.submitted">
+              <p *ngIf="year.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-nav-list>
+</ng-container>
+
+<ng-container *ngIf="lastPageData.filterPage == 'productSalesReport'">
+  <mat-nav-list>
+    <div class=" cs-form">
+      <form name="detail" #f="ngForm" validate (ngSubmit)=" f.valid && getValue()">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select name="type" [(ngModel)]="search.type" #type="ngModel" required>
+                <mat-option *ngFor="let row of typeList" value="{{row}}">{{row}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="type.touched || f.submitted">
+              <p *ngIf="type.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Filter</mat-label>
+              <mat-select name="sortBy" [(ngModel)]="search.sortBy" #sortBy="ngModel"
+                (selectionChange)="(search.sortBy=='State'||search.sortBy=='District')?getStateList():(search.sortBy=='Party')?getPartyList():null"
+                required>
+                <mat-option *ngFor="let row of filterList" value="{{row}}">{{row}} Wise</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="search.sortBy=='State'||search.sortBy=='District'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Select State</mat-label>
+              <mat-select name="state" [(ngModel)]="search.state" #state="ngModel" (selectionChange)="getDistrict(1)"
+                required>
+                <mat-option *ngFor="let row of states" value="{{row.state_name}}">{{row.state_name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+              <p *ngIf="state.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m6 l6" *ngIf="search.sortBy=='District' && search.state">
+          <mat-form-field appearance="outline">
+            <mat-label>District</mat-label>
+            <mat-select name="district" #district="ngModel" [(ngModel)]="data.district">
+              <mat-option disabled="">Select District</mat-option>
+              <mat-option *ngFor="let row of district_list" value="{{row.district_name}}">
+                {{row.district_name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="alert alert-danger" *ngIf="district.touched || f.submitted">
+            <p *ngIf="district.errors?.required">This field is required</p>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="search.sortBy == 'Employee' || search.sortBy == 'Party'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Select {{search.sortBy}}</mat-label>
+              <mat-select name="user_id" [(ngModel)]="search.user_id" #user_id="ngModel"
+                (ngModelChange)="getSalesuserName()" required>
+                <mat-option>
+                  <ngx-mat-select-search noEntriesFoundLabel="'no search found'" placeholderLabel="Search.."
+                    (keyup)="searchHandler($event.target.value)"></ngx-mat-select-search>
+                </mat-option>
+                <!--  {{row.role_name}} -->
+                <mat-option *ngFor="let row of salesUser" value="{{row.id}}">{{row.name}}
+                  {{row.employee_id?'('+row.employee_id+')':null}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="user_id.touched || f.submitted">
+              <p *ngIf="user_id.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-nav-list>
+</ng-container>
+
+<ng-container *ngIf="lastPageData.filterPage == 'enquiryReport'">
+  <form name="detail" #f="ngForm" validate (ngSubmit)=" f.valid && getValue()">
+    <mat-nav-list>
+      <div class=" cs-form">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date From</mat-label>
+              <input matInput [matDatepicker]="picker2" name="date_from" #date_from="ngModel"
+                (dateChange)="date($event)" [max]="search.date_to||today_date" required [(ngModel)]="search.date_from"
+                [min]="minDate" [max]="today_date" readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_from.touched || f.submitted">
+              <p *ngIf="date_from.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date To</mat-label>
+              <input matInput [matDatepicker]="picker3" name="date_to" #date_to="ngModel" [min]="search.date_from"
+                [max]="today_date" (dateChange)="date($event)" [(ngModel)]="search.date_to" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_to.touched || f.submitted">
+              <p *ngIf="date_to.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select name="sortBy" [(ngModel)]="search.sortBy" #sortBy="ngModel"
+                (selectionChange)="(search.sortBy=='District')?getStateList():null" required>
+                <mat-option *ngFor="let row of enquiryTypeList" value="{{row}}">{{row}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="sortBy.touched || f.submitted">
+              <p *ngIf="sortBy.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row" *ngIf="search.sortBy=='District'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Select State</mat-label>
+              <mat-select name="state" [(ngModel)]="search.state" #state="ngModel" required
+                (selectionChange)="getDistrict(1)" required>
+                <mat-option *ngFor="let row of states" value="{{row.state_name}}">{{row.state_name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="state.touched || f.submitted">
+              <p *ngIf="state.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-nav-list>
+  </form>
+</ng-container>
+
+<ng-container *ngIf="lastPageData.filterPage == 'attendance'">
+  <mat-nav-list>
+    <div class="cs-form">
+      <form name="detail" #f="ngForm" validate (ngSubmit)=" f.valid && getValue()">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date</mat-label>
+              <input matInput [matDatepicker]="picker2" name="date_from" #date_from="ngModel"
+                (dateChange)="date($event)" [max]="search.date_to||today_date" [min]="minDate"
+                [(ngModel)]="search.date_from" readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_from.touched || f.submitted">
+              <p *ngIf="date_from.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button [disabled]="!search.date_from">
+              Filter
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-nav-list>
+</ng-container>
+
+
+<ng-container *ngIf="lastPageData.filterPage == 'ScanRatioReport'">
+  <form name="detail" #f="ngForm" validate (ngSubmit)=" f.valid && getValue()">
+    <mat-nav-list>
+      <div class=" cs-form">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select name="sortBy" [(ngModel)]="search.sortBy" #sortBy="ngModel" required>
+                <mat-option *ngFor="let row of ScanRatioReportTypeList" value="{{row}}">{{row}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <div class="row" *ngIf="search.sortBy=='District'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Select State</mat-label>
+              <mat-select name="state" [(ngModel)]="search.state" #state="ngModel" (selectionChange)="getDistrict(1)"
+                required multiple>
+                <mat-option *ngFor="let row of states" value="{{row.state_name}}">{{row.state_name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date From</mat-label>
+              <input matInput [matDatepicker]="picker2" name="date_from" (dateChange)="date($event)"
+                [max]="search.date_to||today_date" [(ngModel)]="search.date_from" [min]="minDate" [max]="today_date"
+                readonly required>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date To</mat-label>
+              <input matInput [matDatepicker]="picker3" name="date_to" [min]="search.date_from" [max]="today_date"
+                (dateChange)="date($event)" [(ngModel)]="search.date_to" readonly required>
+              <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </mat-form-field>
+
+          </div>
+        </div>
+
+
+
+
+
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-nav-list>
+  </form>
+</ng-container>
+
+<ng-container *ngIf=" lastPageData.filterPage == 'travel_plan_list'">
+  <mat-nav-list>
+    <div class=" cs-form">
+
+      <form name="commonForm" #commonForm="ngForm" validate (ngSubmit)=" commonForm.valid && getValue()">
+        <div class="bottom-sheet-heading">
+          Filter
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date {{lastPageData.filterPage!='userworkingReport'?'From':''}}</mat-label>
+              <input matInput [matDatepicker]="picker2" name="date_from" #date_from="ngModel" required
+                (dateChange)="date($event)" [max]="search.date_to||today_date" [(ngModel)]="search.date_from"
+                [min]="minDate" readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_from.touched || commonForm.submitted">
+              <p *ngIf="date_from.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="lastPageData.filterPage!='userworkingReport'">
+          <div class="col s12">
+            <mat-form-field appearance="outline">
+              <mat-label>Date To</mat-label>
+              <input matInput [matDatepicker]="picker3" name="date_to" #date_to="ngModel" [min]="search.date_from"
+                (dateChange)="date($event)" [(ngModel)]="search.date_to" required readonly>
+              <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </mat-form-field>
+            <div class="alert alert-danger" *ngIf="date_to.touched || commonForm.submitted">
+              <p *ngIf="date_to.errors?.required">This field is required</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s12">
+            <button class="add-item text-btn" mat-raised-button>
+              {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-nav-list>
+</ng-container>
+
+
+<ng-container *ngIf="lastPageData.filterPage == 'today_checkin_list' ">
+  <mat-nav-list>
+    <div class=" cs-form">
+      <div class="bottom-sheet-heading">
+        Filter
+      </div>
+
+      <div class="row" *ngIf="lastPageData.filterPage=='today_checkin_list' ">
+        <div class="col s12">
+          <mat-form-field appearance="outline">
+            <mat-label>Employee Name</mat-label>
+            <mat-select name="user_id" [(ngModel)]="search.user_id" #user_id="ngModel" multiple required>
+              <mat-option>
+                <ngx-mat-select-search noEntriesFoundLabel="'no search found'" placeholderLabel="Search.."
+                  (keyup)="getSalesUser($event.target.value)"></ngx-mat-select-search>
+              </mat-option>
+              <div class="padding12" *ngIf="salesUser.length>0">
+                <mat-checkbox [(ngModel)]="search.allemployees" (change)="selectAllEmployees('allemployees')"
+                  name="allemployees" value="true">Select All</mat-checkbox>
+              </div>
+              <!--  {{row.role_name}} -->
+              <mat-option *ngFor="let row of salesUser" [value]="row.id">{{row.name}} ({{row.employee_id}})</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field appearance="outline">
+            <mat-label>Date From</mat-label>
+            <input matInput [matDatepicker]="picker2" name="date_from" (dateChange)="date($event)"
+              [max]="search.date_to||today_date" [(ngModel)]="search.date_from" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <mat-form-field appearance="outline">
+            <mat-label>Date To</mat-label>
+            <input matInput [matDatepicker]="picker3" name="date_to" [min]="search.date_from" [max]="today_date"
+              (dateChange)="date($event)" [(ngModel)]="search.date_to" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <a class="add-item text-btn" mat-raised-button [disabled]="!search.date_to" (click)="getValue()">
+            {{lastPageData.filterPage == 'Expense' ? 'Download Excel' : 'Go'}}
+          </a>
+        </div>
+      </div>
+    </div>
+  </mat-nav-list>
+</ng-container>
