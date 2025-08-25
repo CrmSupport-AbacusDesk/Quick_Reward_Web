@@ -443,22 +443,22 @@
             </li>
 
 
-            <li
+            <!-- <li
                 *ngIf="(login_data?.access_level_new == '3' && login_data?.organisation_data?.loyalty == '1') && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
                 <a mat-button routerLink="/payout" (click)="activeTabHandler(); clearFilter()"
                     routerLinkActive="active">
                     <i class="material-icons ">account_balance_wallet</i>
                     Payout Wallet
                 </a>
-            </li>
+            </li> -->
 
-            <li
+            <!-- <li
                 *ngIf="login_data.access_level_new == '3' && (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
                 <a mat-button routerLink="/whatsapp" (click)="activeTabHandler()" routerLinkActive="active">
                     <i class="material-icons ">chat</i>
                     Whatsapp Integration
                 </a>
-            </li>
+            </li> -->
 
             <li class="dropdown"
                 *ngIf="login_data.view_redeem_request=='1' && (data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
@@ -750,11 +750,11 @@
                             Territory/Postal Code
                         </a>
                     </li>
-                    <li *ngIf="login_data.access_level_new == '3'">
+                    <!-- <li *ngIf="login_data.access_level_new == '3'">
                         <a mat-button routerLink="/types-management" routerLinkActive="active" (click)="clearFilter()">
                             Types Management
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </li>
 
@@ -1064,13 +1064,13 @@
                 </ul>
             </li>
 
-            <li
+            <!-- <li
                 *ngIf="login_data.view_video_tutorial!='1'&& (data.filter_type== 'SFA' || data.filter_type== 'DMS' || data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
                 <a mat-button routerLink="/tutorial-videos" routerLinkActive="active" (click)="clearFilter()">
                     <i class="material-icons">video_library</i>
                     Video Tutorial
                 </a>
-            </li>
+            </li> -->
 
         </ul>
     </div>

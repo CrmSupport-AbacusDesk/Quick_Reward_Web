@@ -45,10 +45,10 @@
                     (click)="active_tab = 'Reject'; InfluencerList()"><i class="material-icons">thumb_down_alt</i>
                     Reject ({{tab_count.reject_count ? tab_count.reject_count : '0'}})
                 </button>
-                <button mat-button [ngClass]="active_tab == 'Suspect' ? 'active' : ''"
+                <!-- <button mat-button [ngClass]="active_tab == 'Suspect' ? 'active' : ''"
                     (click)="active_tab = 'Suspect'; InfluencerList()"><i class="material-icons">help</i>
                     Suspect ({{tab_count.suspect_count ? tab_count.suspect_count : '0'}})
-                </button>
+                </button> -->
             </div>
         </div>
     </div>
@@ -227,9 +227,9 @@
                                     </ng-container>
                                 </td>
                                 <td class="w120 text-center">
-                                    <ng-container *ngIf="login_data5.organisation_data.influencer_reset_device == '0'">
+                                    <!-- <ng-container *ngIf="login_data5.organisation_data.influencer_reset_device == '0'">
                                         <a class="link-btn" (click)="updateType(row.id, row.type)">Change Type</a>
-                                    </ng-container>
+                                    </ng-container> -->
                                     <ng-container *ngIf="login_data5.organisation_data.influencer_reset_device == '1'">
                                         <button mat-icon-button [matMenuTriggerFor]="menu">
                                             <i class="material-icons">more_vert</i>
