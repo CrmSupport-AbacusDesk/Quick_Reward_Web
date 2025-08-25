@@ -65,10 +65,10 @@
                             </div>
 
                             <div class="block-feilds user-dp">
-                                <div class="profile-pic">
+                                <!-- <div class="profile-pic">
                                     <img src="{{Influencer_Detail.profile != null && Influencer_Detail.profile != ''?(profileUrl + Influencer_Detail.profile) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
                                         (click)="Influencer_Detail.profile != null && Influencer_Detail.profile != ''? goToImage(profileUrl + Influencer_Detail.profile) : '' ">
-                                </div>
+                                </div> -->
                                 <div class="wp100" *ngIf="Influencer_Detail.name!=''">
                                     <span>Name</span>
                                     <p>{{Influencer_Detail.name | titlecase}}</p>
@@ -110,7 +110,7 @@
                                     {{Influencer_Detail.country}} {{Influencer_Detail.pincode}}</p>
                             </div>
 
-                            <div class="block-feilds">
+                            <!-- <div class="block-feilds">
                                 <span>Referral Code</span>
                                 <p>{{Influencer_Detail.referral_code ? Influencer_Detail.referral_code : '---'}}</p>
                             </div>
@@ -124,7 +124,7 @@
                             <div class="block-feilds">
                                 <span>Current Wallet Balance</span>
                                 <p>{{Influencer_Detail.wallet_point ? Influencer_Detail.wallet_point : '---'}}</p>
-                            </div>
+                            </div> -->
 
 
 
@@ -148,7 +148,7 @@
                                 <p>{{Influencer_Detail.reject_reason ? Influencer_Detail.reject_reason : '---'}}</p>
                             </div>
 
-                            <ng-container *ngIf="login_data5.organisation_data.influencer_approval == '1'">
+                            <!-- <ng-container *ngIf="login_data5.organisation_data.influencer_approval == '1'">
                                 <div class="block-feilds">
                                     <span>Sales Executive Status </span>
                                     <p> {{Influencer_Detail.sales_user_status == '' ? 'Pending' :
@@ -224,11 +224,11 @@
                                             Influencer_Detail.level2_reject_reason : '---'}}</p>
                                     </div>
                                 </ng-container>
-                            </ng-container>
+                            </ng-container> -->
 
 
 
-                            <div class="block-feilds">
+                            <!-- <div class="block-feilds">
                                 <span>D.O.B</span>
                                 <p>{{(Influencer_Detail.dob !='0000-00-00') ? (Influencer_Detail.dob| date:'d
                                     MMM,y'):('----')}}</p>
@@ -238,9 +238,9 @@
                                 <span>D.O.A</span>
                                 <p>{{(Influencer_Detail.doa !='0000-00-00') ? (Influencer_Detail.doa| date:'d
                                     MMM,y'):('----')}}</p>
-                            </div>
+                            </div> -->
 
-                            <div class="block-feilds">
+                            <!-- <div class="block-feilds">
                                 <span>Date of Wedding</span>
                                 <p>{{(Influencer_Detail.date_of_wedding !='0000-00-00' &&
                                     Influencer_Detail.date_of_wedding !='') ? (Influencer_Detail.date_of_wedding|
@@ -266,14 +266,14 @@
                                     {{Influencer_Detail.dealer_code && Influencer_Detail.dealer_code ?
                                     (Influencer_Detail.dealer_code) : '--'}}
                                 </p>
-                            </div>
-                            <div class="block-feilds">
+                            </div> -->
+                            <!-- <div class="block-feilds">
                                 <span>Primary Customer Name</span>
                                 <p>
                                     {{Influencer_Detail.distributor_name && Influencer_Detail.distributor_name ?
                                     (Influencer_Detail.distributor_name) : '--'}}
                                 </p>
-                            </div>
+                            </div> -->
 
                             <div class="block-feilds">
                                 <span>First Mobile App Login</span>
@@ -308,7 +308,7 @@
                     </div>
 
 
-                    <div class="card-head mt15">
+                    <!-- <div class="card-head mt15">
                         <h2>Document Details</h2>
                     </div>
                     <div class="card-body">
@@ -344,7 +344,7 @@
                                 <p>{{Influencer_Detail.document_no ? Influencer_Detail.document_no : '---'}}</p>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="card-head mt15">
                         <h2>Bank Details</h2>
                         <div class=""
@@ -357,12 +357,12 @@
 
                     <div class="card-body">
                         <div class="grid-box">
-                            <div class="block-feilds">
+                            <!-- <div class="block-feilds">
                                 <span>User Redeemption Preference</span>
                                 <p>{{Influencer_Detail.user_redeemption_prefrence ?
                                     Influencer_Detail.user_redeemption_prefrence :'---'}}</p>
-                            </div>
-
+                            </div> -->
+<!-- 
                             <ng-container *ngIf="Influencer_Detail.user_redeemption_prefrence == 'Bank'">
 
                                 <div class="block-feilds">
@@ -392,9 +392,9 @@
                                     <p>{{Influencer_Detail.account_holder_name ? Influencer_Detail.account_holder_name
                                         :'---'}}</p>
                                 </div>
-                            </ng-container>
+                            </ng-container> -->
 
-                            <ng-container *ngIf="Influencer_Detail.user_redeemption_prefrence == 'UPI'">
+                            <ng-container >
                                 <div class="block-feilds">
                                     <span>UPI ID</span>
                                     <p>{{Influencer_Detail.upi_id ? Influencer_Detail.upi_id :'---'}}</p>
@@ -411,7 +411,7 @@
                         </div>
                     </div>
                     <div class="card-head mt15">
-                        <h2 class="flex-heading">KYC Details
+                        <h2 class="flex-heading">UPI Details
                             <i class="material-icons"
                                 [ngClass]="Influencer_Detail.kyc_status == 'Verified' ? 'Approve' : Influencer_Detail.kyc_status == 'Reject' ? 'Reject' : 'Pending'">
                                 {{Influencer_Detail.kyc_status == 'Verified' ? 'verified' : Influencer_Detail.kyc_status
@@ -422,13 +422,13 @@
                         <div class="left-auto"
                             *ngIf="Influencer_Detail.kyc_status != 'Verified' && login_data5.edit_influencer=='1'">
                             <button matTooltip="Update KYC Status" (click)="update(Influencer_Detail.id)"
-                                mat-raised-button color="primary">Update KYC Status</button>
+                                mat-raised-button color="primary">Verify UPI Id</button>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="grid-box">
                             <div class="block-feilds">
-                                <span>KYC Status</span>
+                                <span>UPI Status</span>
                                 <p>{{Influencer_Detail.kyc_status}}</p>
                             </div>
 

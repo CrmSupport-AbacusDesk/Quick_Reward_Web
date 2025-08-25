@@ -12,7 +12,7 @@ import { CryptoService } from 'src/_services/CryptoService';
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
-  
+  styleUrls:['./navigation.component.scss']
   
 })
 export class NavigationComponent implements OnInit {
