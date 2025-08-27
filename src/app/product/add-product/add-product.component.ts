@@ -80,9 +80,9 @@ export class AddProductComponent implements OnInit {
         }
       });
       
-      if(!this.data.id){
-        this.getFormData();
-      }
+      // if(!this.data.id){
+      //   this.getFormData();
+      // }
       
     }
     getSegment() {
