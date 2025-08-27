@@ -61,28 +61,16 @@
 
                             <div class="block-feilds">
                                 <span>User ID</span>
-                                <p>{{(network | slice:0:1)||'#'}}{{Influencer_Detail.unique_id}}</p>
+                                <p>{{Influencer_Detail.unique_id}}</p>
                             </div>
 
                             <div class="block-feilds user-dp">
-                                <!-- <div class="profile-pic">
-                                    <img src="{{Influencer_Detail.profile != null && Influencer_Detail.profile != ''?(profileUrl + Influencer_Detail.profile) : 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png'}}"
-                                        (click)="Influencer_Detail.profile != null && Influencer_Detail.profile != ''? goToImage(profileUrl + Influencer_Detail.profile) : '' ">
-                                </div> -->
                                 <div class="wp100" *ngIf="Influencer_Detail.name!=''">
                                     <span>Name</span>
                                     <p>{{Influencer_Detail.name | titlecase}}</p>
                                 </div>
                             </div>
 
-                            <div class="block-feilds" *ngIf="Influencer_Detail.instagram_id!=''">
-                                <span>Instagram Id</span>
-                                <p>{{Influencer_Detail.instagram_id}}</p>
-                            </div>
-                            <div class="block-feilds" *ngIf="Influencer_Detail.facebook_id!=''">
-                                <span>Facebook Id</span>
-                                <p>{{Influencer_Detail.facebook_id}}</p>
-                            </div>
                             <div class="block-feilds flex-heading" *ngIf="login_data5?.organisation_data?.sfa==1">
                                 <div>
                                     <span>Sales User Name</span>
@@ -102,32 +90,7 @@
                                 <p>{{Influencer_Detail.mobile_no}}</p>
                             </div>
 
-                            <div class="block-feilds">
-                                <span>Address</span>
-                                <p>{{Influencer_Detail.address}} {{Influencer_Detail.city}}
-                                    {{Influencer_Detail.district}}
-                                    {{Influencer_Detail.state}}
-                                    {{Influencer_Detail.country}} {{Influencer_Detail.pincode}}</p>
-                            </div>
-
-                            <!-- <div class="block-feilds">
-                                <span>Referral Code</span>
-                                <p>{{Influencer_Detail.referral_code ? Influencer_Detail.referral_code : '---'}}</p>
-                            </div>
-
-                            <div class="block-feilds">
-                                <span>Referral By</span>
-                                <p>{{Influencer_Detail.referred_by_code ? Influencer_Detail.referred_by_code : '---'}}
-                                </p>
-                            </div>
-
-                            <div class="block-feilds">
-                                <span>Current Wallet Balance</span>
-                                <p>{{Influencer_Detail.wallet_point ? Influencer_Detail.wallet_point : '---'}}</p>
-                            </div> -->
-
-
-
+                            
                             <div class="block-feilds flex-heading">
                                 <div>
                                     <span>Status</span>
@@ -147,133 +110,6 @@
                                 <span>Reject Reason</span>
                                 <p>{{Influencer_Detail.reject_reason ? Influencer_Detail.reject_reason : '---'}}</p>
                             </div>
-
-                            <!-- <ng-container *ngIf="login_data5.organisation_data.influencer_approval == '1'">
-                                <div class="block-feilds">
-                                    <span>Sales Executive Status </span>
-                                    <p> {{Influencer_Detail.sales_user_status == '' ? 'Pending' :
-                                        Influencer_Detail.sales_user_status}}</p>
-                                </div>
-                                <div class="block-feilds" *ngIf="Influencer_Detail.sales_status_reject_reason">
-                                    <span>Sales Executive {{Influencer_Detail.sales_user_status == '' ? 'Pending' :
-                                        Influencer_Detail.sales_user_status}} Reason </span>
-                                    <p> {{Influencer_Detail.sales_status_reject_reason == '' ? 'Pending' :
-                                        Influencer_Detail.sales_status_reject_reason}}</p>
-                                </div>
-                                <ng-container *ngFor="let row of approvalLevel">
-                                    <div class="block-feilds flex-heading">
-                                        <div>
-                                            <span>{{row.level_name}} Status</span>
-                                            <p>
-                                                {{row.level == 'Level1' ? (Influencer_Detail.level1 ?
-                                                Influencer_Detail.level1 : 'Pending') : row.level == 'Level2' ?
-                                                (Influencer_Detail.level2 ? Influencer_Detail.level2 : 'Pending'): ''}}
-                                            </p>
-                                        </div>
-                                        <div class="left-auto"
-                                            *ngIf="(row.level == 'Level1' && login_data5.influencer_approval_level == row.level &&  Influencer_Detail.level1 != 'Approved') || (row.level == 'Level2' && login_data5.influencer_approval_level == row.level &&  Influencer_Detail.level2 != 'Approved')">
-                                            <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
-                                                (click)="changeStatusDialog(Influencer_Detail.id, (row.level == 'Level1' ? Influencer_Detail.level1 : Influencer_Detail.level2),'influencer_list',Influencer_Detail.referred_by,Influencer_Detail.name,Influencer_Detail.influencer_type, Influencer_Detail.welcome_bonus_flag, row.level)">
-                                                <i class="material-icons">edit</i>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="block-feilds"
-                                        *ngIf="row.level == 'Level1' && Influencer_Detail.level1_update_by_name">
-                                        <span>{{row.level_name}} Status Updated By</span>
-                                        <p>{{Influencer_Detail.level1_update_by_name ?
-                                            Influencer_Detail.level1_update_by_name : '---'}}</p>
-                                    </div>
-
-                                    <div class="block-feilds"
-                                        *ngIf="row.level == 'Level1' && Influencer_Detail.level1_update_by">
-                                        <span>{{row.level_name}} Status Updated On</span>
-                                        <p>{{Influencer_Detail.level1_update_on != '0000-00-00 00:00:00' ?
-                                            (Influencer_Detail.level1_update_on | date:'yyyy-MM-dd, h:mm a') : '---'}}
-                                        </p>
-                                    </div>
-
-
-                                    <div class="block-feilds"
-                                        *ngIf="row.level == 'Level2' && Influencer_Detail.level2_update_by_name">
-                                        <span>{{row.level_name}} Status Updated By</span>
-                                        <p>{{Influencer_Detail.level2_update_by_name ?
-                                            Influencer_Detail.level2_update_by_name : '---'}}</p>
-                                    </div>
-
-                                    <div class="block-feilds"
-                                        *ngIf="row.level == 'Level2' && Influencer_Detail.level1_update_by">
-                                        <span>{{row.level_name}} Status Updated On</span>
-                                        <p>{{Influencer_Detail.level2_update_on != '0000-00-00 00:00:00' ?
-                                            (Influencer_Detail.level2_update_on | date:'yyyy-MM-dd, h:mm a') : '---'}}
-                                        </p>
-                                    </div>
-
-                                    <div class="block-feilds"
-                                        *ngIf="row.level == 'Level1' && Influencer_Detail.level1_reject_reason">
-                                        <span>{{row.level_name}} Reject Reason</span>
-                                        <p>{{Influencer_Detail.level1_reject_reason ?
-                                            Influencer_Detail.level1_reject_reason : '---'}}</p>
-                                    </div>
-
-                                    <div class="block-feilds"
-                                        *ngIf="row.level == 'Level2' && Influencer_Detail.level2_reject_reason">
-                                        <span>{{row.level_name}} Reject Reason</span>
-                                        <p>{{Influencer_Detail.level2_reject_reason ?
-                                            Influencer_Detail.level2_reject_reason : '---'}}</p>
-                                    </div>
-                                </ng-container>
-                            </ng-container> -->
-
-
-
-                            <!-- <div class="block-feilds">
-                                <span>D.O.B</span>
-                                <p>{{(Influencer_Detail.dob !='0000-00-00') ? (Influencer_Detail.dob| date:'d
-                                    MMM,y'):('----')}}</p>
-                            </div>
-
-                            <div class="block-feilds">
-                                <span>D.O.A</span>
-                                <p>{{(Influencer_Detail.doa !='0000-00-00') ? (Influencer_Detail.doa| date:'d
-                                    MMM,y'):('----')}}</p>
-                            </div> -->
-
-                            <!-- <div class="block-feilds">
-                                <span>Date of Wedding</span>
-                                <p>{{(Influencer_Detail.date_of_wedding !='0000-00-00' &&
-                                    Influencer_Detail.date_of_wedding !='') ? (Influencer_Detail.date_of_wedding|
-                                    date:'d MMM,y'):('----')}}</p>
-                            </div>
-                            <div class="block-feilds">
-                                <span>Dealer Name</span>
-                                <p>
-                                    {{Influencer_Detail.dealer_name? (Influencer_Detail.dealer_name | titlecase) :
-                                    '--'}}
-                                </p>
-                            </div>
-                            <div class="block-feilds">
-                                <span>Dealer Mobile</span>
-                                <p>
-                                    {{Influencer_Detail.dealer_mobile && Influencer_Detail.dealer_mobile ?
-                                    (Influencer_Detail.dealer_mobile) : '--'}}
-                                </p>
-                            </div>
-                            <div class="block-feilds">
-                                <span>Dealer Code</span>
-                                <p>
-                                    {{Influencer_Detail.dealer_code && Influencer_Detail.dealer_code ?
-                                    (Influencer_Detail.dealer_code) : '--'}}
-                                </p>
-                            </div> -->
-                            <!-- <div class="block-feilds">
-                                <span>Primary Customer Name</span>
-                                <p>
-                                    {{Influencer_Detail.distributor_name && Influencer_Detail.distributor_name ?
-                                    (Influencer_Detail.distributor_name) : '--'}}
-                                </p>
-                            </div> -->
 
                             <div class="block-feilds">
                                 <span>First Mobile App Login</span>
@@ -307,46 +143,27 @@
                         </div>
                     </div>
 
-
-                    <!-- <div class="card-head mt15">
-                        <h2>Document Details</h2>
+                    <div class="card-head mt20">
+                        <h2>-- Address Details --</h2>
                     </div>
+
                     <div class="card-body">
                         <div class="grid-box">
-                            <div class="block-feilds">
-                                <div class="doc-img">
-                                    <img src="assets/img/no_image.png" *ngIf="Influencer_Detail.pan_img == ''">
-                                    <img *ngIf="Influencer_Detail.pan_img" src="{{url+Influencer_Detail.pan_img}}"
-                                        (click)="goToImage(url+Influencer_Detail.pan_img)" style="cursor: zoom-in;">
+                            <ng-container >
+                                <div class="block-feilds">
+                                    <span>Address</span>
+                                    <p>{{Influencer_Detail.address}} {{Influencer_Detail.city}}
+                                    {{Influencer_Detail.district}}
+                                    {{Influencer_Detail.state}}
+                                    {{Influencer_Detail.country}} {{Influencer_Detail.pincode}}</p>
                                 </div>
-                            </div>
-                            <div class="block-feilds">
-                                <span>Pan Number</span>
-                                <p class="uppercase">{{Influencer_Detail.pan_no ?Influencer_Detail.pan_no :'---'}}</p>
-                            </div>
-                            <div class="block-feilds">
-                                <div class="doc-img">
-                                    <img src="assets/img/no_image.png" *ngIf="Influencer_Detail.document_image == ''">
-                                    <img *ngIf="Influencer_Detail.document_image"
-                                        src="{{url+Influencer_Detail.document_image}}"
-                                        (click)="goToImage(url+Influencer_Detail.document_image)"
-                                        style="cursor: zoom-in;">
-                                    <img src="assets/img/no_image.png"
-                                        *ngIf="Influencer_Detail.document_image_back == ''">
-                                    <img *ngIf="Influencer_Detail.document_image_back && (Influencer_Detail.document_type == 'Aadhaar Card' || Influencer_Detail.document_type == 'Aadhar Card') "
-                                        src="{{url+Influencer_Detail.document_image_back}}"
-                                        (click)="goToImage(url+Influencer_Detail.document_image_back)"
-                                        style="cursor: zoom-in;">
-                                </div>
-                            </div>
-                            <div class="block-feilds">
-                                <span>{{Influencer_Detail.document_type}} Number</span>
-                                <p>{{Influencer_Detail.document_no ? Influencer_Detail.document_no : '---'}}</p>
-                            </div>
+                            </ng-container>
+
                         </div>
-                    </div> -->
-                    <div class="card-head mt15">
-                        <h2>Bank Details</h2>
+                    </div>
+
+                    <div class="card-head mt20">
+                        <h2>-- Bank Details --</h2>
                         <div class=""
                             *ngIf="Influencer_Detail.payout_kyc_status == 'Reject' && Influencer_Detail.influencer_type == 'Plumber'">
                             <button matTooltip="Reset KYC Status" (click)="reset_status(Influencer_Detail.id)"
@@ -357,42 +174,6 @@
 
                     <div class="card-body">
                         <div class="grid-box">
-                            <!-- <div class="block-feilds">
-                                <span>User Redeemption Preference</span>
-                                <p>{{Influencer_Detail.user_redeemption_prefrence ?
-                                    Influencer_Detail.user_redeemption_prefrence :'---'}}</p>
-                            </div> -->
-<!-- 
-                            <ng-container *ngIf="Influencer_Detail.user_redeemption_prefrence == 'Bank'">
-
-                                <div class="block-feilds">
-                                    <span>Bank Name</span>
-                                    <p>{{Influencer_Detail.bank_name ? Influencer_Detail.bank_name :'---'}}</p>
-                                </div>
-
-                                <div class="block-feilds">
-                                    <span>Account Number</span>
-                                    <p>{{Influencer_Detail.account_no ? Influencer_Detail.account_no:'---'}}</p>
-                                </div>
-
-                                <div class="block-feilds">
-                                    <span>IFSC Code</span>
-                                    <p>{{Influencer_Detail.ifsc_code ? Influencer_Detail.ifsc_code :'---'}}</p>
-                                </div>
-                                <div class="block-feilds">
-                                    <div class="doc-img">
-                                        <img src="assets/img/no_image.png" *ngIf="Influencer_Detail.bank_img == ''">
-                                        <img *ngIf="Influencer_Detail.bank_img" src="{{url+Influencer_Detail.bank_img}}"
-                                            (click)="goToImage(url+Influencer_Detail.bank_img)"
-                                            style="cursor: zoom-in;">
-                                    </div>
-                                </div>
-                                <div class="block-feilds">
-                                    <span>Account Holder Name</span>
-                                    <p>{{Influencer_Detail.account_holder_name ? Influencer_Detail.account_holder_name
-                                        :'---'}}</p>
-                                </div>
-                            </ng-container> -->
 
                             <ng-container >
                                 <div class="block-feilds">
@@ -401,58 +182,9 @@
                                 </div>
                             </ng-container>
 
-                            <!-- <div class="block-feilds">
-                                <span>KYC Status</span>
-                                <p>{{Influencer_Detail.payout_kyc_status ? Influencer_Detail.payout_kyc_status :'---'}}</p>
-                            </div> -->
-
-
-
-                        </div>
-                    </div>
-                    <div class="card-head mt15">
-                        <h2 class="flex-heading">UPI Details
-                            <i class="material-icons"
-                                [ngClass]="Influencer_Detail.kyc_status == 'Verified' ? 'Approve' : Influencer_Detail.kyc_status == 'Reject' ? 'Reject' : 'Pending'">
-                                {{Influencer_Detail.kyc_status == 'Verified' ? 'verified' : Influencer_Detail.kyc_status
-                                == 'Reject' ?
-                                'cancel' : 'update'}}
-                            </i>
-                        </h2>
-                        <div class="left-auto"
-                            *ngIf="Influencer_Detail.kyc_status != 'Verified' && login_data5.edit_influencer=='1'">
-                            <button matTooltip="Update KYC Status" (click)="update(Influencer_Detail.id)"
-                                mat-raised-button color="primary">Verify UPI Id</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="grid-box">
-                            <div class="block-feilds">
-                                <span>UPI Status</span>
-                                <p>{{Influencer_Detail.kyc_status}}</p>
-                            </div>
-
-                            <div class="block-feilds" *ngIf="Influencer_Detail.kyc_status != 'Pending'">
-                                <span>Last {{Influencer_Detail.kyc_status}} By</span>
-                                <p>{{Influencer_Detail.kyc_verified_by_name ? Influencer_Detail.kyc_verified_by_name
-                                    :'---'}}</p>
-                            </div>
-
-                            <div class="block-feilds" *ngIf="Influencer_Detail.kyc_status != 'Pending'">
-                                <span>Last {{Influencer_Detail.kyc_status}} On</span>
-                                <p>{{Influencer_Detail.kyc_verified_date != '0000-00-00 00:00:00' ?
-                                    (Influencer_Detail.kyc_verified_date | date : 'dd MMMyyyy, h:mm a') : '--'}}</p>
-
-                            </div>
-
-                            <div class="block-feilds" *ngIf="Influencer_Detail.kyc_remark">
-                                <span>Reason</span>
-                                <p>{{Influencer_Detail.kyc_remark}}</p>
-                            </div>
                         </div>
                     </div>
                 </div>
-
 
                 <ng-container *ngIf="!skLoading">
                     <div class="card mt16" *ngIf="Influencer_Detail.form_builder.length > 0">
@@ -531,9 +263,6 @@
             </div>
         </div>
 
-
-
-
         <div *ngIf="tabType== 'transaction'" style="margin: -10px -10px 0px -10px;">
             <div class="tools-container no-sticky">
                 <div class="mat-tabbar">
@@ -561,14 +290,10 @@
                     </button>
                 </div>
 
-
-
-
                 <div class="left-auto df flex-gap-10">
                     <a mat-icon-button matTooltip="Refresh" (click)="refresh()">
                         <i class="material-icons">refresh</i>
                     </a>
-
 
                     <div class="pagination" *ngIf="(ledgerData.length > 0 && wallet_history_type== 'ledger')">
                         <div class="pagination-content">
@@ -652,17 +377,17 @@
                         <table>
                             <tr>
                                 <th class="w60">S.no.</th>
-                                <th class="w150">Date
+                                <th class="w170">Date
                                     <div class="sorting">
                                         <a (click)="openBottomSheet('ledger_filter')" matTooltip="Export Excel">
                                             <i class="material-icons">filter_alt</i>
                                         </a>
                                     </div>
                                 </th>
-                                <th class="w150">Transaction Type</th>
-                                <th class="text-right">Credit</th>
-                                <th class="text-right">Debit</th>
-                                <th class="w160 text-right">Balance</th>
+                                <!-- <th class="w150">Transaction Type</th> -->
+                                <th class="text-left">Credit</th>
+                                <!-- <th class="text-right">Debit</th> -->
+                                <th class="w160 text-left">Balance</th>
                             </tr>
                         </table>
                     </div>
@@ -670,7 +395,7 @@
                         <table class="sno-border">
                             <tr>
                                 <th class="w60">&nbsp;</th>
-                                <th class="w150">
+                                <th class="w170">
                                     <div class="th-search-acmt">
                                         <mat-form-field class="cs-input date-column infix-bodr">
                                             <input matInput [matDatepicker]="picker1" placeholder="Date" name="date"
@@ -681,7 +406,7 @@
                                         </mat-form-field>
                                     </div>
                                 </th>
-                                <th class="w150 text-right">
+                                <!-- <th class="w150 text-right">
                                     <div class="th-search-acmt">
                                         <mat-form-field>
                                             <input type="text" matInput placeholder="Search ..." name="transaction_type"
@@ -693,9 +418,9 @@
                                             </mat-autocomplete>
                                         </mat-form-field>
                                     </div>
-                                </th>
-                                <th class="text-right">&nbsp;</th>
-                                <th class="text-right">&nbsp;</th>
+                                </th> -->
+                                <th class="text-left">&nbsp;</th>
+                                <!-- <th class="text-right">&nbsp;</th> -->
                                 <th class="w160">&nbsp;</th>
                             </tr>
                         </table>
@@ -707,22 +432,22 @@
                             <ng-container *ngIf="!loader">
                                 <tr *ngFor="let row of ledgerData; let i =index">
                                     <td class="w60">{{i+1+sr_no}}</td>
-                                    <td class="w150">{{row.date_created | date : 'dd MMM yyy ,h:mm a'}}</td>
-                                    <td class="w150">{{row.transaction_type}}</td>
-                                    <td class="text-right">
-                                        <strong class="green-clr" *ngIf="row.credit > 0">+ {{row.credit}} pt</strong>
+                                    <td class="w170">{{row.date_created | date : 'dd MMM yyy ,h:mm a'}}</td>
+                                    <!-- <td class="w150">{{row.transaction_type}}</td> -->
+                                    <td class="text-left">
+                                        <strong class="green-clr" *ngIf="row.credit > 0">+ {{row.credit}} rs</strong>
                                         <ng-container *ngIf="row.credit == 0">---</ng-container>
                                         <br>
                                         <ng-container *ngIf="row.credit > 0">{{row.transaction_remark}}</ng-container>
                                     </td>
-                                    <td class="text-right">
+                                    <!-- <td class="text-right">
                                         <strong class="red-clr" *ngIf="row.debit > 0">- {{row.debit}} pt</strong>
                                         <ng-container *ngIf="row.debit == 0">---</ng-container>
                                         <br>
                                         <ng-container *ngIf="row.debit > 0">{{row.transaction_remark}}</ng-container>
-                                    </td>
-                                    <td class="w160 text-right">
-                                        <strong>{{row.balance}} pt</strong>
+                                    </td> -->
+                                    <td class="w160 text-left">
+                                        <strong>{{row.balance}} rs</strong>
                                     </td>
                                 </tr>
                             </ng-container>
@@ -732,18 +457,18 @@
                                     <td class="w60">
                                         <div>&nbsp;</div>
                                     </td>
-                                    <td class="w150">
+                                    <td class="w170">
                                         <div>&nbsp;</div>
                                     </td>
-                                    <td class="w150">
+                                    <!-- <td class="w150">
                                         <div>&nbsp;</div>
-                                    </td>
+                                    </td> -->
                                     <td>
                                         <div>&nbsp;</div>
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         <div>&nbsp;</div>
-                                    </td>
+                                    </td> -->
                                     <td class="w160">
                                         <div>&nbsp;</div>
                                     </td>
