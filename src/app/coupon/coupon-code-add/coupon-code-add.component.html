@@ -40,10 +40,10 @@
                                     <div class="col s12 m3 l3" *ngIf="assign_login_data2?.organisation_data?.secondary_network_loyalty == 1">
                                         <mat-form-field appearance="outline">
                                             <mat-label>Coupon Type</mat-label>
-                                            <mat-select name="coupon_type" [(ngModel)]="data.coupon_type" #coupon_type="ngModel" [ngClass]="{'has-error' : coupon_type.invalid }" (selectionChange)="getProduct('')" required>
+                                            <mat-select disabled name="coupon_type" [(ngModel)]="data.coupon_type" #coupon_type="ngModel" [ngClass]="{'has-error' : coupon_type.invalid }" (selectionChange)="getProduct('')" required>
                                                 <mat-option value="" disabled>Select</mat-option>
-                                                <mat-option value="Master Box" >Box</mat-option>
-                                                <mat-option value="Item Box" >Product</mat-option>
+                                                <mat-option value="Master Box" disabled>Box</mat-option>
+                                                <!-- <mat-option value="Item Box" >Product</mat-option> -->
                                             </mat-select>
                                         </mat-form-field>
                                         <div class="alert alert-danger" *ngIf="coupon_type.touched || f.submitted">
@@ -83,15 +83,15 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="col s12 m2 l2">
+                                        <!-- <div class="col s12 m2 l2">
                                             <mat-form-field  appearance="outline">
                                                 <mat-label>Batch No.</mat-label>
                                                 <input matInput placeholder="Type Here ..."  name="batch_no" #batch_no="ngModel"
                                                 [(ngModel)]="data.batch_no">
                                             </mat-form-field>
-                                        </div>
+                                        </div> -->
                                         
-                                        <div class="col s12 m3 l3">
+                                        <div class="col s12 m2 l2">
                                             <mat-form-field  appearance="outline">
                                                 <mat-label>Total Number Of QR Code</mat-label>
                                                 <input matInput placeholder="Type Here ..."  name="total_coupon" #total_coupon="ngModel"
@@ -101,10 +101,18 @@
                                                 <p *ngIf="total_coupon.errors?.required">This field is required</p>
                                             </div>
                                         </div>
+
+                                        <div class="col s12 m3 l3">
+                                            <mat-form-field  appearance="outline">
+                                                <mat-label>Remark</mat-label>
+                                                <input matInput placeholder="Type Here ..."  name="coupon_remark" #coupon_remark="ngModel"
+                                                [(ngModel)]="data.coupon_remark">
+                                            </mat-form-field>
+                                        </div>
                                         
                                     </div>
                                     
-                                    <div class="row">
+                                    <!-- <div class="row">
                                         <div class="col s12 m3 l3">
                                             <mat-form-field  appearance="outline">
                                                 <mat-label>Remark</mat-label>
@@ -116,7 +124,7 @@
                                         <div class="col s12 m6 l6">
                                             <img src="{{uploadurl + 'template_img/' + data.temp_image}}" *ngIf="data.temp_image">
                                         </div>
-                                    </div>
+                                    </div> -->
                                     
                                     
                                     
@@ -171,16 +179,16 @@
                                 <th class="w90">Date</th>
                                 <th class="w120">Created by</th>
                                 <th class="w120">Coupon Type</th>
-                                <th class="w80">Paper Size</th>
+                                <th class="w180">Paper Size</th>
                                 <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
                                     <th class="w250">Product Detail</th>
-                                    <th class="w100">Product Code</th>
+                                    <th class="w150">Product Code</th>
                                 </ng-container>
                                 <th class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1">Point Category</th>
                                 <th class="w110 text-center">Total QR Code</th>
-                                <th class="w100">Batch No.</th>
+                                <!-- <th class="w100">Batch No.</th> -->
                                 <th class="w250">Remark</th>
-                                <th class="w100">Printing Status</th>
+                                <!-- <th class="w100">Printing Status</th> -->
                                 <th class="w100" *ngIf="assign_login_data2.add_coupon_code== 1 || assign_login_data2.delete_coupon_code==1">Action</th>
                             </tr>
                         </table>
@@ -213,7 +221,7 @@
                                         </mat-form-field>
                                     </div>
                                 </th>
-                                <th class="w80">&nbsp;</th>
+                                <th class="w180">&nbsp;</th>
                                 <!-- <th class="w120">
                                     <div class="th-search-acmt">
                                         <mat-form-field class="cs-input select-input">
@@ -234,7 +242,7 @@
                                             </mat-form-field>
                                         </div>
                                     </th>
-                                    <th class="w100">
+                                    <th class="w150">
                                         <div class="th-search-acmt">
                                             <mat-form-field class="example-full-width cs-input select-input">
                                                 <input matInput placeholder="Search..." type="text" name="product_code" [(ngModel)]="filter.product_code" (keyup.enter)="!filter.product_code ? refresh() : generated_coupon_listing();">
@@ -257,9 +265,9 @@
                                         </mat-form-field>
                                     </div>
                                 </th>
-                                <th class="w100">&nbsp;</th>
+                                <!-- <th class="w100">&nbsp;</th> -->
                                 <th class="w250">&nbsp;</th>
-                                <th class="w100">&nbsp;</th>
+                                <!-- <th class="w100">&nbsp;</th> -->
                                 <th class="w100" *ngIf="assign_login_data2.add_coupon_code==1 || assign_login_data2.delete_coupon_code==1">&nbsp;</th>
                             </tr>
                         </table>
@@ -275,17 +283,17 @@
                                     <td class="w90">{{(row.date_created?row.date_created:'N/A') | date:'d MMM y'}}</td>
                                     <td class="w120">{{row.created_by_name?row.created_by_name:'N/A'}}</td>
                                     <td class="w120">{{row.coupon_type?row.coupon_type:'N/A'}}</td>
-                                    <td class="w80">{{row.paper_size ? row.paper_size : '---'}}</td>
+                                    <td class="w180">{{row.paper_size ? row.paper_size : '---'}}</td>
                                     <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
                                         <td class="w250">{{row.product_detail?row.product_detail:'N/A'}}</td>
-                                        <td class="w100">{{row.product_code?row.product_code:'N/A'}}</td>
+                                        <td class="w150">{{row.product_code?row.product_code:'N/A'}}</td>
                                     </ng-container>
                                     
                                     <td class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1">{{row.point_category?row.point_category:'N/A'}}</td>
                                     <td class="w110 text-center"><strong>{{row.total_coupon?row.total_coupon:'N/A'}}</strong></td>
-                                    <td class="w100">{{row.batch_no ? row.batch_no: '---'}}</td>
+                                    <!-- <td class="w100">{{row.batch_no ? row.batch_no: '---'}}</td> -->
                                     <td class="w250">{{row.remarks ? row.remarks: '---'}}</td>
-                                    <td class="w100 text-center f15" *ngIf="row.print_status == '1'"><span color="accent">Printed</span></td>
+                                    <!-- <td class="w100 text-center f15" *ngIf="row.print_status == '1'"><span color="accent">Printed</span></td> -->
                                     <td class="w100" *ngIf="row.print_status == '0'">
                                         <button mat-raised-button color="primary" (click)="printStatus(row.id)" >
                                             <i class="material-icons">update</i>  Update</button>
@@ -315,14 +323,14 @@
                                     <td class="w80"><div>&nbsp;</div></td>
                                     <ng-container *ngIf="assign_login_data2.organisation_data.qr_genration==0">
                                         <td class="w250"><div>&nbsp;</div></td>
-                                        <td class="w100"><div>&nbsp;</div></td>
+                                        <td class="w150"><div>&nbsp;</div></td>
                                     </ng-container>
                                     
                                     <td class="w140" *ngIf="assign_login_data2.organisation_data.qr_genration==1"><div>&nbsp;</div></td>
                                     <td class="w110"><div>&nbsp;</div></td>
-                                    <td class="w100"><div>&nbsp;</div></td>
+                                    <!-- <td class="w100"><div>&nbsp;</div></td> -->
                                     <td class="w250"><div>&nbsp;</div></td>
-                                    <td class="w100"><div>&nbsp;</div></td>
+                                    <!-- <td class="w100"><div>&nbsp;</div></td> -->
                                     <td class="w100" *ngIf="assign_login_data2.add_coupon_code==1 || assign_login_data2.delete_coupon_code==1"><div>&nbsp;</div></td>
                                 </tr>
                             </ng-container>

@@ -29,14 +29,7 @@
                     <i class="material-icons">people_alt</i>Secondary
                 </button>
             </div>
-            <!-- <div class="mat-tabbar">
-                <button mat-button [ngClass]="active_tab == 'Master Box' ? 'active' : ''" (click)="active_tab = 'Master Box'; pointCategory_data(active_tab);">
-                    <i class="material-icons">all_inbox</i>Box
-                </button>
-                <button mat-button [ngClass]="active_tab == 'Item Box' ? 'active' : ''" (click)="active_tab = 'Item Box'; pointCategory_data(active_tab);">
-                    <i class="material-icons">category</i>Product
-                </button>
-            </div> -->
+            
         </div>
     </div>
     <div class="container container-scroll pb100">
@@ -46,16 +39,15 @@
                     <table>
                         <tr>
                             <th class="w60 text-center">Sr.No</th>
-                            <th class="w90">Date</th>
+                            <th class="w110">Date</th>
                             <th>Category Name</th>
-                            <th class="w120 text-center" *ngIf="!subType">Influencer Point</th>
-                            <ng-container *ngIf="subType">
+                            <th class="w120 text-center">Influencer Point</th>
+                            <!-- <ng-container>
                                 <th class="w120 text-center" *ngFor="let row of headers">
                                     {{row}}
                                 </th>
                             </ng-container>
-                            
-                            <!-- <th class="w120 text-center" *ngIf="active_tab == 'Item Box'">Secondary Point</th> -->
+                             -->
                             <th class="w100 text-center" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">Action</th>
                         </tr>
                     </table>
@@ -65,7 +57,7 @@
                     <table>
                         <tr>
                             <th class="w60">&nbsp;</th>
-                            <th class="w90">
+                            <th class="w110">
                                 <div class="th-search-acmt">
                                     <mat-form-field class="cs-input date-column infix-bodr">
                                         <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
@@ -83,15 +75,10 @@
                                     </mat-form-field>
                                 </div>
                             </th>
-                            <ng-container *ngIf="!subType">
+                            <ng-container>
                                 <th class="w120 text-center">&nbsp;</th>
                             </ng-container>
-                            <ng-container *ngIf="subType">
-                                <th class="w120 text-center" *ngFor="let row of headers">
-                                    &nbsp;
-                                </th>
-                            </ng-container>
-                            <!-- <th class="w120" *ngIf="active_tab == 'Item Box'">&nbsp;</th> -->
+                            
                             <th class="w100" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">&nbsp;</th>
                         </tr>
                     </table>
@@ -104,31 +91,20 @@
                         <ng-container *ngIf="!loader">
                             <tr *ngFor="let row of pointCategories_data; let i = index;">
                                 <td class="w60 text-center">{{i+1+sr_no}}</td>
-                                <td class="w90">{{row.date_created | date : 'd MMM y'}}</td>
+                                <td class="w110">{{row.date_created | date : 'd MMM y'}}</td>
                                 <td>{{row.point_category_name}}</td>
-                                <ng-container *ngIf="!subType">
+                                <ng-container>
                                     <td class="w120 text-center">
                                         <strong>{{row.influencer_point}}</strong>
                                     </td>
                                 </ng-container>
-                                <ng-container *ngIf="subType">
-                                    <td class="w120 text-center" *ngFor="let data of headers; let i = index">
-                                        {{row?.sub_type[i]?.influencer_point||'--'}}
-                                        
-                                    </td>
-                                </ng-container>
                                 
-                                <!-- <td class="w120 text-center" *ngIf="active_tab == 'Item Box'">
-                                    <strong>{{row.influencer_transfer_point}}</strong>
-                                </td> -->
                                 <td class="w100 text-center" *ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'">
                                     <div class="action-button">
-                                        <button mat-icon-button *ngIf="logined_user_data.edit_point_master=='1'" matTooltip="Edit" [routerLink]="[ 'point-add/', row.id ]">
+                                        <!-- <button mat-icon-button *ngIf="logined_user_data.edit_point_master=='1'" matTooltip="Edit" [routerLink]="[ 'point-add/', row.id ]">
                                             <i class="material-icons edit">edit</i>
-                                        </button>
-                                        <!-- <button mat-icon-button *ngIf="logined_user_data.edit_point_master=='1' && subType" matTooltip="Add" (click)="openDialog(row)">
-                                            <i class="material-icons edit">add</i>
                                         </button> -->
+                                        
                                         <button mat-icon-button matTooltip="Delete" (click)="delete(row.id)" *ngIf="logined_user_data.delete_point_master=='1'">
                                             <i class="material-icons del">delete</i>
                                         </button>
@@ -142,7 +118,7 @@
                                 <td class="w60">
                                     <div>&nbsp;</div>
                                 </td>
-                                <td class="w90">
+                                <td class="w110">
                                     <div>&nbsp;</div>
                                 </td>
                                 <td>
@@ -151,9 +127,7 @@
                                 <td class="w120 text-center">
                                     <div>&nbsp;</div>
                                 </td>
-                                <!-- <td class="w120 text-center" *ngIf="active_tab == 'Item Box'">
-                                    <div>&nbsp;</div>
-                                </td> -->
+                                
                                 <td class="w80 text-center"*ngIf="logined_user_data.edit_point_master=='1' || logined_user_data.delete_point_master=='1'"><div>&nbsp;</div>
                                 </td>
                             </tr>
@@ -259,9 +233,6 @@
             </div>
         </div>
     </div>
-    
-    
-    
     
     <div class="fab-btns" *ngIf=" logined_user_data.export_point_master=='1' || logined_user_data.add_point_master=='1'">
         <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}" [matMenuTriggerFor]="menu">

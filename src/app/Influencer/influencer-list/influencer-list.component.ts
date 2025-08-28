@@ -19,7 +19,7 @@ import { ProgressService } from 'src/app/progress.service';
 export class InfluencerListComponent implements OnInit {
   filter: any = {};
   type: any = '';
-  active_tab: any = 'Pending';
+  active_tab: any = 'All';
   network: any = '';
   Influencer_List: any = [];
   loader: boolean = false;

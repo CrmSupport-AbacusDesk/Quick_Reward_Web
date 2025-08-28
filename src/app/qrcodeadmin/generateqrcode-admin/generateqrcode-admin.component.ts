@@ -59,7 +59,7 @@ export class GenerateqrcodeAdminComponent implements OnInit {
     this.userId = this.userData['data']['id'];
     this.userName = this.userData['data']['name'];
     this.today_date = new Date();
-    this.data.coupon_type = 'Item Box';
+    this.data.coupon_type = 'Master Box';
     
   }
 

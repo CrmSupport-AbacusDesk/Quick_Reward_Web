@@ -57,22 +57,15 @@
         <table>
           <tr>
             <th class="w60">Sr.No</th>
-            <th class="w90">Date</th>
-            <th class="w120">Created by</th>
-            <!-- <th class="w150">Master Box QR Code</th> -->
-            
+            <th class="w110">Date</th>
+            <th class="w100">Created by</th>
             <ng-container *ngIf="active_tab != 'master_box'">
               <th class="w150">Small Box QR Code</th>
             </ng-container>
             <th class="w140">{{active_tab == 'master_box' ? 'Box' : 'Product'}} QR Code</th>
-            <th class="w100">Batch No</th>
+            <th class="w150">Cash Category</th>
             <th> {{assign_login_data2?.organisation_data?.qr_genration==0 ? 'Product Detail' : 'Point Category'}}</th>
-            <th class="w250">Remark</th>
-            <!-- <th class="w100">Dispatch Date</th>
-            <th class="w100">Dispatch Type</th>
-            <th class="w250">Customer Detail</th>
-            <th class="w130">Order No.</th>
-            <th class="w130">Gatepass No.</th> -->
+            <th class="w200">Remark</th>
           </tr>
         </table>
       </div>
@@ -81,7 +74,7 @@
         <table>
           <tr>
             <th class="w60">&nbsp;</th>
-            <th class="w90">
+            <th class="w110">
               <div class="th-search-acmt">
                 <mat-form-field class="cs-input date-column infix-bodr">
                   <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
@@ -92,16 +85,7 @@
               </div>
               
             </th>
-            <th class="w120">&nbsp;</th>
-            
-            <!-- <th class="w150">
-              <div class="th-search-acmt">
-                <mat-form-field class="example-full-width cs-input select-input">
-                  <input matInput placeholder="Search..." type="text" name="master_box_coupon_code"
-                  [(ngModel)]="filter.master_box_coupon_code" (keyup.enter)="couponCodeList()">
-                </mat-form-field>
-              </div>
-            </th> -->
+            <th class="w100">&nbsp;</th>
             
             <ng-container *ngIf="active_tab != 'master_box'">
               <th class="w150">
@@ -121,11 +105,11 @@
                 </mat-form-field>
               </div>
             </th>
-            <th class="w100">
+            <th class="w150">
               <div class="th-search-acmt">
                 <mat-form-field class="example-full-width cs-input select-input">
-                  <input matInput placeholder="Search..." type="text" name="batch_no"
-                  [(ngModel)]="filter.batch_no" (keyup.enter)="couponCodeList()">
+                  <input matInput placeholder="Search..." type="text" name="point_category_name"
+                  [(ngModel)]="filter.point_category_name" (keyup.enter)="couponCodeList()">
                 </mat-form-field>
               </div>
             </th>
@@ -140,37 +124,8 @@
                 </mat-form-field>
               </div>
             </th>
-            
-            <!-- <th class="w100">
-              <div class="th-search-acmt">
-                <mat-form-field class="cs-input date-column infix-bodr">
-                  <input matInput [matDatepicker]="dispatch_date" placeholder="Date" name="dispatch_date"
-                  [(ngModel)]="filter.dispatch_date" (dateChange)="couponCodeList()" [max]="today_date" disabled>
-                  <mat-datepicker-toggle matSuffix [for]="dispatch_date"></mat-datepicker-toggle>
-                  <mat-datepicker #dispatch_date disabled="false"></mat-datepicker>
-                </mat-form-field>
-              </div>
-            </th>
-            <th class="w100">&nbsp;</th>
-            <th class="w250">&nbsp; </th>
-            
-            <th class="w130">
-              <div class="th-search-acmt">
-                <mat-form-field class="example-full-width cs-input select-input">
-                  <input matInput placeholder="Search..." type="text" name="invoice_number"
-                  [(ngModel)]="filter.invoice_number" (keyup.enter)="couponCodeList()">
-                </mat-form-field>
-              </div>
-            </th>
-            <th class="w130">
-              <div class="th-search-acmt">
-                <mat-form-field class="example-full-width cs-input select-input">
-                  <input matInput placeholder="Search..." type="text" name="gatepass_number"
-                  [(ngModel)]="filter.gatepass_number" (keyup.enter)="couponCodeList()">
-                </mat-form-field>
-              </div>
-            </th> -->
-            <th class="w250">&nbsp;</th>
+          
+            <th class="w200">&nbsp;</th>
             
           </tr>
         </table>
@@ -183,27 +138,19 @@
           <ng-container *ngIf="!loader">
             <tr *ngFor="let row of couponData let i = index;">
               <td class="w60">{{i+1+sr_no}}</td>
-              <td class="w90">{{(row.date_created?row.date_created:'---') | date:'d MMM y'}}</td>
-              <td class="w120">{{row.created_by_name?row.created_by_name:'---'}}</td>
-              
-              <!-- <td class="w150">{{row.grand_master?row.grand_master:'---'}}</td> -->
+              <td class="w110">{{(row.date_created?row.date_created:'---') | date:'d MMM y'}}</td>
+              <td class="w100">{{row.created_by_name?row.created_by_name:'---'}}</td>
               
               <ng-container *ngIf="active_tab != 'master_box'">
                 <td class="w150">{{row.master_coupon_code?row.master_coupon_code:'---'}}</td>
               </ng-container>
               <td class="w140">{{row.coupon_code?row.coupon_code:'---'}}</td>
-              <td class="w100">{{row.batch_no?row.batch_no:'---'}}</td>
+              <td class="w150">{{row.point_category_name?row.point_category_name:'---'}}</td>
               <td>
                 {{assign_login_data2?.organisation_data?.qr_genration==0 ? (row.product_detail?row.product_detail:'---') : row.point_category_name?row.point_category_name:'---'}}
               </td>
-              <!-- <td class="w100">
-                {{row.dispatch_date != "0000-00-00 00:00:00" ? (row.dispatch_date | date:'d MMM y') : '---'}}
-              </td>
-              <td class="w100">{{row.dispatch_type}}</td>
-              <td class="w250">{{row.dr_detail}}</td>
-              <td class="w130">{{row.invoice_number}}</td>
-              <td class="w130">{{row.gatepass_number?row.gatepass_number:'---'}}</td> -->
-              <td class="w250">{{row.remark}}</td>
+            
+              <td class="w200">{{row.remark}}</td>
             </tr>
           </ng-container>
           <ng-container *ngIf="loader">
@@ -217,7 +164,7 @@
               <td class="w140"><div>&nbsp;</div></td>
               <td class="w100"><div>&nbsp;</div></td>
               <td><div>&nbsp;</div></td>
-              <td class="w250"><div>&nbsp;</div></td>
+              <td class="w200"><div>&nbsp;</div></td>
             </tr>
           </ng-container>
           
@@ -237,30 +184,22 @@
         <table>
           <tr>
             <th class="w60">Sr.No</th>
-            <th class="w70">Txn Id</th>
+            <th class="w150">Txn Id</th>
             <th class="w140">QR Code</th>
-            <th class="w250"> {{assign_login_data2?.organisation_data?.qr_genration==0 ? 'Product Detail' : 'Point Category'}}</th>
-            <!-- <th class="w100">Dispatch Date</th>
-            <th class="w100">Dispatch Type</th>
-            <th class="w250">Dealer Detail</th>
-            <th class="w130">Invoice No.</th> -->
-            <th class="w110 text-right">Coupon value</th>
-            <th class="w140" *ngIf="assign_login_data2?.organisation_data?.scanning_geo_loaction==1">Scanning Loaction</th>
+            <th class="w230"> {{assign_login_data2?.organisation_data?.qr_genration==0 ? 'Product Detail' : 'Point Category'}}</th>
+            <th class="w150">Scan By Type</th>
             <th class="w150">Scan By</th>
             <th class="w110">Mobile No.</th>
-            <th class="w100">Scan Date
-
+            <th class="w130">Coupon Reward</th>
+            <th class="w170">Scan Date
               <div class="sorting" *ngIf="assign_login_data2.export_coupon_code=='1'">
                 <a (click)="openBottomSheet()" matTooltip="Export Excel">
                   <i class="material-icons">filter_alt</i>
                 </a>
               </div>
             </th>
-            <th class="w100">Generated Date </th>
+            <th class="w170">Generated Date </th>
             <th class="w100">State </th>
-            <th class="w180">Bonus Name</th>
-            <th class="w110 text-right">Bonus Point</th>
-            <th class="w70">Action</th>
           </tr>
         </table>
       </div>
@@ -269,7 +208,7 @@
         <table>
           <tr>
             <th class="w60">&nbsp;</th>
-            <th class="w70">&nbsp;</th>
+            <th class="w150">&nbsp;</th>
             <th class="w140">
               <div class="th-search-acmt">
                 <mat-form-field class="example-full-width cs-input select-input">
@@ -279,7 +218,7 @@
               </div>
             </th>
             
-            <th  class="w250">
+            <th  class="w230">
               <div class="th-search-acmt">
                 <mat-form-field class="example-full-width cs-input select-input">
                   <input matInput placeholder="Search..." type="text" name="product_detail"
@@ -291,30 +230,15 @@
               </div>
             </th>
             
-            <!-- <th class="w100">
+            <th class="w150">
               <div class="th-search-acmt">
-                <mat-form-field class="cs-input date-column infix-bodr">
-                  <input matInput [matDatepicker]="dispatch_date" placeholder="Date" name="dispatch_date"
-                  [(ngModel)]="filter.dispatch_date" (dateChange)="scanCouponList()" [max]="today_date" disabled>
-                  <mat-datepicker-toggle matSuffix [for]="dispatch_date"></mat-datepicker-toggle>
-                  <mat-datepicker #dispatch_date disabled="false"></mat-datepicker>
+                <mat-form-field class="example-full-width cs-input select-input">
+                  <input matInput placeholder="Search..." type="text" name="scanned_by_type"
+                  [(ngModel)]="filter.scanned_by_type" (keyup.enter)="scanCouponList()">
                 </mat-form-field>
               </div>
             </th>
-            <th class="w100">&nbsp;</th>
-            <th class="w250">&nbsp;</th>
-            
-            <th class="w130">
-              <div class="th-search-acmt">
-                <mat-form-field class="example-full-width cs-input select-input">
-                  <input matInput placeholder="Search..." type="text" name="invoice_number"
-                  [(ngModel)]="filter.invoice_number" (keyup.enter)="scanCouponList()">
-                </mat-form-field>
-              </div>
-            </th> -->
-            
-            <th class="w110">&nbsp;</th>
-            <th class="w140" *ngIf="assign_login_data2?.organisation_data?.scanning_geo_loaction==1">&nbsp;</th>
+
             <th class="w150">
               <div class="th-search-acmt">
                 <mat-form-field class="example-full-width cs-input select-input">
@@ -323,7 +247,7 @@
                 </mat-form-field>
               </div>
             </th>
-            
+
             <th class="w110">
               <div class="th-search-acmt">
                 <mat-form-field class="example-full-width cs-input select-input">
@@ -332,8 +256,10 @@
                 </mat-form-field>
               </div>
             </th>
+
+            <th class="w130">&nbsp;</th>
             
-            <th class="w100">
+            <th class="w170">
               <div class="th-search-acmt">
                 <mat-form-field class="cs-input date-column infix-bodr">
                   <input matInput [matDatepicker]="picker1" placeholder="Date" name="scanned_on"
@@ -343,7 +269,7 @@
                 </mat-form-field>
               </div>
             </th>
-            <th class="w100">
+            <th class="w170">
               <div class="th-search-acmt">
                 <mat-form-field class="cs-input date-column infix-bodr">
                   <input matInput [matDatepicker]="picker2" placeholder="Date" name="generated_date"
@@ -361,10 +287,6 @@
                 </mat-form-field>
               </div>
             </th>
-
-            <th class="w180">&nbsp;</th>
-            <th class="w110">&nbsp;</th>
-            <th class="w70">&nbsp;</th>
           </tr>
         </table>
       </div>
@@ -376,34 +298,20 @@
           <ng-container *ngIf="!loader">
             <tr *ngFor="let row of scanData let i = index;">
               <td class="w60">{{i+1+sr_no}}</td>
-              <td class="w70">  #{{row.id}}</td>
+              <td class="w150">{{row.trans_id}}</td>
               <td class="w140">{{row.coupon_code?row.coupon_code:'---'}}</td>
-              <td class="w250">
+              <td class="w230">
                 {{assign_login_data2?.organisation_data?.qr_genration==0 ? (row.product_detail?row.product_detail:'---') : row.point_category_name?row.point_category_name:'---'}}
               </td>
-              <!-- <td class="w100">
-                {{row.dispatch_date != "0000-00-00 00:00:00" ? (row.dispatch_date | date:'d MMM y') : '---'}}
-              </td>
-              <td class="w100">{{row.dispatch_type}}</td>
-              <td class="w250">{{row.dr_detail}}</td>
-              <td class="w130">{{row.invoice_number}}</td> -->
-              <td class="w110 text-right">
-                <strong>{{row.total_point?row.total_point + ' PT':'---'}}</strong>
-              </td>
-              <td class="w140" *ngIf="assign_login_data2?.organisation_data?.scanning_geo_loaction==1">
-                <a class="link-btn" mat-button  href="http://maps.google.com/maps?q={{row.lat}},{{row.lng}}" target="blank" *ngIf="row.lat && row.lng">
-                  View Location
-                </a>
-                <ng-container *ngIf="!row.lat && !row.lng">N/A</ng-container>
-              </td>
+              <td class="w150">{{row.scanned_by_type?row.scanned_by_type:'---'}}</td>
               <td class="w150">{{row.scanned_by_name?row.scanned_by_name:'---'}}</td>
               <td class="w110">{{row.scanned_by_mobile?row.scanned_by_mobile:'---'}}</td>
-              <td class="w100">{{row.scanned_date | date:'d MMM y, h:mm a'}}</td>
-              <td class="w100">{{row.generated_date | date:'d MMM y, h:mm a'}}</td>
+              <td class="w130">
+                <strong>{{ row.total_point > 0 ? row.total_point + ' Rs' : '---' }}</strong>
+              </td>
+              <td class="w170">{{row.scanned_date | date:'d MMM y, h:mm a'}}</td>
+              <td class="w170">{{row.generated_date | date:'d MMM y, h:mm a'}}</td>
               <td class="w100">{{row.state}}</td>
-              <td class="w180">{{row.bonus_scheme_name}}</td>
-              <td class="w110 text-right"><strong>{{row.bonus_point?row.bonus_point + ' PT':'---'}}</strong></td>
-              <td class="w70"><a class="link-btn" (click)="reopenCoupon(row.coupon_code)">Reopen</a></td>
             </tr>
           </ng-container>
           
@@ -413,19 +321,18 @@
               <td class="w60">
                 <div>&nbsp;</div>
               </td>
-              <td class="w70">
+              <td class="w150">
                 <div>&nbsp;</div>
               </td>
               <td class="w140">
                 <div>&nbsp;</div>
               </td>
-              <td class="w250">
+              <td class="w230">
                 <div>&nbsp;</div>
               </td>
               <td class="w110">
                 <div>&nbsp;</div>
               </td>
-              <td class="w140" *ngIf="assign_login_data2?.organisation_data?.scanning_geo_loaction==1"><div>&nbsp;</div></td>
               <td class="w150">
                 <div>&nbsp;</div>
               </td>
@@ -433,15 +340,6 @@
                 <div>&nbsp;</div>
               </td>
               <td class="w180">
-                <div>&nbsp;</div>
-              </td>
-              <td class="w110">
-                <div>&nbsp;</div>
-              </td>
-              <td class="w100">
-                <div>&nbsp;</div>
-              </td>
-              <td class="w70">
                 <div>&nbsp;</div>
               </td>
             </tr>

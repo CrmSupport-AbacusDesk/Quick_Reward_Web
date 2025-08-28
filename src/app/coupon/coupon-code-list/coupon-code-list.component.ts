@@ -119,7 +119,7 @@ export class CouponCodeListComponent implements OnInit {
     }
     
     this.filter.active_tab = this.active_tab;
-    this.encryptedData = this.service.payLoad ? { 'filter': this.filter, 'start': this.start, 'pagelimit': 500 } : this.cryptoService.encryptData({ 'filter': this.filter, 'start': this.start, 'pagelimit': 500 });
+    this.encryptedData = this.service.payLoad ? { 'filter': this.filter, 'start': this.start, 'pagelimit': 100 } : this.cryptoService.encryptData({ 'filter': this.filter, 'start': this.start, 'pagelimit': 100 });
     this.service.post_rqst(this.encryptedData, '/CouponCode/couponCodeList').subscribe((result) => {
       this.decryptedData = this.service.payLoad ? result : this.cryptoService.decryptData(JSON.stringify(result));
       if (this.decryptedData['statusCode'] == 200) {
@@ -176,7 +176,7 @@ export class CouponCodeListComponent implements OnInit {
     }
     
     this.filter.active_tab = this.active_tab;
-    this.encryptedData = this.service.payLoad ? { 'filter': this.filter, 'start': this.start, 'pagelimit': 500 } : this.cryptoService.encryptData({ 'filter': this.filter, 'start': this.start, 'pagelimit': 500 });
+    this.encryptedData = this.service.payLoad ? { 'filter': this.filter, 'start': this.start, 'pagelimit': 100 } : this.cryptoService.encryptData({ 'filter': this.filter, 'start': this.start, 'pagelimit': 100 });
     this.service.post_rqst(this.encryptedData, 'CouponCode/scannedCouponCodeList').subscribe((result) => {
       this.decryptedData = this.service.payLoad ? result : this.cryptoService.decryptData(JSON.stringify(result));
       if (this.decryptedData['statusCode'] == 200) {
@@ -234,7 +234,7 @@ export class CouponCodeListComponent implements OnInit {
     }
     
     this.filter.active_tab = this.active_tab;
-    this.encryptedData = this.service.payLoad ? { 'filter': this.filter, 'start': this.start, 'pagelimit': 500 } : this.cryptoService.encryptData({ 'filter': this.filter, 'start': this.start, 'pagelimit': 500 });
+    this.encryptedData = this.service.payLoad ? { 'filter': this.filter, 'start': this.start, 'pagelimit': 100 } : this.cryptoService.encryptData({ 'filter': this.filter, 'start': this.start, 'pagelimit': 100 });
     this.service.post_rqst(this.encryptedData, 'CouponCode/scannedSecondaryCouponCodeList').subscribe((result) => {
       this.decryptedData = this.service.payLoad ? result : this.cryptoService.decryptData(JSON.stringify(result));
       if (this.decryptedData['statusCode'] == 200) {

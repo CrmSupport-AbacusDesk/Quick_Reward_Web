@@ -54,8 +54,8 @@
                               <mat-label>Coupon Type</mat-label>
                               <mat-select name="coupon_type" [(ngModel)]="data.coupon_type" #coupon_type="ngModel" [ngClass]="{'has-error' : coupon_type.invalid }" required>
                                   <mat-option value="" disabled>Select</mat-option>
-                                  <mat-option value="Master Box" >Box</mat-option>
-                                  <mat-option value="Item Box" >Product</mat-option>
+                                  <mat-option value="Master Box" disabled>Box</mat-option>
+                                  <!-- <mat-option value="Item Box" >Product</mat-option> -->
                               </mat-select>
                           </mat-form-field>
                           <div class="alert alert-danger" *ngIf="coupon_type.touched || f.submitted">
