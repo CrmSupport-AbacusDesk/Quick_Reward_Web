@@ -226,7 +226,7 @@
                 </div>
             </div>
 
-            <div class="col s12 m4 l4" *ngIf="tabType == 'Profile'">
+            <!-- <div class="col s12 m4 l4" *ngIf="tabType == 'Profile'">
                 <div class="card" *ngIf="!skLoading">
                     <div class="card-head">
                         <h2>Logs</h2>
@@ -260,7 +260,7 @@
                     </div>
                 </div>
 
-            </div>
+            </div> -->
         </div>
 
         <div *ngIf="tabType== 'transaction'" style="margin: -10px -10px 0px -10px;">
@@ -271,7 +271,7 @@
                         <i class="material-icons">receipt_long</i>
                         Ledger
                     </button>
-                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'scan_history'}"
+                    <!-- <button mat-button [ngClass]="{'active' :wallet_history_type== 'scan_history'}"
                         (click)="clearFilter(); scan_history_data(); wallet_history_type= 'scan_history'"
                         *ngIf="Influencer_Detail.loyalty_base == '0'">
                         <i class="material-icons">qr_code_scanner</i>
@@ -282,12 +282,12 @@
                         *ngIf="Influencer_Detail.loyalty_base == '1'">
                         <i class="material-icons">receipt</i>
                         Purchase History
-                    </button>
-                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'redeem_history'}"
+                    </button> -->
+                    <!-- <button mat-button [ngClass]="{'active' :wallet_history_type== 'redeem_history'}"
                         (click)="clearFilter(); redeem_history_data(); wallet_history_type = 'redeem_history'">
                         <i class="material-icons">redeem</i>
                         Redeem History
-                    </button>
+                    </button> -->
                 </div>
 
                 <div class="left-auto df flex-gap-10">

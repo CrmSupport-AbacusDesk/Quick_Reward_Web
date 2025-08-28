@@ -32,11 +32,10 @@
                     All ({{tab_count.all_count ? tab_count.all_count : '0'}})
                 </button>
 
-
-                <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
+                <!-- <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
                     (click)="active_tab = 'Pending';InfluencerList()"><i class="material-icons">pending_actions</i>
                     Pending ({{tab_count.pending_count ? tab_count.pending_count : '0'}})
-                </button>
+                </button> -->
                 <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
                     (click)="active_tab = 'Approved'; InfluencerList()"><i class="material-icons">thumb_up_alt</i>
                     Approved ({{tab_count.approved_count ? tab_count.approved_count : '0'}})
@@ -207,10 +206,7 @@
                                                 (click)="service.setData(filter);service.setStart(start) "
                                                 routerLink="influencer-detail/{{row.encrypt_id}}/{{type}}"
                                                 [disabled]="row.mobile_no == '8800123607'">
-                                                {{row[header.headerEncodedName]? (header.headerEncodedName ===
-                                                'unique_id'? (network ? (network | slice:0:1) : '#') +
-                                                row[header.headerEncodedName]: row[header.headerEncodedName]) : '--' }}
-                                                <!-- {{!row[header.headerEncodedName]?'--': header.headerEncodedName == 'unique_id' ? ((network | slice:0:1)||'#'+row[header.headerEncodedName])    : row[header.headerEncodedName]}} -->
+                                                {{ row[header.headerEncodedName] || '--' }}
                                             </button>
                                         </p>
                                     </td>

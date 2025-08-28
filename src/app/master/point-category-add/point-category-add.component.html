@@ -16,20 +16,6 @@
                         </div>
                         <div class="card-body cs-form">
                             <div class="row">
-                                <!-- <div class="col s12 m3 l3">
-                                    <mat-form-field appearance="outline">
-                                        <mat-label>Category Type</mat-label>
-                                        <mat-select name="point_type" [(ngModel)]="data.point_type" #point_type="ngModel"
-                                        [ngClass]="{'has-error' : point_type.invalid } " required>
-                                        <mat-option value="" disabled>Select</mat-option>
-                                        <mat-option value="Master Box">Box</mat-option>
-                                        <mat-option value="Item Box">Product</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <div class="alert alert-danger" *ngIf="point_type.touched || f.submitted">
-                                    <p *ngIf="point_type.errors?.required">This field is required</p>
-                                </div>
-                            </div> -->
                             
                             <div class="col s12 m3 l3">
                                 <mat-form-field appearance="outline">
@@ -55,7 +41,7 @@
                                 </div>
                             </ng-container>
                             <!-- *ngIf="data.point_type == 'Item Box'" -->
-                            <ng-container *ngIf="!subType">
+                            <ng-container >
                                 <div class="col s12 m3 l3" *ngIf="userData.organisation_data.loyalty == '1'">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Influencer Point</mat-label>
@@ -68,17 +54,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- <div class="col s12 m3 l3">
-                                    <mat-form-field appearance="outline">
-                                        <mat-label>Secondary  Point</mat-label>
-                                        <input matInput placeholder="Type Here ..." name="influencer_transfer_point"
-                                        #influencer_transfer_point="ngModel" [(ngModel)]="data.influencer_transfer_point"
-                                        onkeypress="return event.charCode>=48 && event.charCode<=57">
-                                    </mat-form-field>
-                                    <div class="alert alert-danger" *ngIf="influencer_transfer_point.touched || f.submitted">
-                                        <p *ngIf="influencer_transfer_point.errors?.required">This field is required</p>
-                                    </div>
-                                </div> -->
                             </ng-container>
                             
                             <div class="col s12 m3 l3" *ngIf="userData.organisation_data.dms == '1' && userData.organisation_data.secondary_network_loyalty == '1'">
