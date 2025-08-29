@@ -664,7 +664,7 @@ export class LoginComponent implements OnInit {
               data['data']['import_infulencer_master'] = 1
             }
           }
-          else if ((data['assignModule'][i]['module_name'] == 'Point Category') && data['assignModule'][i]['view'] == '1') {
+          else if ((data['assignModule'][i]['module_name'] == 'Cash Category') && data['assignModule'][i]['view'] == '1') {
             data['data']['view_master'] = 1
             data['data']['view_point_category'] = 1
 

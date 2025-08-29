@@ -78,7 +78,7 @@ export class SaleUserDetailComponent implements OnInit {
       this.userId = this.userData['data']['id'];
       this.userName = this.userData['data']['name'];
       this.url = this.service.uploadUrl + 'profile/'
-      this.login_data.accessAllowed = ['Enquiry', 'Site', 'Influencer Network', 'Customer Network', 'Primary Orders', 'Secondary Orders', 'Attendance', 'Check In', 'Leave', 'Travel Plan', 'Followup', 'Expense', 'Event Plan', 'Pop & Gift', 'Survey', 'Gift Gallery', 'Bonus Point', 'Qr Code', 'Redeem Request', 'Task', 'Ticket', 'Brand Audit', 'Target', 'Category', 'Sub Category', 'Products', 'PDF', 'Leave Master', 'Users', 'Designation', 'Customer Category', 'Point Category', 'Holiday', 'Allowance Master']
+      this.login_data.accessAllowed = ['Enquiry', 'Site', 'Influencer Network', 'Customer Network', 'Primary Orders', 'Secondary Orders', 'Attendance', 'Check In', 'Leave', 'Travel Plan', 'Followup', 'Expense', 'Event Plan', 'Pop & Gift', 'Survey', 'Gift Gallery', 'Bonus Point', 'Qr Code', 'Redeem Request', 'Task', 'Ticket', 'Brand Audit', 'Target', 'Category', 'Sub Category', 'Products', 'PDF', 'Leave Master', 'Users', 'Designation', 'Customer Category', 'Cash Category', 'Holiday', 'Allowance Master']
 
     });
 

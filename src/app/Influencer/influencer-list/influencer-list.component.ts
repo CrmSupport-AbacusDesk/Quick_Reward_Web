@@ -61,26 +61,12 @@ export class InfluencerListComponent implements OnInit {
     this.filter = this.service.getData();
 
     this.start = this.service.getStart();
-    console.log(this.filter);
-
-    // this.ActivatedRoute.params.subscribe(params => {
-    //   this.type = params.type;
-    //   this.network = params.network;
-    //   this.InfluencerList();
-    // });
   }
-
-  // ngOnInit() {
-  //   console.log(this.dataToReceive, 'dataToReceive');
-  //   this.getStateList();
-
-  // }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.dataToReceive && !changes.dataToReceive.firstChange) {
       this.updateData();
     }
-
   }
 
   private updateData() {
@@ -95,11 +81,8 @@ export class InfluencerListComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.dataToReceive != undefined) {
-
       this.updateData();
-
-    }
-    else {
+    } else {
       this.ActivatedRoute.params.subscribe(params => {
         this.type = params.type;
         this.network = params.network;
@@ -109,16 +92,9 @@ export class InfluencerListComponent implements OnInit {
         this.InfluencerList();
       }
       );
-
-
-
     }
-
     this.getStateList();
-
   }
-
-
 
   getStateList() {
     this.service.post_rqst(0, "Master/getAllState").subscribe((result => {
@@ -132,21 +108,11 @@ export class InfluencerListComponent implements OnInit {
     }));
   }
 
-
   date_format(): void {
     this.filter.date_created = moment(this.filter.date_created).format('YYYY-MM-DD');
     this.InfluencerList();
   }
 
-  // pervious() {
-  //   this.start = this.start - this.page_limit;
-  //   this.InfluencerList();
-  // }
-
-  // nextPage() {
-  //   this.start = this.start + this.page_limit;
-  //   this.InfluencerList();
-  // }
   pervious() {
     if (this.start > 0) {
       this.start -= this.page_limit;
@@ -174,6 +140,7 @@ export class InfluencerListComponent implements OnInit {
     this.start = (this.pagenumber - 1) * this.page_limit;
     this.InfluencerList();
   }
+
   InfluencerList() {
     if (this.pagenumber > this.total_page) {
       this.pagenumber = this.total_page;
@@ -236,7 +203,6 @@ export class InfluencerListComponent implements OnInit {
     })
   }
 
-
   resetDevice(id) {
     this.alert.confirm("You Want To  Reset Device !").then((result) => {
       if (result) {
@@ -254,9 +220,6 @@ export class InfluencerListComponent implements OnInit {
     })
 
   }
-
-
-
 
   updateStatus(index, id, event) {
     this.alert.confirm("You Want To Change Status !").then((res) => {
@@ -292,18 +255,13 @@ export class InfluencerListComponent implements OnInit {
     this.InfluencerList();
     this.start = 0;
     this.gotoPageNumber = 1;
-
   }
-
-
 
   Addnew() {
     let network = this.network
     let type = this.type
     this.route.navigate(['/add-influencer/'], { queryParams: { type, network } });
   }
-
-
 
   public onDate(event) {
     this.filter.date_created = moment(event.target.value).format('YYYY-MM-DD');
@@ -321,7 +279,6 @@ export class InfluencerListComponent implements OnInit {
       this.filter.date_to = data.date_to;
       console.log(this.filter, 'filter');
       if (data) {
-        // this.downloadInChunks();
         this.InfluencerList();
       }
     })
@@ -347,7 +304,6 @@ export class InfluencerListComponent implements OnInit {
       }
     }, err => {
       this.loader = false;
-
     });
   }
 
@@ -390,7 +346,6 @@ export class InfluencerListComponent implements OnInit {
       });
     }
   }
-
 
   updateType(id, type): void {
     const dialogRef = this.dialog.open(RedeemStatusModalComponent, {
