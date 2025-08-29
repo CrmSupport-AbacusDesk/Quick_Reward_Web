@@ -307,7 +307,9 @@
               <td class="w150">{{row.scanned_by_name?row.scanned_by_name:'---'}}</td>
               <td class="w110">{{row.scanned_by_mobile?row.scanned_by_mobile:'---'}}</td>
               <td class="w130">
-                <strong>{{ row.total_point > 0 ? row.total_point + ' Rs' : '---' }}</strong>
+                <strong [style.color]="row.total_point > 0 ? 'green' : 'black'">
+                  {{ row.total_point > 0 ? row.total_point + ' Rs' : '---' }}
+                </strong>
               </td>
               <td class="w170">{{row.scanned_date | date:'d MMM y, h:mm a'}}</td>
               <td class="w170">{{row.generated_date | date:'d MMM y, h:mm a'}}</td>
@@ -638,13 +640,13 @@
       <span *ngIf="organisation_data.qr_generate_enable=='1'">Generate Coupon {{data.scan_item}}</span>
     </a>
     
-    <a mat-menu-item *ngIf="assign_login_data2.add_coupon_code=='1' && assign_login_data.organisation_data.loyalty == '1'" [ngClass]="{'pulse': fabBtnValue=='add'}"
+    <!-- <a mat-menu-item *ngIf="assign_login_data2.add_coupon_code=='1' && assign_login_data.organisation_data.loyalty == '1'" [ngClass]="{'pulse': fabBtnValue=='add'}"
     color="primary" (click)="openScanLimitModal()">
     <mat-icon>code_off</mat-icon>
     <span>Scan Limit
       <strong class="badge">{{scanLimit.limit}}</strong>
     </span>
-  </a>
+  </a> -->
   
   
   <!-- <button mat-menu-item  routerLink="replacement"  routerLinkActive="active">

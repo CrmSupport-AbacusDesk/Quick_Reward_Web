@@ -186,32 +186,6 @@
                     </div>
                 </div>
 
-                <ng-container *ngIf="!skLoading">
-                    <div class="card mt16" *ngIf="Influencer_Detail.form_builder.length > 0">
-                        <div class="card-head">
-                            <h2>Additional Details</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="grid-box">
-                                <ng-container *ngFor="let row of Influencer_Detail.form_builder">
-                                    <div class="block-feilds" *ngIf="row.value">
-                                        <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) :
-                                            ''}}</span>
-                                        <p>{{row.value ? row.value : ''}}</p>
-                                    </div>
-                                </ng-container>
-                                <ng-container *ngFor="let row of Influencer_Detail.form_builder_dependent">
-                                    <div class="block-feilds" *ngIf="row.value">
-                                        <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) :
-                                            ''}}</span>
-                                        <p>{{row.value ? row.value : ''}}</p>
-                                    </div>
-                                </ng-container>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-
                 <div class="card" *ngIf="skLoading">
                     <div class="sk-head">
                         <h2>&nbsp;</h2>
@@ -271,23 +245,7 @@
                         <i class="material-icons">receipt_long</i>
                         Ledger
                     </button>
-                    <!-- <button mat-button [ngClass]="{'active' :wallet_history_type== 'scan_history'}"
-                        (click)="clearFilter(); scan_history_data(); wallet_history_type= 'scan_history'"
-                        *ngIf="Influencer_Detail.loyalty_base == '0'">
-                        <i class="material-icons">qr_code_scanner</i>
-                        Scan History
-                    </button>
-                    <button mat-button [ngClass]="{'active' :wallet_history_type== 'purchase_history'}"
-                        (click)="clearFilter(); getList(); wallet_history_type= 'purchase_history'"
-                        *ngIf="Influencer_Detail.loyalty_base == '1'">
-                        <i class="material-icons">receipt</i>
-                        Purchase History
-                    </button> -->
-                    <!-- <button mat-button [ngClass]="{'active' :wallet_history_type== 'redeem_history'}"
-                        (click)="clearFilter(); redeem_history_data(); wallet_history_type = 'redeem_history'">
-                        <i class="material-icons">redeem</i>
-                        Redeem History
-                    </button> -->
+                   
                 </div>
 
                 <div class="left-auto df flex-gap-10">

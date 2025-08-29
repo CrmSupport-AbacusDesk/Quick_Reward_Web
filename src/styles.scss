@@ -1662,6 +1662,124 @@ a {
         }
     }
 }
+button {
+    &.link-btn {
+        /* Typography */
+        font-size: 0.75rem;
+        /* 12px - using rem for better scalability */
+        font-weight: 500;
+        /* Slightly bolder for better readability */
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.4;
+        /* Better line spacing */
+        letter-spacing: 0.01em;
+        /* Subtle letter spacing for clarity */
+        background: #ddedfc;
+        padding: 4px;
+        border-radius: 3px;
+        /* Colors & States */
+        color: var(--link-color, #2563eb);
+        /* Fallback color */
+        text-decoration: none;
+        /* Start without underline */
+
+        border: none;
+
+        /* Layout */
+        display: inline-flex;
+        align-items: center;
+
+        min-width: auto;
+        text-align: left;
+        white-space: normal;
+        cursor: pointer;
+
+        /* Modern interactions */
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+
+        /* Hover state */
+        &:hover {
+            color: var(--link-hover-color, #1d4ed8);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+            text-decoration-thickness: 1px;
+            transform: translateY(-1px);
+        }
+
+        /* Focus state for accessibility */
+        &:focus-visible {
+            outline: 2px solid var(--focus-color, #3b82f6);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        /* Active state */
+        &:active {
+            transform: translateY(0);
+            color: var(--link-active-color, #1e40af);
+        }
+
+        /* Underline variant */
+        &.underline {
+            text-decoration: underline;
+            text-underline-offset: 0.25em;
+            text-decoration-thickness: 1px;
+            text-decoration-color: currentColor;
+
+            &:hover {
+                text-decoration-thickness: 2px;
+            }
+        }
+
+        /* Flat variant - minimal styling */
+        &.flat {
+            padding: 0;
+            line-height: 1.2;
+            transition: color 0.15s ease;
+
+            &:hover {
+                transform: none;
+            }
+        }
+
+        /* Disabled state */
+        &:disabled,
+        &[aria-disabled="true"] {
+            color: var(--text-disabled, #9ca3af);
+            cursor: not-allowed;
+            text-decoration: none;
+
+            &:hover {
+                transform: none;
+                text-decoration: none;
+            }
+        }
+
+        /* Loading state */
+        &.loading {
+            cursor: wait;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Icon support */
+        .icon {
+            margin-right: 0.375rem;
+            flex-shrink: 0;
+            width: 1em;
+            height: 1em;
+        }
+
+        /* External link indicator */
+        &[target="_blank"]::after {
+            content: "↗";
+            margin-left: 0.25rem;
+            font-size: 0.85em;
+            opacity: 0.7;
+        }
+    }
+}
 
 .fix-icons {
     position: absolute;

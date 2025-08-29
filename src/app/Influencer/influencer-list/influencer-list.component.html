@@ -32,10 +32,6 @@
                     All ({{tab_count.all_count ? tab_count.all_count : '0'}})
                 </button>
 
-                <!-- <button mat-button [ngClass]="active_tab == 'Pending' ? 'active' : ''"
-                    (click)="active_tab = 'Pending';InfluencerList()"><i class="material-icons">pending_actions</i>
-                    Pending ({{tab_count.pending_count ? tab_count.pending_count : '0'}})
-                </button> -->
                 <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
                     (click)="active_tab = 'Approved'; InfluencerList()"><i class="material-icons">thumb_up_alt</i>
                     Approved ({{tab_count.approved_count ? tab_count.approved_count : '0'}})
@@ -44,10 +40,7 @@
                     (click)="active_tab = 'Reject'; InfluencerList()"><i class="material-icons">thumb_down_alt</i>
                     Reject ({{tab_count.reject_count ? tab_count.reject_count : '0'}})
                 </button>
-                <!-- <button mat-button [ngClass]="active_tab == 'Suspect' ? 'active' : ''"
-                    (click)="active_tab = 'Suspect'; InfluencerList()"><i class="material-icons">help</i>
-                    Suspect ({{tab_count.suspect_count ? tab_count.suspect_count : '0'}})
-                </button> -->
+              
             </div>
         </div>
     </div>
@@ -137,30 +130,6 @@
                                 </th>
                             </ng-container>
 
-
-                            <!-- <th class="w130">
-                                <div class="th-search-acmt">
-                                    <mat-form-field class="cs-input select-input">
-                                        <mat-select name="state" [(ngModel)]="filter.state" (selectionChange)="InfluencerList()">
-                                            <mat-option *ngFor="let state of states"
-                                            value="{{state.state_name}}">{{state.state_name}}</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-                            </th> -->
-
-                            <!-- <th class="w120">
-                                <div class="th-search-acmt">
-                                    <mat-form-field class="cs-input select-input">
-                                        <mat-select name="kyc_status" [(ngModel)]="filter.kyc_status" (selectionChange)="InfluencerList()">
-                                            <mat-option value="">All</mat-option>
-                                            <mat-option value="Pending">Pending</mat-option>
-                                            <mat-option value="Verified">Verified </mat-option>
-                                            <mat-option value="Reject">Reject </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-                            </th> -->
                             <th class="w120">
                                 <div class="th-search-acmt">
                                     <mat-form-field class="cs-input select-input">
@@ -193,15 +162,11 @@
                                             {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName] |
                                             date:'dd MMM yyyy'}}
                                         </p>
-
-                                        <p
-                                            *ngIf="header.headerEncodedName != 'date_created' && (header.headerEncodedName != 'name' && header.headerEncodedName != 'unique_id')">
+                                        <p *ngIf="header.headerEncodedName != 'date_created' && (header.headerEncodedName != 'name' && header.headerEncodedName != 'unique_id')">
                                             {{!row[header.headerEncodedName]?'--':row[header.headerEncodedName]}}
                                         </p>
 
-                                        <p
-                                            *ngIf="header.headerEncodedName == 'name' || header.headerEncodedName == 'unique_id'">
-                                            <!-- goToDetail(row.id, type) -->
+                                        <p *ngIf="header.headerEncodedName == 'name' || header.headerEncodedName == 'unique_id'">
                                             <button class="link-btn" [disabled]="row.mobile == '9319180958'"
                                                 (click)="service.setData(filter);service.setStart(start) "
                                                 routerLink="influencer-detail/{{row.encrypt_id}}/{{type}}"
@@ -223,9 +188,7 @@
                                     </ng-container>
                                 </td>
                                 <td class="w120 text-center">
-                                    <!-- <ng-container *ngIf="login_data5.organisation_data.influencer_reset_device == '0'">
-                                        <a class="link-btn" (click)="updateType(row.id, row.type)">Change Type</a>
-                                    </ng-container> -->
+                                  
                                     <ng-container *ngIf="login_data5.organisation_data.influencer_reset_device == '1'">
                                         <button mat-icon-button [matMenuTriggerFor]="menu">
                                             <i class="material-icons">more_vert</i>
@@ -270,9 +233,7 @@
         </div>
     </div>
 
-
     <ng-container *ngIf="hide">
-
         <div class="fab-btns" *ngIf="login_data5.export_influencer=='1' || login_data5.add_influencer=='1'">
             <button class="excel pulse" mat-fab color="primary" [matMenuTriggerFor]="menu">
                 <i class="material-icons">apps</i>

@@ -713,7 +713,7 @@
                     <li
                         *ngIf="login_data.view_point_category=='1' && (data.filter_type== 'LOYALTY' || data.filter_type== 'All')">
                         <a mat-button routerLink="/point-list" routerLinkActive="active" (click)="clearFilter()">
-                            Point Category
+                            Cash Category
                         </a>
                     </li>
                     <li *ngIf="login_data.id=='1'">
@@ -839,12 +839,12 @@
                         </a>
                     </li> -->
 
-                    <li>
+                    <!-- <li>
                         <a mat-button routerLink="/loyalty-report/loyalty-report-influencer-categorywise-scan-point"
                             routerLinkActive="active" (click)="clearFilter()">
                             Point Category Wise Scan Report
                         </a>
-                    </li>
+                    </li> -->
 
                     <li>
                         <a mat-button routerLink="/loyalty-report/category-wise-scan-point" routerLinkActive="active"
