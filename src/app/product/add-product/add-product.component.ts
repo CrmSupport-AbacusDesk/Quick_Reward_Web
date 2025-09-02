@@ -204,7 +204,7 @@ export class AddProductComponent implements OnInit {
           }
           this.data = result.product_detail;
           this.data.segment_id = result.product_detail.category_id.toString();
-          this.data.warranty_period = result.product_detail.warranty_period.toString();
+          // this.data.warranty_period = result.product_detail.warranty_period.toString();
           this.data.point_category_id = result.product_detail.point_category_id.toString();
           this.data.sub_segment_id = result.product_detail.sub_category_id.toString();
           this.data.boxWOItem = result.product_detail.boxWOItem.toString();

@@ -30,8 +30,8 @@
                     Detail</button>
                 <button mat-button [ngClass]="{'active' :tabType== 'transaction'}"
                     (click)="tabType = 'transaction'; getLedger()" *ngIf="Influencer_Detail.loyalty_base != '2'"><i
-                        class="material-icons">swap_horiz</i>Wallet
-                    Transaction</button>
+                        class="material-icons">{{Influencer_Detail.type == 3 ? "swap_horiz" :"history"}}</i>{{Influencer_Detail.type == 3 ? "Wallet
+                    Transaction" : "Scan History"}}</button>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@
                     <div class="card-body">
                         <div class="grid-box">
 
-                            <div class="block-feilds" *ngIf="Influencer_Detail.company_name!==''">
+                            <div class="block-feilds" *ngIf="Influencer_Detail.company_name!=='' && Influencer_Detail.type != 3">
                                 <span>Company Name</span>
                                 <p>{{Influencer_Detail.company_name ? (Influencer_Detail.company_name | titlecase) :
                                     ''}}</p>
@@ -64,51 +64,16 @@
                                 <p>{{Influencer_Detail.unique_id}}</p>
                             </div>
 
-                            <div class="block-feilds user-dp">
+                            <div class="block-feilds user-dp" *ngIf=" Influencer_Detail.type != 3">
                                 <div class="wp100" *ngIf="Influencer_Detail.name!=''">
                                     <span>Name</span>
                                     <p>{{Influencer_Detail.name | titlecase}}</p>
                                 </div>
                             </div>
 
-                            <div class="block-feilds flex-heading" *ngIf="login_data5?.organisation_data?.sfa==1">
-                                <div>
-                                    <span>Sales User Name</span>
-                                    <p>{{Influencer_Detail.sales_user_name}}
-                                    </p>
-                                </div>
-
-                                <div class="left-auto" *ngIf="login_data5.edit_influencer=='1'">
-                                    <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
-                                        (click)="changeStatusDialog(Influencer_Detail.id,Influencer_Detail.status,'sales_person_edit',Influencer_Detail.referred_by,Influencer_Detail.name,Influencer_Detail.influencer_type, Influencer_Detail.assigned_sales_user_name,'')">
-                                        <i class="material-icons">edit</i>
-                                    </a>
-                                </div>
-                            </div>
                             <div class="block-feilds">
                                 <span>Mobile No.</span>
                                 <p>{{Influencer_Detail.mobile_no}}</p>
-                            </div>
-
-                            
-                            <div class="block-feilds flex-heading">
-                                <div>
-                                    <span>Status</span>
-                                    <p>{{Influencer_Detail.status ? Influencer_Detail.status : '---'}}</p>
-                                </div>
-
-                                <div class="left-auto"
-                                    *ngIf="login_data5.edit_influencer=='1' && login_data5.organisation_data.influencer_approval != '1'">
-                                    <a class="sm-mat-icon-button" mat-icon-button matTooltip="Change Status"
-                                        (click)="changeStatusDialog(Influencer_Detail.id,Influencer_Detail.status,'influencer_list',Influencer_Detail.referred_by,Influencer_Detail.name,Influencer_Detail.influencer_type, Influencer_Detail.welcome_bonus_flag,'')">
-                                        <i class="material-icons">edit</i>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="block-feilds" *ngIf="Influencer_Detail.status=='Reject'">
-                                <span>Reject Reason</span>
-                                <p>{{Influencer_Detail.reject_reason ? Influencer_Detail.reject_reason : '---'}}</p>
                             </div>
 
                             <div class="block-feilds">
@@ -134,16 +99,9 @@
                                 <p>{{Influencer_Detail.device_info ? Influencer_Detail.device_info : '---'}}</p>
                             </div>
                         </div>
-
-                        <div class="grid-box mt10" *ngIf="Influencer_Detail.reason">
-                            <div class="block-feilds">
-                                <span>Reason</span>
-                                <p>{{Influencer_Detail.reason}}</p>
-                            </div>
-                        </div>
                     </div>
 
-                    <div class="card-head mt20">
+                    <div class="card-head mt20" *ngIf=" Influencer_Detail.type != 3" >
                         <h2>-- Address Details --</h2>
                     </div>
 
@@ -162,7 +120,7 @@
                         </div>
                     </div>
 
-                    <div class="card-head mt20">
+                    <div class="card-head mt20" *ngIf=" Influencer_Detail.type == 3">
                         <h2>-- Bank Details --</h2>
                         <div class=""
                             *ngIf="Influencer_Detail.payout_kyc_status == 'Reject' && Influencer_Detail.influencer_type == 'Plumber'">
@@ -343,9 +301,9 @@
                                     </div>
                                 </th>
                                 <!-- <th class="w150">Transaction Type</th> -->
-                                <th class="text-left">Credit</th>
+                                <th class="text-left">{{Influencer_Detail.type == 3 ? "Credit" :"Scan History"}}</th>
                                 <!-- <th class="text-right">Debit</th> -->
-                                <th class="w160 text-left">Balance</th>
+                                <th class="w160 text-left" *ngIf="Influencer_Detail.type == 3 ">Balance</th>
                             </tr>
                         </table>
                     </div>
@@ -364,22 +322,10 @@
                                         </mat-form-field>
                                     </div>
                                 </th>
-                                <!-- <th class="w150 text-right">
-                                    <div class="th-search-acmt">
-                                        <mat-form-field>
-                                            <input type="text" matInput placeholder="Search ..." name="transaction_type"
-                                                (keyup.enter)="getLedger()" #transaction_type="ngModel"
-                                                [(ngModel)]="filter.transaction_type">
-                                            <mat-autocomplete #search="matAutocomplete">
-                                                <mat-option>
-                                                </mat-option>
-                                            </mat-autocomplete>
-                                        </mat-form-field>
-                                    </div>
-                                </th> -->
+                       
                                 <th class="text-left">&nbsp;</th>
                                 <!-- <th class="text-right">&nbsp;</th> -->
-                                <th class="w160">&nbsp;</th>
+                                <th class="w160" *ngIf="Influencer_Detail.type == 3 ">&nbsp;</th>
                             </tr>
                         </table>
                     </div>
@@ -394,9 +340,8 @@
                                     <!-- <td class="w150">{{row.transaction_type}}</td> -->
                                     <td class="text-left">
                                         <strong class="green-clr" *ngIf="row.credit > 0">+ {{row.credit}} rs</strong>
-                                        <ng-container *ngIf="row.credit == 0">---</ng-container>
-                                        <br>
-                                        <ng-container *ngIf="row.credit > 0">{{row.transaction_remark}}</ng-container>
+                                        <br *ngIf="row.credit > 0">
+                                        <ng-container >{{row.transaction_remark}}</ng-container>
                                     </td>
                                     <!-- <td class="text-right">
                                         <strong class="red-clr" *ngIf="row.debit > 0">- {{row.debit}} pt</strong>
@@ -404,7 +349,7 @@
                                         <br>
                                         <ng-container *ngIf="row.debit > 0">{{row.transaction_remark}}</ng-container>
                                     </td> -->
-                                    <td class="w160 text-left">
+                                    <td class="w160 text-left" *ngIf="row.credit > 0">
                                         <strong>{{row.balance}} rs</strong>
                                     </td>
                                 </tr>
@@ -427,7 +372,7 @@
                                     <!-- <td>
                                         <div>&nbsp;</div>
                                     </td> -->
-                                    <td class="w160">
+                                    <td class="w160" *ngIf="Influencer_Detail.type == 3 ">
                                         <div>&nbsp;</div>
                                     </td>
                                 </tr>
@@ -899,30 +844,18 @@
 <div class="fab-btns"
         *ngIf="(tabType== 'transaction' && wallet_history_type== 'ledger' && ledgerData.length > 0) || (tabType== 'transaction' && wallet_history_type== 'scan_history' && couponData.length > 0) || (tabType== 'transaction' && wallet_history_type=='redeem_history' && redeemHistory.length > 0) || (tabType== 'transaction' && wallet_history_type== 'ledger' && Influencer_Detail.status =='Approved' && login_data5.edit_influencer=='1')">
         <button class="pulse excel" mat-fab color="primary" [ngClass]="{'pulse': fabBtnValue=='add'}"
-            [matMenuTriggerFor]="menu">
-            <i class="material-icons">apps</i>
-            Action
+             (click)="progressService.setCancelReq(false);downloadInChunks(wallet_history_type);">
+             <mat-icon>download</mat-icon> Download in excel
         </button>
     </div>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="progressService.setCancelReq(false);downloadInChunks(wallet_history_type);"
+    <!-- <mat-menu #menu="matMenu">
+        <button mat-menu-item 
             *ngIf="(tabType== 'transaction' && wallet_history_type== 'ledger' && ledgerData.length > 0) || (tabType== 'transaction' && wallet_history_type== 'scan_history' && couponData.length > 0) || (tabType== 'transaction' && wallet_history_type=='redeem_history' && redeemHistory.length > 0)">
             <mat-icon>download</mat-icon>
             <span>Download in excel</span>
         </button>
 
-        <button mat-menu-item (click)="openDialog('redeem_request')"
-            *ngIf="tabType== 'transaction' && wallet_history_type== 'ledger' && Influencer_Detail.status =='Approved' && login_data5.edit_influencer=='1'">
-            <mat-icon>send</mat-icon>
-            <span>Send Redeem Request</span>
-        </button>
 
-
-        <button mat-menu-item (click)="openDialog('point_transfer')"
-            *ngIf="tabType== 'transaction' && wallet_history_type== 'ledger' && Influencer_Detail.status =='Approved' && login_data5.edit_influencer=='1'">
-            <mat-icon>swap_horiz</mat-icon>
-            <span>Point Transfer</span>
-        </button>
-    </mat-menu>
+    </mat-menu> -->
 
 </div>

@@ -16,7 +16,7 @@
                         </div>
                         <div class="card-body cs-form">
                             <div class="row">
-                                  <div class="col s12 m3 l3" >
+                                  <div class="col s12 m3 l3" *ngIf="params_type != 3" >
                                     <mat-form-field appearance="outline">
                                         <mat-label> {{params_network ? (params_network) : ''}} Name</mat-label>
                                         <!-- pattern="^[A-Za-z? ,_-]+$" -->
@@ -30,7 +30,7 @@
                                     
                                     
                                 </div>
-                                <div class="col s12 m3 l3">
+                                <div class="col s12 m3 l3" *ngIf="params_type != 3">
                                     <mat-form-field appearance="outline" [ngClass]="{'has-error' : name.invalid } ">
                                         <mat-label>Contact Person</mat-label>
                                         <!-- pattern="^[A-Za-z? ,_-]+$" -->
@@ -75,53 +75,8 @@
                                     </div>
                             </div>
                      
-                            
-                           
-                            
-                            <div class="row">
-                                
-                                
-                                
-                                
-                                <!-- <ng-container *ngIf="checkRight.scanning_rights == 'No' && checkRight.point_transfer_right == 'Yes' ">
-                                    <div class="col s12 m3 l3">
-                                        <mat-form-field appearance="outline">
-                                            <mat-label>Distributor</mat-label>
-                                            <mat-select name="distributor_assign" multiple [(ngModel)]="data.distributor_assign" #distributor_assign="ngModel"  [ngClass]="{'has-error' : distributor_assign.invalid } " required>
-                                                <mat-option>
-                                                    <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
-                                                    (keyup)="distributorList($event.target.value, '')"></ngx-mat-select-search>
-                                                </mat-option>
-                                                <mat-option *ngFor="let row of drlist" value="{{row.id}}">{{row.company_name | titlecase}}
-                                                    {{row.dr_code}}</mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                            <div class="alert alert-danger" *ngIf="distributor_assign.touched || f.submitted">
-                                                <p *ngIf="distributor_assign.errors?.required">This field is required</p>
-                                            </div>
-                                            
-                                        </div>
-                                        
-                                        <div class="col s12 m3 l3">
-                                            <mat-form-field class="cs-input" appearance="outline">
-                                                <mat-label>Sales User</mat-label>
-                                                <mat-select name="user_assign" multiple [(ngModel)]="data.user_assign" #user_assign="ngModel" [ngClass]="{'has-error' : user_assign.invalid }" required>
-                                                    <mat-option>
-                                                        <ngx-mat-select-search noEntriesFoundLabel="'no data found'" placeholderLabel="Search.."
-                                                        (keyup)="getSalesUser($event.target.value)"></ngx-mat-select-search>
-                                                    </mat-option>
-                                                    <mat-option *ngFor="let row of salesUser" value="{{row.id}}">{{row.name}} {{row.role_name}}</mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                            <div class="alert alert-danger" *ngIf="user_assign.touched || f.submitted">
-                                                <p *ngIf="user_assign.errors?.required">This field is required</p>
-                                            </div>
-                                        </div>
-                                    </ng-container> -->
-                                    
-                                    
-                                </div>
-                                <div class="row mb0">
+
+                                <div class="row mb0" *ngIf="params_type != 3" >
                                     <div class="col s12 m6 l6">
                                         <div class="row">
                                             <div class="col s12 m6 l6">
