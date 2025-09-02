@@ -206,29 +206,7 @@
                     
                 </div>
 
-                <ng-container *ngIf="!skLoading">
-                    <div class="card mt16" *ngIf="getData.form_builder.length > 0">
-                      <div class="card-head">
-                        <h2>Additional Details</h2>
-                      </div>
-                      <div class="card-body">
-                        <div class="grid-box">
-                          <ng-container *ngFor="let row of getData.form_builder">
-                            <div class="block-feilds" *ngIf="row.value">
-                              <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</span>
-                              <p>{{row.value ? row.value : ''}}</p>
-                            </div>
-                         </ng-container>
-                         <ng-container *ngFor="let row of getData.form_builder_dependent">
-                          <div class="block-feilds" *ngIf="row.value">
-                            <span>{{row.field_placeholder ? (row.field_placeholder | titlecase) : ''}}</span>
-                            <p>{{row.value ? row.value : ''}}</p>
-                          </div>
-                          </ng-container>
-                        </div>
-                      </div>
-                    </div>
-                  </ng-container>
+        
                 <!-- product data end -->
                 
                 

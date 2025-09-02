@@ -35,7 +35,6 @@
               <th class="w100">Date Created</th>
               <th class="w100">Created By</th>
               <th>Category</th>
-              <th class="w70">SAP Group Code</th>
               <ng-container  *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
                 <th class="w140  text-center">Primary Customer Discount</th>
                 <th class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">Additional Discounts</th>
@@ -84,7 +83,6 @@
                   </mat-form-field>
                 </div>
               </th>
-              <th class="w70 text-center">&nbsp;</th>
               <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
               <th class="w140 text-center">&nbsp;</th>
               <th class="w100 text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">&nbsp;</th>
@@ -124,7 +122,6 @@
                 <td class="w100">{{dist.created_by_name && dist.created_by_name != '' ? dist.created_by_name : '--'}}
                 </td>
                 <td>{{dist.category ? (dist.category) : '---'}}</td>
-                <td class="w70">{{dist.itmsGrpCod ? (dist.itmsGrpCod) : '---'}}</td>
                 <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
                   <td class="w140  text-center">{{dist.distributor_discount}} %</td>
                   <td class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">
@@ -179,7 +176,6 @@
               <td class="w100"><div>&nbsp;</div></td>
               <td class="w100"><div>&nbsp;</div></td>
               <td><div>&nbsp;</div></td>
-              <td class="w70"><div>&nbsp;</div></td>
               <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
               <td class="w14  text-center"><div>&nbsp;</div></td>
               <td class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'"><div>&nbsp;</div></td>

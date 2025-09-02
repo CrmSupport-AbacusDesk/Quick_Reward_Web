@@ -1,6 +1,6 @@
 <div class="main-container {{padding0}}">
     <div class="tools-container">
-        <h2>{{network}}</h2>
+        <h2>{{network}} ({{tab_count.all_count ? tab_count.all_count : '0'}})</h2>
         <div class="left-auto left-auto df ac flex-gap-10">
             <button mat-icon-button matTooltip="Refresh" *ngIf="dataToReceive==undefined" (click)="refresh()">
                 <i class="material-icons">refresh</i>
@@ -26,22 +26,6 @@
                 </div>
             </div>
 
-            <div class="mat-tabbar">
-                <button mat-button [ngClass]="active_tab == 'All' ? 'active' : ''"
-                    (click)="active_tab = 'All';InfluencerList()"><i class="material-icons">inbox</i>
-                    All ({{tab_count.all_count ? tab_count.all_count : '0'}})
-                </button>
-
-                <button mat-button [ngClass]="active_tab == 'Approved' ? 'active' : ''"
-                    (click)="active_tab = 'Approved'; InfluencerList()"><i class="material-icons">thumb_up_alt</i>
-                    Approved ({{tab_count.approved_count ? tab_count.approved_count : '0'}})
-                </button>
-                <button mat-button [ngClass]="active_tab == 'Reject' ? 'active' : ''"
-                    (click)="active_tab = 'Reject'; InfluencerList()"><i class="material-icons">thumb_down_alt</i>
-                    Reject ({{tab_count.reject_count ? tab_count.reject_count : '0'}})
-                </button>
-              
-            </div>
         </div>
     </div>
 
@@ -65,7 +49,6 @@
                                     {{header.headerName}}</th>
                             </ng-container>
                             <th class="w120 text-center">Login Status</th>
-                            <th class="w120 text-center">Action</th>
                         </tr>
                     </table>
                 </div>
@@ -142,7 +125,7 @@
                                     </mat-form-field>
                                 </div>
                             </th>
-                            <th class="w120 text-center">&nbsp;</th>
+                            
                         </tr>
                     </table>
                 </div>
@@ -187,23 +170,6 @@
                                         </div>
                                     </ng-container>
                                 </td>
-                                <td class="w120 text-center">
-                                  
-                                    <ng-container *ngIf="login_data5.organisation_data.influencer_reset_device == '1'">
-                                        <button mat-icon-button [matMenuTriggerFor]="menu">
-                                            <i class="material-icons">more_vert</i>
-                                        </button>
-                                        <mat-menu #menu="matMenu">
-                                            <button mat-menu-item *ngIf="row.device_unique_id !=''"
-                                                (click)="resetDevice(row.id)">
-                                                <span>Reset Device</span>
-                                            </button>
-                                            <button mat-menu-item (click)="updateType(row.id, row.type)">
-                                                <span>Change Type</span>
-                                            </button>
-                                        </mat-menu>
-                                    </ng-container>
-                                </td>
                             </tr>
                         </ng-container>
                         <ng-container *ngIf="loader">
@@ -216,9 +182,6 @@
                                         <div>&nbsp;</div>
                                     </td>
                                 </ng-container>
-                                <td class="w120">
-                                    <div>&nbsp;</div>
-                                </td>
                                 <td class="w120">
                                     <div>&nbsp;</div>
                                 </td>
