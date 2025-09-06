@@ -32,17 +32,16 @@
           <table>
             <tr>
               <th class="w50">S.No</th>
-              <th class="w100">Date Created</th>
+              <th class="w140">Date Created</th>
               <th class="w100">Created By</th>
               <th>Category</th>
-              <ng-container  *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
+              <!-- <ng-container  *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">
                 <th class="w140  text-center">Primary Customer Discount</th>
                 <th class="w100  text-center" *ngIf="logined_user_data.organisation_data.additional_discount == '1'">Additional Discounts</th>
                 <th class="w140  text-center">Secondary Customer  Discount</th>
-                <!-- <th class="w90  text-center" *ngIf="logined_user_data.organisation_data.sfa == '1'">Site/Project Discount</th> -->
                 <th class="w60  text-center">GST</th>
-              </ng-container>
-              <th class="w90  text-right">Total No. Of Products</th>
+              </ng-container> -->
+              <!-- <th class="w90  text-right">Total No. Of Products</th> -->
               <th class="w90 text-center" *ngIf="logined_user_data.edit_category_master=='1'">Status</th>
               <th class="w100 text-center" *ngIf="catImgFlag=='1'">Images</th>
               <th class="w110 text-center"
@@ -55,7 +54,7 @@
           <table>
             <tr>
               <th class="w50"></th>
-              <th class="w100">
+              <th class="w140">
                 <div class="th-search-acmt">
                   <mat-form-field class="cs-input date-column infix-bodr">
                     <input matInput [matDatepicker]="picker" placeholder="Date" name="date_created"
@@ -90,7 +89,7 @@
               <!-- <th class="w90  text-center"  *ngIf="logined_user_data.organisation_data.sfa == '1'">&nbsp;</th> -->
               <th class="w60 text-center">&nbsp;</th>
               </ng-container>
-              <th class="w90"></th>
+              <!-- <th class="w90"></th> -->
               <th class="w90  text-center" *ngIf="logined_user_data.edit_category_master=='1'">
                 <div class="th-search-acmt">
                   <mat-form-field class="cs-input select-input">
@@ -118,7 +117,7 @@
             <ng-container *ngIf="!loader">
               <tr *ngFor="let dist of segmentList; let i = index;">
                 <td class="w50">{{i + 1 + sr_no}}</td>
-                <td class="w100">{{dist.date_created | date}}</td>
+                <td class="w140">{{dist.date_created | date}}</td>
                 <td class="w100">{{dist.created_by_name && dist.created_by_name != '' ? dist.created_by_name : '--'}}
                 </td>
                 <td>{{dist.category ? (dist.category) : '---'}}</td>
@@ -131,7 +130,7 @@
                   <!-- <td class="w90  text-center"  *ngIf="logined_user_data.organisation_data.sfa == '1'">{{dist.project_discount}} %</td> -->
                   <td class="w60  text-center">{{dist.gst}} %</td>
                 </ng-container>
-                <td class="w90  text-right">{{dist.product_count}}</td>
+                <!-- <td class="w90  text-right">{{dist.product_count}}</td> -->
                 <td class="w90  text-center" *ngIf="logined_user_data.edit_category_master=='1'">
                   <mat-slide-toggle color="accent" [name]="'status'+i" [(ngModel)]="dist.segment_status"
                     (change)="updateStatus(i,dist.id,$event)">
@@ -173,7 +172,7 @@
               <tr class="sk-loading" *ngFor="let row of [].constructor(10);">
                 
                 <td class="w50"><div>&nbsp;</div></td>
-              <td class="w100"><div>&nbsp;</div></td>
+              <td class="w140"><div>&nbsp;</div></td>
               <td class="w100"><div>&nbsp;</div></td>
               <td><div>&nbsp;</div></td>
               <ng-container   *ngIf="(logined_user_data.organisation_data.sfa == '1' || logined_user_data.organisation_data.dms== '1') && (logined_user_data.organisation_data.home_page_sfa == 'Default' || logined_user_data.organisation_data.home_page_dms == 'Default')">

@@ -66,7 +66,7 @@ export class CouponCodeListComponent implements OnInit {
   
   ngOnInit() {
     this.couponCodeList();
-    this.getScanLimitCount();
+    // this.getScanLimitCount();
   }
   
   pervious(type) {

@@ -218,9 +218,9 @@ export class HeaderComponent implements OnInit {
       this.progressService.getDownloaderActive().subscribe(response => {          
         value = response
       })
-      if (value == true) {
-        this.cancelDownloading('');
-      }
+      // if (value == true) {
+      //   this.cancelDownloading('');
+      // }
       this.session.LogOutSession();
       this.service.datauser = {};
       this.router.navigate(['']);
@@ -263,7 +263,7 @@ export class HeaderComponent implements OnInit {
     cancelRequest() {
       setTimeout(() => {
         this.progressService.setDownloaderActive(false);
-        this.cancelDownloading('msgFalse');
+        // this.cancelDownloading('msgFalse');
       }, 300);
     }
   }

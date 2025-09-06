@@ -201,6 +201,7 @@ export class CouponCodeAddComponent implements OnInit {
 
   findProductId(code) {
     let index = this.product_data.findIndex(row => row.product_code == code)
+    console.log(this.product_data, 'prodData');
     if (index != -1) {
       this.data.product_id = this.product_data[index].product_id;
       this.data.product_name = this.product_data[index].product_name;
@@ -211,6 +212,7 @@ export class CouponCodeAddComponent implements OnInit {
       this.data.point_category_name = this.product_data[index].point_category_name;
       this.data.uom = this.product_data[index].uom;
       this.data.small_packing_size = this.product_data[index].small_packing_size;
+      this.data.total_coupon = this.product_data[index].couponGenSize;
     }
   }
 

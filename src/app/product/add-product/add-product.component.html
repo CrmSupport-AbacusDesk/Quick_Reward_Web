@@ -80,7 +80,16 @@
                                         <p *ngIf="product_code.errors?.pattern">This field is Invalid!</p>
                                     </div>
                                 </div>
+
                                 <div class="col s12 m3 l3">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>Packing Size</mat-label>
+                                        <input matInput placeholder="Type Here ..." name="small_packing_size"
+                                            #small_packing_size="ngModel" [(ngModel)]="data.small_packing_size">
+                                    </mat-form-field>
+                                </div>
+                                
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>MRP</mat-label>
                                         <input type="number" matInput placeholder="Type Here ..." name="mrp"
@@ -90,20 +99,22 @@
                                         <p *ngIf="mrp.errors?.required">This field is required</p>
                                         <p *ngIf="mrp.errors?.pattern">This field is Invalid!</p>
                                     </div>
-                                </div>
+                                </div> -->
+                                
                             </div>
                             <div class="row">
-                                <div class="col s12 m3 l3">
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Brand</mat-label>
                                         <input matInput placeholder="Type Here ..." name="brand" #brand="ngModel"
                                             [(ngModel)]="data.brand">
                                     </mat-form-field>
-                                    <!-- <div class="alert alert-danger" *ngIf="brand.touched || f.submitted">
+                                    <div class="alert alert-danger" *ngIf="brand.touched || f.submitted">
                                     <p *ngIf="brand.errors?.required">This field is required</p>
-                                </div> -->
                                 </div>
-                                <div class="col s12 m3 l3"
+                                </div> -->
+
+                                <!-- <div class="col s12 m3 l3"
                                     *ngIf="(logined_user_data?.organisation_data?.loyalty == '1' || logined_user_data?.organisation_data?.dms == '1') && logined_user_data?.organisation_data?.qr_genration==0">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Coupon Point</mat-label>
@@ -121,76 +132,76 @@
                                                 (row.point_category_name) : '---'}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                </div>
+                                </div> -->
 
 
-                                <div class="col s12 m3 l3">
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Pack QTY.</mat-label>
                                         <input matInput placeholder="Type Here ..." name="qty" #qty="ngModel"
                                             [(ngModel)]="data.qty">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
 
 
-                                <div class="col s12 m3 l3">
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Unit of Measurement</mat-label>
                                         <input matInput placeholder="Type Here ..." name="uom" #uom="ngModel"
                                             [(ngModel)]="data.uom">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="row">
-                                <div class="col s12 m3 l3" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">
+                                <!-- <div class="col s12 m3 l3" *ngIf="this.logined_user_data?.organisation_data?.sfa==1">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Master Packing Size</mat-label>
                                         <input matInput placeholder="Type Here ..." name="master_packing_size"
                                             #master_packing_size="ngModel" [(ngModel)]="data.master_packing_size"
                                             onkeypress="return event.charCode>=48 && event.charCode<=57">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
 
 
-                                <div class="col s12 m3 l3">
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Packing Size</mat-label>
                                         <input matInput placeholder="Type Here ..." name="small_packing_size"
                                             #small_packing_size="ngModel" [(ngModel)]="data.small_packing_size">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
 
-                                <div class="col s12 m3 l3">
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Product Size</mat-label>
                                         <input matInput placeholder="Type Here ..." name="product_size"
                                             #product_size="ngModel" [(ngModel)]="data.product_size">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
 
-                                <div class="col s12 m3 l3">
+                                <!-- <div class="col s12 m3 l3">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Product Thickness</mat-label>
                                         <input matInput placeholder="Type Here ..." name="product_thickness"
                                             #product_thickness="ngModel" [(ngModel)]="data.product_thickness">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
 
 
-                                <div class="col s12 m3 l3"
+                                <!-- <div class="col s12 m3 l3"
                                     *ngIf="logined_user_data?.organisation_data?.net_price == '1' ">
                                     <mat-form-field appearance="outline">
                                         <mat-label>Net Price</mat-label>
                                         <input type="number" matInput placeholder="Type Here ..." name="net_price"
                                             #net_price="ngModel" [(ngModel)]="data.net_price">
                                     </mat-form-field>
-                                </div>
+                                </div> -->
                             </div>
 
 
 
-                            <div class="row mb0">
+                            <!-- <div class="row mb0">
                                 <div class="col s12 m6 l6">
                                     <div class="row">
                                         <div class="col s12">
@@ -299,7 +310,7 @@
 
 
                                 </div>
-                            </div>
+                            </div> -->
 
 
                             <div class="row">

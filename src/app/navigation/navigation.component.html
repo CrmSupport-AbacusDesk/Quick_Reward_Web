@@ -636,13 +636,13 @@
                                 *ngIf="serve.counterArray.segment > 0">{{serve.counterArray.segment}}</span>
                         </a>
                     </li>
-                    <li *ngIf="login_data.view_sub_category=='1'">
+                    <!-- <li *ngIf="login_data.view_sub_category=='1'">
                         <a mat-button routerLink="/subcategory" routerLinkActive="active" (click)="clearFilter()">
                             Sub Category
                             <span class="nav-counter"
                                 *ngIf="serve.counterArray.sub_segment > 0">{{serve.counterArray.sub_segment}}</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li *ngIf="login_data.view_products=='1' ">
                         <a mat-button routerLink="/product-list" routerLinkActive="active" (click)="clearFilter()">
                             Products
