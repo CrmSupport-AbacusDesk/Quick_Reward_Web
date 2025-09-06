@@ -41,6 +41,7 @@
                             <th class="w60 text-center">Sr.No</th>
                             <th class="w110">Date</th>
                             <th>Category Name</th>
+                            <th class="w200 text-center">Product Mapped</th>
                             <th class="w120 text-center">Influencer Point</th>
                             <!-- <ng-container>
                                 <th class="w120 text-center" *ngFor="let row of headers">
@@ -75,6 +76,14 @@
                                     </mat-form-field>
                                 </div>
                             </th>
+                            <th class="w200">
+                                <div class="th-search-acmt">
+                                    <mat-form-field class="example-full-width cs-input select-input">
+                                        <input matInput placeholder="Search..." type="text" name="product_name"
+                                        [(ngModel)]="filter.product_name" (keyup.enter)="pointCategory_data(active_tab)">
+                                    </mat-form-field>
+                                </div>
+                            </th>
                             <ng-container>
                                 <th class="w120 text-center">&nbsp;</th>
                             </ng-container>
@@ -93,6 +102,7 @@
                                 <td class="w60 text-center">{{i+1+sr_no}}</td>
                                 <td class="w110">{{row.date_created | date : 'd MMM y'}}</td>
                                 <td>{{row.point_category_name}}</td>
+                                <td class="w200 text-center">{{row.product_name}}</td>
                                 <ng-container>
                                     <td class="w120 text-center">
                                         <strong>{{row.influencer_point}}</strong>
@@ -119,6 +129,9 @@
                                     <div>&nbsp;</div>
                                 </td>
                                 <td class="w110">
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td class="w200">
                                     <div>&nbsp;</div>
                                 </td>
                                 <td>

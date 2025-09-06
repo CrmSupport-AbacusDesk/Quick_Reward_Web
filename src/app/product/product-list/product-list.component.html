@@ -34,15 +34,16 @@
         <div class="table-head">
           <table>
             <tr>
-              <th class="w60">S. No</th>
+              <th class="w50">S. No</th>
               <th class="w100">Date Created</th>
               <th class="w150">Category</th>
-              <th class="w150">Sub Category</th>
+              <!-- <th class="w150">Sub Category</th> -->
               <th class="w250">Product Name</th>
               <th class="w100">Product Code</th>
-              <th class="w100">Brand</th>
+              <th class="w80">Item Size</th>
+              <!-- <th class="w100">Brand</th>
               <th class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'">Coupon Point</th>
-              <th class="w120 text-right">Mrp</th>
+              <th class="w120 text-right">Mrp</th> -->
               <th class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">Status</th>
               <th class="w100 text-center" *ngIf="logined_user_data.delete_products_master=='1'">Action</th>
             </tr>
@@ -52,7 +53,7 @@
         <div class="table-head bdrt">
           <table>
             <tr>
-              <th class="w60"></th>
+              <th class="w50"></th>
               <th class="w100">
                 <div class="th-search-acmt">
                   <mat-form-field class="cs-input date-column infix-bodr">
@@ -76,7 +77,7 @@
                   </mat-form-field>
                 </div>
               </th>
-              <th class="w150">
+              <!-- <th class="w150">
                 <div class="th-search-acmt">
                   <mat-form-field class="cs-input select-input">
                     <mat-select (selectionChange)="getProductList('')" name="sub_category_name"
@@ -87,7 +88,7 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
-              </th>
+              </th> -->
 
               <th class="w250">
                 <div class="th-search-acmt">
@@ -105,15 +106,23 @@
                   </mat-form-field>
                 </div>
               </th>
-              <th class="w100">
+              <th class="w80">
+                <div class="th-search-acmt">
+                  <mat-form-field>
+                    <input type="text" matInput placeholder="Search ..." name="small_packing_size"
+                      (keyup.enter)="getProductList('')" #small_packing_size="ngModel" [(ngModel)]="filter_data.small_packing_size">
+                  </mat-form-field>
+                </div>
+              </th>
+              <!-- <th class="w100">
                 <div class="th-search-acmt">
                   <mat-form-field>
                     <input type="text" matInput placeholder="Search ..." name="brand" (keyup.enter)="getProductList('')"
                       #brand="ngModel" [(ngModel)]="filter_data.brand">
                   </mat-form-field>
                 </div>
-              </th>
-              <th class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'">
+              </th> -->
+              <!-- <th class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'">
                 <div class="th-search-acmt">
                   <mat-form-field>
                     <input type="text" matInput placeholder="Search ..." name="point_category_name"
@@ -122,7 +131,7 @@
                   </mat-form-field>
                 </div>
               </th>
-              <th class="w120"></th>
+              <th class="w120"></th> -->
               <th class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">
                 <div class="th-search-acmt">
                   <mat-form-field class="cs-input select-input">
@@ -148,18 +157,19 @@
             <ng-container *ngIf="!loader">
               <tr *ngFor="let row of productlist; let i = index "
                 [ngClass]="{'Current': service.currentUserID == row.id}">
-                <td class="w60">{{i + 1 + sr_no}}</td>
+                <td class="w50">{{i + 1 + sr_no}}</td>
                 <td class="w100">{{row.date_created ? (row.date_created | date) : '---'}}</td>
                 <td class="w150">{{row.category ? (row.category) : '---'}}</td>
-                <td class="w150">{{row.sub_category_name ? (row.sub_category_name) : '---'}}</td>
+                <!-- <td class="w150">{{row.sub_category_name ? (row.sub_category_name) : '---'}}</td> -->
                 <td class="w250"><a class="link-btn" mat-button (click)="service.setData(filter_data)"
                     routerLink="product-detail/{{row.encrypt_id}}" routerLinkActive="active"> {{row.product_name ?
                     (row.product_name) : '---'}}</a></td>
                 <td class="w100">{{row.product_code && row.product_code!=''? row.product_code:'--'}}</td>
-                <td class="w100">{{row.brand && row.brand!=''? row.brand:'--'}}</td>
+                <td class="w80">{{row.small_packing_size && row.small_packing_size!=''? row.small_packing_size:'--'}}</td>
+                <!-- <td class="w100">{{row.brand && row.brand!=''? row.brand:'--'}}</td>
                 <td class="w120" *ngIf="logined_user_data.organisation_data.loyalty == '1'"> {{row.point_category_name ?
                   (row.point_category_name | titlecase) : '---'}}</td>
-                <td class="w120 text-right"> {{row.mrp && row.mrp!=''? ( '₹ ' + row.mrp):'--'}}</td>
+                <td class="w120 text-right"> {{row.mrp && row.mrp!=''? ( '₹ ' + row.mrp):'--'}}</td> -->
 
                 <td class="w100 text-center" *ngIf="logined_user_data.edit_products_master=='1'">
                   <div class="action-button">
@@ -186,7 +196,7 @@
             </ng-container>
             <ng-container *ngIf="loader">
               <tr class="sk-loading" *ngFor="let row of [].constructor(15)">
-                <td class="w60">
+                <td class="w50">
                   <div>&nbsp;</div>
                 </td>
                 <td class="w100">
@@ -195,13 +205,16 @@
                 <td class="w150">
                   <div>&nbsp;</div>
                 </td>
-                <td class="w150">
+                <!-- <td class="w150">
                   <div>&nbsp;</div>
-                </td>
+                </td> -->
                 <td class="w250">
                   <div>&nbsp;</div>
                 </td>
                 <td class="w100">
+                  <div>&nbsp;</div>
+                </td>
+                <td class="w80">
                   <div>&nbsp;</div>
                 </td>
                 <td class="w100">

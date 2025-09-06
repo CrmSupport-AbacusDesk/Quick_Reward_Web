@@ -94,7 +94,7 @@
                                         <div class="col s12 m2 l2">
                                             <mat-form-field  appearance="outline">
                                                 <mat-label>Total Number Of QR Code</mat-label>
-                                                <input matInput placeholder="Type Here ..."  name="total_coupon" #total_coupon="ngModel"
+                                                <input disabled matInput placeholder="Type Here ..."  name="total_coupon" #total_coupon="ngModel"
                                                 [(ngModel)]="data.total_coupon" onkeypress="return event.charCode>=48 && event.charCode<=57"  required>
                                             </mat-form-field>
                                             <div class="alert alert-danger" *ngIf="total_coupon.touched || f.submitted">
